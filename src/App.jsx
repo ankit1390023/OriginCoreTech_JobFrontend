@@ -7,7 +7,8 @@ import Home from "./components/Home";
 import SignUpChooseRole from "./components/auth/SignUpChooseRole";
 import SignUp from "./components/auth/SignUP";
 import SignUpSendOtpEmail from "./components/auth/SignUpSendOtpEmail";
-import StudentFillAccountDetails from "./components/studentFillAccountDetails/studentFillAccountDetails";
+import RecruiterPostJobInternDetails from "./components/recuiterPostJobInternDetails/RecuiterPostJobInternDetails";
+import StudentFillAccountDetails from "./components/studentFillAccountDetails/StudentFillAccountDetails.jsx"
 const appRouter = createBrowserRouter([
   {
     path: "/",
@@ -43,7 +44,11 @@ const appRouter = createBrowserRouter([
   },
   {
     path: "/student-fill-account-details",
-    element: <StudentFillAccountDetails />,
+    element:<StudentFillAccountDetails/>
+  },
+  {
+    path: "/recruiter-post-job-intern-details",
+    element: <RecruiterPostJobInternDetails />,
   },
 ]);
 const App = () => {

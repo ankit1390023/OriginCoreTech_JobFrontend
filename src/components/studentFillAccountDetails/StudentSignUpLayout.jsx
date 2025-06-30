@@ -1,7 +1,7 @@
 import React from "react";
 import SignUpIllustration from "../../assets/SignUp_Illustration.png";
 
-export default function SignUpLayout({ children, heading, subheading }) {
+export default function StudentSignUpLayout({ children, heading, subheading }) {
   return (
     <div className="w-full min-h-screen bg-white overflow-hidden relative">
       {/* Logo */}

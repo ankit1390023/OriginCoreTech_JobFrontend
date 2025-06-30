@@ -1,20 +1,40 @@
-import React, { useState } from "react";
+import React from "react";
+import { useFormContext } from "react-hook-form";
 
 const lookingForOptions = ["Jobs", "Internship", "Project"];
 const workModes = ["In-office", "Hybrid", "Work from home"];
 
 export default function PreferencesForm() {
-  const [lookingFor, setLookingFor] = useState([]);
-  const [workMode, setWorkMode] = useState([]);
+  const { watch, setValue, register } = useFormContext();
+  const lookingFor = watch("currentlyLookingFor") || [];
+  const workMode = watch("workMode") || [];
 
-  const toggle = (arr, setArr, value) => {
-    setArr(
-      arr.includes(value) ? arr.filter((v) => v !== value) : [...arr, value]
-    );
+  const toggle = (field, value) => {
+    const arr = watch(field) || [];
+    if (arr.includes(value)) {
+      setValue(
+        field,
+        arr.filter((v) => v !== value)
+      );
+    } else {
+      setValue(field, [...arr, value]);
+    }
   };
 
   return (
     <div>
+      {/* Hidden inputs to register the fields with react-hook-form */}
+      <input
+        type="hidden"
+        {...register("currentlyLookingFor")}
+        value={lookingFor.join(",")}
+      />
+      <input
+        type="hidden"
+        {...register("workMode")}
+        value={workMode.join(",")}
+      />
+
       <div className="mb-6">
         <div className="font-semibold mb-2">Currently looking for:</div>
         <div className="flex flex-wrap gap-2">
@@ -27,7 +47,7 @@ export default function PreferencesForm() {
                   ? "bg-blue-600 text-white border-blue-600"
                   : "bg-gray-100 text-gray-700 border-gray-300"
               }`}
-              onClick={() => toggle(lookingFor, setLookingFor, option)}
+              onClick={() => toggle("currentlyLookingFor", option)}
             >
               {option} +
             </button>
@@ -46,7 +66,7 @@ export default function PreferencesForm() {
                   ? "bg-blue-600 text-white border-blue-600"
                   : "bg-gray-100 text-gray-700 border-gray-300"
               }`}
-              onClick={() => toggle(workMode, setWorkMode, mode)}
+              onClick={() => toggle("workMode", mode)}
             >
               {mode} +
             </button>
