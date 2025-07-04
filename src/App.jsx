@@ -9,6 +9,10 @@ import SignUp from "./components/auth/SignUP";
 import SignUpSendOtpEmail from "./components/auth/SignUpSendOtpEmail";
 import RecruiterPostJobInternDetails from "./components/recuiterPostJobInternDetails/RecuiterPostJobInternDetails";
 import StudentFillAccountDetails from "./components/studentFillAccountDetails/StudentFillAccountDetails.jsx"
+import AllJobs from "./components/jobSection/AllJObs.jsx"
+import JobDetailsPage from "./components/jobSection/JobDetailsPage.jsx";
+import CompanyRecruiterProfile from "./components/company/CompanyRecruiterProfile.jsx";
+
 const appRouter = createBrowserRouter([
   {
     path: "/",
@@ -44,12 +48,24 @@ const appRouter = createBrowserRouter([
   },
   {
     path: "/student-fill-account-details",
-    element:<StudentFillAccountDetails/>
+    element: <StudentFillAccountDetails />
   },
   {
     path: "/recruiter-post-job-intern-details",
     element: <RecruiterPostJobInternDetails />,
   },
+  {
+    path: "/all-jobs",
+    element: <AllJobs />,
+  },
+  {
+    path: "/jobs/:jobId",
+    element: <JobDetailsPage />,
+  },
+  {
+    path: "/company-recruiter-profile",
+    element: <CompanyRecruiterProfile />,
+  }
 ]);
 const App = () => {
   return <RouterProvider router={appRouter} />;

@@ -68,7 +68,7 @@ export default function DomainsForm() {
       return newSkills;
     });
   };
-
+  
   const handleCompanyChange = (idx, value) => {
     setDomains(
       domains.map((d, i) => (i === idx ? { ...d, company: value } : d))

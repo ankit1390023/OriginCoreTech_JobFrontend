@@ -373,7 +373,7 @@ export default function RecruiterPostJobInternDetails() {
           course: data.course || null,
         }),
       };
-
+   
       // Get authentication token
       const token = localStorage.getItem('token');
 

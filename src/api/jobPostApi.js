@@ -2,39 +2,21 @@ import axios from 'axios';
 
 const BASE_URL = import.meta.env.VITE_BASE_URL || 'http://localhost:5000/api';
 
-// Get token from localStorage
-const getAuthToken = () => {
-    return localStorage.getItem('token');
-};
-
-// Create axios instance with auth header
-const apiClient = axios.create({
-    baseURL: BASE_URL,
-    headers: {
-        'Content-Type': 'application/json',
-    },
-});
-
-// Add auth interceptor
-apiClient.interceptors.request.use(
-    (config) => {
-        const token = getAuthToken();
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-        }
-        return config;
-    },
-    (error) => {
-        return Promise.reject(error);
-    }
-);
+// Simple function to get auth token
+const getToken = () => localStorage.getItem('token');
 
 // API service functions for job posting
 export const jobPostApi = {
     // Create a new job post
     createJobPost: async (jobPostData) => {
         try {
-            const response = await apiClient.post('/jobpost/create', jobPostData);
+            const token = getToken();
+            const response = await axios.post(`${BASE_URL}/jobpost/create`, jobPostData, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
             return response.data;
         } catch (error) {
             throw error;
@@ -44,7 +26,12 @@ export const jobPostApi = {
     // Get all domains (for skills suggestions)
     getAllDomains: async () => {
         try {
-            const response = await apiClient.get('/domain/all');
+            const token = getToken();
+            const response = await axios.get(`${BASE_URL}/domain/all`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
             return response.data;
         } catch (error) {
             throw error;
@@ -54,7 +41,12 @@ export const jobPostApi = {
     // Get job posts by recruiter
     getJobPostsByRecruiter: async () => {
         try {
-            const response = await apiClient.get('/company-recruiter-profile/jobpost/list');
+            const token = getToken();
+            const response = await axios.get(`${BASE_URL}/company-recruiter-profile/jobpost/list`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
             return response.data;
         } catch (error) {
             throw error;
@@ -64,7 +56,12 @@ export const jobPostApi = {
     // Get total job posts count by recruiter
     getTotalJobPostsCount: async () => {
         try {
-            const response = await apiClient.get('/jobpost/totalcount');
+            const token = getToken();
+            const response = await axios.get(`${BASE_URL}/jobpost/totalcount`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
             return response.data;
         } catch (error) {
             throw error;
