@@ -8,7 +8,7 @@ import ProgressBar from "./ProgressBar";
 import StudentSignUpLayout from "./StudentSignUpLayout";
 import SkillsForm from "./SkillsForm";
 import PreferencesForm from "./PreferencesForm";
-import { userDetailsApi } from "../../api/userDetailsApi";
+import { userDetailsApi } from "../../../api/userDetailsApi";
 
 const steps = [
   "Personal Info",

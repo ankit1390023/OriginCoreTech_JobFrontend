@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { FaMapMarkerAlt, FaUserTie, FaMoneyBillWave } from "react-icons/fa";
-import Header from "../shared/Header";
+import Header from "../../shared/Header";
 
 const jobs = [
     {

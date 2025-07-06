@@ -83,9 +83,9 @@ export default function Login() {
             </h2>
             <p className="text-white text-sm sm:text-base mb-2">
               Don&apos;t have an account?{" "}
-              <a href="#" className="text-red-400 hover:underline font-medium">
+              <Link to="/signup-choose-role" className="text-red-400 hover:underline font-medium">
                 Sign Up
-              </a>
+              </Link>
             </p>
           </div>
 
@@ -113,9 +113,8 @@ export default function Login() {
               <input
                 type="email"
                 {...register("email")}
-                className={`w-full px-3 sm:px-4 py-2 sm:py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm sm:text-base ${
-                  errors.email ? "border-red-500" : "border-gray-300"
-                }`}
+                className={`w-full px-3 sm:px-4 py-2 sm:py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm sm:text-base ${errors.email ? "border-red-500" : "border-gray-300"
+                  }`}
                 placeholder="Enter your email"
               />
               {errors.email && (
@@ -132,9 +131,8 @@ export default function Login() {
               <input
                 type="password"
                 {...register("password")}
-                className={`w-full px-3 sm:px-4 py-2 sm:py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm sm:text-base ${
-                  errors.password ? "border-red-500" : "border-gray-300"
-                }`}
+                className={`w-full px-3 sm:px-4 py-2 sm:py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm sm:text-base ${errors.password ? "border-red-500" : "border-gray-300"
+                  }`}
                 placeholder="Enter your password"
               />
               {errors.password && (
@@ -163,9 +161,8 @@ export default function Login() {
 
             <button
               type="submit"
-              className={`w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-2 sm:py-3 rounded-lg mb-4 transition-colors text-base sm:text-lg ${
-                loading ? "opacity-60 cursor-not-allowed" : ""
-              }`}
+              className={`w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-2 sm:py-3 rounded-lg mb-4 transition-colors text-base sm:text-lg ${loading ? "opacity-60 cursor-not-allowed" : ""
+                }`}
               disabled={loading}
             >
               {loading ? "Logging in..." : "Log In"}

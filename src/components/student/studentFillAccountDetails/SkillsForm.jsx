@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { FaTimes, FaInfoCircle } from "react-icons/fa";
-import { useDomainsApi } from "../../hooks/useDomainsApi";
-import { useSkillApi } from "../../hooks/useSkillApi";
-import { domainApi } from "../../api/domainApi";
+import { useDomainsApi } from "../../../hooks/useDomainsApi";
+import { useSkillApi } from "../../../hooks/useSkillApi";
+import { domainApi } from "../../../api/domainApi";
 
 const initialDomains = [];
 

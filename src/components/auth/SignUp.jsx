@@ -181,9 +181,8 @@ export default function SignUp() {
               <input
                 type="text"
                 {...register("firstName")}
-                className={`w-full px-4 py-2 border rounded-lg focus:outline-none ${
-                  errors.firstName ? "border-red-500" : "border-gray-300"
-                }`}
+                className={`w-full px-4 py-2 border rounded-lg focus:outline-none ${errors.firstName ? "border-red-500" : "border-gray-300"
+                  }`}
                 placeholder="First Name"
                 disabled={loading}
               />
@@ -200,9 +199,8 @@ export default function SignUp() {
               <input
                 type="text"
                 {...register("lastName")}
-                className={`w-full px-4 py-2 border rounded-lg focus:outline-none ${
-                  errors.lastName ? "border-red-500" : "border-gray-300"
-                }`}
+                className={`w-full px-4 py-2 border rounded-lg focus:outline-none ${errors.lastName ? "border-red-500" : "border-gray-300"
+                  }`}
                 placeholder="Last Name"
                 disabled={loading}
               />
@@ -228,9 +226,8 @@ export default function SignUp() {
                 <input
                   type="text"
                   {...register("phone")}
-                  className={`w-full px-4 py-2 border rounded-r-lg focus:outline-none ${
-                    errors.phone ? "border-red-500" : "border-gray-300"
-                  }`}
+                  className={`w-full px-4 py-2 border rounded-r-lg focus:outline-none ${errors.phone ? "border-red-500" : "border-gray-300"
+                    }`}
                   placeholder="9876543210"
                   disabled={loading}
                 />
@@ -248,9 +245,8 @@ export default function SignUp() {
               <input
                 type="email"
                 {...register("email")}
-                className={`w-full px-4 py-2 border rounded-lg focus:outline-none ${
-                  errors.email ? "border-red-500" : "border-gray-300"
-                }`}
+                className={`w-full px-4 py-2 border rounded-lg focus:outline-none ${errors.email ? "border-red-500" : "border-gray-300"
+                  }`}
                 placeholder="Email"
                 disabled={loading}
               />
@@ -274,9 +270,8 @@ export default function SignUp() {
               <input
                 type="password"
                 {...register("password")}
-                className={`w-full px-4 py-2 border rounded-lg focus:outline-none ${
-                  errors.password ? "border-red-500" : "border-gray-300"
-                }`}
+                className={`w-full px-4 py-2 border rounded-lg focus:outline-none ${errors.password ? "border-red-500" : "border-gray-300"
+                  }`}
                 placeholder="Password"
                 disabled={loading}
               />
@@ -298,11 +293,10 @@ export default function SignUp() {
             <button
               type="submit"
               disabled={loading}
-              className={`w-full py-2 rounded-lg font-semibold text-lg mb-4 transition ${
-                loading
+              className={`w-full py-2 rounded-lg font-semibold text-lg mb-4 transition ${loading
                   ? "bg-gray-400 text-white cursor-not-allowed"
                   : "bg-[#f44336] text-white hover:bg-[#d32f2f]"
-              }`}
+                }`}
             >
               {loading ? "Creating Account..." : "Register"}
             </button>
@@ -316,9 +310,8 @@ export default function SignUp() {
             <button
               type="button"
               disabled={loading}
-              className={`w-full flex items-center justify-center border border-gray-300 py-2 rounded-lg font-semibold text-gray-700 bg-white transition ${
-                loading ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-50"
-              }`}
+              className={`w-full flex items-center justify-center border border-gray-300 py-2 rounded-lg font-semibold text-gray-700 bg-white transition ${loading ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-50"
+                }`}
             >
               <FcGoogle size={20} className="sm:w-6 sm:h-6 mr-2" />
               Sign up with Google

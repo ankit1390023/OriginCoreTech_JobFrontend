@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import LoginIllustration from "../../assets/Login_Illustration.png";
 import axios from "axios";
-
+import { useNavigate, Link } from "react-router-dom";
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const schema = z.object({
@@ -31,7 +31,7 @@ export default function VerifyOtpEmail() {
   const [otpError, setOtpError] = useState("");
   const otpRefs = [useRef(), useRef(), useRef(), useRef()];
   const otpValue = watch("otp") || "";
-
+  const navigate = useNavigate();
   const handleOtpChange = (index, value) => {
     if (value.length > 1) {
       value = value.slice(-1);
@@ -60,12 +60,30 @@ export default function VerifyOtpEmail() {
     setLoading(true);
     setOtpError("");
     try {
-      const response = await axios.post(`${BASE_URL}/users/verify-otp`, {
+      const response = await axios.post(`${BASE_URL}/otp/verify-otp`, {
         email: data.email,
         otp: data.otp,
       });
+      console.log("OTP verification success:", response);
       console.log("OTP verification success:", response.data);
-      // You can redirect or store token here
+
+      // Role-based redirection
+      const userRole = response.data.userRole;
+      console.log("User role:", userRole);
+      switch (userRole) {
+        case 'STUDENT':
+          navigate("/student-fill-account-details");
+          break;
+        case 'COMPANY':
+          navigate("/recruiter-post-job-intern-details");
+          break;
+        case 'UNIVERSITY':
+          navigate("/university-fill-details");
+          break;
+        default:
+          // Fallback to student page if role is not recognized
+          navigate("/student-fill-account-details");
+      }
     } catch (error) {
       if (
         error.response &&
@@ -107,9 +125,9 @@ export default function VerifyOtpEmail() {
             </h2>
             <p className="text-white text-sm sm:text-base mb-2">
               Don&apos;t have an account?{" "}
-              <a href="#" className="text-red-400 hover:underline font-medium">
+              <Link to="/signup-choose-role" className="text-red-400 hover:underline font-medium">
                 Sign Up
-              </a>
+              </Link>
             </p>
           </div>
 
@@ -137,9 +155,8 @@ export default function VerifyOtpEmail() {
               <input
                 type="email"
                 {...register("email")}
-                className={`w-full px-3 sm:px-4 py-2 sm:py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm sm:text-base ${
-                  errors.email ? "border-red-500" : "border-gray-300"
-                }`}
+                className={`w-full px-3 sm:px-4 py-2 sm:py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm sm:text-base ${errors.email ? "border-red-500" : "border-gray-300"
+                  }`}
                 placeholder="Enter your email"
                 defaultValue="Loisbecket@gmail.com"
               />
@@ -164,9 +181,8 @@ export default function VerifyOtpEmail() {
                     value={otpValue[index] || ""}
                     onChange={(e) => handleOtpChange(index, e.target.value)}
                     onKeyDown={(e) => handleKeyDown(index, e)}
-                    className={`w-full h-10 sm:h-12 text-center text-base sm:text-lg font-semibold border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 ${
-                      errors.otp ? "border-red-500" : "border-gray-300"
-                    }`}
+                    className={`w-full h-10 sm:h-12 text-center text-base sm:text-lg font-semibold border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 ${errors.otp ? "border-red-500" : "border-gray-300"
+                      }`}
                     placeholder=""
                   />
                 ))}
@@ -187,9 +203,8 @@ export default function VerifyOtpEmail() {
 
             <button
               type="submit"
-              className={`w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-2 sm:py-3 rounded-lg mb-4 transition-colors text-base sm:text-lg ${
-                loading ? "opacity-60 cursor-not-allowed" : ""
-              }`}
+              className={`w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-2 sm:py-3 rounded-lg mb-4 transition-colors text-base sm:text-lg ${loading ? "opacity-60 cursor-not-allowed" : ""
+                }`}
               disabled={loading}
             >
               {loading ? "Verifying..." : "Verify OTP"}

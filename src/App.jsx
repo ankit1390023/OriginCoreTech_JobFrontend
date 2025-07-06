@@ -5,13 +5,14 @@ import SendOtpEmail from "./components/auth/SendOtpEmail";
 import VerifyOtpEmail from "./components/auth/VerifyOtpEmail";
 import Home from "./components/Home";
 import SignUpChooseRole from "./components/auth/SignUpChooseRole";
-import SignUp from "./components/auth/SignUP";
+import SignUp from "./components/auth/SignUp";
 import SignUpSendOtpEmail from "./components/auth/SignUpSendOtpEmail";
-import RecruiterPostJobInternDetails from "./components/recuiterPostJobInternDetails/RecuiterPostJobInternDetails";
-import StudentFillAccountDetails from "./components/studentFillAccountDetails/StudentFillAccountDetails.jsx"
-import AllJobs from "./components/jobSection/AllJObs.jsx"
-import JobDetailsPage from "./components/jobSection/JobDetailsPage.jsx";
-import CompanyRecruiterProfile from "./components/company/CompanyRecruiterProfile.jsx";
+import AllJobs from "./components/student/jobSection/AllJObs.jsx"
+import JobDetailsPage from "./components/student/jobSection/JobDetailsPage.jsx";
+import StudentFillAccountDetails from "./components/student/studentFillAccountDetails/StudentFillAccountDetails.jsx";
+import RecruiterPostJobInternDetails from "./components/recruiter/recruiterPostJobInternDetails/RecruiterPostJobInternDetails.jsx";
+import RecruiterProfile from "./components/recruiter/recruiterProfile/recuiterProfile.jsx";
+import UniversityFillDetails from "./components/university/UniversityFillDetails.jsx";
 
 const appRouter = createBrowserRouter([
   {
@@ -63,9 +64,15 @@ const appRouter = createBrowserRouter([
     element: <JobDetailsPage />,
   },
   {
-    path: "/company-recruiter-profile",
-    element: <CompanyRecruiterProfile />,
-  }
+    path: "/recruiter-profile",
+    element: <RecruiterProfile />
+  },
+  {
+    path: "/university-fill-details",
+    element: <UniversityFillDetails />
+  },
+
+
 ]);
 const App = () => {
   return <RouterProvider router={appRouter} />;

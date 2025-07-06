@@ -3,7 +3,7 @@ import { useForm, FormProvider } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import RecruiterPostJobInternLayout from "./RecruiterPostJobInternLayout";
-import { jobPostApi } from "../../api/jobPostApi";
+import { jobPostApi } from "../../../api/jobPostApi";
 
 const formSchema = z.object({
   opportunityType: z.enum(["Internship", "Job", "Project"]),
@@ -471,7 +471,7 @@ export default function RecruiterPostJobInternDetails() {
       <FormProvider {...methods}>
         <form
           onSubmit={methods.handleSubmit(onSubmit)}
-          className="space-y-6 max-w-2xl mx-auto bg-white rounded-xl"
+          className="space-y-6 max-w-2xl mx-auto bg-white rounded-xl p-1 "
         >
           {/* Success Message */}
           {successMessage && (

@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import LoginIllustration from "../../assets/Login_Illustration.png";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { Link,  useNavigate } from "react-router-dom";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
@@ -34,6 +34,7 @@ export default function SendOtpEmail() {
         email: data.email,
       });
       console.log("OTP sent successfully:", response.data);
+      alert("OTP sent successfully, please check your email");
       // You can redirect or show success message here
       navigate("/verify-otp-email");
     } catch (error) {
@@ -78,9 +79,9 @@ export default function SendOtpEmail() {
             </h2>
             <p className="text-white text-sm sm:text-base mb-2">
               Don&apos;t have an account?{" "}
-              <a href="#" className="text-red-400 hover:underline font-medium">
+              <Link to="/signup-choose-role" className="text-red-400 hover:underline font-medium">
                 Sign Up
-              </a>
+              </Link>
             </p>
           </div>
 

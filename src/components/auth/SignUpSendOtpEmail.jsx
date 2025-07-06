@@ -39,7 +39,7 @@ export default function SignUpSendOtpEmail() {
 
     try {
       // Add your OTP verification logic here
-      // const response = await axios.post(`${baseUrl}/verify-otp`, data);
+      const response = await axios.post(`${BASE_URL}/verify-otp`, data);
 
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 2000));
@@ -118,11 +118,10 @@ export default function SignUpSendOtpEmail() {
                   type="text"
                   {...register("otp")}
                   onChange={handleOtpChange}
-                  className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 transition-all text-center text-lg font-semibold tracking-widest ${
-                    errors.otp
+                  className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 transition-all text-center text-lg font-semibold tracking-widest ${errors.otp
                       ? "border-red-500 focus:border-red-500 focus:ring-red-200"
                       : "border-gray-200 focus:border-blue-500 focus:ring-blue-200"
-                  }`}
+                    }`}
                   placeholder="0000"
                   maxLength={4}
                   disabled={loading}
@@ -144,13 +143,12 @@ export default function SignUpSendOtpEmail() {
               <button
                 type="submit"
                 disabled={loading || watchedOtp.length !== 4}
-                className={`w-full py-3 rounded-xl font-semibold text-lg transition-all ${
-                  loading
+                className={`w-full py-3 rounded-xl font-semibold text-lg transition-all ${loading
                     ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                     : watchedOtp.length === 4
-                    ? "bg-[#f44336] text-white hover:bg-[#d32f2f] shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 cursor-pointer"
-                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                }`}
+                      ? "bg-[#f44336] text-white hover:bg-[#d32f2f] shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 cursor-pointer"
+                      : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  }`}
               >
                 {loading ? (
                   <div className="flex items-center justify-center space-x-2">

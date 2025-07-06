@@ -1,7 +1,7 @@
-import Header from "../shared/Header";
+import Header from "../../shared/Header";
 import { FaSearch, FaBuilding, FaMapMarkerAlt, FaUserTie, FaMoneyBillWave, FaBriefcase } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import { useGetJobApi } from '../../hooks/useGetJobApi';
+import { useGetJobApi } from '../../../hooks/useGetJobApi';
 
 export default function AllJobs() {
     const { allJobs, loading, error, refetch } = useGetJobApi();

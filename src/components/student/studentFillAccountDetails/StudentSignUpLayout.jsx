@@ -1,5 +1,5 @@
 import React from "react";
-import SignUpIllustration from "../../assets/SignUp_Illustration.png";
+import SignUpIllustration from "../../../assets/SignUp_Illustration.png";
 
 export default function StudentSignUpLayout({ children, heading, subheading }) {
   return (
