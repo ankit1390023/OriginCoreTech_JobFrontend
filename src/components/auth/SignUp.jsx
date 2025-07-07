@@ -8,7 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import SignUpIllustration from "../../assets/SignUp_Illustration.png";
 import { FcGoogle } from "react-icons/fc";
 
-const baseUrl = import.meta.env.VITE_BASE_URL || "http://localhost:5000/api";
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const companyDomains = [".com", ".org", ".net", ".co", ".io", ".tech", ".in"];
 
@@ -92,7 +92,7 @@ export default function SignUp() {
   const onSubmit = async (data) => {
     setLoading(true);
     try {
-      const response = await axios.post(`${baseUrl}/users/register`, {
+      const response = await axios.post(`${BASE_URL}/users/register`, {
         firstName: data.firstName,
         lastName: data.lastName,
         phone: data.phone,
@@ -100,22 +100,20 @@ export default function SignUp() {
         password: data.password,
         userRole: data.userRole,
       });
-      alert("Signup successful!");
       if (response.status === 201) {
+        alert("Signup successful!");
         navigate("/send-otp-email");
+      } else {
+        alert("Signup failed. Please try again.");
       }
     } catch (error) {
       console.error("Signup error:", error);
       if (error?.response?.data?.message) {
         alert(error.response.data.message);
-      } else if (error.code === "ERR_NETWORK") {
-        alert(
-          "Network error: Please check if the backend server is running on http://localhost:5000"
-        );
       } else {
-        alert("Network error");
+        alert("Signup failed. Please try again.");
       }
-    } finally {
+    } finally {``
       setLoading(false);
     }
   };
