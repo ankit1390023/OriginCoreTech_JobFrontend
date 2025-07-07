@@ -113,7 +113,8 @@ export default function SignUp() {
       } else {
         alert("Signup failed. Please try again.");
       }
-    } finally {``
+    } finally {
+      ``
       setLoading(false);
     }
   };
@@ -292,8 +293,8 @@ export default function SignUp() {
               type="submit"
               disabled={loading}
               className={`w-full py-2 rounded-lg font-semibold text-lg mb-4 transition ${loading
-                  ? "bg-gray-400 text-white cursor-not-allowed"
-                  : "bg-[#f44336] text-white hover:bg-[#d32f2f]"
+                ? "bg-gray-400 text-white cursor-not-allowed"
+                : "bg-[#f44336] text-white hover:bg-[#d32f2f]"
                 }`}
             >
               {loading ? "Creating Account..." : "Register"}
