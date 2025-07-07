@@ -7,12 +7,15 @@ import Home from "./components/Home";
 import SignUpChooseRole from "./components/auth/SignUpChooseRole";
 import SignUp from "./components/auth/SignUp";
 import SignUpSendOtpEmail from "./components/auth/SignUpSendOtpEmail";
-import AllJobs from "./components/student/jobSection/AllJObs.jsx"
 import JobDetailsPage from "./components/student/jobSection/JobDetailsPage.jsx";
 import StudentFillAccountDetails from "./components/student/studentFillAccountDetails/StudentFillAccountDetails.jsx";
 import RecruiterPostJobInternDetails from "./components/recruiter/recruiterPostJobInternDetails/RecruiterPostJobInternDetails.jsx";
 import RecruiterProfile from "./components/recruiter/recruiterProfile/recuiterProfile.jsx";
 import UniversityFillDetails from "./components/university/UniversityFillDetails.jsx";
+import AllJObs from "./components/student/jobSection/AllJObs.jsx";
+
+
+
 
 const appRouter = createBrowserRouter([
   {
@@ -57,7 +60,7 @@ const appRouter = createBrowserRouter([
   },
   {
     path: "/all-jobs",
-    element: <AllJobs />,
+    element: <AllJObs />,
   },
   {
     path: "/jobs/:jobId",

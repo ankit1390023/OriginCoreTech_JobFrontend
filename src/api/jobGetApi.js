@@ -15,18 +15,18 @@ export const jobGetApi = {
             const response = await axios.get(`${BASE_URL}/opportunities`,
                 {
                     headers: {
-                    'Authorization':`Bearer ${token}`
-                }
+                        'Authorization': `Bearer ${token}`
+                    }
                 });
-            console.log("response.data from getAllJobs", response.data);
+            // console.log("response.data from getAllJobs", response.data);
             return response.data;
         } catch (error) {
             throw error;
         }
     },
 
-    //Get By By ID
-    getJobById: async () => {
+    //Get Job By ID
+    getJobById: async (jobId) => {
         try {
             const token = getToken();
             const response = await axios.get(`${BASE_URL}/jobdetails/${jobId}`, {
