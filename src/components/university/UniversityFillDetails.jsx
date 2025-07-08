@@ -4,7 +4,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
+import StudentSignUpLayout from "../student/studentFillAccountDetails/StudentSignUpLayout";
+import { Link } from "react-router-dom";
+import { FcGoogle } from "react-icons/fc";
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const schema = z.object({
@@ -59,13 +61,11 @@ export default function UniversityFillDetails() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 py-8">
-            <div className="max-w-2xl mx-auto px-4">
+        <StudentSignUpLayout
+            heading="University Sign Up"
+            subheading="Complete your university profile."
+        >
                 <div className="bg-white rounded-lg shadow-md p-6">
-                    <h1 className="text-2xl font-bold text-gray-900 mb-6 text-center">
-                        Complete Your University Profile
-                    </h1>
-
                     {error && (
                         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
                             {error}
@@ -207,10 +207,32 @@ export default function UniversityFillDetails() {
                                 }`}
                         >
                             {loading ? "Saving..." : "Save University Details"}
-                        </button>
+                    </button>
+                    
+                    <div className="flex items-center my-4 sm:my-6">
+                        <div className="flex-grow h-px bg-gray-300"></div>
+                        <span className="mx-3 sm:mx-4 text-gray-400 text-sm sm:text-base font-medium">Or</span>
+                        <div className="flex-grow h-px bg-gray-300"></div>
+                    </div>
+
+                    <button
+                        type="button"
+                        disabled={loading}
+                        className={`w-full flex items-center justify-center border border-gray-300 py-2.5 sm:py-3 md:py-4 rounded-xl font-semibold text-gray-700 bg-white transition-all duration-200 transform hover:scale-[1.01] active:scale-[0.99] ${loading ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-50"
+                            }`}
+                    >
+                        <FcGoogle size={20} className="sm:w-6 sm:h-6 mr-2 sm:mr-3" />
+                        <span className="text-sm sm:text-base">Sign up with Google</span>
+                    </button>
+
+                    <p className="text-center text-sm sm:text-base text-gray-600 mt-6 sm:mt-8">
+                        Already have an account?{" "}
+                        <Link to="/login" className="text-red-500 font-semibold hover:text-red-600 transition-colors duration-200">
+                            Login
+                        </Link>
+                    </p>
                     </form>
                 </div>
-            </div>
-        </div>
+        </StudentSignUpLayout>
     );
 } 

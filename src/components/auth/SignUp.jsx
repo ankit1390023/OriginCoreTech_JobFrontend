@@ -136,8 +136,7 @@ export default function SignUp() {
       <div className="flex-1 w-full flex justify-center">
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 md:p-8 lg:p-10 w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl"
-          style={{ boxShadow: "0 20px 40px 0 rgba(31, 38, 135, 0.15)" }}
+          className="bg-white rounded-2xl shadow-md p-4 sm:p-6 md:p-8 lg:p-10 w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl"
         >
           <input
             type="hidden"

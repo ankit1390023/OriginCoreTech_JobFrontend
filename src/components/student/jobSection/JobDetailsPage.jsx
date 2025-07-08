@@ -176,10 +176,11 @@ export default function JobDetailsPage() {
                                                 <FaUserTie className="text-orange-500 text-xs" />
                                                 <span className="truncate">{selectedJobDetails.opportunityType}</span>
                                             </span>
-                                            <span className="bg-emerald-100 rounded-full px-2 sm:px-3 py-1 text-xs text-emerald-700 border border-emerald-200 flex items-center gap-1">
-                                                <FaMoneyBillWave className="text-emerald-500 text-xs" />
-                                                <span className="truncate">₹{selectedJobDetails.salary}</span>
-                                            </span>
+                                                        {selectedJobDetails.salary && (
+                                                            <span className="bg-emerald-100 text-emerald-600 text-xs rounded-full px-2 sm:px-3 py-1 border border-emerald-200">
+                                                                <span className="truncate">₹{selectedJobDetails.salary}</span>
+                                                            </span>
+                                                        )}
                                             <span className="bg-blue-100 rounded-full px-2 sm:px-3 py-1 text-xs text-blue-700 border border-blue-200">
                                                 <FaCalendarAlt className="text-blue-500 text-xs inline mr-1" />
                                                 <span className="truncate">{selectedJobDetails.postedDaysAgo}</span>
