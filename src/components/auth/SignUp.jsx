@@ -6,6 +6,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import SignUpIllustration from "../../assets/SignUp_Illustration.png";
+import StudentSignUpLayout from "../student/studentFillAccountDetails/StudentSignUpLayout";
 import { FcGoogle } from "react-icons/fc";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -126,43 +127,12 @@ export default function SignUp() {
   }, [location.state, navigate]);
 
   return (
-    <div className="w-full min-h-screen bg-white overflow-hidden relative">
-      <div className="absolute top-4 left-4 sm:top-6 sm:left-6 md:top-8 md:left-8 z-20">
-        <span className="text-xl sm:text-2xl font-bold text-white tracking-wide">
-          YourLogo
-        </span>
-      </div>
-
-      <div className="absolute top-0 left-0 w-full h-[50%] bg-[#6EB5DD66] z-0" />
-
-      <div className="absolute top-1/2 left-0 w-full z-10 -translate-y-1/2">
-        <svg
-          viewBox="0 0 1440 80"
-          className="w-full h-20"
-          preserveAspectRatio="none"
-        >
-          <path d="M0,0 Q720,100 1440,0 L1440,80 L0,80 Z" fill="#fff" />
-        </svg>
-      </div>
-
-      <div className="relative z-20 flex flex-col lg:flex-row items-center justify-between max-w-6xl mx-auto px-4 sm:px-4 lg:px-6 py-16 gap-y-10 gap-x-6">
-        <div className="flex-1 flex flex-col items-center lg:items-start text-center lg:text-left space-y-8">
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-black">
-            Sign Up
-          </h1>
-          <p className="text-sm sm:text-base md:text-lg font-medium text-gray-800 max-w-md">
-            Create an account to continue!
-          </p>
-          <div className="mt-2 p-3 bg-blue-50 rounded-lg border border-blue-200">
-            <p className="text-sm font-medium text-blue-800">{roleLabel}</p>
-          </div>
-          <img
-            src={SignUpIllustration}
-            alt="Sign Up Illustration"
-            className="w-52 sm:w-64 md:w-72 lg:w-80 mt-4"
-          />
-        </div>
-
+    <StudentSignUpLayout
+      heading="Create a New Account"
+      subheading="Join us and find your dream job or recruit talented candidates."
+      illustration={SignUpIllustration}
+    >
+ 
         <div className="flex-1 w-full flex justify-center">
           <form
             onSubmit={handleSubmit(onSubmit)}
@@ -333,7 +303,6 @@ export default function SignUp() {
             </p>
           </form>
         </div>
-      </div>
-    </div>
+      </StudentSignUpLayout>
   );
 }

@@ -194,6 +194,9 @@ export default function StudentFillAccountDetails() {
       heading="Create a New Account"
       subheading="Join us and find your dream job or recruit talented candidates."
     >
+      {/* Right Section */}
+      <div className="flex-1 w-full flex justify-center">
+        <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6 sm:p-8">
       <ProgressBar currentStep={step} steps={steps} />
       <FormProvider {...methods}>
         <form
@@ -252,8 +255,10 @@ export default function StudentFillAccountDetails() {
               </button>
             )}
           </div>
-        </form>
-      </FormProvider>
+          </form>
+        </FormProvider>
+      </div>
+      </div>
     </StudentSignUpLayout>
   );
 }

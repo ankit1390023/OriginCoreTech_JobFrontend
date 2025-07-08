@@ -3,38 +3,35 @@ import LoginIllustration from "../../assets/Login_Illustration.png";
 
 export default function AuthLayout({ children, title, subtitle, showIllustration = true }) {
     return (
-        <div className="min-h-screen w-full relative bg-white overflow-hidden">
-            {/* Logo at top-left */}
-            <div className="absolute top-4 left-4 sm:top-6 sm:left-6 md:top-8 md:left-8 z-20">
+        <div className="relative w-full min-h-screen bg-white overflow-hidden">
+            {/* Fixed Background Split */}
+            <div className="absolute inset-0 z-0 pointer-events-none">
+                <div className="w-full h-1/2 bg-[#072366]"></div>
+                <div className="w-full h-1/2 bg-white absolute bottom-0"></div>
+            </div>
+            
+            {/* Logo */}
+            <div className="absolute top-4 left-4 sm:top-6 sm:left-6 md:top-8 md:left-8 z-30">
                 <span className="text-xl sm:text-2xl font-bold text-white tracking-wide">
                     YourLogo
                 </span>
             </div>
 
-            {/* Top Blue Section */}
-            <div className="absolute top-0 left-0 w-full h-1/2 bg-[#072366] z-0" />
-            {/* Bottom White Section */}
-            <div className="absolute bottom-0 left-0 w-full h-1/2 bg-white z-0" />
-
             {/* Content */}
-            <div className="relative z-10 flex flex-col lg:flex-row min-h-screen">
-                {/* Left Side: Text and Illustration */}
-                <div className="flex-1 flex flex-col justify-between px-4 sm:px-6 md:px-8 lg:px-16 pt-24 sm:pt-28 md:pt-32 lg:pt-28">
-                    {/* Top-left text in blue section */}
-                    <div className="text-center lg:text-left mb-8 lg:mb-0">
-                        <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-3 sm:mb-4 leading-tight">
+            <div className="relative top-8 z-10 flex flex-col lg:flex-row items-start min-h-screen ml-20">
+                {/* Left Side */}
+                <div className="w-full lg:w-3/5 pl-16 pr-4 py-24 lg:py-32 relative">
+                    <div className="max-w-xl">
+                        <h2 className="text-4xl lg:text-5xl font-bold text-white leading-tight">
                             {title}
                         </h2>
                         {subtitle && (
-                            <p className="text-white text-sm sm:text-base mb-2">
-                                {subtitle}
-                            </p>
+                            <p className="text-white text-base mt-2">{subtitle}</p>
                         )}
                     </div>
 
-                    {/* Bottom-left illustration in white section */}
                     {showIllustration && (
-                        <div className="hidden lg:block lg:pb-12">
+                        <div className="mt-10">
                             <img
                                 src={LoginIllustration}
                                 alt="Login Illustration"
@@ -44,9 +41,11 @@ export default function AuthLayout({ children, title, subtitle, showIllustration
                     )}
                 </div>
 
-                {/* Right Side: Form Content */}
-                <div className="flex-1 flex items-center justify-center px-4 sm:px-6 md:px-8 lg:px-12 py-8 lg:py-0">
-                    {children}
+                {/* Right Side (Form) - Scrollable with fixed height */}
+                <div className="w-full lg:w-3/5 px-6 sm:px-8 md:px-12 pt-24 pb-32 h-screen overflow-y-auto">
+                    <div className="max-w-md mx-auto">
+                        {children}
+                    </div>
                 </div>
             </div>
         </div>

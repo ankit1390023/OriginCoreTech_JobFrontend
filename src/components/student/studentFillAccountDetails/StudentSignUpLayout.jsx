@@ -25,7 +25,7 @@ export default function StudentSignUpLayout({ children, heading, subheading }) {
       {/* Main Content */}
       <div className="relative z-20 flex flex-col lg:flex-row items-start justify-between max-w-5xl lg:max-w-6xl xl:max-w-7xl mx-auto px-4 sm:px-4 lg:px-6 py-16 gap-y-10 gap-x-6 mt-28">
         {/* Left Section */}
-        <div className="hidden lg:flex flex-1 flex-col items-center lg:items-start text-center lg:text-left space-y-4 lg:sticky lg:top-28">
+        <div className="hidden ml-12 lg:flex flex-1 flex-col items-center lg:items-start text-center lg:text-left space-y-4 lg:sticky lg:top-28">
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-black">
             {heading}
           </h1>
@@ -40,11 +40,9 @@ export default function StudentSignUpLayout({ children, heading, subheading }) {
         </div>
         {/* Right Section */}
         <div className="flex-1 w-full flex justify-center">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl xl:max-w-3xl p-6 sm:p-10 flex flex-col min-h-[600px] overflow-x-hidden">
-            <div className="flex-1 overflow-y-auto overflow-x-hidden">
+            <div className="w-full overflow-y-auto overflow-x-hidden">
               {children}
             </div>
-          </div>
         </div>
       </div>
     </div>

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { FaCheckCircle } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import SignUpIllustration from "../../assets/SignUp_Illustration.png";
+import StudentSignUpLayout from "../../components/student/studentFillAccountDetails/StudentSignUpLayout";
 
 const roles = [
   {
@@ -43,66 +44,33 @@ export default function SignUpChooseRole() {
   };
 
   return (
-    <div className="w-full min-h-screen bg-white overflow-hidden relative">
-      <div className="absolute top-4 left-4 sm:top-6 sm:left-6 md:top-8 md:left-8 z-20">
-        <span className="text-xl sm:text-2xl font-bold text-white tracking-wide">
-          YourLogo
-        </span>
-      </div>
-      {/* Top Decorative Section */}
-      <div className="absolute top-0 left-0 w-full h-[50%] bg-[#6EB5DD66] z-0" />
-      {/* SVG Divider */}
-      <div className="absolute top-1/2 left-0 w-full z-10 -translate-y-1/2">
-        <svg
-          viewBox="0 0 1440 80"
-          className="w-full h-20"
-          preserveAspectRatio="none"
-        >
-          <path d="M0,0 Q720,100 1440,0 L1440,80 L0,80 Z" fill="#fff" />
-        </svg>
-      </div>
-      {/* Main Content */}
-      <div className="relative z-20 flex flex-col lg:flex-row items-center justify-between max-w-6xl mx-auto px-4 sm:px-4 lg:px-6 py-16 gap-y-10 gap-x-6 mt-28">
-        {/* Left Section */}
-        <div className="flex-1 flex flex-col items-center lg:items-start text-center lg:text-left space-y-4">
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-black">
-            Create a New Account
-          </h1>
-          <p className="text-sm sm:text-base md:text-lg font-medium text-gray-800 max-w-md">
-            Join us and find your dream job or recruit talented candidates.
-          </p>
-          <img
-            src={SignUpIllustration}
-            alt="Sign Up Illustration"
-            className="w-52 sm:w-64 md:w-72 lg:w-80 mt-4"
-          />
-        </div>
-
-        {/* Right Section */}
-        <div className="flex-1 w-full flex justify-center">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6 sm:p-8">
+    <StudentSignUpLayout
+      heading="Create a New Account"
+      subheading="Join us and find your dream job or recruit talented candidates."
+      illustration={SignUpIllustration}
+    >
+      {/* Right Section */}
+      <div className="flex-1 w-full flex justify-center">
+        <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6 sm:p-8">
             {roles.map((role, idx) => (
               <div
                 key={role.label}
                 onClick={() => handleRoleSelect(idx)}
-                className={`flex items-center justify-between mb-4 last:mb-0 rounded-lg border cursor-pointer transition-all p-4 hover:shadow-md ${
-                  idx === selected
+                className={`flex items-center justify-between mb-4 last:mb-0 rounded-lg border cursor-pointer transition-all p-4 hover:shadow-md ${idx === selected
                     ? "bg-red-50 border-red-300"
                     : "bg-gradient-to-r from-blue-50 to-white border-blue-300"
-                }`}
+                  }`}
               >
                 <div>
                   <div
-                    className={`font-semibold text-base sm:text-lg ${
-                      idx === selected ? "text-red-600" : "text-blue-900"
-                    }`}
+                    className={`font-semibold text-base sm:text-lg ${idx === selected ? "text-red-600" : "text-blue-900"
+                      }`}
                   >
                     {role.label}
                   </div>
                   <div
-                    className={`text-sm mt-1 ${
-                      idx === selected ? "text-red-400" : "text-blue-600"
-                    }`}
+                    className={`text-sm mt-1 ${idx === selected ? "text-red-400" : "text-blue-600"
+                      }`}
                   >
                     {role.description}
                   </div>
@@ -132,7 +100,6 @@ export default function SignUpChooseRole() {
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </StudentSignUpLayout>
   );
 }
