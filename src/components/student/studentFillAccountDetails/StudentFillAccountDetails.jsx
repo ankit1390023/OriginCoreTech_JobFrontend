@@ -196,68 +196,67 @@ export default function StudentFillAccountDetails() {
     >
       {/* Right Section */}
       <div className="flex-1 w-full flex justify-center">
-        <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6 sm:p-8">
-      <ProgressBar currentStep={step} steps={steps} />
-      <FormProvider {...methods}>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            console.log("Form submit event prevented");
-          }}
-        >
-          {step === 0 && (
-            <PersonalInfo
-              register={methods.register}
-              errors={methods.formState.errors}
-            />
-          )}
-          {step === 1 && (
-            <EducationInfo
-              register={methods.register}
-              errors={methods.formState.errors}
-              watch={methods.watch}
-            />
-          )}
-          {step === 2 && <SkillsForm />}
-          {step === 3 && <PreferencesForm />}
-          <div className="flex justify-between mt-8">
-            {step > 0 ? (
-              <button
-                type="button"
-                onClick={onBack}
-                className="px-6 py-2 rounded bg-gray-200 text-gray-700 font-semibold"
-              >
-                Back
-              </button>
-            ) : (
-              <div />
-            )}
-            {step < steps.length - 1 ? (
-              <button
-                type="button"
-                onClick={onNext}
-                className="px-6 py-2 rounded bg-blue-500 text-white font-semibold"
-              >
-                Next
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={handleSubmitClick}
-                disabled={isSubmitting}
-                className={`px-6 py-2 rounded font-semibold ${
-                  isSubmitting
-                    ? "bg-gray-400 text-gray-200 cursor-not-allowed"
-                    : "bg-green-500 text-white hover:bg-green-600"
-                }`}
-              >
-                {isSubmitting ? "Submitting..." : "Submit"}
-              </button>
-            )}
-          </div>
-          </form>
-        </FormProvider>
-      </div>
+        <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl p-6 sm:p-8">
+          <ProgressBar currentStep={step} steps={steps} />
+          <FormProvider {...methods}>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                console.log("Form submit event prevented");
+              }}
+            >
+              {step === 0 && (
+                <PersonalInfo
+                  register={methods.register}
+                  errors={methods.formState.errors}
+                />
+              )}
+              {step === 1 && (
+                <EducationInfo
+                  register={methods.register}
+                  errors={methods.formState.errors}
+                  watch={methods.watch}
+                />
+              )}
+              {step === 2 && <SkillsForm />}
+              {step === 3 && <PreferencesForm />}
+              <div className="flex justify-between mt-8">
+                {step > 0 ? (
+                  <button
+                    type="button"
+                    onClick={onBack}
+                    className="px-6 py-2 rounded bg-gray-200 text-gray-700 font-semibold"
+                  >
+                    Back
+                  </button>
+                ) : (
+                  <div />
+                )}
+                {step < steps.length - 1 ? (
+                  <button
+                    type="button"
+                    onClick={onNext}
+                    className="px-6 py-2 rounded bg-blue-500 text-white font-semibold"
+                  >
+                    Next
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={handleSubmitClick}
+                    disabled={isSubmitting}
+                    className={`px-6 py-2 rounded font-semibold ${isSubmitting
+                        ? "bg-gray-400 text-gray-200 cursor-not-allowed"
+                        : "bg-green-500 text-white hover:bg-green-600"
+                      }`}
+                  >
+                    {isSubmitting ? "Submitting..." : "Submit"}
+                  </button>
+                )}
+              </div>
+            </form>
+          </FormProvider>
+        </div>
       </div>
     </StudentSignUpLayout>
   );

@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import RecruiterPostJobInternLayout from "./RecruiterPostJobInternLayout";
 import { jobPostApi } from "../../../api/jobPostApi";
+import { domainApi } from "../../../api/domainApi";
+import { useEducationData } from "../../../hooks/useEducationData";
 
 const formSchema = z.object({
   opportunityType: z.enum(["Internship", "Job", "Project"]),
@@ -270,47 +272,84 @@ export default function RecruiterPostJobInternDetails() {
     },
   });
 
-  // State for related skills
-  const [relatedSkills, setRelatedSkills] = useState([
-    "React.js",
-    "Node.js",
-    "MongoDB",
-    "Express.js",
-    "JavaScript"
-  ]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showAddSkill, setShowAddSkill] = useState(false);
-  const [newSkill, setNewSkill] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
-  // Dummy skills for suggestions
-  const dummySkills = [
-    "Python", "Java", "C++", "TypeScript", "Angular", "Vue.js",
-    "PostgreSQL", "MySQL", "Redis", "Docker", "Kubernetes", "AWS",
-    "Git", "REST API", "GraphQL", "Redux", "Next.js", "Tailwind CSS"
-  ];
+  // New state for domain-based skill selection
+  const [allDomains, setAllDomains] = useState([]);
+  const [domainSkills, setDomainSkills] = useState({});
+  const [selectedDomain, setSelectedDomain] = useState(null);
+  const [domainsLoading, setDomainsLoading] = useState(false);
+  const [domainError, setDomainError] = useState("");
+  const [skillsLoading, setSkillsLoading] = useState(false);
+  const [showAllDomains, setShowAllDomains] = useState(false);
 
-  const handleAddSkill = () => {
-    if (newSkill.trim() && !relatedSkills.includes(newSkill.trim())) {
-      const updatedSkills = [...relatedSkills, newSkill.trim()];
-      setRelatedSkills(updatedSkills);
-      setNewSkill("");
-      setShowAddSkill(false);
+  // Education data hook for cities
+  const { data: educationData, loading: educationLoading, error: educationError } = useEducationData();
+
+
+
+  // Fetch all domains on component mount
+  useEffect(() => {
+    fetchAllDomains();
+  }, []);
+
+  const fetchAllDomains = async () => {
+    try {
+      setDomainsLoading(true);
+      setDomainError("");
+      const domainsData = await domainApi.getAllDomains();
+      // Extract domain names from the response structure
+      const domainNames = domainsData.map(domain => domain.domain_name);
+      setAllDomains(domainNames);
+    } catch (error) {
+      console.error("Error fetching domains:", error);
+      setDomainError("Failed to load domains. Please try again.");
+    } finally {
+      setDomainsLoading(false);
     }
   };
 
-  const handleRemoveSkill = (skillToRemove) => {
-    const updatedSkills = relatedSkills.filter(skill => skill !== skillToRemove);
-    setRelatedSkills(updatedSkills);
-  };
 
-  const handleSuggestionClick = (skill) => {
-    if (!relatedSkills.includes(skill)) {
-      const updatedSkills = [...relatedSkills, skill];
-      setRelatedSkills(updatedSkills);
+
+  const handleDomainClick = async (domain) => {
+    try {
+      setSelectedDomain(domain);
+
+      // If we haven't fetched skills for this domain yet, fetch them
+      if (!domainSkills[domain]) {
+        setSkillsLoading(true);
+        const skills = await domainApi.getSkillsByDomain(domain);
+        setDomainSkills(prev => ({
+          ...prev,
+          [domain]: skills
+        }));
+      }
+    } catch (error) {
+      console.error("Error fetching skills for domain:", domain, error);
+      setDomainError("Failed to load skills for this domain.");
+    } finally {
+      setSkillsLoading(false);
     }
   };
+
+  const handleSelectAllSkills = () => {
+    if (selectedDomain && domainSkills[selectedDomain]) {
+      const skills = domainSkills[selectedDomain];
+      const currentSkills = methods.getValues("skills");
+      const skillsText = skills.join(', ');
+
+      if (currentSkills) {
+        const updatedSkills = currentSkills + (currentSkills.endsWith(',') ? ' ' : ', ') + skillsText;
+        methods.setValue("skills", updatedSkills);
+      } else {
+        methods.setValue("skills", skillsText);
+      }
+    }
+  };
+
+
 
   const clearMessages = () => {
     setErrorMessage("");
@@ -344,7 +383,7 @@ export default function RecruiterPostJobInternDetails() {
         opportunityType: data.opportunityType,
         jobProfile: data.opportunityType === "Internship" ? data.profile : data.jobTitle,
         skillsRequired: data.skills,
-        skillRequiredNote: relatedSkills.join(', '), // Convert related skills array to string
+        skillRequiredNote: data.skills, // Use the skills field directly
         jobType: data.opportunityType === "Internship" ? data.internshipType : data.jobType,
         daysInOffice: data.inOfficeDays ? parseInt(data.inOfficeDays) : null,
         jobTime: data.partFullTime,
@@ -373,7 +412,7 @@ export default function RecruiterPostJobInternDetails() {
           course: data.course || null,
         }),
       };
-   
+
       // Get authentication token
       const token = localStorage.getItem('token');
 
@@ -389,7 +428,9 @@ export default function RecruiterPostJobInternDetails() {
 
       // Reset form after successful submission
       methods.reset();
-      setRelatedSkills(["React.js", "Node.js", "MongoDB", "Express.js", "JavaScript"]);
+      setSelectedDomain(null);
+      setDomainSkills({});
+      setShowAllDomains(false);
 
       // Clear success message after 5 seconds
       setTimeout(() => {
@@ -459,6 +500,11 @@ export default function RecruiterPostJobInternDetails() {
     // Clear success and error messages
     setSuccessMessage("");
     setErrorMessage("");
+
+    // Clear domain-related state
+    setSelectedDomain(null);
+    setDomainError("");
+    setShowAllDomains(false);
   };
 
 
@@ -618,92 +664,88 @@ export default function RecruiterPostJobInternDetails() {
               {methods.formState.errors.skills?.message}
             </p>
           </div>
-          {/* related skills you might may know */}
+
+          {/* Domain-based Skill Selection */}
           <div>
-            <label className={labelStyles}>Related skills you might may know</label>
+            <label className={labelStyles}>Select skills by domain</label>
 
-            {/* Display existing skills as circular badges */}
-            <div className="flex flex-wrap gap-2 sm:gap-3 mb-3">
-              {relatedSkills.map((skill) => (
-                <div
-                  key={skill}
-                  className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium"
+            {domainError && (
+              <div className="p-3 bg-red-50 border border-red-200 rounded-lg mb-3">
+                <p className="text-sm text-red-800">{domainError}</p>
+                <button
+                  type="button"
+                  onClick={fetchAllDomains}
+                  className="text-sm text-red-600 hover:text-red-800 underline mt-1"
                 >
-                  <span>{skill}</span>
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveSkill(skill)}
-                    className="text-blue-600 text-lg font-bold leading-none focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 hover:text-blue-800 hover:outline-none active:outline-none border-none bg-transparent ml-1"
-                  >
-                    ×
-                  </button>
-                </div>
-              ))}
+                  Retry
+                </button>
+              </div>
+            )}
 
-              {/* Add More button */}
-              <button
-                type="button"
-                onClick={() => setShowAddSkill(true)}
-                className="inline-flex items-center gap-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm font-medium hover:bg-gray-200 hover:text-gray-800 transition-colors"
-              >
-                <span className="text-lg">+</span>
-                Add More
-              </button>
-            </div>
-
-            {/* Add skill input and suggestions */}
-            {showAddSkill && (
-              <div className="space-y-2 sm:space-y-3 p-4 bg-gray-50 rounded-lg">
-                <div className="flex flex-col sm:flex-row gap-2">
-                  <input
-                    type="text"
-                    value={newSkill}
-                    onChange={(e) => setNewSkill(e.target.value)}
-                    placeholder="Enter skill name"
-                    className={inputStyles}
-                    onKeyPress={(e) => e.key === 'Enter' && handleAddSkill()}
-                  />
-                  <button
-                    type="button"
-                    onClick={handleAddSkill}
-                    className="px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors w-full sm:w-auto font-medium"
-                  >
-                    Add
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setShowAddSkill(false);
-                      setNewSkill("");
-                    }}
-                    className="px-4 py-3 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors w-full sm:w-auto font-medium"
-                  >
-                    Cancel
-                  </button>
-                </div>
-
-                {/* Skill suggestions */}
+            {domainsLoading ? (
+              <div className="p-4 bg-gray-50 rounded-lg">
+                <p className="text-gray-600">Loading domains...</p>
+              </div>
+            ) : allDomains.length === 0 ? (
+              <div className="p-4 bg-gray-50 rounded-lg">
+                <p className="text-gray-600">No domains available at the moment.</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {/* Domain Selection */}
                 <div>
-                  <p className="text-sm text-gray-600 mb-2">Popular skills:</p>
-                  <div className="flex flex-wrap gap-1 sm:gap-2">
-                    {dummySkills
-                      .filter(skill => !relatedSkills.includes(skill))
-                      .slice(0, 8)
-                      .map((skill) => (
-                        <button
-                          key={skill}
-                          type="button"
-                          onClick={() => handleSuggestionClick(skill)}
-                          className="px-3 py-2 bg-white border border-gray-300 text-gray-700 rounded-full text-sm hover:bg-gray-50 hover:border-gray-400 transition-colors"
-                        >
-                          {skill}
-                        </button>
-                      ))}
+                  <p className="text-sm text-gray-600 mb-2">Click on a domain to see related skills:</p>
+
+                  {/* Display domains as rounded badges */}
+                  <div className="flex flex-wrap gap-2 sm:gap-3 mb-3">
+                    {(showAllDomains ? allDomains : allDomains.slice(0, 4)).map((domain) => (
+                      <button
+                        key={domain}
+                        type="button"
+                        onClick={() => handleDomainClick(domain)}
+                        className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium transition-colors ${selectedDomain === domain
+                          ? "bg-blue-100 text-blue-800 border border-blue-300"
+                          : "bg-gray-100 text-gray-700 border border-gray-300 hover:bg-gray-200 hover:text-gray-800"
+                          }`}
+                      >
+                        {domain}
+                      </button>
+                    ))}
+
+                    {/* Show More/Less button */}
+                    {allDomains.length > 4 && (
+                      <button
+                        type="button"
+                        onClick={() => setShowAllDomains(!showAllDomains)}
+                        className="inline-flex items-center gap-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm font-medium hover:bg-gray-200 hover:text-gray-800 transition-colors"
+                      >
+                        <span>{showAllDomains ? "Show Less" : "Show More"}</span>
+                      </button>
+                    )}
                   </div>
+
+                  {/* Select All button for selected domain */}
+                  {selectedDomain && domainSkills[selectedDomain] && (
+                    <div className="mt-3">
+                      <button
+                        type="button"
+                        onClick={handleSelectAllSkills}
+                        className="inline-flex items-center gap-1 px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition-colors"
+                      >
+                        <span className="text-lg">+</span>
+                        Add All Skills from {selectedDomain}
+                      </button>
+                    </div>
+                  )}
                 </div>
+
+
+
               </div>
             )}
           </div>
+
+
           {/* Internship Type */}
           {opportunityType === "Internship" && (
             <>
@@ -1232,12 +1274,27 @@ export default function RecruiterPostJobInternDetails() {
           {/* City/Cities */}
           <div>
             <label className={labelStyles}>City/Cities</label>
-            <input
-              type="text"
-              className={inputStyles}
-              placeholder="e.g. Mumbai"
-              {...methods.register("city")}
-            />
+            {educationLoading ? (
+              <div className="p-3 bg-gray-50 rounded-lg">
+                <p className="text-gray-600">Loading cities...</p>
+              </div>
+            ) : educationError ? (
+              <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+                <p className="text-red-800 text-sm">{educationError}</p>
+              </div>
+            ) : (
+              <select
+                className={selectStyles}
+                {...methods.register("city")}
+              >
+                <option value="">Select a city</option>
+                {educationData.locations && educationData.locations.map((location) => (
+                  <option key={location} value={location}>
+                    {location}
+                  </option>
+                ))}
+              </select>
+            )}
             <p className={errorStyles}>
               {methods.formState.errors.city?.message}
             </p>
@@ -1372,12 +1429,27 @@ export default function RecruiterPostJobInternDetails() {
                 College Name
                 <span className="ml-2 align-middle inline-block px-2 py-0.5 text-xs font-semibold bg-green-100 text-green-700 rounded-full border border-green-300">PRO Plan</span>
               </label>
-              <input
-                type="text"
-                className={inputStyles}
-                placeholder="e.g. University Institute of Engineering and Technology, Kanpur"
-                {...methods.register("collegeName")}
-              />
+              {educationLoading ? (
+                <div className="p-3 bg-gray-50 rounded-lg">
+                  <p className="text-gray-600">Loading colleges...</p>
+                </div>
+              ) : educationError ? (
+                <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+                  <p className="text-red-800 text-sm">{educationError}</p>
+                </div>
+              ) : (
+                <select
+                  className={selectStyles}
+                  {...methods.register("collegeName")}
+                >
+                  <option value="">Select a college</option>
+                  {educationData.colleges && educationData.colleges.map((college) => (
+                    <option key={college} value={college}>
+                      {college}
+                    </option>
+                  ))}
+                </select>
+              )}
               <div className="flex items-center mt-2 mb-4">
                 <input
                   type="checkbox"
@@ -1388,28 +1460,29 @@ export default function RecruiterPostJobInternDetails() {
                   Candidates from ONLY the above college should be allowed to apply.
                 </label>
               </div>
+
               <div className="mb-2 font-semibold text-gray-700 text-sm">Course</div>
-              <input
-                type="text"
-                className={inputStyles}
-                placeholder="e.g. B.Tech Computer Science"
-                {...methods.register("course")}
-              />
-              <div className="flex flex-wrap gap-2 mt-2">
-                {['B.Tech', 'BE', 'B.Com', 'MBA', 'BA', 'B.Sc', 'M.Tech', 'MCA', 'Diploma'].map(course => (
-                  <button
-                    key={course}
-                    type="button"
-                    onClick={() => methods.setValue("course", course, { shouldValidate: true })}
-                    className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-medium border transition-colors ${methods.getValues("course") === course
-                      ? "bg-blue-100 text-blue-700 border-blue-300"
-                      : "bg-gray-100 text-gray-700 border-gray-200 hover:bg-gray-200"
-                      }`}
-                  >
-                    {course}
-                  </button>
-                ))}
-              </div>
+              {educationLoading ? (
+                <div className="p-3 bg-gray-50 rounded-lg">
+                  <p className="text-gray-600">Loading courses...</p>
+                </div>
+              ) : educationError ? (
+                <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+                  <p className="text-red-800 text-sm">{educationError}</p>
+                </div>
+              ) : (
+                <select
+                  className={selectStyles}
+                  {...methods.register("course")}
+                >
+                  <option value="">Select a course</option>
+                  {educationData.courses && educationData.courses.map((course) => (
+                    <option key={course} value={course}>
+                      {course}
+                    </option>
+                  ))}
+                </select>
+              )}
             </div>
           )}
 
