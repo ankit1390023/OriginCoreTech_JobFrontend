@@ -4,6 +4,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { recruiterApi } from "../../../api/recuiterApi";
 import RecruiterPostJobInternLayout from "../recruiterPostJobInternDetails/RecruiterPostJobInternLayout";
+import { useNavigate } from "react-router-dom";
 
 const formSchema = z.object({
     designation: z.string().min(1, { message: "Designation is required" }),
@@ -11,13 +12,13 @@ const formSchema = z.object({
     industry: z.string().min(1, { message: "Industry is required" }),
     location: z.string().min(1, { message: "Location is required" }),
     about: z.string().min(10, { message: "About section must be at least 10 characters" }),
-    logoUrl: z.string().url({ message: "Please enter a valid URL" }).optional().or(z.literal("")),
+    logo: z.instanceof(File).optional().or(z.literal("")),
+    profilePic: z.instanceof(File).optional().or(z.literal("")),
     hiringPreferences: z.string().optional(),
     languagesKnown: z.string().optional(),
     isEmailVerified: z.boolean().default(false),
     isPhoneVerified: z.boolean().default(false),
     isGstVerified: z.boolean().default(false),
-    profilePic: z.string().optional(),
 });
 
 export default function CompanyRecruiterProfile() {
@@ -26,13 +27,16 @@ export default function CompanyRecruiterProfile() {
     const [errorMessage, setErrorMessage] = useState("");
     const [isEditMode, setIsEditMode] = useState(false);
     const [existingProfile, setExistingProfile] = useState(null);
-
+    const [logoPreview, setLogoPreview] = useState("");
+    const [profilePicPreview, setProfilePicPreview] = useState("");
+    const navigate = useNavigate();
     const {
         register,
         handleSubmit,
         formState: { errors },
         reset,
         setValue,
+        watch,
     } = useForm({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -41,15 +45,44 @@ export default function CompanyRecruiterProfile() {
             industry: "",
             location: "",
             about: "",
-            logoUrl: "",
+            logo: "",
+            profilePic: "",
             hiringPreferences: "",
             languagesKnown: "",
             isEmailVerified: false,
             isPhoneVerified: false,
             isGstVerified: false,
-            profilePic: "",
         },
     });
+
+    // Watch for file changes to show previews
+    const watchedLogo = watch("logo");
+    const watchedProfilePic = watch("profilePic");
+
+    // Handle file previews
+    useEffect(() => {
+        if (watchedLogo && watchedLogo instanceof File) {
+            const reader = new FileReader();
+            reader.onload = (e) => setLogoPreview(e.target.result);
+            reader.readAsDataURL(watchedLogo);
+        } else if (existingProfile?.logoUrl) {
+            setLogoPreview(existingProfile.logoUrl);
+        } else {
+            setLogoPreview("");
+        }
+    }, [watchedLogo, existingProfile?.logoUrl]);
+
+    useEffect(() => {
+        if (watchedProfilePic && watchedProfilePic instanceof File) {
+            const reader = new FileReader();
+            reader.onload = (e) => setProfilePicPreview(e.target.result);
+            reader.readAsDataURL(watchedProfilePic);
+        } else if (existingProfile?.profilePic) {
+            setProfilePicPreview(existingProfile.profilePic);
+        } else {
+            setProfilePicPreview("");
+        }
+    }, [watchedProfilePic, existingProfile?.profilePic]);
 
     // Check if profile exists on component mount
     useEffect(() => {
@@ -68,13 +101,11 @@ export default function CompanyRecruiterProfile() {
             setValue("industry", profile.industry || "");
             setValue("location", profile.location || "");
             setValue("about", profile.about || "");
-            setValue("logoUrl", profile.logoUrl || "");
             setValue("hiringPreferences", profile.hiringPreferences || "");
             setValue("languagesKnown", profile.languagesKnown || "");
             setValue("isEmailVerified", profile.isEmailVerified || false);
             setValue("isPhoneVerified", profile.isPhoneVerified || false);
             setValue("isGstVerified", profile.isGstVerified || false);
-            setValue("profilePic", profile.profilePic || "");
         } catch (error) {
             if (error.response?.status === 404) {
                 // Profile doesn't exist, stay in create mode
@@ -96,11 +127,13 @@ export default function CompanyRecruiterProfile() {
                 // Update existing profile
                 await recruiterApi.updateProfile(data);
                 setSuccessMessage("Profile updated successfully!");
+                navigate("/recruiter-post-job-intern-details");
             } else {
                 // Create new profile
                 await recruiterApi.createProfile(data);
                 setSuccessMessage("Profile created successfully!");
                 setIsEditMode(true);
+                navigate("/recruiter-post-job-intern-details");
             }
 
             // Refresh profile data
@@ -151,6 +184,7 @@ export default function CompanyRecruiterProfile() {
     const textareaStyles = "w-full px-4 py-3 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-vertical min-h-[120px]";
     const labelStyles = "block text-sm font-semibold text-gray-700 mb-2";
     const errorStyles = "text-red-500 text-sm mt-1";
+    const fileInputStyles = "w-full px-4 py-3 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100";
 
     return (
         <RecruiterPostJobInternLayout
@@ -299,19 +333,58 @@ export default function CompanyRecruiterProfile() {
                         {errors.about && <p className={errorStyles}>{errors.about.message}</p>}
                     </div>
 
-                    {/* Logo URL */}
+                    {/* Company Logo Upload */}
                     <div>
-                        <label htmlFor="logoUrl" className={labelStyles}>
-                            Company Logo URL
+                        <label htmlFor="logo" className={labelStyles}>
+                            Company Logo
                         </label>
                         <input
-                            type="url"
-                            id="logoUrl"
-                            {...register("logoUrl")}
-                            className={inputStyles}
-                            placeholder="https://example.com/logo.png"
+                            type="file"
+                            id="logo"
+                            accept="image/*"
+                            {...register("logo")}
+                            className={fileInputStyles}
                         />
-                        {errors.logoUrl && <p className={errorStyles}>{errors.logoUrl.message}</p>}
+                        {errors.logo && <p className={errorStyles}>{errors.logo.message}</p>}
+
+                        {/* Logo Preview */}
+                        {logoPreview && (
+                            <div className="mt-3">
+                                <p className="text-sm text-gray-600 mb-2">Preview:</p>
+                                <img
+                                    src={logoPreview}
+                                    alt="Company Logo Preview"
+                                    className="w-32 h-32 object-contain border border-gray-300 rounded-lg"
+                                />
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Profile Picture Upload */}
+                    <div>
+                        <label htmlFor="profilePic" className={labelStyles}>
+                            Profile Picture
+                        </label>
+                        <input
+                            type="file"
+                            id="profilePic"
+                            accept="image/*"
+                            {...register("profilePic")}
+                            className={fileInputStyles}
+                        />
+                        {errors.profilePic && <p className={errorStyles}>{errors.profilePic.message}</p>}
+
+                        {/* Profile Picture Preview */}
+                        {profilePicPreview && (
+                            <div className="mt-3">
+                                <p className="text-sm text-gray-600 mb-2">Preview:</p>
+                                <img
+                                    src={profilePicPreview}
+                                    alt="Profile Picture Preview"
+                                    className="w-32 h-32 object-cover border border-gray-300 rounded-lg"
+                                />
+                            </div>
+                        )}
                     </div>
 
                     {/* Hiring Preferences */}

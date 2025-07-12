@@ -1,9 +1,10 @@
 import React from "react";
 import LoginIllustration from "../../assets/Login_Illustration.png";
+import websiteLogo from "../../assets/websiteLogo.svg";
 
 export default function AuthLayout({ children, title, subtitle, showIllustration = true }) {
     return (
-        <div className="relative w-full min-h-screen bg-white overflow-hidden">
+        <div className="w-full min-h-screen bg-white overflow-hidden relative">
             {/* Fixed Background Split */}
             <div className="absolute inset-0 z-0 pointer-events-none">
                 <div className="w-full h-1/2 bg-[#072366]"></div>
@@ -13,37 +14,45 @@ export default function AuthLayout({ children, title, subtitle, showIllustration
             {/* Logo */}
             <div className="absolute top-4 left-4 sm:top-6 sm:left-6 md:top-8 md:left-8 z-30">
                 <span className="text-xl sm:text-2xl font-bold text-white tracking-wide">
-                    YourLogo
+                    <img src={websiteLogo} alt="Logo" className="w-10 h-10" />
                 </span>
             </div>
 
-            {/* Content */}
-            <div className="relative top-16 z-10 flex flex-col lg:flex-row items-start min-h-screen ml-4 sm:ml-8 md:ml-12 lg:ml-20">
-                {/* Left Side */}
-                <div className="w-full lg:w-3/5 pl-4 sm:pl-8 md:pl-12 lg:pl-16 pr-4 py-8 sm:py-12 md:py-16 lg:py-32 relative">
-                    <div className="max-w-xl">
-                        <h2 className="text-2xl xs:text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight">
-                            {title}
-                        </h2>
-                        {subtitle && (
-                            <p className="text-white text-sm sm:text-base mt-1 sm:mt-2">{subtitle}</p>
-                        )}
-                    </div>
+            {/* Mobile/Tablet Header Section - Only visible on small devices */}
+            <div className="lg:hidden absolute top-12 left-4 sm:top-16 sm:left-6 md:top-20 md:left-8 z-30 max-w-xs sm:max-w-sm">
+                <h1 className="text-base sm:text-lg md:text-xl font-bold text-white leading-tight mb-1">
+                    {title}
+                </h1>
+                {subtitle && (
+                    <p className="text-xs font-medium text-white leading-relaxed">
+                        {subtitle}
+                    </p>
+                )}
+            </div>
 
+            {/* Main Content */}
+            <div className="relative z-20 flex flex-col lg:flex-row items-start justify-start max-w-5xl lg:max-w-6xl xl:max-w-7xl mx-auto px-2 sm:px-4 lg:px-6 py-8 sm:py-12 md:py-16 gap-y-6 sm:gap-y-8 md:gap-y-10 lg:gap-x-2 mt-20 sm:mt-24 md:mt-28 lg:mt-12 lg:mt-16 lg:mt-20">
+                {/* Left Section - Desktop Only */}
+                <div className="hidden ml-14 lg:flex flex-1 flex-col items-center lg:items-start text-center lg:text-left space-y-2 sm:space-y-3 lg:sticky lg:top-28">
+                    <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-white">
+                        {title}
+                    </h1>
+                    {subtitle && (
+                        <p className="text-xs sm:text-sm md:text-base font-medium text-white max-w-md">
+                            {subtitle}
+                        </p>
+                    )}
                     {showIllustration && (
-                        <div className="mt-6 sm:mt-8 lg:mt-10 hidden lg:block">
-                            <img
-                                src={LoginIllustration}
-                                alt="Login Illustration"
-                                className="w-[280px] sm:w-[320px] lg:w-[340px] max-w-full rotate-[-90deg]"
-                            />
-                        </div>
+                        <img
+                            src={LoginIllustration}
+                            alt="Login Illustration"
+                            className="w-40 sm:w-48 md:w-56 lg:w-64 mt-1 sm:mt-2 hidden lg:block rotate-[-90deg]"
+                        />
                     )}
                 </div>
-
-                {/* Right Side (Form) - Scrollable with fixed height */}
-                <div className="w-full lg:w-3/5 px-4 sm:px-6 md:px-8 lg:px-12 pt-6 sm:pt-8 md:pt-12 lg:pt-24 pb-32 h-screen overflow-y-auto">
-                    <div className="max-w-md mx-auto">
+                {/* Right Section */}
+                <div className="flex-1 w-full flex justify-center">
+                    <div className="w-full overflow-y-auto overflow-x-hidden">
                         {children}
                     </div>
                 </div>

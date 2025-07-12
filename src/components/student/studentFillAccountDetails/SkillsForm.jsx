@@ -68,7 +68,7 @@ export default function DomainsForm() {
       return newSkills;
     });
   };
-  
+
   const handleCompanyChange = (idx, value) => {
     setDomains(
       domains.map((d, i) => (i === idx ? { ...d, company: value } : d))
@@ -115,40 +115,36 @@ export default function DomainsForm() {
       );
 
       // Upload skills using custom hook
-      const userId = 123; // This should come from authentication context
+      // TODO: Replace with actual user ID from authentication context
+      const userId = 51; // Get from auth context
       const response = await uploadSkills(userId, skills, certificateFiles);
 
       console.log("Skills uploaded successfully:", response);
       alert("Skills uploaded successfully!");
+
+      // Clear form after successful upload
+      setDomains([]);
+      setDomainSkills({});
     } catch (error) {
       console.error("Error uploading skills:", error);
 
-      // Show specific error message from backend
-      let errorMessage = "Error uploading skills. Please try again.";
-      if (
-        error.response &&
-        error.response.data &&
-        error.response.data.message
-      ) {
-        errorMessage = error.response.data.message;
-      }
-
-      alert(errorMessage);
+      // Error message is already set in the hook, so we don't need to show alert here
+      // The error will be displayed in the UI below the form
     }
   };
 
   if (domainsLoading && domains.length === 0) {
     return (
-      <div className="flex justify-center items-center py-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-        <span className="ml-2 text-gray-600">Loading domains...</span>
+      <div className="flex justify-center items-center py-2 sm:py-3">
+        <div className="animate-spin rounded-full h-6 w-6 sm:h-8 sm:w-8 border-b-2 border-blue-600"></div>
+        <span className="ml-2 text-gray-600 text-xs">Loading domains...</span>
       </div>
     );
   }
 
   if (domainsError && domains.length === 0) {
     return (
-      <div className="text-red-500 text-center py-4">
+      <div className="text-red-500 text-center py-2 sm:py-3 text-xs">
         {domainsError}
         <button onClick={handleRetry} className="ml-2 text-blue-500 underline">
           Retry
@@ -169,11 +165,11 @@ export default function DomainsForm() {
         }
       }}
     >
-      <div className="mb-4">
-        <label className="block font-semibold mb-2">Areas of Interest</label>
-        <div className="flex items-center border rounded px-3 py-2 mb-2">
+      <div className="mb-2 sm:mb-3">
+        <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">Areas of Interest</label>
+        <div className="flex items-center border rounded-md px-1.5 sm:px-2 py-1.5 sm:py-2 mb-1 sm:mb-2 focus-within:ring-1 focus-within:ring-red-400 focus-within:border-transparent transition-all duration-200 border-gray-300 hover:border-gray-400">
           <input
-            className="flex-1 outline-none"
+            className="flex-1 outline-none text-xs"
             placeholder="List your skills here"
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -192,10 +188,10 @@ export default function DomainsForm() {
             onClick={() => input.trim() && handleAddDomain(input.trim())}
             type="button"
           >
-            <svg width="20" height="20" fill="none">
-              <circle cx="10" cy="10" r="9" stroke="#888" />
+            <svg width="16" height="16" fill="none">
+              <circle cx="8" cy="8" r="7" stroke="#888" />
               <path
-                d="M10 5v10M5 10h10"
+                d="M8 4v8M4 8h8"
                 stroke="#888"
                 strokeWidth="2"
                 strokeLinecap="round"
@@ -205,16 +201,16 @@ export default function DomainsForm() {
         </div>
 
         {/* Show all domains with "Show more" option */}
-        <div className="mb-4">
-          <div className="text-xs mb-2 text-gray-500">Available domains</div>
-          <div className="flex flex-wrap gap-2">
+        <div className="mb-2 sm:mb-3">
+          <div className="text-xs mb-1 sm:mb-2 text-gray-500">Available domains</div>
+          <div className="flex flex-wrap gap-1 sm:gap-2">
             {allDomains
               .slice(0, showMore ? allDomains.length : 6)
               .map((domain) => (
                 <button
                   key={domain.domain_name || domain}
                   type="button"
-                  className="bg-gray-100 rounded-full px-3 py-1 text-xs border hover:bg-gray-200"
+                  className="bg-gray-100 rounded-md px-1.5 sm:px-2 py-1.5 sm:py-2 text-xs border hover:border-gray-400 transition-all duration-200"
                   onClick={() => handleAddDomain(domain.domain_name || domain)}
                 >
                   {domain.domain_name || domain} +
@@ -236,21 +232,21 @@ export default function DomainsForm() {
         {domains.map((domain, idx) => (
           <div
             key={domain.name}
-            className="border rounded-lg p-3 mb-3 flex flex-col gap-2 relative"
+            className="border rounded-md p-2 sm:p-3 mb-2 sm:mb-3 flex flex-col gap-1 sm:gap-2 relative"
           >
-            <div className="flex items-center gap-2">
-              <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium">
+            <div className="flex items-center gap-1 sm:gap-2">
+              <span className="bg-blue-600 text-white px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md text-xs font-medium">
                 {domain.name}
               </span>
               <button
-                className="ml-2 text-gray-400"
+                className="ml-1 sm:ml-2 text-gray-400"
                 onClick={() => handleRemoveDomain(idx)}
                 type="button"
               >
-                <FaTimes />
+                <FaTimes className="text-xs" />
               </button>
               <button
-                className="ml-2 text-blue-500 text-xs underline"
+                className="ml-1 sm:ml-2 text-blue-500 text-xs underline"
                 type="button"
                 onClick={() => document.getElementById(`cert-${idx}`).click()}
               >
@@ -269,7 +265,7 @@ export default function DomainsForm() {
 
             {/* Display uploaded certificate name */}
             {domain.certificate && (
-              <div className="flex items-center gap-2 mt-2">
+              <div className="flex items-center gap-1 sm:gap-2 mt-1 sm:mt-2">
                 <span className="text-xs text-gray-600">Certificate:</span>
                 <span className="text-xs font-medium text-green-600">
                   {domain.certificate.name}
@@ -287,15 +283,15 @@ export default function DomainsForm() {
             {/* Display related skills for this specific domain */}
             {domainSkills[domain.name] &&
               domainSkills[domain.name].length > 0 && (
-                <div className="mt-2">
-                  <div className="text-xs mb-2 text-gray-500">
+                <div className="mt-1 sm:mt-2">
+                  <div className="text-xs mb-1 sm:mb-2 text-gray-500">
                     Related skills for {domain.name}:
                   </div>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-1 sm:gap-2">
                     {domainSkills[domain.name].map((skill) => (
                       <span
                         key={skill}
-                        className="bg-green-100 text-green-800 rounded-full px-2 py-1 text-xs border"
+                        className="bg-green-100 text-green-800 rounded-md px-1.5 sm:px-2 py-1.5 sm:py-2 text-xs border"
                       >
                         {skill}
                       </span>
@@ -305,11 +301,11 @@ export default function DomainsForm() {
               )}
 
             <div>
-              <label className="block text-xs mb-1">
+              <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">
                 Where did you learn this skill?
               </label>
               <input
-                className="w-full border rounded px-2 py-2"
+                className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 border-gray-300 hover:border-gray-400"
                 placeholder="College/ Company name"
                 value={domain.company}
                 onChange={(e) => handleCompanyChange(idx, e.target.value)}
@@ -326,16 +322,15 @@ export default function DomainsForm() {
       </div>
 
       {/* Submit button for skills */}
-      <div className="mt-6">
+      <div className="mt-2 sm:mt-3">
         <button
           type="button"
           onClick={handleSubmitSkills}
           disabled={skillUploadLoading}
-          className={`w-full px-6 py-3 rounded font-semibold ${
-            skillUploadLoading
-              ? "bg-gray-400 text-gray-200 cursor-not-allowed"
-              : "bg-green-500 text-white hover:bg-green-600"
-          }`}
+          className={`w-full py-1.5 sm:py-2 rounded-md font-semibold text-xs transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-md hover:shadow-lg ${skillUploadLoading
+            ? "bg-gray-400 text-white cursor-not-allowed"
+            : "bg-[#f44336] text-white hover:bg-[#d32f2f]"
+            }`}
         >
           {skillUploadLoading ? "Uploading Skills..." : "Upload Skills"}
         </button>
@@ -343,7 +338,7 @@ export default function DomainsForm() {
 
       {/* Show skill upload error if any */}
       {skillUploadError && (
-        <div className="mt-4 text-red-500 text-center">{skillUploadError}</div>
+        <div className="mt-2 sm:mt-3 text-red-500 text-center text-xs">{skillUploadError}</div>
       )}
     </div>
   );

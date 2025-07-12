@@ -31,75 +31,75 @@ export default function PersonalInfo() {
   );
 
   return (
-    <div className="space-y-4">
-      <div className="flex gap-4">
+    <div className="space-y-2 sm:space-y-3">
+      <div className="flex gap-1 sm:gap-2 mb-2 sm:mb-3">
         <div className="flex-1">
-          <label className="block text-sm font-medium mb-1">First Name</label>
+          <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">First Name</label>
           <input
             {...register("firstName")}
-            className="w-full p-2 border rounded"
+            className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 border-gray-300 hover:border-gray-400"
             placeholder="Enter your first name"
           />
           {errors.firstName && (
-            <p className="text-red-500 text-xs">{errors.firstName.message}</p>
+            <p className="text-xs text-red-500 mt-0.5 block">{errors.firstName.message}</p>
           )}
         </div>
         <div className="flex-1">
-          <label className="block text-sm font-medium mb-1">Last Name</label>
+          <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">Last Name</label>
           <input
             {...register("lastName")}
-            className="w-full p-2 border rounded"
+            className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 border-gray-300 hover:border-gray-400"
             placeholder="Enter your last name"
           />
           {errors.lastName && (
-            <p className="text-red-500 text-xs">{errors.lastName.message}</p>
+            <p className="text-xs text-red-500 mt-0.5 block">{errors.lastName.message}</p>
           )}
         </div>
       </div>
-      <div>
-        <label className="block text-sm font-medium mb-1">Email ID</label>
+      <div className="mb-2 sm:mb-3">
+        <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">Email ID</label>
         <input
           {...register("email")}
-          className="w-full p-2 border rounded"
+          className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 border-gray-300 hover:border-gray-400"
           placeholder="example@email.com"
           type="email"
         />
         {errors.email && (
-          <p className="text-red-500 text-xs">{errors.email.message}</p>
+          <p className="text-xs text-red-500 mt-0.5 block">{errors.email.message}</p>
         )}
       </div>
-      <div>
-        <label className="block text-sm font-medium mb-1">Phone Number</label>
+      <div className="mb-2 sm:mb-3">
+        <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">Phone Number</label>
         <input
           {...register("phone")}
-          className="w-full p-2 border rounded"
+          className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 border-gray-300 hover:border-gray-400"
           placeholder="+91 98765 43210"
           type="tel"
         />
         {errors.phone && (
-          <p className="text-red-500 text-xs">{errors.phone.message}</p>
+          <p className="text-xs text-red-500 mt-0.5 block">{errors.phone.message}</p>
         )}
       </div>
-      <div>
-        <label className="block text-sm font-medium mb-1">Date of Birth</label>
+      <div className="mb-2 sm:mb-3">
+        <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">Date of Birth</label>
         <input
           type="date"
           {...register("dob")}
-          className="w-full p-2 border rounded"
+          className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 border-gray-300 hover:border-gray-400"
           placeholder="Select your date of birth"
         />
         {errors.dob && (
-          <p className="text-red-500 text-xs">{errors.dob.message}</p>
+          <p className="text-xs text-red-500 mt-0.5 block">{errors.dob.message}</p>
         )}
       </div>
-      <div>
-        <label className="block text-sm font-medium mb-1">Current City</label>
+      <div className="mb-2 sm:mb-3">
+        <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">Current City</label>
         {loading ? (
           <LoadingSpinner message="Loading locations..." />
         ) : error ? (
           <ErrorMessage message={error} />
         ) : (
-          <select {...register("city")} className="w-full p-2 border rounded">
+          <select {...register("city")} className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 border-gray-300 hover:border-gray-400">
             <option value="">Select your current city</option>
             {locations.map((location, index) => (
               <option key={index} value={location}>
@@ -109,19 +109,19 @@ export default function PersonalInfo() {
           </select>
         )}
         {errors.city && (
-          <p className="text-red-500 text-xs">{errors.city.message}</p>
+          <p className="text-xs text-red-500 mt-0.5 block">{errors.city.message}</p>
         )}
       </div>
-      <div>
-        <label className="block text-sm font-medium mb-1">Gender</label>
-        <select {...register("gender")} className="w-full p-2 border rounded">
+      <div className="mb-2 sm:mb-3">
+        <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">Gender</label>
+        <select {...register("gender")} className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 border-gray-300 hover:border-gray-400">
           <option value="">Select your gender</option>
           <option value="Male">Male</option>
           <option value="Female">Female</option>
           <option value="Other">Other</option>
         </select>
         {errors.gender && (
-          <p className="text-red-500 text-xs">{errors.gender.message}</p>
+          <p className="text-xs text-red-500 mt-0.5 block">{errors.gender.message}</p>
         )}
       </div>
     </div>

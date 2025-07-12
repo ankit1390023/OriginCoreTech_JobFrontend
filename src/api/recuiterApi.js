@@ -13,10 +13,34 @@ export const recruiterApi = {
     createProfile: async (profileData) => {
         try {
             const token = getToken();
-            const response = await axios.post(`${BASE_URL}/company-recruiter/profile`, profileData, {
-                headers: {  
-                    'Content-Type': 'application/json',
+
+            // Create FormData for multipart upload
+            const formData = new FormData();
+
+            // Add text fields
+            formData.append('designation', profileData.designation);
+            formData.append('companyName', profileData.companyName);
+            formData.append('industry', profileData.industry);
+            formData.append('location', profileData.location);
+            formData.append('about', profileData.about);
+            formData.append('hiringPreferences', profileData.hiringPreferences || '');
+            formData.append('languagesKnown', profileData.languagesKnown || '');
+            formData.append('isEmailVerified', profileData.isEmailVerified);
+            formData.append('isPhoneVerified', profileData.isPhoneVerified);
+            formData.append('isGstVerified', profileData.isGstVerified);
+
+            // Add files if they exist
+            if (profileData.logo && profileData.logo instanceof File) {
+                formData.append('logo', profileData.logo);
+            }
+            if (profileData.profilePic && profileData.profilePic instanceof File) {
+                formData.append('profilePic', profileData.profilePic);
+            }
+
+            const response = await axios.post(`${BASE_URL}/company-recruiter/profile`, formData, {
+                headers: {
                     'Authorization': `Bearer ${token}`
+                    // Don't set Content-Type - let browser set it with boundary for multipart
                 }
             });
             return response.data;
@@ -44,10 +68,34 @@ export const recruiterApi = {
     updateProfile: async (profileData) => {
         try {
             const token = getToken();
-            const response = await axios.put(`${BASE_URL}/company-recruiter/profile`, profileData, {
+
+            // Create FormData for multipart upload
+            const formData = new FormData();
+
+            // Add text fields
+            formData.append('designation', profileData.designation);
+            formData.append('companyName', profileData.companyName);
+            formData.append('industry', profileData.industry);
+            formData.append('location', profileData.location);
+            formData.append('about', profileData.about);
+            formData.append('hiringPreferences', profileData.hiringPreferences || '');
+            formData.append('languagesKnown', profileData.languagesKnown || '');
+            formData.append('isEmailVerified', profileData.isEmailVerified);
+            formData.append('isPhoneVerified', profileData.isPhoneVerified);
+            formData.append('isGstVerified', profileData.isGstVerified);
+
+            // Add files if they exist
+            if (profileData.logo && profileData.logo instanceof File) {
+                formData.append('logo', profileData.logo);
+            }
+            if (profileData.profilePic && profileData.profilePic instanceof File) {
+                formData.append('profilePic', profileData.profilePic);
+            }
+
+            const response = await axios.put(`${BASE_URL}/company-recruiter/profile`, formData, {
                 headers: {
-                    'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
+                    // Don't set Content-Type - let browser set it with boundary for multipart
                 }
             });
             return response.data;

@@ -147,23 +147,22 @@ export default function ForgotPassword() {
     >
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="w-full max-w-[280px] xs:max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl bg-white rounded-2xl shadow-xl p-3 xs:p-4 sm:p-6 md:p-8 lg:p-10"
-        style={{ boxShadow: "0 20px 40px 0 rgba(31, 38, 135, 0.15)" }}
+        className="bg-white rounded-lg shadow-md p-4 sm:p-6 w-full max-w-xs sm:max-w-sm md:max-w-md"
       >
         {/* Email */}
-        <div className="mb-3 xs:mb-4 sm:mb-5 md:mb-6">
-          <label className="block text-gray-700 text-xs xs:text-sm sm:text-base font-semibold mb-1.5 xs:mb-2 sm:mb-3">
+        <div className="mb-2 sm:mb-3">
+          <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">
             Email Address
           </label>
           <input
             type="email"
             {...register("email")}
-            className={`w-full px-2.5 xs:px-3 sm:px-4 md:px-5 py-2 xs:py-2.5 sm:py-3 md:py-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent text-xs xs:text-sm sm:text-base transition-all duration-200 ${errors.email ? "border-red-500 bg-red-50" : "border-gray-300 hover:border-gray-400"
+            className={`w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 ${errors.email ? "border-red-500 bg-red-50" : "border-gray-300 hover:border-gray-400"
               }`}
             placeholder="example@gmail.com"
           />
           {errors.email && (
-            <span className="text-xs text-red-500 mt-1 xs:mt-1.5 sm:mt-2 block">
+            <span className="text-xs text-red-500 mt-0.5 block">
               {errors.email.message}
             </span>
           )}
@@ -173,15 +172,15 @@ export default function ForgotPassword() {
         <button
           type="button"
           onClick={handleGetOtp}
-          className={`w-full py-2 xs:py-2.5 sm:py-3 md:py-4 mb-3 xs:mb-4 sm:mb-5 md:mb-6 rounded-xl text-white font-semibold text-xs xs:text-sm sm:text-base md:text-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] ${otpLoading
+          className={`w-full py-1.5 sm:py-2 mb-2 sm:mb-3 rounded-md text-white font-semibold text-xs transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-md hover:shadow-lg ${otpLoading
             ? "bg-gray-400 text-gray-600 cursor-not-allowed"
-            : "bg-red-500 hover:bg-red-600 shadow-lg hover:shadow-xl"
+            : "bg-[#f44336] hover:bg-[#d32f2f]"
             }`}
           disabled={otpLoading}
         >
           {otpLoading ? (
             <span className="flex items-center justify-center">
-              <svg className="animate-spin -ml-1 mr-1.5 xs:mr-2 h-3.5 w-3.5 xs:h-4 xs:w-4 sm:h-5 sm:w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <svg className="animate-spin -ml-1 mr-1.5 h-3 w-3 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
@@ -193,31 +192,31 @@ export default function ForgotPassword() {
         </button>
 
         {/* OTP Input */}
-        <div className="mb-3 xs:mb-4 sm:mb-5 md:mb-6">
-          <label className="block text-gray-700 text-xs xs:text-sm sm:text-base font-semibold mb-1.5 xs:mb-2 sm:mb-3">
+        <div className="mb-2 sm:mb-3">
+          <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">
             Enter OTP to verify your Email
           </label>
           <input
             type="text"
             {...register("otp")}
-            className={`w-full px-2.5 xs:px-3 sm:px-4 md:px-5 py-2 xs:py-2.5 sm:py-3 md:py-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent text-xs xs:text-sm sm:text-base transition-all duration-200 ${errors.otp ? "border-red-500 bg-red-50" : "border-gray-300 hover:border-gray-400"
+            className={`w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 ${errors.otp ? "border-red-500 bg-red-50" : "border-gray-300 hover:border-gray-400"
               }`}
             placeholder="Enter 4-digit OTP"
             maxLength={4}
           />
           {errors.otp && (
-            <span className="text-xs text-red-500 mt-1 xs:mt-1.5 sm:mt-2 block">
+            <span className="text-xs text-red-500 mt-0.5 block">
               {errors.otp.message}
             </span>
           )}
           {otpError && (
-            <span className="text-xs text-red-500 mt-1 xs:mt-1.5 sm:mt-2 block">
+            <span className="text-xs text-red-500 mt-0.5 block">
               {otpError}
             </span>
           )}
           {otpSent && (
-            <span className="text-xs text-green-600 mt-1 xs:mt-1.5 sm:mt-2 block flex items-center">
-              <svg className="w-3.5 h-3.5 xs:w-4 xs:h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+            <span className="text-xs text-green-600 mt-0.5 block flex items-center">
+              <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
               </svg>
               OTP sent successfully! Check your email.
@@ -226,42 +225,42 @@ export default function ForgotPassword() {
         </div>
 
         {/* New Password */}
-        <div className="mb-3 xs:mb-4 sm:mb-5 md:mb-6">
-          <label className="block text-gray-700 text-xs xs:text-sm sm:text-base font-semibold mb-1.5 xs:mb-2 sm:mb-3">
+        <div className="mb-2 sm:mb-3">
+          <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">
             New Password
           </label>
           <div className="relative">
             <input
               type="password"
               {...register("newPassword")}
-              className={`w-full px-2.5 xs:px-3 sm:px-4 md:px-5 py-2 xs:py-2.5 sm:py-3 md:py-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent text-xs xs:text-sm sm:text-base transition-all duration-200 ${errors.newPassword ? "border-red-500 bg-red-50" : "border-gray-300 hover:border-gray-400"
+              className={`w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 ${errors.newPassword ? "border-red-500 bg-red-50" : "border-gray-300 hover:border-gray-400"
                 }`}
               placeholder="Enter new password"
             />
           </div>
           {errors.newPassword && (
-            <span className="text-xs text-red-500 mt-1 xs:mt-1.5 sm:mt-2 block">
+            <span className="text-xs text-red-500 mt-0.5 block">
               {errors.newPassword.message}
             </span>
           )}
         </div>
 
         {/* Retype Password */}
-        <div className="mb-4 xs:mb-6 sm:mb-8 md:mb-10">
-          <label className="block text-gray-700 text-xs xs:text-sm sm:text-base font-semibold mb-1.5 xs:mb-2 sm:mb-3">
+        <div className="mb-2 sm:mb-3">
+          <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">
             Retype Password
           </label>
           <div className="relative">
             <input
               type="password"
               {...register("retypePassword")}
-              className={`w-full px-2.5 xs:px-3 sm:px-4 md:px-5 py-2 xs:py-2.5 sm:py-3 md:py-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent text-xs xs:text-sm sm:text-base transition-all duration-200 ${errors.retypePassword ? "border-red-500 bg-red-50" : "border-gray-300 hover:border-gray-400"
+              className={`w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 ${errors.retypePassword ? "border-red-500 bg-red-50" : "border-gray-300 hover:border-gray-400"
                 }`}
               placeholder="Confirm new password"
             />
           </div>
           {errors.retypePassword && (
-            <span className="text-xs text-red-500 mt-1 xs:mt-1.5 sm:mt-2 block">
+            <span className="text-xs text-red-500 mt-0.5 block">
               {errors.retypePassword.message}
             </span>
           )}
@@ -271,15 +270,15 @@ export default function ForgotPassword() {
         <div className="flex justify-center">
           <button
             type="submit"
-            className={`w-full xs:w-4/5 sm:w-2/3 md:w-1/2 py-2 xs:py-2.5 sm:py-3 md:py-4 rounded-xl text-white font-semibold text-xs xs:text-sm sm:text-base md:text-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] ${saveLoading
+            className={`w-full py-1.5 sm:py-2 rounded-md text-white font-semibold text-xs transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-md hover:shadow-lg ${saveLoading
               ? "bg-gray-400 text-gray-600 cursor-not-allowed"
-              : "bg-red-500 hover:bg-red-600 shadow-lg hover:shadow-xl"
+              : "bg-[#f44336] hover:bg-[#d32f2f]"
               }`}
             disabled={saveLoading}
           >
             {saveLoading ? (
               <span className="flex items-center justify-center">
-                <svg className="animate-spin -ml-1 mr-1.5 xs:mr-2 h-3.5 w-3.5 xs:h-4 xs:w-4 sm:h-5 sm:w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <svg className="animate-spin -ml-1 mr-1.5 h-3 w-3 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
@@ -292,13 +291,13 @@ export default function ForgotPassword() {
         </div>
 
         {saveError && (
-          <div className="text-xs text-red-500 mt-2 xs:mt-3 sm:mt-4 text-center bg-red-50 p-2 xs:p-2.5 sm:p-3 rounded-lg">
+          <div className="text-xs text-red-500 mt-2 sm:mt-3 text-center bg-red-50 p-2 sm:p-3 rounded-md">
             {saveError}
           </div>
         )}
         {saveSuccess && (
-          <div className="text-xs text-green-600 mt-2 xs:mt-3 sm:mt-4 text-center bg-green-50 p-2 xs:p-2.5 sm:p-3 rounded-lg flex items-center justify-center">
-            <svg className="w-3.5 h-3.5 xs:w-4 xs:h-4 mr-1.5 xs:mr-2" fill="currentColor" viewBox="0 0 20 20">
+          <div className="text-xs text-green-600 mt-2 sm:mt-3 text-center bg-green-50 p-2 sm:p-3 rounded-md flex items-center justify-center">
+            <svg className="w-3 h-3 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
             </svg>
             {saveSuccess}

@@ -15,8 +15,6 @@ import UniversityFillDetails from "./components/university/UniversityFillDetails
 import AllJObs from "./components/student/jobSection/AllJObs.jsx";
 
 
-
-
 const appRouter = createBrowserRouter([
   {
     path: "/",

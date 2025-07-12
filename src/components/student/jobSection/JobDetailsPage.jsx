@@ -84,46 +84,51 @@ export default function JobDetailsPage() {
                 </button>
             </div>
 
-            <div className="max-w-8xl mx-auto pt-2 sm:pt-4 md:pt-6 lg:pt-14 pb-8 sm:pb-10 px-2 sm:px-4 md:px-6 lg:px-8">
-                <div className="grid grid-cols-1 lg:grid-cols-[460px_1fr] gap-4 sm:gap-6">
+            <div className="max-w-8xl mx-auto pt-1 sm:pt-2 md:pt-4 lg:pt-8 pb-4 sm:pb-6 px-2 sm:px-3 md:px-4 lg:px-6">
+                <div className="grid grid-cols-1 lg:grid-cols-[400px_1fr] gap-3 sm:gap-4">
                     {/* Left: Job List */}
-                    <aside className={`bg-white rounded-2xl shadow border border-gray-100 flex flex-col self-start min-h-[140vh] p-3 sm:p-4 md:p-6 ${isJobListOpen ? 'block' : 'hidden lg:flex'}`}>
-                        <p className="text-gray-500 text-sm mb-3 sm:mb-4">Top Jobs Picks for you</p>
-                        <div className="flex flex-col gap-2 sm:gap-3 md:gap-4 overflow-y-auto max-h-[140vh] border border-gray-100 rounded-lg p-2">
-                            <div className="flex flex-col gap-2 sm:gap-3 md:gap-4">
+                    <aside className={`bg-white rounded-xl shadow border border-gray-100 flex flex-col self-start min-h-[120vh] p-2 sm:p-3 md:p-4 ${isJobListOpen ? 'block' : 'hidden lg:flex'}`}>
+                        <p className="text-gray-500 text-xs mb-2 sm:mb-3">Top Jobs Picks for you</p>
+                        <div className="flex flex-col gap-1.5 sm:gap-2 md:gap-3 overflow-y-auto max-h-[120vh] border border-gray-100 rounded-lg p-1.5">
+                            <div className="flex flex-col gap-1.5 sm:gap-2 md:gap-3">
                                 {allJobs && allJobs.map((job) => (
                                     <button
                                         key={job.jobId}
                                         onClick={() => handleSelect(job.jobId)}
-                                        className={`flex items-center gap-2 sm:gap-3 md:gap-4 rounded-xl px-2 sm:px-3 md:px-4 py-2 sm:py-3 md:py-4 text-left transition border-2 border-gray-200 hover:border-blue-200 hover:bg-blue-50 focus:outline-none relative ${selectedId === job.jobId.toString() ? 'bg-blue-100 border-blue-400' : ''}`}
+                                        className={`flex items-center gap-1.5 sm:gap-2 md:gap-3 rounded-lg px-1.5 sm:px-2 md:px-3 py-1.5 sm:py-2 md:py-3 text-left transition border-2 border-gray-200 hover:border-blue-200 hover:bg-blue-50 focus:outline-none relative ${selectedId === job.jobId.toString() ? 'bg-blue-100 border-blue-400' : ''}`}
                                     >
                                         <img
-                                            src={job.logoUrl || "https://via.placeholder.com/64x64?text=Logo"}
+                                            src={"https://images.squarespace-cdn.com/content/v1/65da3ae088ac635ab34abd13/c6caad75-54ea-4e3f-840b-a7aa78473188/transparent-google-logo-google-logo-green-and-blue-g-in-circle65cf691984e008.0012613817080916735443.png?format=1500w"}
                                             alt="logo"
-                                            className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 rounded-lg object-contain bg-gray-100 flex-shrink-0"
+                                            className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg object-contain bg-gray-100 flex-shrink-0"
                                         />
+                                        {/* <img
+                                            src={job.logoUrl || "https://via.placeholder.com/48x48?text=Logo"}
+                                            alt="logo"
+                                            className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg object-contain bg-gray-100 flex-shrink-0"
+                                        /> */}
                                         <div className="flex-1 min-w-0">
-                                            <div className="font-semibold text-sm sm:text-base truncate mb-1">{job.jobProfile}</div>
-                                            <div className="text-gray-500 text-xs sm:text-sm truncate mb-2">{job.companyName}</div>
-                                            <div className="flex flex-wrap items-center gap-1 sm:gap-2">
-                                                <span className="bg-gray-100 rounded-full px-2 sm:px-3 py-1 text-xs text-gray-700 border border-gray-200 flex items-center gap-1">
+                                            <div className="font-semibold text-xs sm:text-sm truncate mb-0.5">{job.jobProfile}</div>
+                                            <div className="text-gray-500 text-xs truncate mb-1.5">{job.companyName}</div>
+                                            <div className="flex flex-wrap items-center gap-1">
+                                                <span className="bg-gray-100 rounded-full px-1.5 sm:px-2 py-0.5 text-xs text-gray-700 border border-gray-200 flex items-center gap-1">
                                                     <span className="truncate">{job.location}</span>
                                                 </span>
                                                 {job.salary && (
-                                                    <span className="bg-emerald-100 text-emerald-600 text-xs rounded-full px-2 sm:px-3 py-1 border border-emerald-200">
+                                                    <span className="bg-emerald-100 text-emerald-600 text-xs rounded-full px-1.5 sm:px-2 py-0.5 border border-emerald-200">
                                                         <span className="truncate">₹{job.salary}</span>
                                                     </span>
                                                 )}
                                             </div>
                                         </div>
-                                        <div className="flex flex-col items-end gap-1 sm:gap-2 min-w-[80px] sm:min-w-[90px] md:min-w-[110px]">
-                                            <span className={`text-white text-xs font-semibold rounded-full px-2 sm:px-3 py-1 shadow ${job.hiringStatus === 'Actively Hiring' ? 'bg-red-400' : 'bg-green-400'}`}>
+                                        <div className="flex flex-col items-end gap-1 min-w-[70px] sm:min-w-[80px] md:min-w-[90px]">
+                                            <span className={`text-white text-xs font-semibold rounded-full px-1.5 sm:px-2 py-0.5 shadow ${job.hiringStatus === 'Actively Hiring' ? 'bg-red-400' : 'bg-green-400'}`}>
                                                 {job.hiringStatus}
                                             </span>
-                                            <span className={`text-xs rounded-full px-2 sm:px-3 py-1 border font-semibold ${job.matchPercentage > 0 ? 'bg-green-100 text-green-700 border-green-200' : 'bg-gray-100 text-gray-500 border-gray-200'}`}>
+                                            <span className={`text-xs rounded-full px-1.5 sm:px-2 py-0.5 border font-semibold ${job.matchPercentage > 0 ? 'bg-green-100 text-green-700 border-green-200' : 'bg-gray-100 text-gray-500 border-gray-200'}`}>
                                                 {job.matchPercentage || 0}% match
                                             </span>
-                                            <span className="bg-gray-100 rounded-full px-2 sm:px-3 py-1 text-xs text-gray-700 border border-gray-200 flex items-center gap-1">
+                                            <span className="bg-gray-100 rounded-full px-1.5 sm:px-2 py-0.5 text-xs text-gray-700 border border-gray-200 flex items-center gap-1">
                                                 <span className="hidden sm:inline">Posted: </span>
                                                 {job.postedDaysAgo === 'Today' || job.postedDaysAgo === 0
                                                     ? 'Today'
@@ -137,63 +142,69 @@ export default function JobDetailsPage() {
                     </aside>
 
                     {/* Right: Job Details */}
-                    <main className="bg-white rounded-2xl shadow border border-gray-100 p-3 sm:p-4 md:p-6 lg:p-8 min-h-[120vh] flex flex-col relative">
+                    <main className="bg-white rounded-xl shadow border border-gray-100 p-2 sm:p-3 md:p-4 lg:p-6 min-h-[100vh] flex flex-col relative">
                         {jobDetailsLoading ? (
                             <div className="animate-pulse">
-                                <div className="h-8 bg-gray-200 rounded w-1/3 mb-4"></div>
-                                <div className="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
-                                <div className="h-4 bg-gray-200 rounded w-1/4"></div>
+                                <div className="h-6 bg-gray-200 rounded w-1/3 mb-3"></div>
+                                <div className="h-3 bg-gray-200 rounded w-1/2 mb-1.5"></div>
+                                <div className="h-3 bg-gray-200 rounded w-1/4"></div>
                             </div>
                         ) : jobDetailsError ? (
                             <div className="text-center text-red-600">
-                                <p className="text-lg font-semibold">Error loading job details</p>
-                                <p className="text-sm mt-2">{jobDetailsError}</p>
+                                <p className="text-base font-semibold">Error loading job details</p>
+                                <p className="text-xs mt-1.5">{jobDetailsError}</p>
                             </div>
                         ) : !selectedJobDetails ? (
                             <div className="text-center text-gray-600">
-                                <p className="text-lg font-semibold">Select a job to view details</p>
+                                <p className="text-base font-semibold">Select a job to view details</p>
                             </div>
                         ) : (
                             <>
                                 {/* Header Section */}
-                                <div className="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4 md:gap-6 mb-4 sm:mb-6 relative">
-                                    <img
-                                        src={selectedJobDetails.logoUrl || "https://via.placeholder.com/96x96?text=Logo"}
+                                            <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-3 md:gap-4 mb-3 sm:mb-4 relative">
+                                            
+                                                <img
+                                                    src={"https://images.squarespace-cdn.com/content/v1/65da3ae088ac635ab34abd13/c6caad75-54ea-4e3f-840b-a7aa78473188/transparent-google-logo-google-logo-green-and-blue-g-in-circle65cf691984e008.0012613817080916735443.png?format=1500w"}
                                         alt="Company Logo"
-                                        className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-lg object-contain bg-gray-100 border border-gray-200 flex-shrink-0 self-start"
+                                        className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-lg object-contain bg-gray-100 border border-gray-200 flex-shrink-0 self-start"
                                     />
+                                    {/* <img
+                                        src={selectedJobDetails.logoUrl}
+                                        alt="Company Logo"
+                                        className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-lg object-contain bg-gray-100 border border-gray-200 flex-shrink-0 self-start"
+                                    /> */}
                                     <div className="flex-1">
-                                        <div className="font-bold text-lg sm:text-xl md:text-2xl leading-tight mb-2">{selectedJobDetails.jobProfile}</div>
-                                        <div className="text-gray-600 text-sm sm:text-base md:text-lg mb-3">{selectedJobDetails.companyName}</div>
+                                        <div className="font-bold text-base sm:text-lg md:text-xl leading-tight mb-1.5">{selectedJobDetails.jobProfile}</div>
+                                        <div className="text-gray-600 text-sm sm:text-base mb-2">{selectedJobDetails.companyName}</div>
 
                                         {/* Job Tags */}
-                                        <div className="flex flex-wrap gap-2 mb-4">
-                                            <span className="bg-purple-100 rounded-full px-2 sm:px-3 py-1 text-xs text-purple-700 border border-purple-200 flex items-center gap-1">
+                                        <div className="flex flex-wrap gap-1.5 mb-3">
+                                            <span className="bg-purple-100 rounded-full px-1.5 sm:px-2 py-0.5 text-xs text-purple-700 border border-purple-200 flex items-center gap-1">
                                                 <FaMapMarkerAlt className="text-purple-500 text-xs" />
                                                 <span className="truncate">{selectedJobDetails.companyLocation}</span>
                                             </span>
-                                            <span className="bg-orange-100 rounded-full px-2 sm:px-3 py-1 text-xs text-orange-700 border border-orange-200 flex items-center gap-1">
+                                            <span className="bg-orange-100 rounded-full px-1.5 sm:px-2 py-0.5 text-xs text-orange-700 border border-orange-200 flex items-center gap-1">
                                                 <FaUserTie className="text-orange-500 text-xs" />
                                                 <span className="truncate">{selectedJobDetails.opportunityType}</span>
                                             </span>
-                                                        {selectedJobDetails.salary && (
-                                                            <span className="bg-emerald-100 text-emerald-600 text-xs rounded-full px-2 sm:px-3 py-1 border border-emerald-200">
-                                                                <span className="truncate">₹{selectedJobDetails.salary}</span>
-                                                            </span>
-                                                        )}
-                                            <span className="bg-blue-100 rounded-full px-2 sm:px-3 py-1 text-xs text-blue-700 border border-blue-200">
+                                            {selectedJobDetails.salary && (
+                                                <span className="bg-emerald-100 text-emerald-600 text-xs rounded-full px-1.5 sm:px-2 py-0.5 border border-emerald-200">
+                                                    <span className="truncate">₹{selectedJobDetails.salary}</span>
+                                                </span>
+                                            )}
+                                            <span className="bg-blue-100 rounded-full px-1.5 sm:px-2 py-0.5 text-xs text-blue-700 border border-blue-200">
                                                 <FaCalendarAlt className="text-blue-500 text-xs inline mr-1" />
                                                 <span className="truncate">{selectedJobDetails.postedDaysAgo}</span>
                                             </span>
-                                            <span className="bg-teal-100 rounded-full px-2 sm:px-3 py-1 text-xs text-teal-700 border border-teal-200">
+                                            <span className="bg-teal-100 rounded-full px-1.5 sm:px-2 py-0.5 text-xs text-teal-700 border border-teal-200">
                                                 <FaUsers className="text-teal-500 text-xs inline mr-1" />
                                                 <span className="truncate">{selectedJobDetails.numberOfApplicants} applicants</span>
                                             </span>
-                                            <span className="bg-red-100 rounded-full px-2 sm:px-3 py-1 text-xs text-red-700 border border-red-200">
+                                            <span className="bg-red-100 rounded-full px-1.5 sm:px-2 py-0.5 text-xs text-red-700 border border-red-200">
                                                 <FaClock className="text-red-500 text-xs inline mr-1" />
                                                 <span className="truncate">{selectedJobDetails.jobTime}</span>
                                             </span>
-                                            <span className="bg-indigo-100 rounded-full px-2 sm:px-3 py-1 text-xs text-indigo-700 border border-indigo-200">
+                                            <span className="bg-indigo-100 rounded-full px-1.5 sm:px-2 py-0.5 text-xs text-indigo-700 border border-indigo-200">
                                                 <FaLaptop className="text-indigo-500 text-xs inline mr-1" />
                                                 <span className="truncate">{selectedJobDetails.jobType}</span>
                                             </span>
@@ -203,7 +214,7 @@ export default function JobDetailsPage() {
                                     {/* Apply Now Button - Top Right */}
                                     <div className="absolute top-0 right-0">
                                         <button
-                                            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 sm:py-3 px-3 sm:px-4 md:px-8 rounded-lg shadow-lg transition-colors duration-200 flex items-center gap-2 text-sm sm:text-base"
+                                            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1.5 sm:py-2 px-2 sm:px-3 md:px-6 rounded-lg shadow-lg transition-colors duration-200 flex items-center gap-1.5 text-xs sm:text-sm"
                                             onClick={() => {
                                                 // Handle apply functionality here
                                                 console.log('Applying for job:', selectedJobDetails.jobId);
@@ -215,28 +226,28 @@ export default function JobDetailsPage() {
                                 </div>
 
                                 {/* Job Description */}
-                                <div className="mb-6">
-                                    <h3 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 flex items-center gap-2">
-                                        <FaBriefcase className="text-blue-600" />
+                                <div className="mb-4">
+                                    <h3 className="text-base sm:text-lg font-bold mb-2 sm:mb-3 flex items-center gap-1.5">
+                                        <FaBriefcase className="text-blue-600 text-sm" />
                                         Job Description
                                     </h3>
-                                    <div className="prose prose-sm sm:prose-base max-w-none">
-                                        <p className="text-gray-700 leading-relaxed">
+                                    <div className="prose prose-xs sm:prose-sm max-w-none">
+                                        <p className="text-gray-700 leading-relaxed text-sm">
                                             {selectedJobDetails.jobDescription || "No job description available."}
                                         </p>
                                     </div>
                                 </div>
 
                                 {/* Job Details - Single Column */}
-                                <div className="space-y-6 mb-6">
+                                <div className="space-y-4 mb-4">
                                     {/* Internship Details */}
                                     {selectedJobDetails.opportunityType === 'Internship' && (
-                                        <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
-                                            <h4 className="font-semibold text-blue-800 mb-3 flex items-center gap-2">
-                                                <FaCalendarAlt className="text-blue-600" />
+                                        <div className="bg-blue-50 rounded-lg p-3 border border-blue-200">
+                                            <h4 className="font-semibold text-blue-800 mb-2 flex items-center gap-1.5 text-sm">
+                                                <FaCalendarAlt className="text-blue-600 text-xs" />
                                                 Internship Details
                                             </h4>
-                                            <div className="space-y-2 text-sm">
+                                            <div className="space-y-1.5 text-xs">
                                                 <div className="flex justify-between">
                                                     <span className="text-gray-600">Duration:</span>
                                                     <span className="font-medium">{selectedJobDetails.internshipDuration}</span>
@@ -262,12 +273,12 @@ export default function JobDetailsPage() {
                                     )}
 
                                     {/* Company Information */}
-                                    <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                                        <h4 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                                            <FaBuilding className="text-gray-600" />
+                                    <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
+                                        <h4 className="font-semibold text-gray-800 mb-2 flex items-center gap-1.5 text-sm">
+                                            <FaBuilding className="text-gray-600 text-xs" />
                                             Company Information
                                         </h4>
-                                        <div className="space-y-2 text-sm">
+                                        <div className="space-y-1.5 text-xs">
                                             <div className="flex justify-between">
                                                 <span className="text-gray-600">Industry:</span>
                                                 <span className="font-medium">{selectedJobDetails.companyIndustry}</span>
@@ -291,23 +302,23 @@ export default function JobDetailsPage() {
 
                                     {/* Skills Required */}
                                     {selectedJobDetails.skillsRequired && selectedJobDetails.skillsRequired.length > 0 && (
-                                        <div className="bg-purple-50 rounded-lg p-4 border border-purple-200">
-                                            <h4 className="font-semibold text-purple-800 mb-3 flex items-center gap-2">
-                                                <FaStar className="text-purple-600" />
+                                        <div className="bg-purple-50 rounded-lg p-3 border border-purple-200">
+                                            <h4 className="font-semibold text-purple-800 mb-2 flex items-center gap-1.5 text-sm">
+                                                <FaStar className="text-purple-600 text-xs" />
                                                 Skills Required
                                             </h4>
-                                            <div className="flex flex-wrap gap-2">
+                                            <div className="flex flex-wrap gap-1.5">
                                                 {selectedJobDetails.skillsRequired.map((skill, index) => (
                                                     <span
                                                         key={index}
-                                                        className="bg-purple-100 text-purple-700 text-xs rounded-full px-3 py-1 border border-purple-200"
+                                                        className="bg-purple-100 text-purple-700 text-xs rounded-full px-2 py-0.5 border border-purple-200"
                                                     >
                                                         {skill}
                                                     </span>
                                                 ))}
                                             </div>
                                             {selectedJobDetails.skillRequiredNote && (
-                                                <p className="text-sm text-gray-600 mt-3 italic">
+                                                <p className="text-xs text-gray-600 mt-2 italic">
                                                     {selectedJobDetails.skillRequiredNote}
                                                 </p>
                                             )}
@@ -316,14 +327,14 @@ export default function JobDetailsPage() {
 
                                     {/* Perks & Benefits */}
                                     {selectedJobDetails.perks && selectedJobDetails.perks.length > 0 && (
-                                        <div className="bg-yellow-50 rounded-lg p-4 border border-yellow-200">
-                                            <h4 className="font-semibold text-yellow-800 mb-3 flex items-center gap-2">
-                                                <FaGift className="text-yellow-600" />
+                                        <div className="bg-yellow-50 rounded-lg p-3 border border-yellow-200">
+                                            <h4 className="font-semibold text-yellow-800 mb-2 flex items-center gap-1.5 text-sm">
+                                                <FaGift className="text-yellow-600 text-xs" />
                                                 Perks & Benefits
                                             </h4>
-                                            <div className="space-y-2">
+                                            <div className="space-y-1.5">
                                                 {selectedJobDetails.perks.map((perk, index) => (
-                                                    <div key={index} className="flex items-center gap-2 text-sm">
+                                                    <div key={index} className="flex items-center gap-1.5 text-xs">
                                                         <FaCheckCircle className="text-yellow-600 text-xs" />
                                                         <span>{perk}</span>
                                                     </div>
@@ -333,12 +344,12 @@ export default function JobDetailsPage() {
                                     )}
 
                                     {/* Educational Requirements */}
-                                    <div className="bg-green-50 rounded-lg p-4 border border-green-200">
-                                        <h4 className="font-semibold text-green-800 mb-3 flex items-center gap-2">
-                                            <FaGraduationCap className="text-green-600" />
+                                    <div className="bg-green-50 rounded-lg p-3 border border-green-200">
+                                        <h4 className="font-semibold text-green-800 mb-2 flex items-center gap-1.5 text-sm">
+                                            <FaGraduationCap className="text-green-600 text-xs" />
                                             Educational Requirements
                                         </h4>
-                                        <div className="space-y-2 text-sm">
+                                        <div className="space-y-1.5 text-xs">
                                             <div className="flex justify-between">
                                                 <span className="text-gray-600">College:</span>
                                                 <span className="font-medium">{selectedJobDetails.collegeName}</span>
@@ -351,12 +362,12 @@ export default function JobDetailsPage() {
                                     </div>
 
                                     {/* Candidate Preferences */}
-                                    <div className="bg-indigo-50 rounded-lg p-4 border border-indigo-200">
-                                        <h4 className="font-semibold text-indigo-800 mb-3 flex items-center gap-2">
-                                            <FaUserGraduate className="text-indigo-600" />
+                                    <div className="bg-indigo-50 rounded-lg p-3 border border-indigo-200">
+                                        <h4 className="font-semibold text-indigo-800 mb-2 flex items-center gap-1.5 text-sm">
+                                            <FaUserGraduate className="text-indigo-600 text-xs" />
                                             Candidate Preferences
                                         </h4>
-                                        <div className="space-y-2 text-sm">
+                                        <div className="space-y-1.5 text-xs">
                                             <div className="flex justify-between">
                                                 <span className="text-gray-600">Preferences:</span>
                                                 <span className="font-medium">{selectedJobDetails.candidatePreferences}</span>
@@ -369,7 +380,7 @@ export default function JobDetailsPage() {
                                                 <div className="flex justify-between">
                                                     <span className="text-gray-600">Women Preferred:</span>
                                                     <span className="font-medium text-green-600 flex items-center gap-1">
-                                                        <FaVenus className="text-pink-500" />
+                                                        <FaVenus className="text-pink-500 text-xs" />
                                                         Yes
                                                     </span>
                                                 </div>
@@ -386,13 +397,13 @@ export default function JobDetailsPage() {
 
                                 {/* About Company */}
                                 {selectedJobDetails.aboutCompany && (
-                                    <div className="mb-6">
-                                        <h3 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 flex items-center gap-2">
-                                            <FaIndustry className="text-blue-600" />
+                                    <div className="mb-4">
+                                        <h3 className="text-base sm:text-lg font-bold mb-2 sm:mb-3 flex items-center gap-1.5">
+                                            <FaIndustry className="text-blue-600 text-sm" />
                                             About the Company
                                         </h3>
-                                        <div className="bg-gray-50 rounded-lg p-4 sm:p-6 border border-gray-200">
-                                            <p className="text-gray-700 leading-relaxed">
+                                        <div className="bg-gray-50 rounded-lg p-3 sm:p-4 border border-gray-200">
+                                            <p className="text-gray-700 leading-relaxed text-sm">
                                                 {selectedJobDetails.aboutCompany}
                                             </p>
                                         </div>
@@ -401,19 +412,19 @@ export default function JobDetailsPage() {
 
                                 {/* Screening Questions */}
                                 {selectedJobDetails.screeningQuestions && selectedJobDetails.screeningQuestions.length > 0 && (
-                                    <div className="mb-6">
-                                        <h3 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 flex items-center gap-2">
-                                            <FaQuestionCircle className="text-blue-600" />
+                                    <div className="mb-4">
+                                        <h3 className="text-base sm:text-lg font-bold mb-2 sm:mb-3 flex items-center gap-1.5">
+                                            <FaQuestionCircle className="text-blue-600 text-sm" />
                                             Screening Questions
                                         </h3>
-                                        <div className="space-y-3">
+                                        <div className="space-y-2">
                                             {selectedJobDetails.screeningQuestions.map((question, index) => (
-                                                <div key={index} className="bg-orange-50 rounded-lg p-4 border border-orange-200">
-                                                    <div className="flex items-start gap-3">
-                                                        <span className="bg-orange-100 text-orange-700 text-xs font-semibold rounded-full px-2 py-1 mt-1">
+                                                <div key={index} className="bg-orange-50 rounded-lg p-3 border border-orange-200">
+                                                    <div className="flex items-start gap-2">
+                                                        <span className="bg-orange-100 text-orange-700 text-xs font-semibold rounded-full px-1.5 py-0.5 mt-0.5">
                                                             Q{index + 1}
                                                         </span>
-                                                        <p className="text-gray-700 text-sm">{question}</p>
+                                                        <p className="text-gray-700 text-xs">{question}</p>
                                                     </div>
                                                 </div>
                                             ))}
@@ -422,42 +433,42 @@ export default function JobDetailsPage() {
                                 )}
 
                                 {/* Recruiter Information */}
-                                <div className="mb-6">
-                                    <h3 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 flex items-center gap-2">
-                                        <FaUserTie className="text-blue-600" />
+                                <div className="mb-4">
+                                    <h3 className="text-base sm:text-lg font-bold mb-2 sm:mb-3 flex items-center gap-1.5">
+                                        <FaUserTie className="text-blue-600 text-sm" />
                                         Recruiter Information
                                     </h3>
-                                    <div className="bg-blue-50 rounded-lg p-4 sm:p-6 border border-blue-200">
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                            <div className="flex items-center gap-3">
+                                    <div className="bg-blue-50 rounded-lg p-3 sm:p-4 border border-blue-200">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                            <div className="flex items-center gap-2">
                                                 <img
-                                                    src={selectedJobDetails.recruiterProfilePic || "https://via.placeholder.com/48x48?text=Avatar"}
+                                                    src={selectedJobDetails.recruiterProfilePic || "https://via.placeholder.com/40x40?text=Avatar"}
                                                     alt="Recruiter"
-                                                    className="w-12 h-12 rounded-full object-cover border border-gray-200"
+                                                    className="w-10 h-10 rounded-full object-cover border border-gray-200"
                                                 />
                                                 <div>
-                                                    <h4 className="font-semibold text-gray-800">{selectedJobDetails.recruiterName}</h4>
-                                                    <p className="text-sm text-gray-600">{selectedJobDetails.recruiterDesignation}</p>
+                                                    <h4 className="font-semibold text-gray-800 text-sm">{selectedJobDetails.recruiterName}</h4>
+                                                    <p className="text-xs text-gray-600">{selectedJobDetails.recruiterDesignation}</p>
                                                 </div>
                                             </div>
-                                            <div className="space-y-2 text-sm">
-                                                <div className="flex items-center gap-2">
-                                                    <FaEnvelope className="text-gray-400" />
+                                            <div className="space-y-1.5 text-xs">
+                                                <div className="flex items-center gap-1.5">
+                                                    <FaEnvelope className="text-gray-400 text-xs" />
                                                     <span className="text-gray-700">{selectedJobDetails.recruiterEmail}</span>
                                                 </div>
-                                                <div className="flex items-center gap-2">
-                                                    <FaPhone className="text-gray-400" />
+                                                <div className="flex items-center gap-1.5">
+                                                    <FaPhone className="text-gray-400 text-xs" />
                                                     <span className="text-gray-700">{selectedJobDetails.recruiterPhone}</span>
                                                 </div>
                                                 {selectedJobDetails.phoneContact && (
-                                                    <div className="flex items-center gap-2">
-                                                        <FaPhone className="text-gray-400" />
+                                                    <div className="flex items-center gap-1.5">
+                                                        <FaPhone className="text-gray-400 text-xs" />
                                                         <span className="text-gray-700">{selectedJobDetails.phoneContact}</span>
                                                     </div>
                                                 )}
                                                 {selectedJobDetails.alternatePhoneNumber && (
-                                                    <div className="flex items-center gap-2">
-                                                        <FaPhone className="text-gray-400" />
+                                                    <div className="flex items-center gap-1.5">
+                                                        <FaPhone className="text-gray-400 text-xs" />
                                                         <span className="text-gray-700">{selectedJobDetails.alternatePhoneNumber}</span>
                                                     </div>
                                                 )}
@@ -467,27 +478,27 @@ export default function JobDetailsPage() {
                                 </div>
 
                                 {/* Verification Status */}
-                                <div className="mb-6">
-                                    <h3 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 flex items-center gap-2">
-                                        <FaCheckCircle className="text-blue-600" />
+                                <div className="mb-4">
+                                    <h3 className="text-base sm:text-lg font-bold mb-2 sm:mb-3 flex items-center gap-1.5">
+                                        <FaCheckCircle className="text-blue-600 text-sm" />
                                         Verification Status
                                     </h3>
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                                        <div className={`flex items-center gap-2 p-3 rounded-lg ${selectedJobDetails.isEmailVerified ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`}>
-                                            <FaEnvelope className={selectedJobDetails.isEmailVerified ? 'text-green-600' : 'text-red-600'} />
-                                            <span className={`text-sm font-medium ${selectedJobDetails.isEmailVerified ? 'text-green-700' : 'text-red-700'}`}>
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                                        <div className={`flex items-center gap-1.5 p-2 rounded-lg ${selectedJobDetails.isEmailVerified ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`}>
+                                            <FaEnvelope className={`text-xs ${selectedJobDetails.isEmailVerified ? 'text-green-600' : 'text-red-600'}`} />
+                                            <span className={`text-xs font-medium ${selectedJobDetails.isEmailVerified ? 'text-green-700' : 'text-red-700'}`}>
                                                 Email {selectedJobDetails.isEmailVerified ? 'Verified' : 'Not Verified'}
                                             </span>
                                         </div>
-                                        <div className={`flex items-center gap-2 p-3 rounded-lg ${selectedJobDetails.isPhoneVerified ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`}>
-                                            <FaPhone className={selectedJobDetails.isPhoneVerified ? 'text-green-600' : 'text-red-600'} />
-                                            <span className={`text-sm font-medium ${selectedJobDetails.isPhoneVerified ? 'text-green-700' : 'text-red-700'}`}>
+                                        <div className={`flex items-center gap-1.5 p-2 rounded-lg ${selectedJobDetails.isPhoneVerified ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`}>
+                                            <FaPhone className={`text-xs ${selectedJobDetails.isPhoneVerified ? 'text-green-600' : 'text-red-600'}`} />
+                                            <span className={`text-xs font-medium ${selectedJobDetails.isPhoneVerified ? 'text-green-700' : 'text-red-700'}`}>
                                                 Phone {selectedJobDetails.isPhoneVerified ? 'Verified' : 'Not Verified'}
                                             </span>
                                         </div>
-                                        <div className={`flex items-center gap-2 p-3 rounded-lg ${selectedJobDetails.isGstVerified ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`}>
-                                            <FaBuilding className={selectedJobDetails.isGstVerified ? 'text-green-600' : 'text-red-600'} />
-                                            <span className={`text-sm font-medium ${selectedJobDetails.isGstVerified ? 'text-green-700' : 'text-red-700'}`}>
+                                        <div className={`flex items-center gap-1.5 p-2 rounded-lg ${selectedJobDetails.isGstVerified ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`}>
+                                            <FaBuilding className={`text-xs ${selectedJobDetails.isGstVerified ? 'text-green-600' : 'text-red-600'}`} />
+                                            <span className={`text-xs font-medium ${selectedJobDetails.isGstVerified ? 'text-green-700' : 'text-red-700'}`}>
                                                 GST {selectedJobDetails.isGstVerified ? 'Verified' : 'Not Verified'}
                                             </span>
                                         </div>

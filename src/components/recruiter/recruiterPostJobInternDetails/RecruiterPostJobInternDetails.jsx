@@ -300,9 +300,10 @@ export default function RecruiterPostJobInternDetails() {
       setDomainsLoading(true);
       setDomainError("");
       const domainsData = await domainApi.getAllDomains();
-      // Extract domain names from the response structure
-      const domainNames = domainsData.map(domain => domain.domain_name);
-      setAllDomains(domainNames);
+      // The API already returns an array of domain names
+      console.log("All domains", domainsData);
+
+      setAllDomains(domainsData);
     } catch (error) {
       console.error("Error fetching domains:", error);
       setDomainError("Failed to load domains. Please try again.");
@@ -467,16 +468,16 @@ export default function RecruiterPostJobInternDetails() {
   };
 
   // Common input styles
-  const inputStyles = "w-full px-4 py-3 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200";
-  const textareaStyles = "w-full px-4 py-3 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-vertical";
-  const selectStyles = "w-full px-4 py-3 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white";
-  const radioStyles = "w-4 h-4 text-blue-600 border-gray-300 focus:outline-none focus:ring-0";
-  const checkboxStyles = "w-4 h-4 text-blue-600 border-gray-300 rounded focus:outline-none focus:ring-0";
-  const radioContainerStyles = "flex gap-6 p-4 border border-gray-300 rounded-lg bg-white";
-  const numberInputStyles = "w-full px-4 py-3 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200";
-  const phoneInputStyles = "flex-1 px-4 py-3 text-base border border-gray-300 rounded-r-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200";
-  const labelStyles = "block text-sm font-semibold text-gray-700 mb-2";
-  const errorStyles = "text-red-500 text-sm mt-1";
+  const inputStyles = "w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200";
+  const textareaStyles = "w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-vertical";
+  const selectStyles = "w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white";
+  const radioStyles = "w-3 h-3 text-blue-600 border-gray-300 focus:outline-none focus:ring-0";
+  const checkboxStyles = "w-3 h-3 text-blue-600 border-gray-300 rounded focus:outline-none focus:ring-0";
+  const radioContainerStyles = "flex gap-4 p-3 border border-gray-300 rounded-lg bg-white";
+  const numberInputStyles = "w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200";
+  const phoneInputStyles = "flex-1 px-3 py-2 text-sm border border-gray-300 rounded-r-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200";
+  const labelStyles = "block text-xs font-semibold text-gray-700 mb-1";
+  const errorStyles = "text-red-500 text-xs mt-1";
 
   // Watch startDateType for conditional rendering
   const startDateType = methods.watch("startDateType");
@@ -517,29 +518,29 @@ export default function RecruiterPostJobInternDetails() {
       <FormProvider {...methods}>
         <form
           onSubmit={methods.handleSubmit(onSubmit)}
-          className="space-y-6 max-w-2xl mx-auto bg-white rounded-xl p-1 "
+          className="space-y-4 max-w-2xl mx-auto bg-white rounded-xl p-1 "
         >
           {/* Success Message */}
           {successMessage && (
-            <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+            <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
               <div className="flex">
                 <div className="flex-shrink-0">
-                  <svg className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                  <svg className="h-4 w-4 text-green-400" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                   </svg>
                 </div>
-                <div className="ml-3 flex-1">
-                  <p className="text-sm font-medium text-green-800">
+                <div className="ml-2 flex-1">
+                  <p className="text-xs font-medium text-green-800">
                     {successMessage}
                   </p>
                 </div>
-                <div className="ml-auto pl-3">
+                <div className="ml-auto pl-2">
                   <button
                     type="button"
                     onClick={() => setSuccessMessage("")}
                     className="inline-flex text-green-400 hover:text-green-600 focus:outline-none"
                   >
-                    <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                       <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
                     </svg>
                   </button>
@@ -550,25 +551,25 @@ export default function RecruiterPostJobInternDetails() {
 
           {/* Error Message */}
           {errorMessage && (
-            <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+            <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
               <div className="flex">
                 <div className="flex-shrink-0">
-                  <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                  <svg className="h-4 w-4 text-red-400" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clipRule="evenodd" />
                   </svg>
                 </div>
-                <div className="ml-3 flex-1">
-                  <p className="text-sm font-medium text-red-800">
+                <div className="ml-2 flex-1">
+                  <p className="text-xs font-medium text-red-800">
                     {errorMessage}
                   </p>
                 </div>
-                <div className="ml-auto pl-3">
+                <div className="ml-auto pl-2">
                   <button
                     type="button"
                     onClick={() => setErrorMessage("")}
                     className="inline-flex text-red-400 hover:text-red-600 focus:outline-none"
                   >
-                    <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                       <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
                     </svg>
                   </button>
@@ -589,7 +590,7 @@ export default function RecruiterPostJobInternDetails() {
                   checked={opportunityType === "Internship"}
                   onChange={handleOpportunityTypeChange}
                 />
-                <span className="text-base text-gray-700">Internship</span>
+                <span className="text-sm text-gray-700">Internship</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
@@ -599,7 +600,7 @@ export default function RecruiterPostJobInternDetails() {
                   checked={opportunityType === "Job"}
                   onChange={handleOpportunityTypeChange}
                 />
-                <span className="text-base text-gray-700">Job</span>
+                <span className="text-sm text-gray-700">Job</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
@@ -609,7 +610,7 @@ export default function RecruiterPostJobInternDetails() {
                   checked={opportunityType === "Project"}
                   onChange={handleOpportunityTypeChange}
                 />
-                <span className="text-base text-gray-700">Project</span>
+                <span className="text-sm text-gray-700">Project</span>
               </label>
             </div>
             <p className={errorStyles}>
@@ -670,12 +671,12 @@ export default function RecruiterPostJobInternDetails() {
             <label className={labelStyles}>Select skills by domain</label>
 
             {domainError && (
-              <div className="p-3 bg-red-50 border border-red-200 rounded-lg mb-3">
-                <p className="text-sm text-red-800">{domainError}</p>
+              <div className="p-2 bg-red-50 border border-red-200 rounded-lg mb-2">
+                <p className="text-xs text-red-800">{domainError}</p>
                 <button
                   type="button"
                   onClick={fetchAllDomains}
-                  className="text-sm text-red-600 hover:text-red-800 underline mt-1"
+                  className="text-xs text-red-600 hover:text-red-800 underline mt-1"
                 >
                   Retry
                 </button>
@@ -683,27 +684,27 @@ export default function RecruiterPostJobInternDetails() {
             )}
 
             {domainsLoading ? (
-              <div className="p-4 bg-gray-50 rounded-lg">
-                <p className="text-gray-600">Loading domains...</p>
+              <div className="p-3 bg-gray-50 rounded-lg">
+                <p className="text-xs text-gray-600">Loading domains...</p>
               </div>
             ) : allDomains.length === 0 ? (
-              <div className="p-4 bg-gray-50 rounded-lg">
-                <p className="text-gray-600">No domains available at the moment.</p>
+              <div className="p-3 bg-gray-50 rounded-lg">
+                <p className="text-xs text-gray-600">No domains available at the moment.</p>
               </div>
             ) : (
               <div className="space-y-4">
                 {/* Domain Selection */}
                 <div>
-                  <p className="text-sm text-gray-600 mb-2">Click on a domain to see related skills:</p>
+                  <p className="text-xs text-gray-600 mb-1">Click on a domain to see related skills:</p>
 
                   {/* Display domains as rounded badges */}
-                  <div className="flex flex-wrap gap-2 sm:gap-3 mb-3">
+                  <div className="flex flex-wrap gap-1 sm:gap-2 mb-2">
                     {(showAllDomains ? allDomains : allDomains.slice(0, 4)).map((domain) => (
                       <button
                         key={domain}
                         type="button"
                         onClick={() => handleDomainClick(domain)}
-                        className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium transition-colors ${selectedDomain === domain
+                        className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium transition-colors ${selectedDomain === domain
                           ? "bg-blue-100 text-blue-800 border border-blue-300"
                           : "bg-gray-100 text-gray-700 border border-gray-300 hover:bg-gray-200 hover:text-gray-800"
                           }`}
@@ -717,7 +718,7 @@ export default function RecruiterPostJobInternDetails() {
                       <button
                         type="button"
                         onClick={() => setShowAllDomains(!showAllDomains)}
-                        className="inline-flex items-center gap-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm font-medium hover:bg-gray-200 hover:text-gray-800 transition-colors"
+                        className="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-medium hover:bg-gray-200 hover:text-gray-800 transition-colors"
                       >
                         <span>{showAllDomains ? "Show Less" : "Show More"}</span>
                       </button>
@@ -726,13 +727,13 @@ export default function RecruiterPostJobInternDetails() {
 
                   {/* Select All button for selected domain */}
                   {selectedDomain && domainSkills[selectedDomain] && (
-                    <div className="mt-3">
+                    <div className="mt-2">
                       <button
                         type="button"
                         onClick={handleSelectAllSkills}
-                        className="inline-flex items-center gap-1 px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition-colors"
+                        className="inline-flex items-center gap-1 px-3 py-1 bg-green-600 text-white rounded-lg text-xs font-medium hover:bg-green-700 transition-colors"
                       >
-                        <span className="text-lg">+</span>
+                        <span className="text-sm">+</span>
                         Add All Skills from {selectedDomain}
                       </button>
                     </div>
@@ -759,7 +760,7 @@ export default function RecruiterPostJobInternDetails() {
                       className={radioStyles}
                       {...methods.register("internshipType")}
                     />
-                    <span className="text-base text-gray-700">In office</span>
+                    <span className="text-sm text-gray-700">In office</span>
                   </label>
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input
@@ -768,7 +769,7 @@ export default function RecruiterPostJobInternDetails() {
                       className={radioStyles}
                       {...methods.register("internshipType")}
                     />
-                    <span className="text-base text-gray-700">Hybrid</span>
+                    <span className="text-sm text-gray-700">Hybrid</span>
                   </label>
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input
@@ -777,7 +778,7 @@ export default function RecruiterPostJobInternDetails() {
                       className={radioStyles}
                       {...methods.register("internshipType")}
                     />
-                    <span className="text-base text-gray-700">Remote</span>
+                    <span className="text-sm text-gray-700">Remote</span>
                   </label>
                 </div>
                 <p className={errorStyles}>
@@ -786,14 +787,14 @@ export default function RecruiterPostJobInternDetails() {
               </div>
               {/* No. of in-office days in a week (for Hybrid) */}
               {internshipType === "Hybrid" && (
-                <div className="my-4">
+                <div className="my-3">
                   <label className={labelStyles}>No. of in-office days in a week:</label>
-                  <div className="flex gap-2 sm:gap-4 md:gap-10">
+                  <div className="flex gap-1 sm:gap-3 md:gap-8">
                     {[1, 2, 3, 4, 5].map((day) => (
                       <button
                         key={day}
                         type="button"
-                        className={`w-12 h-12 rounded-full border text-lg font-semibold flex items-center justify-center
+                        className={`w-10 h-10 rounded-full border text-sm font-semibold flex items-center justify-center
                           ${methods.getValues("inOfficeDays") === String(day)
                             ? "bg-blue-600 text-white border-blue-600"
                             : "bg-white text-gray-700 border-gray-300"}
@@ -823,7 +824,7 @@ export default function RecruiterPostJobInternDetails() {
                       className={radioStyles}
                       {...methods.register("startDateType")}
                     />
-                    <span className="text-base text-gray-700">Immediately (within 30 days)</span>
+                    <span className="text-sm text-gray-700">Immediately (within 30 days)</span>
                   </label>
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input
@@ -832,7 +833,7 @@ export default function RecruiterPostJobInternDetails() {
                       className={radioStyles}
                       {...methods.register("startDateType")}
                     />
-                    <span className="text-base text-gray-700">Custom</span>
+                    <span className="text-sm text-gray-700">Custom</span>
                   </label>
                 </div>
                 <p className={errorStyles}>
@@ -842,7 +843,7 @@ export default function RecruiterPostJobInternDetails() {
 
               {/* Show date pickers if Custom is selected */}
               {startDateType === "Custom" && (
-                <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 mb-4">
+                <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mb-3">
                   <div className="flex-1">
                     <label className={labelStyles}>From</label>
                     <input
@@ -909,7 +910,7 @@ export default function RecruiterPostJobInternDetails() {
                       className={radioStyles}
                       {...methods.register("jobType")}
                     />
-                    <span className="text-base text-gray-700">In office</span>
+                    <span className="text-sm text-gray-700">In office</span>
                   </label>
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input
@@ -918,7 +919,7 @@ export default function RecruiterPostJobInternDetails() {
                       className={radioStyles}
                       {...methods.register("jobType")}
                     />
-                    <span className="text-base text-gray-700">Hybrid</span>
+                    <span className="text-sm text-gray-700">Hybrid</span>
                   </label>
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input
@@ -927,7 +928,7 @@ export default function RecruiterPostJobInternDetails() {
                       className={radioStyles}
                       {...methods.register("jobType")}
                     />
-                    <span className="text-base text-gray-700">Remote</span>
+                    <span className="text-sm text-gray-700">Remote</span>
                   </label>
                 </div>
                 <p className={errorStyles}>
@@ -963,13 +964,13 @@ export default function RecruiterPostJobInternDetails() {
               </div>
 
               {/* Women only checkbox */}
-              <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg">
+              <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
                 <input
                   type="checkbox"
                   className={checkboxStyles}
                   {...methods.register("womenOnly")}
                 />
-                <span className="text-base text-gray-700">
+                <span className="text-sm text-gray-700">
                   Allow applications from women who are willing to start/restart their career.
                 </span>
               </div>
@@ -980,14 +981,14 @@ export default function RecruiterPostJobInternDetails() {
                 <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
                   <input
                     type="number"
-                    className="w-full sm:w-32 px-4 py-3 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                    className="w-full sm:w-32 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                     placeholder="₹ Min"
                     min="0"
                     {...methods.register("stipendMin")}
                   />
                   <input
                     type="number"
-                    className="w-full sm:w-32 px-4 py-3 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                    className="w-full sm:w-32 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                     placeholder="₹ Max"
                     min="0"
                     {...methods.register("stipendMax")}
@@ -1001,14 +1002,14 @@ export default function RecruiterPostJobInternDetails() {
                 <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
                   <input
                     type="number"
-                    className="w-full sm:w-32 px-4 py-3 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                    className="w-full sm:w-32 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                     placeholder="₹ Min"
                     min="0"
                     {...methods.register("incentivesMin")}
                   />
                   <input
                     type="number"
-                    className="w-full sm:w-32 px-4 py-3 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                    className="w-full sm:w-32 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                     placeholder="₹ Max"
                     min="0"
                     {...methods.register("incentivesMax")}
@@ -1019,7 +1020,7 @@ export default function RecruiterPostJobInternDetails() {
               {/* Perks (Job-specific) */}
               <div>
                 <label className={labelStyles}>Perks: (Select all that apply)</label>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 p-4 bg-gray-50 rounded-lg">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 p-3 bg-gray-50 rounded-lg">
                   {["5 days a week", "Health Insurance", "Life Insurance"].map((perk) => (
                     <label key={perk} className="flex items-center gap-2 cursor-pointer">
                       <input
@@ -1028,7 +1029,7 @@ export default function RecruiterPostJobInternDetails() {
                         className={checkboxStyles}
                         {...methods.register("perks")}
                       />
-                      <span className="text-base text-gray-700">{perk}</span>
+                      <span className="text-sm text-gray-700">{perk}</span>
                     </label>
                   ))}
                 </div>
@@ -1045,18 +1046,18 @@ export default function RecruiterPostJobInternDetails() {
                   {...methods.register("screeningQuestions")}
                 />
                 {/* Add more questions (Optional) - UI only, not functional */}
-                <button type="button" className="text-blue-600 mt-2 text-sm">+ Add more questions (Optional)</button>
+                <button type="button" className="text-blue-600 mt-2 text-xs">+ Add more questions (Optional)</button>
               </div>
 
               {/* Primary phone number */}
               <div>
                 <label className={labelStyles}>Primary phone number</label>
                 <div className="flex">
-                  <span className="inline-flex items-center px-3 py-3 border border-r-0 border-gray-300 bg-gray-50 rounded-l-lg text-gray-600 text-base">
+                  <span className="inline-flex items-center px-2 py-2 border border-r-0 border-gray-300 bg-gray-50 rounded-l-lg text-gray-600 text-sm">
                     <img
                       src="https://flagcdn.com/in.svg"
                       alt="IN"
-                      className="w-5 h-5 mr-1"
+                      className="w-4 h-4 mr-1"
                     />
                     +91
                   </span>
@@ -1076,11 +1077,11 @@ export default function RecruiterPostJobInternDetails() {
               <div>
                 <label className={labelStyles}>Alternate phone number for this listing (Optional)</label>
                 <div className="flex">
-                  <span className="inline-flex items-center px-3 py-3 border border-r-0 border-gray-300 bg-gray-50 rounded-l-lg text-gray-600 text-base">
+                  <span className="inline-flex items-center px-2 py-2 border border-r-0 border-gray-300 bg-gray-50 rounded-l-lg text-gray-600 text-sm">
                     <img
                       src="https://flagcdn.com/in.svg"
                       alt="IN"
-                      className="w-5 h-5 mr-1"
+                      className="w-4 h-4 mr-1"
                     />
                     +91
                   </span>
@@ -1108,7 +1109,7 @@ export default function RecruiterPostJobInternDetails() {
                       className={radioStyles}
                       {...methods.register("jobType")}
                     />
-                    <span className="text-base text-gray-700">In office</span>
+                    <span className="text-sm text-gray-700">In office</span>
                   </label>
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input
@@ -1117,7 +1118,7 @@ export default function RecruiterPostJobInternDetails() {
                       className={radioStyles}
                       {...methods.register("jobType")}
                     />
-                    <span className="text-base text-gray-700">Hybrid</span>
+                    <span className="text-sm text-gray-700">Hybrid</span>
                   </label>
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input
@@ -1126,7 +1127,7 @@ export default function RecruiterPostJobInternDetails() {
                       className={radioStyles}
                       {...methods.register("jobType")}
                     />
-                    <span className="text-base text-gray-700">Remote</span>
+                    <span className="text-sm text-gray-700">Remote</span>
                   </label>
                 </div>
                 <p className={errorStyles}>
@@ -1162,13 +1163,13 @@ export default function RecruiterPostJobInternDetails() {
               </div>
 
               {/* Women only checkbox */}
-              <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg">
+              <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
                 <input
                   type="checkbox"
                   className={checkboxStyles}
                   {...methods.register("womenOnly")}
                 />
-                <span className="text-base text-gray-700">
+                <span className="text-sm text-gray-700">
                   Allow applications from women who are willing to start/restart their career.
                 </span>
               </div>
@@ -1179,14 +1180,14 @@ export default function RecruiterPostJobInternDetails() {
                 <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
                   <input
                     type="number"
-                    className="w-full sm:w-32 px-4 py-3 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                    className="w-full sm:w-32 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                     placeholder="₹ Min"
                     min="0"
                     {...methods.register("stipendMin")}
                   />
                   <input
                     type="number"
-                    className="w-full sm:w-32 px-4 py-3 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                    className="w-full sm:w-32 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                     placeholder="₹ Max"
                     min="0"
                     {...methods.register("stipendMax")}
@@ -1204,18 +1205,18 @@ export default function RecruiterPostJobInternDetails() {
                   defaultValue={"Please confirm your availability for this project. Share your relevant project experience."}
                   {...methods.register("screeningQuestions")}
                 />
-                <button type="button" className="text-blue-600 mt-2 text-sm">+ Add more questions (Optional)</button>
+                <button type="button" className="text-blue-600 mt-2 text-xs">+ Add more questions (Optional)</button>
               </div>
 
               {/* Primary phone number */}
               <div>
                 <label className={labelStyles}>Primary phone number</label>
                 <div className="flex">
-                  <span className="inline-flex items-center px-3 py-3 border border-r-0 border-gray-300 bg-gray-50 rounded-l-lg text-gray-600 text-base">
+                  <span className="inline-flex items-center px-2 py-2 border border-r-0 border-gray-300 bg-gray-50 rounded-l-lg text-gray-600 text-sm">
                     <img
                       src="https://flagcdn.com/in.svg"
                       alt="IN"
-                      className="w-5 h-5 mr-1"
+                      className="w-4 h-4 mr-1"
                     />
                     +91
                   </span>
@@ -1235,11 +1236,11 @@ export default function RecruiterPostJobInternDetails() {
               <div>
                 <label className={labelStyles}>Alternate phone number for this listing (Optional)</label>
                 <div className="flex">
-                  <span className="inline-flex items-center px-3 py-3 border border-r-0 border-gray-300 bg-gray-50 rounded-l-lg text-gray-600 text-base">
+                  <span className="inline-flex items-center px-2 py-2 border border-r-0 border-gray-300 bg-gray-50 rounded-l-lg text-gray-600 text-sm">
                     <img
                       src="https://flagcdn.com/in.svg"
                       alt="IN"
-                      className="w-5 h-5 mr-1"
+                      className="w-4 h-4 mr-1"
                     />
                     +91
                   </span>
@@ -1275,12 +1276,12 @@ export default function RecruiterPostJobInternDetails() {
           <div>
             <label className={labelStyles}>City/Cities</label>
             {educationLoading ? (
-              <div className="p-3 bg-gray-50 rounded-lg">
-                <p className="text-gray-600">Loading cities...</p>
+              <div className="p-2 bg-gray-50 rounded-lg">
+                <p className="text-xs text-gray-600">Loading cities...</p>
               </div>
             ) : educationError ? (
-              <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-                <p className="text-red-800 text-sm">{educationError}</p>
+              <div className="p-2 bg-red-50 border border-red-200 rounded-lg">
+                <p className="text-red-800 text-xs">{educationError}</p>
               </div>
             ) : (
               <select

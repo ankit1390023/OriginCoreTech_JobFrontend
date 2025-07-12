@@ -10,11 +10,36 @@ export const useSkillApi = () => {
         try {
             setLoading(true);
             setError(null);
+
+            console.log('Uploading skills with data:', {
+                user_id,
+                skills,
+                certificateFiles: certificateFiles.map(f => ({ name: f.name, size: f.size, type: f.type }))
+            });
+
             const response = await skillApi.uploadSkills(user_id, skills, certificateFiles);
+            console.log('Upload response:', response);
             return response;
         } catch (err) {
             console.error('Error uploading skills:', err);
-            setError('Failed to upload skills. Please try again.');
+            console.error('Error details:', {
+                message: err.message,
+                response: err.response?.data,
+                status: err.response?.status,
+                statusText: err.response?.statusText
+            });
+
+            // Set more specific error message
+            let errorMessage = 'Failed to upload skills. Please try again.';
+            if (err.response?.data?.error) {
+                errorMessage = err.response.data.error;
+            } else if (err.response?.data?.message) {
+                errorMessage = err.response.data.message;
+            } else if (err.message) {
+                errorMessage = err.message;
+            }
+
+            setError(errorMessage);
             throw err;
         } finally {
             setLoading(false);

@@ -1,6 +1,6 @@
 import axios from 'axios';
-const SKILL_BASE_URL = 'http://212.95.51.83:3000';
 
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 // API service functions for skill uploads
 export const skillApi = {
     // Upload skill certificates
@@ -21,12 +21,12 @@ export const skillApi = {
                 }
             });
 
-            const response = await axios.post(`${SKILL_BASE_URL}/upload-skill`, formData, {
+            const response = await axios.post(`${BASE_URL}/upload-skill`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
             });
-
+            console.log("response.data from uploadSkills", response.data);
             return response.data;
         } catch (error) {
             console.error('Error uploading skills:', error);
@@ -37,11 +37,17 @@ export const skillApi = {
     // Get skills for a user
     getUserSkills: async (userId) => {
         try {
-            const response = await axios.get(`${SKILL_BASE_URL}/user-skills/${userId}`);
+            const response = await axios.get(`${API_BASE_URL}/api/user-skills/${userId}`);
             return response.data;
         } catch (error) {
             console.error('Error fetching user skills:', error);
             throw error;
         }
+    },
+
+    // Get certificate file URL
+    getCertificateUrl: (certificatePath) => {
+        if (!certificatePath) return null;
+        return `${API_BASE_URL}${certificatePath}`;
     }
 }; 

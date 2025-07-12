@@ -67,84 +67,85 @@ export default function SignUpSendOtpEmail() {
       subtitle="Create an account to continue!"
       showIllustration={false}
     >
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="w-full max-w-sm sm:max-w-md bg-white rounded-xl shadow-lg p-6 sm:p-8"
-        style={{ boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.15)" }}
-      >
-        <div className="mb-4 sm:mb-5">
-          <p className="text-gray-600 text-sm mb-4">
-            One Time Password (OTP) has been sent to your email on
-            amangupta@gmail.com
-          </p>
-
-          <label className="block text-gray-700 text-sm font-semibold mb-2">
-            Enter OTP to verify your email
-          </label>
-          <input
-            type="text"
-            {...register("otp")}
-            onChange={handleOtpChange}
-            className={`w-full px-3 sm:px-4 py-2 sm:py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm sm:text-base text-center font-semibold tracking-widest ${errors.otp ? "border-red-500" : "border-gray-300"
-              }`}
-            placeholder="0000"
-            maxLength={4}
-            disabled={loading}
-          />
-          {errors.otp && (
-            <span className="text-xs text-red-500 mt-1 block">
-              {errors.otp.message}
-            </span>
-          )}
-          {!errors.otp && (
-            <span className="text-xs text-gray-500 mt-1 block">
-              Enter the 4-digit verification code
-            </span>
-          )}
-        </div>
-
-        {/* Submit Button */}
-        <button
-          type="submit"
-          disabled={loading || watchedOtp.length !== 4}
-          className={`w-full py-2 sm:py-3 rounded-lg font-semibold text-sm sm:text-lg transition-colors ${loading
-            ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-            : watchedOtp.length === 4
-              ? "bg-red-500 hover:bg-red-600 text-white cursor-pointer"
-              : "bg-gray-300 text-gray-500 cursor-not-allowed"
-            }`}
+      <div className="flex-1 w-full flex justify-center">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="bg-white rounded-lg shadow-md p-4 sm:p-6 w-full max-w-xs sm:max-w-sm md:max-w-md"
         >
-          {loading ? (
-            <div className="flex items-center justify-center space-x-2">
-              <FaSpinner className="animate-spin" />
-              <span>Verifying...</span>
-            </div>
-          ) : (
-            "Verify Email"
-          )}
-        </button>
+          <div className="mb-2 sm:mb-3">
+            <p className="text-gray-600 text-xs mb-2">
+              One Time Password (OTP) has been sent to your email on
+              amangupta@gmail.com
+            </p>
 
-        {/* Help Text */}
-        <div className="mt-4 p-3 bg-gray-50 rounded-lg">
-          <p className="text-xs text-gray-600 text-center">
-            <FaEnvelope className="inline mr-1 text-gray-400" />
-            Can't find our email? Check spam folders or promotion tabs too!
-          </p>
-        </div>
+            <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">
+              Enter OTP to verify your email
+            </label>
+            <input
+              type="text"
+              {...register("otp")}
+              onChange={handleOtpChange}
+              className={`w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 text-center font-semibold tracking-widest ${errors.otp ? "border-red-500 bg-red-50" : "border-gray-300 hover:border-gray-400"
+                }`}
+              placeholder="0000"
+              maxLength={4}
+              disabled={loading}
+            />
+            {errors.otp && (
+              <span className="text-xs text-red-500 mt-0.5 block">
+                {errors.otp.message}
+              </span>
+            )}
+            {!errors.otp && (
+              <span className="text-xs text-gray-500 mt-0.5 block">
+                Enter the 4-digit verification code
+              </span>
+            )}
+          </div>
 
-        {/* Login Link */}
-        <div className="text-center mt-4 pt-4 border-t border-gray-200">
-          <p className="text-gray-500 text-xs">
-            Already have an account?{" "}
-            <Link
-              to="/login"
-              className="text-blue-600 hover:text-blue-700 font-medium hover:underline transition-colors"
-            >
-              Login
-            </Link>
-          </p>
-        </div>
-      </form>
+          {/* Submit Button */}
+          <button
+            type="submit"
+            disabled={loading || watchedOtp.length !== 4}
+            className={`w-full py-1.5 sm:py-2 rounded-md font-semibold text-xs mb-2 sm:mb-3 transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-md hover:shadow-lg ${loading
+              ? "bg-gray-400 text-white cursor-not-allowed"
+              : watchedOtp.length === 4
+                ? "bg-[#f44336] text-white hover:bg-[#d32f2f]"
+                : "bg-gray-400 text-white cursor-not-allowed"
+              }`}
+          >
+            {loading ? (
+              <div className="flex items-center justify-center space-x-1">
+                <FaSpinner className="animate-spin h-3 w-3" />
+                <span>Verifying...</span>
+              </div>
+            ) : (
+              "Verify Email"
+            )}
+          </button>
+
+          {/* Help Text */}
+          <div className="mt-2 p-2 bg-gray-50 rounded-md">
+            <p className="text-xs text-gray-600 text-center">
+              <FaEnvelope className="inline mr-1 text-gray-400" />
+              Can't find our email? Check spam folders or promotion tabs too!
+            </p>
+          </div>
+
+          {/* Login Link */}
+          <div className="text-center mt-2 pt-2 border-t border-gray-200">
+            <p className="text-gray-500 text-xs">
+              Already have an account?{" "}
+              <Link
+                to="/login"
+                className="text-red-500 font-semibold hover:text-red-600 transition-colors duration-200"
+              >
+                Login
+              </Link>
+            </p>
+          </div>
+        </form>
+      </div>
     </AuthLayout>
   );
 }

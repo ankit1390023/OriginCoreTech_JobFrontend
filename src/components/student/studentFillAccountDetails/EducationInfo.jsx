@@ -25,16 +25,15 @@ export default function EducationInfo({ register, errors, watch }) {
   );
 
   return (
-    <div className="space-y-4">
-      <div>
-        <label className="block text-sm font-medium mb-1">Type</label>
-        <div className="flex gap-2 flex-wrap">
+    <div className="space-y-2 sm:space-y-3">
+      <div className="mb-2 sm:mb-3">
+        <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">Type</label>
+        <div className="flex gap-1 sm:gap-2 flex-wrap">
           <label
-            className={`px-3 py-1 rounded border cursor-pointer ${
-              watch("type") === "School Student"
-                ? "bg-blue-600 text-white"
-                : "bg-gray-100"
-            }`}
+            className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${watch("type") === "School Student"
+              ? "bg-[#f44336] text-white border-[#f44336]"
+              : "bg-gray-100 border-gray-300 hover:border-gray-400"
+              }`}
           >
             <input
               type="radio"
@@ -45,11 +44,10 @@ export default function EducationInfo({ register, errors, watch }) {
             School Student
           </label>
           <label
-            className={`px-3 py-1 rounded border cursor-pointer ${
-              watch("type") === "College Student"
-                ? "bg-blue-600 text-white"
-                : "bg-gray-100"
-            }`}
+            className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${watch("type") === "College Student"
+              ? "bg-[#f44336] text-white border-[#f44336]"
+              : "bg-gray-100 border-gray-300 hover:border-gray-400"
+              }`}
           >
             <input
               type="radio"
@@ -60,11 +58,10 @@ export default function EducationInfo({ register, errors, watch }) {
             College Student
           </label>
           <label
-            className={`px-3 py-1 rounded border cursor-pointer ${
-              watch("type") === "Fresher"
-                ? "bg-blue-600 text-white"
-                : "bg-gray-100"
-            }`}
+            className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${watch("type") === "Fresher"
+              ? "bg-[#f44336] text-white border-[#f44336]"
+              : "bg-gray-100 border-gray-300 hover:border-gray-400"
+              }`}
           >
             <input
               type="radio"
@@ -75,11 +72,10 @@ export default function EducationInfo({ register, errors, watch }) {
             Fresher
           </label>
           <label
-            className={`px-3 py-1 rounded border cursor-pointer ${
-              watch("type") === "Working Professional"
-                ? "bg-blue-600 text-white"
-                : "bg-gray-100"
-            }`}
+            className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${watch("type") === "Working Professional"
+              ? "bg-[#f44336] text-white border-[#f44336]"
+              : "bg-gray-100 border-gray-300 hover:border-gray-400"
+              }`}
           >
             <input
               type="radio"
@@ -91,19 +87,20 @@ export default function EducationInfo({ register, errors, watch }) {
           </label>
         </div>
         {errors.type && (
-          <p className="text-red-500 text-xs">{errors.type.message}</p>
+          <span className="text-xs text-red-500 mt-0.5 block">
+            {errors.type.message}
+          </span>
         )}
       </div>
       {watch("type") === "School Student" && (
-        <div>
-          <label className="block text-sm font-medium mb-1">Standard</label>
-          <div className="flex gap-2 flex-wrap">
+        <div className="mb-2 sm:mb-3">
+          <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">Standard</label>
+          <div className="flex gap-1 sm:gap-2 flex-wrap">
             <label
-              className={`px-3 py-1 rounded border cursor-pointer ${
-                watch("standard") === "Class XII"
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-100"
-              }`}
+              className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${watch("standard") === "Class XII"
+                ? "bg-[#f44336] text-white border-[#f44336]"
+                : "bg-gray-100 border-gray-300 hover:border-gray-400"
+                }`}
             >
               <input
                 type="radio"
@@ -114,11 +111,10 @@ export default function EducationInfo({ register, errors, watch }) {
               Class XII
             </label>
             <label
-              className={`px-3 py-1 rounded border cursor-pointer ${
-                watch("standard") === "Class XI"
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-100"
-              }`}
+              className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${watch("standard") === "Class XI"
+                ? "bg-[#f44336] text-white border-[#f44336]"
+                : "bg-gray-100 border-gray-300 hover:border-gray-400"
+                }`}
             >
               <input
                 type="radio"
@@ -129,11 +125,10 @@ export default function EducationInfo({ register, errors, watch }) {
               Class XI
             </label>
             <label
-              className={`px-3 py-1 rounded border cursor-pointer ${
-                watch("standard") === "Class X or below"
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-100"
-              }`}
+              className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${watch("standard") === "Class X or below"
+                ? "bg-[#f44336] text-white border-[#f44336]"
+                : "bg-gray-100 border-gray-300 hover:border-gray-400"
+                }`}
             >
               <input
                 type="radio"
@@ -145,28 +140,29 @@ export default function EducationInfo({ register, errors, watch }) {
             </label>
           </div>
           {errors.standard && (
-            <p className="text-red-500 text-xs">{errors.standard.message}</p>
+            <span className="text-xs text-red-500 mt-0.5 block">
+              {errors.standard.message}
+            </span>
           )}
         </div>
       )}
       {watch("type") === "College Student" && (
         <>
-          <div>
-            <label className="block text-sm font-medium mb-1">Course</label>
+          <div className="mb-2 sm:mb-3">
+            <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">Course</label>
             {loading ? (
               <LoadingSpinner message="Loading courses..." />
             ) : error ? (
               <ErrorMessage message={error} />
             ) : (
-              <div className="flex gap-2 flex-wrap">
+              <div className="flex gap-1 sm:gap-2 flex-wrap">
                 {courses.map((course, index) => (
                   <label
                     key={index}
-                    className={`px-3 py-1 rounded border cursor-pointer ${
-                      watch("course") === course
-                        ? "bg-blue-600 text-white"
-                        : "bg-gray-100"
-                    }`}
+                    className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${watch("course") === course
+                      ? "bg-[#f44336] text-white border-[#f44336]"
+                      : "bg-gray-100 border-gray-300 hover:border-gray-400"
+                      }`}
                   >
                     <input
                       type="radio"
@@ -180,11 +176,10 @@ export default function EducationInfo({ register, errors, watch }) {
                   </label>
                 ))}
                 <label
-                  className={`px-3 py-1 rounded border cursor-pointer ${
-                    courses.includes(watch("course")) || !watch("course")
-                      ? "bg-gray-100"
-                      : "bg-blue-600 text-white"
-                  }`}
+                  className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${courses.includes(watch("course")) || !watch("course")
+                    ? "bg-gray-100 border-gray-300 hover:border-gray-400"
+                    : "bg-[#f44336] text-white border-[#f44336]"
+                    }`}
                 >
                   <input
                     type="radio"
@@ -197,11 +192,13 @@ export default function EducationInfo({ register, errors, watch }) {
               </div>
             )}
             {errors.course && (
-              <p className="text-red-500 text-xs">{errors.course.message}</p>
+              <span className="text-xs text-red-500 mt-0.5 block">
+                {errors.course.message}
+              </span>
             )}
           </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">
+          <div className="mb-2 sm:mb-3">
+            <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">
               College Name
             </label>
             {loading ? (
@@ -213,7 +210,7 @@ export default function EducationInfo({ register, errors, watch }) {
                 {...register("college", {
                   required: "College Name is required",
                 })}
-                className="w-full p-2 border rounded"
+                className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 hover:border-gray-400"
               >
                 <option value="">Select a college</option>
                 {colleges.map((college, index) => (
@@ -224,11 +221,13 @@ export default function EducationInfo({ register, errors, watch }) {
               </select>
             )}
             {errors.college && (
-              <p className="text-red-500 text-xs">{errors.college.message}</p>
+              <span className="text-xs text-red-500 mt-0.5 block">
+                {errors.college.message}
+              </span>
             )}
           </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">
+          <div className="mb-2 sm:mb-3">
+            <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">
               Specialization
             </label>
             {loading ? (
@@ -240,7 +239,7 @@ export default function EducationInfo({ register, errors, watch }) {
                 {...register("specialization", {
                   required: "Specialization is required",
                 })}
-                className="w-full p-2 border rounded"
+                className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 hover:border-gray-400"
               >
                 <option value="">Select a specialization</option>
                 {specializations.map((specialization, index) => (
@@ -251,14 +250,14 @@ export default function EducationInfo({ register, errors, watch }) {
               </select>
             )}
             {errors.specialization && (
-              <p className="text-red-500 text-xs">
+              <span className="text-xs text-red-500 mt-0.5 block">
                 {errors.specialization.message}
-              </p>
+              </span>
             )}
           </div>
-          <div className="flex gap-4">
+          <div className="flex gap-1 sm:gap-2 mb-2 sm:mb-3">
             <div className="flex-1">
-              <label className="block text-sm font-medium mb-1">
+              <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">
                 Start Year
               </label>
               <input
@@ -266,25 +265,27 @@ export default function EducationInfo({ register, errors, watch }) {
                 {...register("startYear", {
                   required: "Start Year is required",
                 })}
-                className="w-full p-2 border rounded"
+                className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 hover:border-gray-400"
                 placeholder="Choose year"
               />
               {errors.startYear && (
-                <p className="text-red-500 text-xs">
+                <span className="text-xs text-red-500 mt-0.5 block">
                   {errors.startYear.message}
-                </p>
+                </span>
               )}
             </div>
             <div className="flex-1">
-              <label className="block text-sm font-medium mb-1">End Year</label>
+              <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">End Year</label>
               <input
                 type="number"
                 {...register("endYear", { required: "End Year is required" })}
-                className="w-full p-2 border rounded"
+                className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 hover:border-gray-400"
                 placeholder="Choose year"
               />
               {errors.endYear && (
-                <p className="text-red-500 text-xs">{errors.endYear.message}</p>
+                <span className="text-xs text-red-500 mt-0.5 block">
+                  {errors.endYear.message}
+                </span>
               )}
             </div>
           </div>
@@ -292,22 +293,21 @@ export default function EducationInfo({ register, errors, watch }) {
       )}
       {watch("type") === "Fresher" && (
         <>
-          <div>
-            <label className="block text-sm font-medium mb-1">Course</label>
+          <div className="mb-2 sm:mb-3">
+            <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">Course</label>
             {loading ? (
               <LoadingSpinner message="Loading courses..." />
             ) : error ? (
               <ErrorMessage message={error} />
             ) : (
-              <div className="flex gap-2 flex-wrap">
+              <div className="flex gap-1 sm:gap-2 flex-wrap">
                 {courses.map((course, index) => (
                   <label
                     key={index}
-                    className={`px-3 py-1 rounded border cursor-pointer ${
-                      watch("course") === course
-                        ? "bg-blue-600 text-white"
-                        : "bg-gray-100"
-                    }`}
+                    className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${watch("course") === course
+                      ? "bg-[#f44336] text-white border-[#f44336]"
+                      : "bg-gray-100 border-gray-300 hover:border-gray-400"
+                      }`}
                   >
                     <input
                       type="radio"
@@ -321,11 +321,10 @@ export default function EducationInfo({ register, errors, watch }) {
                   </label>
                 ))}
                 <label
-                  className={`px-3 py-1 rounded border cursor-pointer ${
-                    courses.includes(watch("course")) || !watch("course")
-                      ? "bg-gray-100"
-                      : "bg-blue-600 text-white"
-                  }`}
+                  className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${courses.includes(watch("course")) || !watch("course")
+                    ? "bg-gray-100 border-gray-300 hover:border-gray-400"
+                    : "bg-[#f44336] text-white border-[#f44336]"
+                    }`}
                 >
                   <input
                     type="radio"
@@ -338,11 +337,13 @@ export default function EducationInfo({ register, errors, watch }) {
               </div>
             )}
             {errors.course && (
-              <p className="text-red-500 text-xs">{errors.course.message}</p>
+              <span className="text-xs text-red-500 mt-0.5 block">
+                {errors.course.message}
+              </span>
             )}
           </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">
+          <div className="mb-2 sm:mb-3">
+            <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">
               College Name
             </label>
             {loading ? (
@@ -354,7 +355,7 @@ export default function EducationInfo({ register, errors, watch }) {
                 {...register("college", {
                   required: "College Name is required",
                 })}
-                className="w-full p-2 border rounded"
+                className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 hover:border-gray-400"
               >
                 <option value="">Select a college</option>
                 {colleges.map((college, index) => (
@@ -365,11 +366,13 @@ export default function EducationInfo({ register, errors, watch }) {
               </select>
             )}
             {errors.college && (
-              <p className="text-red-500 text-xs">{errors.college.message}</p>
+              <span className="text-xs text-red-500 mt-0.5 block">
+                {errors.college.message}
+              </span>
             )}
           </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">
+          <div className="mb-2 sm:mb-3">
+            <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">
               Specialization
             </label>
             {loading ? (
@@ -381,7 +384,7 @@ export default function EducationInfo({ register, errors, watch }) {
                 {...register("specialization", {
                   required: "Specialization is required",
                 })}
-                className="w-full p-2 border rounded"
+                className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 hover:border-gray-400"
               >
                 <option value="">Select a specialization</option>
                 {specializations.map((specialization, index) => (
@@ -392,14 +395,14 @@ export default function EducationInfo({ register, errors, watch }) {
               </select>
             )}
             {errors.specialization && (
-              <p className="text-red-500 text-xs">
+              <span className="text-xs text-red-500 mt-0.5 block">
                 {errors.specialization.message}
-              </p>
+              </span>
             )}
           </div>
-          <div className="flex gap-4">
+          <div className="flex gap-1 sm:gap-2 mb-2 sm:mb-3">
             <div className="flex-1">
-              <label className="block text-sm font-medium mb-1">
+              <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">
                 Start Year
               </label>
               <input
@@ -407,25 +410,27 @@ export default function EducationInfo({ register, errors, watch }) {
                 {...register("startYear", {
                   required: "Start Year is required",
                 })}
-                className="w-full p-2 border rounded"
+                className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 hover:border-gray-400"
                 placeholder="Choose year"
               />
               {errors.startYear && (
-                <p className="text-red-500 text-xs">
+                <span className="text-xs text-red-500 mt-0.5 block">
                   {errors.startYear.message}
-                </p>
+                </span>
               )}
             </div>
             <div className="flex-1">
-              <label className="block text-sm font-medium mb-1">End Year</label>
+              <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">End Year</label>
               <input
                 type="number"
                 {...register("endYear", { required: "End Year is required" })}
-                className="w-full p-2 border rounded"
+                className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 hover:border-gray-400"
                 placeholder="Choose year"
               />
               {errors.endYear && (
-                <p className="text-red-500 text-xs">{errors.endYear.message}</p>
+                <span className="text-xs text-red-500 mt-0.5 block">
+                  {errors.endYear.message}
+                </span>
               )}
             </div>
           </div>
@@ -433,8 +438,8 @@ export default function EducationInfo({ register, errors, watch }) {
       )}
       {watch("type") === "Working Professional" && (
         <>
-          <div>
-            <label className="block text-sm font-medium mb-1">
+          <div className="mb-2 sm:mb-3">
+            <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">
               Total work experience<span className="text-red-500"> *</span>
             </label>
             {loading ? (
@@ -446,7 +451,7 @@ export default function EducationInfo({ register, errors, watch }) {
                 {...register("experience", {
                   required: "Experience is required",
                 })}
-                className="w-full p-2 border rounded"
+                className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 hover:border-gray-400"
               >
                 <option value="">Select experience</option>
                 {/* Example experience options, replace with API data if available */}
@@ -458,13 +463,13 @@ export default function EducationInfo({ register, errors, watch }) {
               </select>
             )}
             {errors.experience && (
-              <p className="text-red-500 text-xs">
+              <span className="text-xs text-red-500 mt-0.5 block">
                 {errors.experience.message}
-              </p>
+              </span>
             )}
           </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">
+          <div className="mb-2 sm:mb-3">
+            <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">
               Current Job Role<span className="text-red-500"> *</span>
             </label>
             {loading ? (
@@ -474,22 +479,24 @@ export default function EducationInfo({ register, errors, watch }) {
             ) : (
               <select
                 {...register("jobRole", { required: "Job Role is required" })}
-                className="w-full p-2 border rounded"
+                className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 hover:border-gray-400"
               >
-              <option value="">Job role</option>
+                <option value="">Job role</option>
                 {jobRoles.map((jobRole, index) => (
                   <option key={index} value={jobRole}>
                     {jobRole}
                   </option>
-                ))  }
+                ))}
               </select>
             )}
             {errors.jobRole && (
-              <p className="text-red-500 text-xs">{errors.jobRole.message}</p>
+              <span className="text-xs text-red-500 mt-0.5 block">
+                {errors.jobRole.message}
+              </span>
             )}
           </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">
+          <div className="mb-2 sm:mb-3">
+            <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">
               Current Company<span className="text-red-500"> *</span>
             </label>
             {loading ? (
@@ -501,7 +508,7 @@ export default function EducationInfo({ register, errors, watch }) {
                 {...register("company", {
                   required: "Company Name is required",
                 })}
-                className="w-full p-2 border rounded"
+                className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 hover:border-gray-400"
               >
                 <option value="">Company name</option>
                 {/* Example companies, replace with API data if available */}
@@ -514,12 +521,14 @@ export default function EducationInfo({ register, errors, watch }) {
               </select>
             )}
             {errors.company && (
-              <p className="text-red-500 text-xs">{errors.company.message}</p>
+              <span className="text-xs text-red-500 mt-0.5 block">
+                {errors.company.message}
+              </span>
             )}
           </div>
-          <div className="flex gap-4">
+          <div className="flex gap-1 sm:gap-2 mb-2 sm:mb-3">
             <div className="flex-1">
-              <label className="block text-sm font-medium mb-1">
+              <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">
                 Start Year
               </label>
               <input
@@ -527,30 +536,32 @@ export default function EducationInfo({ register, errors, watch }) {
                 {...register("startYear", {
                   required: "Start Year is required",
                 })}
-                className="w-full p-2 border rounded"
+                className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 hover:border-gray-400"
                 placeholder="Choose year"
               />
               {errors.startYear && (
-                <p className="text-red-500 text-xs">
+                <span className="text-xs text-red-500 mt-0.5 block">
                   {errors.startYear.message}
-                </p>
+                </span>
               )}
             </div>
             <div className="flex-1">
-              <label className="block text-sm font-medium mb-1">End Year</label>
+              <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">End Year</label>
               <input
                 type="number"
                 {...register("endYear", { required: "End Year is required" })}
-                className="w-full p-2 border rounded"
+                className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 hover:border-gray-400"
                 placeholder="Choose year"
               />
               {errors.endYear && (
-                <p className="text-red-500 text-xs">{errors.endYear.message}</p>
+                <span className="text-xs text-red-500 mt-0.5 block">
+                  {errors.endYear.message}
+                </span>
               )}
             </div>
           </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">
+          <div className="mb-2 sm:mb-3">
+            <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">
               Current or latest annual salary/CTC
             </label>
             <span className="block text-xs text-gray-500 mb-1">
@@ -562,7 +573,7 @@ export default function EducationInfo({ register, errors, watch }) {
             <input
               type="text"
               {...register("salary")}
-              className="w-full p-2 border rounded"
+              className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 hover:border-gray-400"
               placeholder="Eg: 4,00,000"
             />
           </div>

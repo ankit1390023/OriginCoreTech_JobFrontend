@@ -115,7 +115,6 @@ export default function SignUp() {
         alert("Signup failed. Please try again.");
       }
     } finally {
-      ``
       setLoading(false);
     }
   };
@@ -128,15 +127,15 @@ export default function SignUp() {
 
   return (
     <StudentSignUpLayout
-      heading="Create a New Account"
-      subheading="Join us and find your dream job or recruit talented candidates."
+      heading="Sign Up"
+      subheading="Create an account to contunue!."
       illustration={SignUpIllustration}
     >
 
       <div className="flex-1 w-full flex justify-center">
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="bg-white rounded-2xl shadow-md p-4 sm:p-6 md:p-8 lg:p-10 w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl"
+          className="bg-white rounded-lg shadow-md p-4 sm:p-6 w-full max-w-xs sm:max-w-sm md:max-w-md"
         >
           <input
             type="hidden"
@@ -144,89 +143,89 @@ export default function SignUp() {
             value={selectedRole}
           />
 
-          {/* First Name */}
-          <div className="mb-4 sm:mb-5 md:mb-6">
-            <label className="block text-gray-700 text-sm sm:text-base font-semibold mb-2 sm:mb-3">First Name</label>
-            <input
-              type="text"
-              {...register("firstName")}
-              className={`w-full px-3 sm:px-4 md:px-5 py-2.5 sm:py-3 md:py-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent text-sm sm:text-base transition-all duration-200 ${errors.firstName ? "border-red-500 bg-red-50" : "border-gray-300 hover:border-gray-400"
-                }`}
-              placeholder="First Name"
-              disabled={loading}
-            />
-            {errors.firstName && (
-              <span className="text-xs sm:text-sm text-red-500 mt-1 sm:mt-2 block">
-                {errors.firstName.message}
-              </span>
-            )}
-          </div>
-
-          {/* Last Name */}
-          <div className="mb-4 sm:mb-5 md:mb-6">
-            <label className="block text-gray-700 text-sm sm:text-base font-semibold mb-2 sm:mb-3">Last Name</label>
-            <input
-              type="text"
-              {...register("lastName")}
-              className={`w-full px-3 sm:px-4 md:px-5 py-2.5 sm:py-3 md:py-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent text-sm sm:text-base transition-all duration-200 ${errors.lastName ? "border-red-500 bg-red-50" : "border-gray-300 hover:border-gray-400"
-                }`}
-              placeholder="Last Name"
-              disabled={loading}
-            />
-            {errors.lastName && (
-              <span className="text-xs sm:text-sm text-red-500 mt-1 sm:mt-2 block">
-                {errors.lastName.message}
-              </span>
-            )}
+          {/* First Name and Last Name in one row */}
+          <div className="flex gap-1 sm:gap-2 mb-2 sm:mb-3">
+            <div className="flex-1">
+              <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">First Name</label>
+              <input
+                type="text"
+                {...register("firstName")}
+                className={`w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 ${errors.firstName ? "border-red-500 bg-red-50" : "border-gray-300 hover:border-gray-400"
+                  }`}
+                placeholder="First Name"
+                disabled={loading}
+              />
+              {errors.firstName && (
+                <span className="text-xs text-red-500 mt-0.5 block">
+                  {errors.firstName.message}
+                </span>
+              )}
+            </div>
+            <div className="flex-1">
+              <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">Last Name</label>
+              <input
+                type="text"
+                {...register("lastName")}
+                className={`w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 ${errors.lastName ? "border-red-500 bg-red-50" : "border-gray-300 hover:border-gray-400"
+                  }`}
+                placeholder="Last Name"
+                disabled={loading}
+              />
+              {errors.lastName && (
+                <span className="text-xs text-red-500 mt-0.5 block">
+                  {errors.lastName.message}
+                </span>
+              )}
+            </div>
           </div>
 
           {/* Phone Number */}
-          <div className="mb-4 sm:mb-5 md:mb-6">
-            <label className="block text-gray-700 text-sm sm:text-base font-semibold mb-2 sm:mb-3">Phone Number</label>
+          <div className="mb-2 sm:mb-3">
+            <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">Phone Number</label>
             <div className="flex">
-              <span className="inline-flex items-center px-3 sm:px-4 border border-r-0 border-gray-300 bg-gray-50 rounded-l-xl text-gray-600 text-sm sm:text-base">
+              <span className="inline-flex items-center px-1.5 sm:px-2 border border-r-0 border-gray-300 bg-gray-50 rounded-l-md text-gray-600 text-xs">
                 <img
                   src="https://flagcdn.com/in.svg"
                   alt="IN"
-                  className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2"
+                  className="w-3 h-3 mr-1"
                 />
                 +91
               </span>
               <input
                 type="text"
                 {...register("phone")}
-                className={`w-full px-3 sm:px-4 md:px-5 py-2.5 sm:py-3 md:py-4 border rounded-r-xl focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent text-sm sm:text-base transition-all duration-200 ${errors.phone ? "border-red-500 bg-red-50" : "border-gray-300 hover:border-gray-400"
+                className={`w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border rounded-r-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 ${errors.phone ? "border-red-500 bg-red-50" : "border-gray-300 hover:border-gray-400"
                   }`}
                 placeholder="9876543210"
                 disabled={loading}
               />
             </div>
             {errors.phone && (
-              <span className="text-xs sm:text-sm text-red-500 mt-1 sm:mt-2 block">
+              <span className="text-xs text-red-500 mt-0.5 block">
                 {errors.phone.message}
               </span>
             )}
           </div>
 
           {/* Email */}
-          <div className="mb-4 sm:mb-5 md:mb-6">
-            <label className="block text-gray-700 text-sm sm:text-base font-semibold mb-2 sm:mb-3">Email ID</label>
+          <div className="mb-2 sm:mb-3">
+            <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">Email ID</label>
             <input
               type="email"
               {...register("email")}
-              className={`w-full px-3 sm:px-4 md:px-5 py-2.5 sm:py-3 md:py-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent text-sm sm:text-base transition-all duration-200 ${errors.email ? "border-red-500 bg-red-50" : "border-gray-300 hover:border-gray-400"
+              className={`w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 ${errors.email ? "border-red-500 bg-red-50" : "border-gray-300 hover:border-gray-400"
                 }`}
               placeholder="Email"
               disabled={loading}
             />
             {errors.email && (
-              <span className="text-xs sm:text-sm text-red-500 mt-1 sm:mt-2 block flex items-center">
+              <span className="text-xs text-red-500 mt-0.5 block flex items-center">
                 <span className="mr-1">⚠️</span>
                 {errors.email.message}
               </span>
             )}
             {selectedRole && selectedRole.toUpperCase() === "COMPANY" && (
-              <p className="text-xs sm:text-sm text-gray-500 mt-1 sm:mt-2">
+              <p className="text-xs text-gray-500 mt-0.5">
                 Company emails must use professional domains (.com, .org,
                 .net, etc.)
               </p>
@@ -234,25 +233,25 @@ export default function SignUp() {
           </div>
 
           {/* Password */}
-          <div className="mb-4 sm:mb-5 md:mb-6">
-            <label className="block text-gray-700 text-sm sm:text-base font-semibold mb-2 sm:mb-3">Password</label>
+          <div className="mb-2 sm:mb-3">
+            <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">Password</label>
             <input
               type="password"
               {...register("password")}
-              className={`w-full px-3 sm:px-4 md:px-5 py-2.5 sm:py-3 md:py-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent text-sm sm:text-base transition-all duration-200 ${errors.password ? "border-red-500 bg-red-50" : "border-gray-300 hover:border-gray-400"
+              className={`w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 ${errors.password ? "border-red-500 bg-red-50" : "border-gray-300 hover:border-gray-400"
                 }`}
               placeholder="Password"
               disabled={loading}
             />
             {errors.password && (
-              <span className="text-xs sm:text-sm text-red-500 mt-1 sm:mt-2 block">
+              <span className="text-xs text-red-500 mt-0.5 block">
                 {errors.password.message}
               </span>
             )}
           </div>
 
           {/* Terms */}
-          <p className="text-xs sm:text-sm text-gray-500 mb-4 sm:mb-6">
+          <p className="text-xs text-gray-500 mb-2 sm:mb-3">
             By signing up, you agree to our{" "}
             <span className="font-semibold text-gray-700">
               Terms and Conditions
@@ -262,14 +261,14 @@ export default function SignUp() {
           <button
             type="submit"
             disabled={loading}
-            className={`w-full py-2.5 sm:py-3 md:py-4 rounded-xl font-semibold text-sm sm:text-base md:text-lg mb-4 sm:mb-6 transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl ${loading
-                ? "bg-gray-400 text-white cursor-not-allowed"
-                : "bg-[#f44336] text-white hover:bg-[#d32f2f]"
+            className={`w-full py-1.5 sm:py-2 rounded-md font-semibold text-xs mb-2 sm:mb-3 transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-md hover:shadow-lg ${loading
+              ? "bg-gray-400 text-white cursor-not-allowed"
+              : "bg-[#f44336] text-white hover:bg-[#d32f2f]"
               }`}
           >
             {loading ? (
               <span className="flex items-center justify-center">
-                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 sm:h-5 sm:w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <svg className="animate-spin -ml-1 mr-1.5 h-3 w-3 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
@@ -280,35 +279,26 @@ export default function SignUp() {
             )}
           </button>
 
-          <div className="flex items-center my-4 sm:my-6">
+          <div className="flex items-center my-2 sm:my-3">
             <div className="flex-grow h-px bg-gray-300"></div>
-            <span className="mx-3 sm:mx-4 text-gray-400 text-sm sm:text-base font-medium">Or</span>
+            <span className="mx-1.5 sm:mx-2 text-gray-400 text-xs font-medium">Or</span>
             <div className="flex-grow h-px bg-gray-300"></div>
           </div>
 
           <button
             type="button"
             disabled={loading}
-            className={`w-full flex items-center justify-center border border-gray-300 py-2.5 sm:py-3 md:py-4 rounded-xl font-semibold text-gray-700 bg-white transition-all duration-200 transform hover:scale-[1.01] active:scale-[0.99] ${loading ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-50"
+            className={`w-full flex items-center justify-center border border-gray-300 py-1.5 sm:py-2 rounded-md font-semibold text-gray-700 bg-white transition-all duration-200 transform hover:scale-[1.01] active:scale-[0.99] ${loading ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-50"
               }`}
           >
-            <FcGoogle size={20} className="sm:w-6 sm:h-6 mr-2 sm:mr-3" />
-            <span className="text-sm sm:text-base">Sign up with Google</span>
+            <FcGoogle size={14} className="mr-1.5" />
+            <span className="text-xs">Sign up with Google</span>
           </button>
 
-          <p className="text-center text-sm sm:text-base text-gray-600 mt-6 sm:mt-8">
+          <p className="text-center text-xs text-gray-600 mt-3 sm:mt-4">
             Already have an account?{" "}
             <Link to="/login" className="text-red-500 font-semibold hover:text-red-600 transition-colors duration-200">
               Login
-            </Link>
-          </p>
-
-          <p className="text-center text-sm sm:text-base text-gray-600 mt-2 sm:mt-3">
-            <Link
-              to="/signup-choose-role"
-              className="text-red-500 font-semibold hover:text-red-600 transition-colors duration-200"
-            >
-              ← Choose different role
             </Link>
           </p>
         </form>
