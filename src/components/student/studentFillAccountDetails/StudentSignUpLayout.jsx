@@ -1,7 +1,7 @@
 import React from "react";
 import SignUpIllustration from "../../../assets/SignUp_Illustration.png";
 import websiteLogo from "../../../assets/websiteLogo.svg";
-export default function StudentSignUpLayout({ children, heading, subheading }) {
+export default function StudentSignUpLayout({ children, heading, subheading, hideMobileIllustration = false, centerMobileContent = false }) {
   return (
     <div className="w-full min-h-screen bg-white overflow-hidden relative">
       {/* Logo */}
@@ -41,13 +41,15 @@ export default function StudentSignUpLayout({ children, heading, subheading }) {
         </div>
         {/* Right Section */}
         <div className="flex-1 w-full flex flex-col items-center justify-center">
-          {/* Illustration, Heading, and Subheading for mobile/tablet */}
-          <div className="block lg:hidden flex flex-col items-center text-center mb-4">
-            <img
-              src={SignUpIllustration}
-              alt="Sign Up Illustration"
-              className="w-56 h-56 sm:w-64 sm:h-64 object-contain mb-2"
-            />
+          {/* Heading and Subheading for mobile/tablet */}
+          <div className={`block lg:hidden flex flex-col mb-8 w-full ${centerMobileContent ? 'items-center text-center' : 'items-start text-left'}`}>
+            {!hideMobileIllustration && (
+              <img
+                src={SignUpIllustration}
+                alt="Sign Up Illustration"
+                className="w-60 h-60 sm:w-64 sm:h-64 object-contain mb-2"
+              />
+            )}
             <h1 className="text-2xl font-bold text-black mb-1">{heading}</h1>
             <p className="text-sm text-gray-700">{subheading}</p>
           </div>

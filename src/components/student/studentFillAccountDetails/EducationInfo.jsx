@@ -31,7 +31,7 @@ export default function EducationInfo({ register, errors, watch }) {
         <div className="flex gap-1 sm:gap-2 flex-wrap">
           <label
             className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${watch("type") === "School Student"
-              ? "bg-[#f44336] text-white border-[#f44336]"
+              ? "bg-blue-500 text-white border-blue-500"
               : "bg-gray-100 border-gray-300 hover:border-gray-400"
               }`}
           >
@@ -45,7 +45,7 @@ export default function EducationInfo({ register, errors, watch }) {
           </label>
           <label
             className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${watch("type") === "College Student"
-              ? "bg-[#f44336] text-white border-[#f44336]"
+              ? "bg-blue-500 text-white border-blue-500"
               : "bg-gray-100 border-gray-300 hover:border-gray-400"
               }`}
           >
@@ -59,7 +59,7 @@ export default function EducationInfo({ register, errors, watch }) {
           </label>
           <label
             className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${watch("type") === "Fresher"
-              ? "bg-[#f44336] text-white border-[#f44336]"
+              ? "bg-blue-500 text-white border-blue-500"
               : "bg-gray-100 border-gray-300 hover:border-gray-400"
               }`}
           >
@@ -73,7 +73,7 @@ export default function EducationInfo({ register, errors, watch }) {
           </label>
           <label
             className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${watch("type") === "Working Professional"
-              ? "bg-[#f44336] text-white border-[#f44336]"
+              ? "bg-blue-500 text-white border-blue-500"
               : "bg-gray-100 border-gray-300 hover:border-gray-400"
               }`}
           >
@@ -98,7 +98,7 @@ export default function EducationInfo({ register, errors, watch }) {
           <div className="flex gap-1 sm:gap-2 flex-wrap">
             <label
               className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${watch("standard") === "Class XII"
-                ? "bg-[#f44336] text-white border-[#f44336]"
+                ? "bg-blue-500 text-white border-blue-500"
                 : "bg-gray-100 border-gray-300 hover:border-gray-400"
                 }`}
             >
@@ -112,7 +112,7 @@ export default function EducationInfo({ register, errors, watch }) {
             </label>
             <label
               className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${watch("standard") === "Class XI"
-                ? "bg-[#f44336] text-white border-[#f44336]"
+                ? "bg-blue-500 text-white border-blue-500"
                 : "bg-gray-100 border-gray-300 hover:border-gray-400"
                 }`}
             >
@@ -126,7 +126,7 @@ export default function EducationInfo({ register, errors, watch }) {
             </label>
             <label
               className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${watch("standard") === "Class X or below"
-                ? "bg-[#f44336] text-white border-[#f44336]"
+                ? "bg-blue-500 text-white border-blue-500"
                 : "bg-gray-100 border-gray-300 hover:border-gray-400"
                 }`}
             >
@@ -160,7 +160,7 @@ export default function EducationInfo({ register, errors, watch }) {
                   <label
                     key={index}
                     className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${watch("course") === course
-                      ? "bg-[#f44336] text-white border-[#f44336]"
+                      ? "bg-blue-500 text-white border-blue-500"
                       : "bg-gray-100 border-gray-300 hover:border-gray-400"
                       }`}
                   >
@@ -178,7 +178,7 @@ export default function EducationInfo({ register, errors, watch }) {
                 <label
                   className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${courses.includes(watch("course")) || !watch("course")
                     ? "bg-gray-100 border-gray-300 hover:border-gray-400"
-                    : "bg-[#f44336] text-white border-[#f44336]"
+                    : "bg-blue-500 text-white border-blue-500"
                     }`}
                 >
                   <input
@@ -210,7 +210,7 @@ export default function EducationInfo({ register, errors, watch }) {
                 {...register("college", {
                   required: "College Name is required",
                 })}
-                className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 hover:border-gray-400"
+                className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-transparent text-xs transition-all duration-200 hover:border-gray-400"
               >
                 <option value="">Select a college</option>
                 {colleges.map((college, index) => (
@@ -239,7 +239,7 @@ export default function EducationInfo({ register, errors, watch }) {
                 {...register("specialization", {
                   required: "Specialization is required",
                 })}
-                className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 hover:border-gray-400"
+                className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-transparent text-xs transition-all duration-200 hover:border-gray-400"
               >
                 <option value="">Select a specialization</option>
                 {specializations.map((specialization, index) => (
@@ -265,7 +265,7 @@ export default function EducationInfo({ register, errors, watch }) {
                 {...register("startYear", {
                   required: "Start Year is required",
                 })}
-                className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 hover:border-gray-400"
+                className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-transparent text-xs transition-all duration-200 hover:border-gray-400"
                 placeholder="Choose year"
               />
               {errors.startYear && (
@@ -279,7 +279,7 @@ export default function EducationInfo({ register, errors, watch }) {
               <input
                 type="number"
                 {...register("endYear", { required: "End Year is required" })}
-                className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 hover:border-gray-400"
+                className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-transparent text-xs transition-all duration-200 hover:border-gray-400"
                 placeholder="Choose year"
               />
               {errors.endYear && (
@@ -305,7 +305,7 @@ export default function EducationInfo({ register, errors, watch }) {
                   <label
                     key={index}
                     className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${watch("course") === course
-                      ? "bg-[#f44336] text-white border-[#f44336]"
+                      ? "bg-blue-500 text-white border-blue-500"
                       : "bg-gray-100 border-gray-300 hover:border-gray-400"
                       }`}
                   >
@@ -323,7 +323,7 @@ export default function EducationInfo({ register, errors, watch }) {
                 <label
                   className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${courses.includes(watch("course")) || !watch("course")
                     ? "bg-gray-100 border-gray-300 hover:border-gray-400"
-                    : "bg-[#f44336] text-white border-[#f44336]"
+                    : "bg-blue-500 text-white border-blue-500"
                     }`}
                 >
                   <input
@@ -355,7 +355,7 @@ export default function EducationInfo({ register, errors, watch }) {
                 {...register("college", {
                   required: "College Name is required",
                 })}
-                className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 hover:border-gray-400"
+                className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-transparent text-xs transition-all duration-200 hover:border-gray-400"
               >
                 <option value="">Select a college</option>
                 {colleges.map((college, index) => (
@@ -384,7 +384,7 @@ export default function EducationInfo({ register, errors, watch }) {
                 {...register("specialization", {
                   required: "Specialization is required",
                 })}
-                className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 hover:border-gray-400"
+                className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-transparent text-xs transition-all duration-200 hover:border-gray-400"
               >
                 <option value="">Select a specialization</option>
                 {specializations.map((specialization, index) => (
@@ -410,7 +410,7 @@ export default function EducationInfo({ register, errors, watch }) {
                 {...register("startYear", {
                   required: "Start Year is required",
                 })}
-                className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 hover:border-gray-400"
+                className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-transparent text-xs transition-all duration-200 hover:border-gray-400"
                 placeholder="Choose year"
               />
               {errors.startYear && (
@@ -424,7 +424,7 @@ export default function EducationInfo({ register, errors, watch }) {
               <input
                 type="number"
                 {...register("endYear", { required: "End Year is required" })}
-                className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 hover:border-gray-400"
+                className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-transparent text-xs transition-all duration-200 hover:border-gray-400"
                 placeholder="Choose year"
               />
               {errors.endYear && (
@@ -451,7 +451,7 @@ export default function EducationInfo({ register, errors, watch }) {
                 {...register("experience", {
                   required: "Experience is required",
                 })}
-                className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 hover:border-gray-400"
+                className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-transparent text-xs transition-all duration-200 hover:border-gray-400"
               >
                 <option value="">Select experience</option>
                 {/* Example experience options, replace with API data if available */}
@@ -479,7 +479,7 @@ export default function EducationInfo({ register, errors, watch }) {
             ) : (
               <select
                 {...register("jobRole", { required: "Job Role is required" })}
-                className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 hover:border-gray-400"
+                className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-transparent text-xs transition-all duration-200 hover:border-gray-400"
               >
                 <option value="">Job role</option>
                 {jobRoles.map((jobRole, index) => (
@@ -508,7 +508,7 @@ export default function EducationInfo({ register, errors, watch }) {
                 {...register("company", {
                   required: "Company Name is required",
                 })}
-                className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 hover:border-gray-400"
+                className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-transparent text-xs transition-all duration-200 hover:border-gray-400"
               >
                 <option value="">Company name</option>
                 {/* Example companies, replace with API data if available */}
@@ -536,7 +536,7 @@ export default function EducationInfo({ register, errors, watch }) {
                 {...register("startYear", {
                   required: "Start Year is required",
                 })}
-                className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 hover:border-gray-400"
+                className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-transparent text-xs transition-all duration-200 hover:border-gray-400"
                 placeholder="Choose year"
               />
               {errors.startYear && (
@@ -550,7 +550,7 @@ export default function EducationInfo({ register, errors, watch }) {
               <input
                 type="number"
                 {...register("endYear", { required: "End Year is required" })}
-                className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 hover:border-gray-400"
+                className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-transparent text-xs transition-all duration-200 hover:border-gray-400"
                 placeholder="Choose year"
               />
               {errors.endYear && (
@@ -573,7 +573,7 @@ export default function EducationInfo({ register, errors, watch }) {
             <input
               type="text"
               {...register("salary")}
-              className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 hover:border-gray-400"
+              className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-transparent text-xs transition-all duration-200 hover:border-gray-400"
               placeholder="Eg: 4,00,000"
             />
           </div>

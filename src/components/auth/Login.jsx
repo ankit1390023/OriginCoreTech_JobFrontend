@@ -40,8 +40,13 @@ export default function Login() {
         password: data.password,
       });
       console.log("Login success:", response.data);
+
       localStorage.setItem("token", response.data.token);
-      console.log("from login", response.data.token);
+      localStorage.setItem("userId", response.data.user.id);
+      localStorage.setItem("userRole", response.data.user.role);
+      localStorage.setItem("userEmail", response.data.user.email);
+      // console.log("userId from login", response.data.user.id);
+      // console.log("from login", response.data.token);
       alert("Login successful!");
       navigate("/send-otp-email");
     } catch (error) {
@@ -74,7 +79,7 @@ export default function Login() {
     >
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="bg-white rounded-lg shadow-md p-4 sm:p-6 w-full max-w-xs sm:max-w-sm md:max-w-md"
+        className="w-full bg-white p-0 rounded-none shadow-none max-w-full md:p-4 md:rounded-lg md:shadow-md md:max-w-md md:mx-auto"
       >
         <div className="mb-2 sm:mb-3">
           <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">
@@ -173,7 +178,7 @@ export default function Login() {
           <span className="text-xs">Continue with Google</span>
         </button>
 
-      
+
 
         <button
           type="button"

@@ -13,6 +13,7 @@ export default function JobDetailsPage() {
 
     const [selectedId, setSelectedId] = useState(jobId);
     const [isJobListOpen, setIsJobListOpen] = useState(false);
+    const [showFullDetails, setShowFullDetails] = useState(false);
 
     const handleSelect = (id) => {
         setSelectedId(id);
@@ -142,7 +143,7 @@ export default function JobDetailsPage() {
                     </aside>
 
                     {/* Right: Job Details */}
-                    <main className="bg-white rounded-xl shadow border border-gray-100 p-2 sm:p-3 md:p-4 lg:p-6 min-h-[100vh] flex flex-col relative">
+                    <main className={`bg-white rounded-xl shadow border border-gray-100 p-2 sm:p-3 md:p-4 lg:p-6 flex flex-col relative ${showFullDetails ? 'min-h-auto' : 'min-h-[120vh] max-h-[100vh] overflow-hidden'}`}>
                         {jobDetailsLoading ? (
                             <div className="animate-pulse">
                                 <div className="h-6 bg-gray-200 rounded w-1/3 mb-3"></div>
@@ -161,10 +162,10 @@ export default function JobDetailsPage() {
                         ) : (
                             <>
                                 {/* Header Section */}
-                                            <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-3 md:gap-4 mb-3 sm:mb-4 relative">
-                                            
-                                                <img
-                                                    src={"https://images.squarespace-cdn.com/content/v1/65da3ae088ac635ab34abd13/c6caad75-54ea-4e3f-840b-a7aa78473188/transparent-google-logo-google-logo-green-and-blue-g-in-circle65cf691984e008.0012613817080916735443.png?format=1500w"}
+                                <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-3 md:gap-4 mb-3 sm:mb-4 relative">
+
+                                    <img
+                                        src={"https://images.squarespace-cdn.com/content/v1/65da3ae088ac635ab34abd13/c6caad75-54ea-4e3f-840b-a7aa78473188/transparent-google-logo-google-logo-green-and-blue-g-in-circle65cf691984e008.0012613817080916735443.png?format=1500w"}
                                         alt="Company Logo"
                                         className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-lg object-contain bg-gray-100 border border-gray-200 flex-shrink-0 self-start"
                                     />
@@ -505,6 +506,34 @@ export default function JobDetailsPage() {
                                     </div>
                                 </div>
 
+                                {/* Show More/Less Button */}
+                                {!showFullDetails && (
+                                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-white via-white to-transparent h-10 flex items-end justify-center pb-1">
+                                        <button
+                                            onClick={() => setShowFullDetails(true)}
+                                            className="bg-gray-100 hover:bg-gray-200 text-gray-600 font-normal py-1 px-3 rounded-full shadow-sm border border-gray-300 transition-all duration-200 flex items-center gap-1 text-xs hover:shadow-md hover:scale-105"
+                                        >
+                                            Show more
+                                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                )}
+
+                                {showFullDetails && (
+                                    <div className="mt-4 flex justify-center">
+                                        <button
+                                            onClick={() => setShowFullDetails(false)}
+                                            className="bg-gray-100 hover:bg-gray-200 text-gray-600 font-medium py-1.5 px-4 rounded-full shadow-sm border border-gray-200 transition-all duration-200 flex items-center gap-1.5 text-sm hover:shadow-md hover:scale-105"
+                                        >
+                                            Show less
+                                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                )}
 
                             </>
                         )}

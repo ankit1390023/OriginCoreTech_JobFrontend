@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -48,6 +48,14 @@ export default function ForgotPassword() {
   });
 
   const emailValue = watch("email");
+
+  // Get logged-in user's email from localStorage
+  useEffect(() => {
+    const userEmail = localStorage.getItem("userEmail");
+    if (userEmail) {
+      setValue("email", userEmail);
+    }
+  }, [setValue]);
 
   // Handler for sending OTP
   const handleGetOtp = async () => {

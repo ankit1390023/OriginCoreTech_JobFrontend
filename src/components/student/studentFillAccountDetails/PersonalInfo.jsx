@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useFormContext } from "react-hook-form";
 import { useEducationData } from "../../../hooks/useEducationData";
 import LoadingSpinner from "../../shared/LoadingSpinner";
@@ -7,6 +7,7 @@ export default function PersonalInfo() {
   const {
     register,
     formState: { errors },
+    setValue,
   } = useFormContext();
 
   const {
@@ -15,6 +16,14 @@ export default function PersonalInfo() {
     error,
     refetch,
   } = useEducationData();
+
+  // Pre-fill email with logged-in user's email
+  useEffect(() => {
+    const userEmail = localStorage.getItem("userEmail");
+    if (userEmail) {
+      setValue("email", userEmail);
+    }
+  }, [setValue]);
 
   const ErrorMessage = ({ message }) => (
     <div className="w-full p-3 border rounded bg-red-50 text-red-500 text-xs">
@@ -37,7 +46,7 @@ export default function PersonalInfo() {
           <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">First Name</label>
           <input
             {...register("firstName")}
-            className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 border-gray-300 hover:border-gray-400"
+            className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border rounded-md focus:outline-none focus:border-blue-500 text-xs transition-all duration-200 border-gray-300 hover:border-gray-400"
             placeholder="Enter your first name"
           />
           {errors.firstName && (
@@ -48,7 +57,7 @@ export default function PersonalInfo() {
           <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">Last Name</label>
           <input
             {...register("lastName")}
-            className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 border-gray-300 hover:border-gray-400"
+            className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border rounded-md focus:outline-none focus:border-blue-500 text-xs transition-all duration-200 border-gray-300 hover:border-gray-400"
             placeholder="Enter your last name"
           />
           {errors.lastName && (
@@ -60,9 +69,10 @@ export default function PersonalInfo() {
         <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">Email ID</label>
         <input
           {...register("email")}
-          className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 border-gray-300 hover:border-gray-400"
+          className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border rounded-md focus:outline-none focus:border-blue-500 text-xs transition-all duration-200 border-gray-300 hover:border-gray-400 bg-gray-50 cursor-not-allowed"
           placeholder="example@email.com"
           type="email"
+          readOnly
         />
         {errors.email && (
           <p className="text-xs text-red-500 mt-0.5 block">{errors.email.message}</p>
@@ -72,7 +82,7 @@ export default function PersonalInfo() {
         <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">Phone Number</label>
         <input
           {...register("phone")}
-          className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 border-gray-300 hover:border-gray-400"
+          className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border rounded-md focus:outline-none focus:border-blue-500 text-xs transition-all duration-200 border-gray-300 hover:border-gray-400"
           placeholder="+91 98765 43210"
           type="tel"
         />
@@ -85,7 +95,7 @@ export default function PersonalInfo() {
         <input
           type="date"
           {...register("dob")}
-          className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 border-gray-300 hover:border-gray-400"
+          className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border rounded-md focus:outline-none focus:border-blue-500 text-xs transition-all duration-200 border-gray-300 hover:border-gray-400"
           placeholder="Select your date of birth"
         />
         {errors.dob && (
@@ -99,7 +109,7 @@ export default function PersonalInfo() {
         ) : error ? (
           <ErrorMessage message={error} />
         ) : (
-          <select {...register("city")} className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 border-gray-300 hover:border-gray-400">
+          <select {...register("city")} className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border rounded-md focus:outline-none focus:border-blue-500 text-xs transition-all duration-200 border-gray-300 hover:border-gray-400">
             <option value="">Select your current city</option>
             {locations.map((location, index) => (
               <option key={index} value={location}>
@@ -114,7 +124,7 @@ export default function PersonalInfo() {
       </div>
       <div className="mb-2 sm:mb-3">
         <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">Gender</label>
-        <select {...register("gender")} className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 border-gray-300 hover:border-gray-400">
+        <select {...register("gender")} className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border rounded-md focus:outline-none focus:border-blue-500 text-xs transition-all duration-200 border-gray-300 hover:border-gray-400">
           <option value="">Select your gender</option>
           <option value="Male">Male</option>
           <option value="Female">Female</option>

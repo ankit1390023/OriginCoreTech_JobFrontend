@@ -48,6 +48,7 @@ export default function SignUpChooseRole() {
       heading="Create a new account"
       subheading="Join us and find your dream job or recruit talented candidates."
       illustration={SignUpIllustration}
+      centerMobileContent={true}
     >
       {/* Main Content */}
       <div className="w-full max-w-xs sm:max-w-sm mx-auto flex flex-col items-center justify-center">

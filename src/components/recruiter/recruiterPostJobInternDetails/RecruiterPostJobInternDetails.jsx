@@ -473,7 +473,7 @@ export default function RecruiterPostJobInternDetails() {
   const selectStyles = "w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white";
   const radioStyles = "w-3 h-3 text-blue-600 border-gray-300 focus:outline-none focus:ring-0";
   const checkboxStyles = "w-3 h-3 text-blue-600 border-gray-300 rounded focus:outline-none focus:ring-0";
-  const radioContainerStyles = "flex gap-4 p-3 border border-gray-300 rounded-lg bg-white";
+  const radioContainerStyles = "flex gap-3 p-2 border border-gray-300 rounded-lg bg-white";
   const numberInputStyles = "w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200";
   const phoneInputStyles = "flex-1 px-3 py-2 text-sm border border-gray-300 rounded-r-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200";
   const labelStyles = "block text-xs font-semibold text-gray-700 mb-1";
@@ -1302,13 +1302,13 @@ export default function RecruiterPostJobInternDetails() {
           </div>
 
           {/* Only this city checkbox */}
-          <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg">
+          <div className="flex items-center gap-3 p-2 mt-[10px] rounded-lg">
             <input
               type="checkbox"
               className={checkboxStyles}
               {...methods.register("onlyThisCity")}
             />
-            <span className="text-base text-gray-700">
+            <span className="text-sm text-gray-700">
               Candidates from ONLY the above city should be allowed to apply.
             </span>
           </div>
@@ -1326,7 +1326,7 @@ export default function RecruiterPostJobInternDetails() {
                   className={radioStyles}
                   {...methods.register("partFullTime")}
                 />
-                <span className="text-base text-gray-700">Part-time</span>
+                <span className="text-sm text-gray-700">Part-time</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
@@ -1335,7 +1335,7 @@ export default function RecruiterPostJobInternDetails() {
                   className={radioStyles}
                   {...methods.register("partFullTime")}
                 />
-                <span className="text-base text-gray-700">Full-time</span>
+                <span className="text-sm text-gray-700">Full-time</span>
               </label>
             </div>
             <p className={errorStyles}>
@@ -1374,7 +1374,7 @@ export default function RecruiterPostJobInternDetails() {
                     className={radioStyles}
                     {...methods.register("stipendType")}
                   />
-                  <span className="text-base text-gray-700">Paid</span>
+                  <span className="text-sm text-gray-700">Paid</span>
                 </label>
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
@@ -1383,7 +1383,7 @@ export default function RecruiterPostJobInternDetails() {
                     className={radioStyles}
                     {...methods.register("stipendType")}
                   />
-                  <span className="text-base text-gray-700">Unpaid</span>
+                  <span className="text-sm text-gray-700">Unpaid</span>
                 </label>
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
@@ -1392,31 +1392,31 @@ export default function RecruiterPostJobInternDetails() {
                     className={radioStyles}
                     {...methods.register("stipendType")}
                   />
-                  <span className="text-base text-gray-700">Fixed</span>
+                  <span className="text-sm text-gray-700">Fixed</span>
                 </label>
               </div>
               {stipendType === "Paid" && (
                 <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
                   <input
                     type="number"
-                    className="w-full sm:w-32 px-4 py-3 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                    className="w-full sm:w-32 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                     placeholder="₹ Min"
                     min="0"
                     {...methods.register("stipendMin")}
                   />
                   <input
                     type="number"
-                    className="w-full sm:w-32 px-4 py-3 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                    className="w-full sm:w-32 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                     placeholder="₹ Max"
                     min="0"
                     {...methods.register("stipendMax")}
                   />
                   <select
-                    className="w-full sm:w-32 px-4 py-3 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white"
+                    className="w-full sm:w-32 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white"
                     {...methods.register("stipendMode")}
                   >
-                    <option value="Month">Month</option>
-                    <option value="Lump sum">Lump sum</option>
+                    <option value="Month" className="text-sm">Month</option>
+                    <option value="Lump sum" className="text-sm">Lump sum</option>
                   </select>
                 </div>
               )}
@@ -1494,24 +1494,24 @@ export default function RecruiterPostJobInternDetails() {
               <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
                 <input
                   type="number"
-                  className="w-full sm:w-32 px-4 py-3 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  className="w-full sm:w-32 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                   placeholder="₹ Min"
                   min="0"
                   {...methods.register("incentivesMin")}
                 />
                 <input
                   type="number"
-                  className="w-full sm:w-32 px-4 py-3 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  className="w-full sm:w-32 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                   placeholder="₹ Max"
                   min="0"
                   {...methods.register("incentivesMax")}
                 />
                 <select
-                  className="w-full sm:w-32 px-4 py-3 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white"
+                  className="w-full sm:w-32 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white"
                   {...methods.register("incentivesMode")}
                 >
-                  <option value="Month">Month</option>
-                  <option value="Lump sum">Lump sum</option>
+                  <option value="Month" className="text-sm">Month</option>
+                  <option value="Lump sum" className="text-sm">Lump sum</option>
                 </select>
               </div>
             </div>
@@ -1523,7 +1523,7 @@ export default function RecruiterPostJobInternDetails() {
               <label className={labelStyles}>
                 Perks (Select all that apply)
               </label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 p-4 bg-gray-50 rounded-lg">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 p-3 bg-gray-50 rounded-lg">
                 {[
                   "Certificate of completion",
                   "Letter of recommendation",
@@ -1540,7 +1540,7 @@ export default function RecruiterPostJobInternDetails() {
                       className={checkboxStyles}
                       {...methods.register("perks")}
                     />
-                    <span className="text-base text-gray-700">{perk}</span>
+                    <span className="text-sm text-gray-700">{perk}</span>
                   </label>
                 ))}
               </div>
@@ -1549,24 +1549,24 @@ export default function RecruiterPostJobInternDetails() {
 
           {/* PPO Question */}
           {opportunityType === "Internship" && (
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 p-4 bg-gray-50 rounded-lg">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 p-3 bg-gray-50 rounded-lg">
               <input
                 type="radio"
                 value="Yes"
                 className={radioStyles}
                 {...methods.register("ppo")}
               />
-              <span className="text-base font-semibold text-blue-700">
+              <span className="text-sm font-semibold text-blue-700">
                 Does this internship come with a pre-placement offer (PPO)?
               </span>
             </div>
           )}
 
           {/* Submit Buttons */}
-          <div className="flex flex-col sm:flex-row justify-between gap-2 sm:gap-4 mt-8 pt-6 border-t border-gray-200">
+          <div className="flex flex-col sm:flex-row justify-between gap-2 sm:gap-4 mt-6 pt-4 border-t border-gray-200">
             <button
               type="button"
-              className="w-full sm:w-auto px-8 py-3 text-base font-semibold text-gray-700 bg-gray-100 border border-gray-300 rounded-lg hover:bg-gray-200 transition-all duration-200"
+              className="w-full sm:w-auto px-6 py-2 text-sm font-semibold text-gray-700 bg-gray-100 border border-gray-300 rounded-lg hover:bg-gray-200 transition-all duration-200"
               onClick={() => alert("Draft saved (not implemented)")}
             >
               Save Draft
@@ -1574,7 +1574,7 @@ export default function RecruiterPostJobInternDetails() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className={`w-full sm:w-auto px-8 py-3 text-base font-semibold rounded-lg transition-all duration-200 ${isSubmitting
+              className={`w-full sm:w-auto px-6 py-2 text-sm font-semibold rounded-lg transition-all duration-200 ${isSubmitting
                 ? "bg-gray-400 text-gray-200 cursor-not-allowed"
                 : "bg-blue-600 text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 }`}

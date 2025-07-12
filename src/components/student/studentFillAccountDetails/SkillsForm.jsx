@@ -116,10 +116,10 @@ export default function DomainsForm() {
 
       // Upload skills using custom hook
       // TODO: Replace with actual user ID from authentication context
-      const userId = 51; // Get from auth context
+      const userId = localStorage.getItem("userId");
       const response = await uploadSkills(userId, skills, certificateFiles);
 
-      console.log("Skills uploaded successfully:", response);
+      // console.log("Skills uploaded successfully:", response);
       alert("Skills uploaded successfully!");
 
       // Clear form after successful upload
@@ -167,7 +167,7 @@ export default function DomainsForm() {
     >
       <div className="mb-2 sm:mb-3">
         <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">Areas of Interest</label>
-        <div className="flex items-center border rounded-md px-1.5 sm:px-2 py-1.5 sm:py-2 mb-1 sm:mb-2 focus-within:ring-1 focus-within:ring-red-400 focus-within:border-transparent transition-all duration-200 border-gray-300 hover:border-gray-400">
+        <div className="flex items-center border rounded-md px-1.5 sm:px-2 py-1.5 sm:py-2 mb-1 sm:mb-2 focus-within:ring-1 focus-within:ring-blue-400 focus-within:border-transparent transition-all duration-200 border-gray-300 hover:border-gray-400">
           <input
             className="flex-1 outline-none text-xs"
             placeholder="List your skills here"
@@ -305,7 +305,7 @@ export default function DomainsForm() {
                 Where did you learn this skill?
               </label>
               <input
-                className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 border-gray-300 hover:border-gray-400"
+                className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-transparent text-xs transition-all duration-200 border-gray-300 hover:border-gray-400"
                 placeholder="College/ Company name"
                 value={domain.company}
                 onChange={(e) => handleCompanyChange(idx, e.target.value)}
@@ -329,7 +329,7 @@ export default function DomainsForm() {
           disabled={skillUploadLoading}
           className={`w-full py-1.5 sm:py-2 rounded-md font-semibold text-xs transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-md hover:shadow-lg ${skillUploadLoading
             ? "bg-gray-400 text-white cursor-not-allowed"
-            : "bg-[#f44336] text-white hover:bg-[#d32f2f]"
+            : "bg-blue-500 text-white hover:bg-blue-600"
             }`}
         >
           {skillUploadLoading ? "Uploading Skills..." : "Upload Skills"}

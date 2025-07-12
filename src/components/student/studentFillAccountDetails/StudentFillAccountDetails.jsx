@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useNavigate } from "react-router-dom";
 import PersonalInfo from "./PersonalInfo";
 import EducationInfo from "./EducationInfo";
 import ProgressBar from "./ProgressBar";
@@ -55,6 +56,7 @@ export default function StudentFillAccountDetails() {
   });
   const [step, setStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate();
 
   const onNext = async () => {
     console.log("onNext called, current step:", step);
@@ -87,6 +89,14 @@ export default function StudentFillAccountDetails() {
       const formData = methods.getValues();
       console.log("Form data:", formData);
 
+      // Get the current user ID from localStorage
+      const userId = localStorage.getItem('userId');
+      if (!userId) {
+        alert("User not authenticated. Please log in again.");
+        navigate("/login");
+        return;
+      }
+
       // Prepare the data structure for the API based on original backend structure
       const userData = {
         firstName: formData.firstName,
@@ -94,7 +104,7 @@ export default function StudentFillAccountDetails() {
         email: formData.email,
         phone: formData.phone,
         dob: formData.dob,
-        currentLocation: formData.city,
+        city: formData.city,
         gender: formData.gender,
         userType: formData.type || "Working Professional",
         experiences: [],
@@ -115,11 +125,11 @@ export default function StudentFillAccountDetails() {
 
       // Add education fields based on user type
       if (formData.type === "School Student") {
-        userData.Standard = formData.standard;
+        userData.educationStandard = formData.standard;
       } else if (formData.type === "College Student") {
         userData.course = formData.course;
         userData.specialization = formData.specialization;
-        userData.college = formData.college;
+        userData.collegeName = formData.college;
         userData.startYear = formData.startYear;
         userData.endYear = formData.endYear;
       } else if (formData.type === "Working Professional") {
@@ -158,11 +168,25 @@ export default function StudentFillAccountDetails() {
 
       console.log("Sending data to API:", userData);
 
-      const response = await userDetailsApi.createUserDetails(userData);
-      console.log("API response:", response);
+      // Check if user details already exist
+      const { exists } = await userDetailsApi.checkUserDetailsExist(userId);
+
+      let response;
+      if (exists) {
+        // Update existing user details
+        console.log("User details exist, updating...");
+        response = await userDetailsApi.updateUserDetails(userId, userData);
+        console.log("Update response:", response);
+      } else {
+        // Create new user details
+        console.log("User details don't exist, creating...");
+        response = await userDetailsApi.createUserDetails(userData);
+        console.log("Create response:", response);
+      }
 
       alert("Form submitted successfully!");
-      // You can redirect to another page or show success message
+      // Redirect to all-jobs page after successful submission
+      navigate("/all-jobs");
     } catch (error) {
       console.error("Error submitting form:", error);
 
@@ -193,6 +217,7 @@ export default function StudentFillAccountDetails() {
     <StudentSignUpLayout
       heading="Create a New Account"
       subheading="Join us and find your dream job or recruit talented candidates."
+      hideMobileIllustration={true}
     >
       {/* Right Section */}
       <div className="flex-1 w-full flex justify-center">
@@ -246,8 +271,8 @@ export default function StudentFillAccountDetails() {
                     onClick={handleSubmitClick}
                     disabled={isSubmitting}
                     className={`px-6 py-2 rounded font-semibold ${isSubmitting
-                        ? "bg-gray-400 text-gray-200 cursor-not-allowed"
-                        : "bg-green-500 text-white hover:bg-green-600"
+                      ? "bg-gray-400 text-gray-200 cursor-not-allowed"
+                      : "bg-green-500 text-white hover:bg-green-600"
                       }`}
                   >
                     {isSubmitting ? "Submitting..." : "Submit"}

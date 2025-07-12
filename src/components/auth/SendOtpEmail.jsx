@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -17,6 +17,7 @@ export default function SendOtpEmail() {
     register,
     handleSubmit,
     formState: { errors },
+    setValue,
   } = useForm({
     resolver: zodResolver(schema),
     defaultValues: { email: "" },
@@ -25,6 +26,14 @@ export default function SendOtpEmail() {
   const [loading, setLoading] = useState(false);
   const [otpError, setOtpError] = useState("");
   const navigate = useNavigate();
+
+  // Get logged-in user's email from localStorage
+  useEffect(() => {
+    const userEmail = localStorage.getItem("userEmail");
+    if (userEmail) {
+      setValue("email", userEmail);
+    }
+  }, [setValue]);
 
   const onSubmit = async (data) => {
     setLoading(true);

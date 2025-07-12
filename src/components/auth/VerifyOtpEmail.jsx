@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -33,6 +33,14 @@ export default function VerifyOtpEmail() {
   const otpRefs = [useRef(), useRef(), useRef(), useRef()];
   const otpValue = watch("otp") || "";
   const navigate = useNavigate();
+
+  // Get logged-in user's email from localStorage
+  useEffect(() => {
+    const userEmail = localStorage.getItem("userEmail");
+    if (userEmail) {
+      setValue("email", userEmail);
+    }
+  }, [setValue]);
 
   const handleOtpChange = (index, value) => {
     if (value.length > 1) {
@@ -129,7 +137,6 @@ export default function VerifyOtpEmail() {
               className={`w-full px-1.5 sm:px-2 py-1 sm:py-1.5 border rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 ${errors.email ? "border-red-500 bg-red-50" : "border-gray-300 hover:border-gray-400"
                 }`}
               placeholder="Enter your email"
-              defaultValue="Loisbecket@gmail.com"
             />
             {errors.email && (
               <span className="text-xs text-red-500 mt-0.5 block">

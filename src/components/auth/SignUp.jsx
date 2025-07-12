@@ -10,6 +10,8 @@ import StudentSignUpLayout from "../student/studentFillAccountDetails/StudentSig
 import { FcGoogle } from "react-icons/fc";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
+console.log("BASE_URL:", BASE_URL); // should print: http://localhost:5000
+
 
 const companyDomains = [".com", ".org", ".net", ".co", ".io", ".tech", ".in"];
 
