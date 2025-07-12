@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { FaCheckCircle, FaEnvelope, FaSpinner } from "react-icons/fa";
-import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import SignUpIllustration from "../../assets/SignUp_Illustration.png";
 import AuthLayout from "./authLayout";
+import { Input, Button, Link } from "../ui";
 
 // Zod schema for OTP validation
 const otpSchema = z.object({
@@ -78,24 +78,20 @@ export default function SignUpSendOtpEmail() {
               amangupta@gmail.com
             </p>
 
-            <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">
-              Enter OTP to verify your email
-            </label>
-            <input
+            {/* OTP Input - Using new UI component */}
+            <Input
+              label="Enter OTP to verify your email"
               type="text"
-              {...register("otp")}
-              onChange={handleOtpChange}
-              className={`w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 text-center font-semibold tracking-widest ${errors.otp ? "border-red-500 bg-red-50" : "border-gray-300 hover:border-gray-400"
-                }`}
               placeholder="0000"
               maxLength={4}
               disabled={loading}
+              error={errors.otp?.message}
+              variant={errors.otp ? "error" : "default"}
+              className="text-center font-semibold tracking-widest"
+              {...register("otp")}
+              onChange={handleOtpChange}
             />
-            {errors.otp && (
-              <span className="text-xs text-red-500 mt-0.5 block">
-                {errors.otp.message}
-              </span>
-            )}
+
             {!errors.otp && (
               <span className="text-xs text-gray-500 mt-0.5 block">
                 Enter the 4-digit verification code
@@ -103,26 +99,15 @@ export default function SignUpSendOtpEmail() {
             )}
           </div>
 
-          {/* Submit Button */}
-          <button
+          {/* Submit Button - Using new UI component */}
+          <Button
             type="submit"
+            loading={loading}
             disabled={loading || watchedOtp.length !== 4}
-            className={`w-full py-1.5 sm:py-2 rounded-md font-semibold text-xs mb-2 sm:mb-3 transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-md hover:shadow-lg ${loading
-              ? "bg-gray-400 text-white cursor-not-allowed"
-              : watchedOtp.length === 4
-                ? "bg-[#f44336] text-white hover:bg-[#d32f2f]"
-                : "bg-gray-400 text-white cursor-not-allowed"
-              }`}
+            className="w-full mb-2 sm:mb-3"
           >
-            {loading ? (
-              <div className="flex items-center justify-center space-x-1">
-                <FaSpinner className="animate-spin h-3 w-3" />
-                <span>Verifying...</span>
-              </div>
-            ) : (
-              "Verify Email"
-            )}
-          </button>
+            {loading ? "Verifying..." : "Verify Email"}
+          </Button>
 
           {/* Help Text */}
           <div className="mt-2 p-2 bg-gray-50 rounded-md">
@@ -132,13 +117,13 @@ export default function SignUpSendOtpEmail() {
             </p>
           </div>
 
-          {/* Login Link */}
+          {/* Login Link - Using new UI component */}
           <div className="text-center mt-2 pt-2 border-t border-gray-200">
             <p className="text-gray-500 text-xs">
               Already have an account?{" "}
               <Link
                 to="/login"
-                className="text-red-500 font-semibold hover:text-red-600 transition-colors duration-200"
+                variant="primary"
               >
                 Login
               </Link>

@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Button, Link } from "./ui";
 
 export default function Home() {
   return (
@@ -13,18 +13,24 @@ export default function Home() {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
-          <Link
+          <Button
+            variant="primary"
+            size="large"
+            className="px-8 py-3 text-lg"
+            as={Link}
             to="/signup-choose-role"
-            className="bg-[#f44336] text-white px-8 py-3 rounded-lg font-semibold text-lg hover:bg-[#d32f2f] transition"
           >
             Get Started
-          </Link>
-          <Link
+          </Button>
+          <Button
+            variant="outline"
+            size="large"
+            className="px-8 py-3 text-lg border-[#f44336] text-[#f44336] hover:bg-[#f44336] hover:text-white"
+            as={Link}
             to="/login"
-            className="bg-white text-[#f44336] border-2 border-[#f44336] px-8 py-3 rounded-lg font-semibold text-lg hover:bg-[#f44336] hover:text-white transition"
           >
             Login
-          </Link>
+          </Button>
         </div>
       </div>
     </div>

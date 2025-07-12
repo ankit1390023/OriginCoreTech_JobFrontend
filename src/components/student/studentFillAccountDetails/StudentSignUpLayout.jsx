@@ -1,14 +1,16 @@
 import React from "react";
 import SignUpIllustration from "../../../assets/SignUp_Illustration.png";
 import websiteLogo from "../../../assets/websiteLogo.svg";
+import { Link } from "../../ui";
+
 export default function StudentSignUpLayout({ children, heading, subheading, hideMobileIllustration = false, centerMobileContent = false }) {
   return (
     <div className="w-full min-h-screen bg-white overflow-hidden relative">
       {/* Logo */}
       <div className="absolute top-4 left-4 sm:top-6 sm:left-6 md:top-8 md:left-8 z-30">
-        <span className="text-xl sm:text-2xl font-bold text-white tracking-wide">
+        <Link to="/" className="text-xl sm:text-2xl font-bold text-white tracking-wide hover:opacity-80 transition-opacity">
           <img src={websiteLogo} alt="Logo" className="w-10 h-10" />
-        </span>
+        </Link>
       </div>
 
       {/* Fixed Top Decorative Section */}

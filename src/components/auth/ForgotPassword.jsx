@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import AuthLayout from "./authLayout";
+import { Input, Button, Link, SuccessMessage, ErrorMessage } from "../ui";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
@@ -147,9 +148,9 @@ export default function ForgotPassword() {
       subtitle={
         <>
           Don&apos;t have an account?{" "}
-          <a href="/login" className="text-red-400 hover:underline font-medium">
+          <Link to="/login" variant="primary">
             Sign In
-          </a>
+          </Link>
         </>
       }
     >
@@ -157,159 +158,87 @@ export default function ForgotPassword() {
         onSubmit={handleSubmit(onSubmit)}
         className="bg-white rounded-lg shadow-md p-4 sm:p-6 w-full max-w-xs sm:max-w-sm md:max-w-md"
       >
-        {/* Email */}
-        <div className="mb-2 sm:mb-3">
-          <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">
-            Email Address
-          </label>
-          <input
-            type="email"
-            {...register("email")}
-            className={`w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 ${errors.email ? "border-red-500 bg-red-50" : "border-gray-300 hover:border-gray-400"
-              }`}
-            placeholder="example@gmail.com"
-          />
-          {errors.email && (
-            <span className="text-xs text-red-500 mt-0.5 block">
-              {errors.email.message}
-            </span>
-          )}
-        </div>
+        {/* Email Input - Using new UI component */}
+        <Input
+          label="Email Address"
+          type="email"
+          placeholder="example@gmail.com"
+          error={errors.email?.message}
+          variant={errors.email ? "error" : "default"}
+          {...register("email")}
+        />
 
-        {/* Get OTP Button */}
-        <button
+        {/* Get OTP Button - Using new UI component */}
+        <Button
           type="button"
           onClick={handleGetOtp}
-          className={`w-full py-1.5 sm:py-2 mb-2 sm:mb-3 rounded-md text-white font-semibold text-xs transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-md hover:shadow-lg ${otpLoading
-            ? "bg-gray-400 text-gray-600 cursor-not-allowed"
-            : "bg-[#f44336] hover:bg-[#d32f2f]"
-            }`}
+          loading={otpLoading}
           disabled={otpLoading}
+          className="w-full mb-2 sm:mb-3"
         >
-          {otpLoading ? (
-            <span className="flex items-center justify-center">
-              <svg className="animate-spin -ml-1 mr-1.5 h-3 w-3 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              Sending OTP...
-            </span>
-          ) : (
-            "Get OTP"
-          )}
-        </button>
+          {otpLoading ? "Sending OTP..." : "Get OTP"}
+        </Button>
 
-        {/* OTP Input */}
-        <div className="mb-2 sm:mb-3">
-          <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">
-            Enter OTP to verify your Email
-          </label>
-          <input
-            type="text"
-            {...register("otp")}
-            className={`w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 ${errors.otp ? "border-red-500 bg-red-50" : "border-gray-300 hover:border-gray-400"
-              }`}
-            placeholder="Enter 4-digit OTP"
-            maxLength={4}
-          />
-          {errors.otp && (
-            <span className="text-xs text-red-500 mt-0.5 block">
-              {errors.otp.message}
-            </span>
-          )}
-          {otpError && (
-            <span className="text-xs text-red-500 mt-0.5 block">
-              {otpError}
-            </span>
-          )}
-          {otpSent && (
-            <span className="text-xs text-green-600 mt-0.5 block flex items-center">
-              <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-              </svg>
-              OTP sent successfully! Check your email.
-            </span>
-          )}
-        </div>
+        {/* OTP Input - Using new UI component */}
+        <Input
+          label="Enter OTP to verify your Email"
+          type="text"
+          placeholder="Enter 4-digit OTP"
+          maxLength={4}
+          error={errors.otp?.message || otpError}
+          variant={errors.otp || otpError ? "error" : "default"}
+          {...register("otp")}
+        />
 
-        {/* New Password */}
-        <div className="mb-2 sm:mb-3">
-          <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">
-            New Password
-          </label>
-          <div className="relative">
-            <input
-              type="password"
-              {...register("newPassword")}
-              className={`w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 ${errors.newPassword ? "border-red-500 bg-red-50" : "border-gray-300 hover:border-gray-400"
-                }`}
-              placeholder="Enter new password"
-            />
-          </div>
-          {errors.newPassword && (
-            <span className="text-xs text-red-500 mt-0.5 block">
-              {errors.newPassword.message}
-            </span>
-          )}
-        </div>
+        {/* Success message for OTP - Using new UI component */}
+        {otpSent && (
+          <SuccessMessage className="mt-0.5 mb-2 sm:mb-3">
+            OTP sent successfully! Check your email.
+          </SuccessMessage>
+        )}
 
-        {/* Retype Password */}
-        <div className="mb-2 sm:mb-3">
-          <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">
-            Retype Password
-          </label>
-          <div className="relative">
-            <input
-              type="password"
-              {...register("retypePassword")}
-              className={`w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 ${errors.retypePassword ? "border-red-500 bg-red-50" : "border-gray-300 hover:border-gray-400"
-                }`}
-              placeholder="Confirm new password"
-            />
-          </div>
-          {errors.retypePassword && (
-            <span className="text-xs text-red-500 mt-0.5 block">
-              {errors.retypePassword.message}
-            </span>
-          )}
-        </div>
+        {/* New Password Input - Using new UI component */}
+        <Input
+          label="New Password"
+          type="password"
+          placeholder="Enter new password"
+          error={errors.newPassword?.message}
+          variant={errors.newPassword ? "error" : "default"}
+          {...register("newPassword")}
+        />
 
-        {/* Save Changes Button */}
+        {/* Retype Password Input - Using new UI component */}
+        <Input
+          label="Retype Password"
+          type="password"
+          placeholder="Confirm new password"
+          error={errors.retypePassword?.message}
+          variant={errors.retypePassword ? "error" : "default"}
+          {...register("retypePassword")}
+        />
+
+        {/* Save Changes Button - Using new UI component */}
         <div className="flex justify-center">
-          <button
+          <Button
             type="submit"
-            className={`w-full py-1.5 sm:py-2 rounded-md text-white font-semibold text-xs transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-md hover:shadow-lg ${saveLoading
-              ? "bg-gray-400 text-gray-600 cursor-not-allowed"
-              : "bg-[#f44336] hover:bg-[#d32f2f]"
-              }`}
+            loading={saveLoading}
             disabled={saveLoading}
+            className="w-full"
           >
-            {saveLoading ? (
-              <span className="flex items-center justify-center">
-                <svg className="animate-spin -ml-1 mr-1.5 h-3 w-3 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Saving...
-              </span>
-            ) : (
-              "Save Changes"
-            )}
-          </button>
+            {saveLoading ? "Saving..." : "Save Changes"}
+          </Button>
         </div>
 
+        {/* Error and Success Messages - Using new UI components */}
         {saveError && (
-          <div className="text-xs text-red-500 mt-2 sm:mt-3 text-center bg-red-50 p-2 sm:p-3 rounded-md">
+          <ErrorMessage className="mt-2 sm:mt-3">
             {saveError}
-          </div>
+          </ErrorMessage>
         )}
         {saveSuccess && (
-          <div className="text-xs text-green-600 mt-2 sm:mt-3 text-center bg-green-50 p-2 sm:p-3 rounded-md flex items-center justify-center">
-            <svg className="w-3 h-3 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-            </svg>
+          <SuccessMessage className="mt-2 sm:mt-3">
             {saveSuccess}
-          </div>
+          </SuccessMessage>
         )}
       </form>
     </AuthLayout>

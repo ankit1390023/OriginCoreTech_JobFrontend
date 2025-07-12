@@ -4,9 +4,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { FcGoogle } from "react-icons/fc";
 import axios from "axios";
-import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import AuthLayout from "./authLayout";
+import { Input, Button, Link } from "../ui";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 const schema = z.object({
@@ -71,7 +71,7 @@ export default function Login() {
       subtitle={
         <>
           Don&apos;t have an account?{" "}
-          <Link to="/signup-choose-role" className="text-red-400 hover:underline font-medium">
+          <Link to="/signup-choose-role" variant="primary">
             Sign Up
           </Link>
         </>
@@ -81,41 +81,25 @@ export default function Login() {
         onSubmit={handleSubmit(onSubmit)}
         className="w-full bg-white p-0 rounded-none shadow-none max-w-full md:p-4 md:rounded-lg md:shadow-md md:max-w-md md:mx-auto"
       >
-        <div className="mb-2 sm:mb-3">
-          <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">
-            Email
-          </label>
-          <input
-            type="email"
-            {...register("email")}
-            className={`w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 ${errors.email ? "border-red-500 bg-red-50" : "border-gray-300 hover:border-gray-400"
-              }`}
-            placeholder="Enter your email"
-          />
-          {errors.email && (
-            <span className="text-xs text-red-500 mt-0.5 block">
-              {errors.email.message}
-            </span>
-          )}
-        </div>
+        {/* Email Input - Using new UI component */}
+        <Input
+          label="Email"
+          type="email"
+          placeholder="Enter your email"
+          error={errors.email?.message}
+          variant={errors.email ? "error" : "default"}
+          {...register("email")}
+        />
 
-        <div className="mb-2 sm:mb-3">
-          <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">
-            Password
-          </label>
-          <input
-            type="password"
-            {...register("password")}
-            className={`w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-red-400 focus:border-transparent text-xs transition-all duration-200 ${errors.password ? "border-red-500 bg-red-50" : "border-gray-300 hover:border-gray-400"
-              }`}
-            placeholder="Enter your password"
-          />
-          {errors.password && (
-            <span className="text-xs text-red-500 mt-0.5 block">
-              {errors.password.message}
-            </span>
-          )}
-        </div>
+        {/* Password Input - Using new UI component */}
+        <Input
+          label="Password"
+          type="password"
+          placeholder="Enter your password"
+          error={errors.password?.message}
+          variant={errors.password ? "error" : "default"}
+          {...register("password")}
+        />
 
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2 sm:mb-3 gap-1 sm:gap-0">
           <label className="flex items-center text-[10px] cursor-pointer space-x-1">
@@ -129,32 +113,22 @@ export default function Login() {
 
           <Link
             to="/forgot-password"
-            className="text-red-500 text-xs hover:text-red-600 hover:underline transition-colors duration-200"
+            variant="primary"
+            className="text-xs"
           >
             Forgot Password?
           </Link>
         </div>
 
-        <button
+        {/* Submit Button - Using new UI component */}
+        <Button
           type="submit"
+          loading={loading}
           disabled={loading}
-          className={`w-full py-1.5 sm:py-2 rounded-md font-semibold text-xs mb-2 sm:mb-3 transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-md hover:shadow-lg ${loading
-            ? "bg-gray-400 text-white cursor-not-allowed"
-            : "bg-[#f44336] text-white hover:bg-[#d32f2f]"
-            }`}
+          className="w-full mb-2 sm:mb-3"
         >
-          {loading ? (
-            <span className="flex items-center justify-center">
-              <svg className="animate-spin -ml-1 mr-1.5 h-3 w-3 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              Logging in...
-            </span>
-          ) : (
-            "Log In"
-          )}
-        </button>
+          {loading ? "Logging in..." : "Log In"}
+        </Button>
 
         {loginError && (
           <div className="text-xs text-red-500 mb-2 sm:mb-3 text-center bg-red-50 p-2 sm:p-3 rounded-md">
@@ -168,26 +142,26 @@ export default function Login() {
           <div className="flex-grow h-px bg-gray-300"></div>
         </div>
 
-        <button
+        {/* Google Button - Using new UI component */}
+        <Button
           type="button"
+          variant="outline"
           disabled={loading}
-          className={`w-full flex items-center justify-center border border-gray-300 py-1.5 sm:py-2 rounded-md font-semibold text-gray-700 bg-white transition-all duration-200 transform hover:scale-[1.01] active:scale-[0.99] ${loading ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-50"
-            }`}
+          className="w-full flex items-center justify-center shadow-none hover:shadow-none"
         >
           <FcGoogle size={14} className="mr-1.5" />
           <span className="text-xs">Continue with Google</span>
-        </button>
+        </Button>
 
-
-
-        <button
+        {/* OTP Button - Using new UI component */}
+        <Button
           type="button"
+          variant="outline"
           disabled={loading}
-          className={`w-full border mt-2 border-gray-300 py-1 sm:py-2 rounded-md font-semibold text-gray-700 bg-white transition-all duration-200 transform hover:scale-[1.01] active:scale-[0.99] ${loading ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-50"
-            }`}
+          className="w-full mt-2 shadow-none hover:shadow-none"
         >
           <span className="text-xs">Login with OTP</span>
-        </button>
+        </Button>
       </form>
     </AuthLayout>
   );

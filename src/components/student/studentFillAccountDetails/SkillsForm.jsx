@@ -3,6 +3,7 @@ import { FaTimes, FaInfoCircle } from "react-icons/fa";
 import { useDomainsApi } from "../../../hooks/useDomainsApi";
 import { useSkillApi } from "../../../hooks/useSkillApi";
 import { domainApi } from "../../../api/domainApi";
+import { Input, Label, Button, ErrorMessage, Loader } from "../../ui";
 
 const initialDomains = [];
 
@@ -134,22 +135,17 @@ export default function DomainsForm() {
   };
 
   if (domainsLoading && domains.length === 0) {
-    return (
-      <div className="flex justify-center items-center py-2 sm:py-3">
-        <div className="animate-spin rounded-full h-6 w-6 sm:h-8 sm:w-8 border-b-2 border-blue-600"></div>
-        <span className="ml-2 text-gray-600 text-xs">Loading domains...</span>
-      </div>
-    );
+    return <Loader message="Loading domains..." />;
   }
 
   if (domainsError && domains.length === 0) {
     return (
-      <div className="text-red-500 text-center py-2 sm:py-3 text-xs">
+      <ErrorMessage>
         {domainsError}
         <button onClick={handleRetry} className="ml-2 text-blue-500 underline">
           Retry
         </button>
-      </div>
+      </ErrorMessage>
     );
   }
 
@@ -166,7 +162,7 @@ export default function DomainsForm() {
       }}
     >
       <div className="mb-2 sm:mb-3">
-        <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">Areas of Interest</label>
+        <Label>Areas of Interest</Label>
         <div className="flex items-center border rounded-md px-1.5 sm:px-2 py-1.5 sm:py-2 mb-1 sm:mb-2 focus-within:ring-1 focus-within:ring-blue-400 focus-within:border-transparent transition-all duration-200 border-gray-300 hover:border-gray-400">
           <input
             className="flex-1 outline-none text-xs"
@@ -300,10 +296,8 @@ export default function DomainsForm() {
                 </div>
               )}
 
-            <div>
-              <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">
-                Where did you learn this skill?
-              </label>
+            <div className="mb-2 sm:mb-3">
+              <Label>Where did you learn this skill?</Label>
               <input
                 className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-transparent text-xs transition-all duration-200 border-gray-300 hover:border-gray-400"
                 placeholder="College/ Company name"
@@ -323,22 +317,22 @@ export default function DomainsForm() {
 
       {/* Submit button for skills */}
       <div className="mt-2 sm:mt-3">
-        <button
-          type="button"
-          onClick={handleSubmitSkills}
+        <Button
+          variant="secondary"
+          loading={skillUploadLoading}
           disabled={skillUploadLoading}
-          className={`w-full py-1.5 sm:py-2 rounded-md font-semibold text-xs transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-md hover:shadow-lg ${skillUploadLoading
-            ? "bg-gray-400 text-white cursor-not-allowed"
-            : "bg-blue-500 text-white hover:bg-blue-600"
-            }`}
+          className="w-full"
+          onClick={handleSubmitSkills}
         >
           {skillUploadLoading ? "Uploading Skills..." : "Upload Skills"}
-        </button>
+        </Button>
       </div>
 
       {/* Show skill upload error if any */}
       {skillUploadError && (
-        <div className="mt-2 sm:mt-3 text-red-500 text-center text-xs">{skillUploadError}</div>
+        <ErrorMessage className="mt-2 sm:mt-3 text-center">
+          {skillUploadError}
+        </ErrorMessage>
       )}
     </div>
   );

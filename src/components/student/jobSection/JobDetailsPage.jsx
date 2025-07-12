@@ -4,6 +4,7 @@ import { FaMapMarkerAlt, FaUserTie, FaMoneyBillWave, FaBuilding, FaCalendarAlt, 
 import Header from "../../shared/Header";
 import { useGetJobApi } from "../../../hooks/useGetJobApi";
 import { useGetJobById } from "../../../hooks/useGetJobApi";
+import { Button, Loader, Badge } from '../../ui';
 
 export default function JobDetailsPage() {
     const { jobId } = useParams();
@@ -33,11 +34,7 @@ export default function JobDetailsPage() {
                 <Header />
                 <div className="max-w-8xl mx-auto pt-10 sm:pt-12 md:pt-14 pb-8 sm:pb-10 px-2 sm:px-4 md:px-6 lg:px-8">
                     <div className="bg-white rounded-2xl shadow border border-gray-100 p-6 sm:p-8">
-                        <div className="animate-pulse">
-                            <div className="h-8 bg-gray-200 rounded w-1/3 mb-4"></div>
-                            <div className="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
-                            <div className="h-4 bg-gray-200 rounded w-1/4"></div>
-                        </div>
+                        <Loader message="Loading jobs..." />
                     </div>
                 </div>
             </div>
@@ -54,6 +51,14 @@ export default function JobDetailsPage() {
                         <div className="text-center text-red-600">
                             <p className="text-lg font-semibold">Error loading jobs</p>
                             <p className="text-sm mt-2">{allJobsError}</p>
+                            <Button
+                                onClick={refetch}
+                                variant="secondary"
+                                size="small"
+                                className="mt-3"
+                            >
+                                Try Again
+                            </Button>
                         </div>
                     </div>
                 </div>
@@ -67,8 +72,10 @@ export default function JobDetailsPage() {
 
             {/* Mobile Job List Toggle */}
             <div className="lg:hidden px-2 sm:px-4 pt-2 sm:pt-4">
-                <button
+                <Button
                     onClick={toggleJobList}
+                    variant="outline"
+                    size="default"
                     className="flex items-center gap-2 bg-white rounded-xl px-3 sm:px-4 py-2.5 sm:py-3 shadow border border-gray-200 w-full justify-center"
                 >
                     {isJobListOpen ? (
@@ -82,7 +89,7 @@ export default function JobDetailsPage() {
                             <span className="font-medium">Show Job List ({allJobs?.length || 0} jobs)</span>
                         </>
                     )}
-                </button>
+                </Button>
             </div>
 
             <div className="max-w-8xl mx-auto pt-1 sm:pt-2 md:pt-4 lg:pt-8 pb-4 sm:pb-6 px-2 sm:px-3 md:px-4 lg:px-6">
@@ -112,29 +119,39 @@ export default function JobDetailsPage() {
                                             <div className="font-semibold text-xs sm:text-sm truncate mb-0.5">{job.jobProfile}</div>
                                             <div className="text-gray-500 text-xs truncate mb-1.5">{job.companyName}</div>
                                             <div className="flex flex-wrap items-center gap-1">
-                                                <span className="bg-gray-100 rounded-full px-1.5 sm:px-2 py-0.5 text-xs text-gray-700 border border-gray-200 flex items-center gap-1">
+                                                <Badge
+                                                    color="bg-gray-100 text-gray-700 hover:bg-gray-200"
+                                                >
                                                     <span className="truncate">{job.location}</span>
-                                                </span>
+                                                </Badge>
                                                 {job.salary && (
-                                                    <span className="bg-emerald-100 text-emerald-600 text-xs rounded-full px-1.5 sm:px-2 py-0.5 border border-emerald-200">
+                                                    <Badge
+                                                        color="bg-emerald-100 text-emerald-600 hover:bg-emerald-200"
+                                                    >
                                                         <span className="truncate">₹{job.salary}</span>
-                                                    </span>
+                                                    </Badge>
                                                 )}
                                             </div>
                                         </div>
                                         <div className="flex flex-col items-end gap-1 min-w-[70px] sm:min-w-[80px] md:min-w-[90px]">
-                                            <span className={`text-white text-xs font-semibold rounded-full px-1.5 sm:px-2 py-0.5 shadow ${job.hiringStatus === 'Actively Hiring' ? 'bg-red-400' : 'bg-green-400'}`}>
-                                                {job.hiringStatus}
-                                            </span>
-                                            <span className={`text-xs rounded-full px-1.5 sm:px-2 py-0.5 border font-semibold ${job.matchPercentage > 0 ? 'bg-green-100 text-green-700 border-green-200' : 'bg-gray-100 text-gray-500 border-gray-200'}`}>
-                                                {job.matchPercentage || 0}% match
-                                            </span>
-                                            <span className="bg-gray-100 rounded-full px-1.5 sm:px-2 py-0.5 text-xs text-gray-700 border border-gray-200 flex items-center gap-1">
+                                            <Badge
+                                                color={job.hiringStatus === 'Actively Hiring' ? 'bg-red-400 text-white hover:bg-red-500' : 'bg-green-400 text-white hover:bg-green-500'}
+                                                text={job.hiringStatus}
+                                                className="text-xs font-semibold shadow"
+                                            />
+                                            <Badge
+                                                color={job.matchPercentage > 0 ? 'bg-green-100 text-green-700 hover:bg-green-200' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}
+                                                text={`${job.matchPercentage || 0}% match`}
+                                                className="text-xs border font-semibold"
+                                            />
+                                            <Badge
+                                                color="bg-gray-100 text-gray-700 hover:bg-gray-200"
+                                            >
                                                 <span className="hidden sm:inline">Posted: </span>
                                                 {job.postedDaysAgo === 'Today' || job.postedDaysAgo === 0
                                                     ? 'Today'
                                                     : `${job.postedDaysAgo} days ago`}
-                                            </span>
+                                            </Badge>
                                         </div>
                                     </button>
                                 ))}
@@ -145,11 +162,7 @@ export default function JobDetailsPage() {
                     {/* Right: Job Details */}
                     <main className={`bg-white rounded-xl shadow border border-gray-100 p-2 sm:p-3 md:p-4 lg:p-6 flex flex-col relative ${showFullDetails ? 'min-h-auto' : 'min-h-[120vh] max-h-[100vh] overflow-hidden'}`}>
                         {jobDetailsLoading ? (
-                            <div className="animate-pulse">
-                                <div className="h-6 bg-gray-200 rounded w-1/3 mb-3"></div>
-                                <div className="h-3 bg-gray-200 rounded w-1/2 mb-1.5"></div>
-                                <div className="h-3 bg-gray-200 rounded w-1/4"></div>
-                            </div>
+                            <Loader message="Loading job details..." />
                         ) : jobDetailsError ? (
                             <div className="text-center text-red-600">
                                 <p className="text-base font-semibold">Error loading job details</p>
@@ -180,41 +193,85 @@ export default function JobDetailsPage() {
 
                                         {/* Job Tags */}
                                         <div className="flex flex-wrap gap-1.5 mb-3">
-                                            <span className="bg-purple-100 rounded-full px-1.5 sm:px-2 py-0.5 text-xs text-purple-700 border border-purple-200 flex items-center gap-1">
-                                                <FaMapMarkerAlt className="text-purple-500 text-xs" />
-                                                <span className="truncate">{selectedJobDetails.companyLocation}</span>
-                                            </span>
-                                            <span className="bg-orange-100 rounded-full px-1.5 sm:px-2 py-0.5 text-xs text-orange-700 border border-orange-200 flex items-center gap-1">
-                                                <FaUserTie className="text-orange-500 text-xs" />
-                                                <span className="truncate">{selectedJobDetails.opportunityType}</span>
-                                            </span>
-                                            {selectedJobDetails.salary && (
-                                                <span className="bg-emerald-100 text-emerald-600 text-xs rounded-full px-1.5 sm:px-2 py-0.5 border border-emerald-200">
-                                                    <span className="truncate">₹{selectedJobDetails.salary}</span>
-                                                </span>
-                                            )}
-                                            <span className="bg-blue-100 rounded-full px-1.5 sm:px-2 py-0.5 text-xs text-blue-700 border border-blue-200">
-                                                <FaCalendarAlt className="text-blue-500 text-xs inline mr-1" />
-                                                <span className="truncate">{selectedJobDetails.postedDaysAgo}</span>
-                                            </span>
-                                            <span className="bg-teal-100 rounded-full px-1.5 sm:px-2 py-0.5 text-xs text-teal-700 border border-teal-200">
-                                                <FaUsers className="text-teal-500 text-xs inline mr-1" />
-                                                <span className="truncate">{selectedJobDetails.numberOfApplicants} applicants</span>
-                                            </span>
-                                            <span className="bg-red-100 rounded-full px-1.5 sm:px-2 py-0.5 text-xs text-red-700 border border-red-200">
-                                                <FaClock className="text-red-500 text-xs inline mr-1" />
-                                                <span className="truncate">{selectedJobDetails.jobTime}</span>
-                                            </span>
-                                            <span className="bg-indigo-100 rounded-full px-1.5 sm:px-2 py-0.5 text-xs text-indigo-700 border border-indigo-200">
-                                                <FaLaptop className="text-indigo-500 text-xs inline mr-1" />
-                                                <span className="truncate">{selectedJobDetails.jobType}</span>
-                                            </span>
+                                            {
+                                                selectedJobDetails.companyLocation && (
+                                                    <Badge
+                                                        color="bg-purple-100 text-purple-700 hover:bg-purple-200"
+                                                    >
+                                                        <FaMapMarkerAlt className="text-purple-500 text-xs" />
+                                                        <span className="truncate">{selectedJobDetails.companyLocation}</span>
+                                                    </Badge>
+                                                )
+                                            }
+
+                                            {
+                                                selectedJobDetails.opportunityType && (
+                                                    <Badge
+                                                        color="bg-orange-100 text-orange-700 hover:bg-orange-200"
+                                                    >
+                                                        <FaUserTie className="text-orange-500 text-xs" />
+                                                        <span className="truncate">{selectedJobDetails.opportunityType}</span>
+                                                    </Badge>
+                                                )
+                                            }
+                                            {
+                                                selectedJobDetails.salary && (
+                                                    <Badge
+                                                        color="bg-emerald-100 text-emerald-600 hover:bg-emerald-200"
+                                                    >
+                                                        <span className="truncate">₹{selectedJobDetails.salary}</span>
+                                                    </Badge>)
+                                            }
+                                            {
+                                                selectedJobDetails.postedDaysAgo && (
+                                                    <Badge
+                                                        color="bg-blue-100 text-blue-700 hover:bg-blue-200"
+                                                    >
+                                                        <FaCalendarAlt className="text-blue-500 text-xs inline mr-1" />
+                                                        <span className="truncate">{selectedJobDetails.postedDaysAgo}</span>
+                                                    </Badge>
+                                                )
+                                            }
+                                            {
+                                                selectedJobDetails.numberofApplicants && (
+                                                    <Badge
+                                                        color="bg-teal-100 text-teal-700 hover:bg-teal-200"
+                                                    >
+                                                        <FaUsers className="text-teal-500 text-xs inline mr-1" />
+                                                        <span className="truncate">{selectedJobDetails.numberOfApplicants} applicants</span>
+                                                    </Badge>
+                                                )
+                                            }
+                                            {
+                                                selectedJobDetails.numberOfApplicants && (
+                                                    <Badge
+                                                        color="bg-teal-100 text-teal-700 hover:bg-teal-200"
+                                                    >
+                                                        <FaUsers className="text-teal-500 text-xs inline mr-1" />
+                                                        <span className="truncate">{selectedJobDetails.numberOfApplicants} applicants</span>
+                                                    </Badge>
+
+                                                )
+                                            }
+                                            {
+                                                selectedJobDetails.jobType && (
+                                                    <Badge
+                                                        color="bg-indigo-100 text-indigo-700 hover:bg-indigo-200"
+                                                    >
+                                                        <FaLaptop className="text-indigo-500 text-xs inline mr-1" />
+                                                        <span className="truncate">{selectedJobDetails.jobType}</span>
+                                                    </Badge>
+                                                )
+                                            }
+
                                         </div>
                                     </div>
 
                                     {/* Apply Now Button - Top Right */}
                                     <div className="absolute top-0 right-0">
-                                        <button
+                                        <Button
+                                            variant="secondary"
+                                            size="small"
                                             className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1.5 sm:py-2 px-2 sm:px-3 md:px-6 rounded-lg shadow-lg transition-colors duration-200 flex items-center gap-1.5 text-xs sm:text-sm"
                                             onClick={() => {
                                                 // Handle apply functionality here
@@ -222,7 +279,7 @@ export default function JobDetailsPage() {
                                             }}
                                         >
                                             Apply Now
-                                        </button>
+                                        </Button>
                                     </div>
                                 </div>
 
@@ -265,10 +322,14 @@ export default function JobDetailsPage() {
                                                         <span className="font-medium">₹{selectedJobDetails.incentivePerYear}</span>
                                                     </div>
                                                 )}
-                                                <div className="flex justify-between">
-                                                    <span className="text-gray-600">Stipend Type:</span>
-                                                    <span className="font-medium">{selectedJobDetails.stipendType}</span>
-                                                </div>
+                                                {
+                                                    selectedJobDetails.stipendType && (
+                                                        <div className="flex justify-between">
+                                                            <span className="text-gray-600">Stipend Type:</span>
+                                                            <span className="font-medium">{selectedJobDetails.stipendType}</span>
+                                                        </div>
+                                                    )
+                                                }
                                             </div>
                                         </div>
                                     )}
@@ -310,12 +371,12 @@ export default function JobDetailsPage() {
                                             </h4>
                                             <div className="flex flex-wrap gap-1.5">
                                                 {selectedJobDetails.skillsRequired.map((skill, index) => (
-                                                    <span
+                                                    <Badge
                                                         key={index}
-                                                        className="bg-purple-100 text-purple-700 text-xs rounded-full px-2 py-0.5 border border-purple-200"
-                                                    >
-                                                        {skill}
-                                                    </span>
+                                                        color="bg-purple-100 text-purple-700 hover:bg-purple-200"
+                                                        text={skill}
+                                                        className="text-xs border border-purple-200"
+                                                    />
                                                 ))}
                                             </div>
                                             {selectedJobDetails.skillRequiredNote && (
@@ -509,29 +570,33 @@ export default function JobDetailsPage() {
                                 {/* Show More/Less Button */}
                                 {!showFullDetails && (
                                     <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-white via-white to-transparent h-10 flex items-end justify-center pb-1">
-                                        <button
+                                        <Button
                                             onClick={() => setShowFullDetails(true)}
+                                            variant="outline"
+                                            size="small"
                                             className="bg-gray-100 hover:bg-gray-200 text-gray-600 font-normal py-1 px-3 rounded-full shadow-sm border border-gray-300 transition-all duration-200 flex items-center gap-1 text-xs hover:shadow-md hover:scale-105"
                                         >
                                             Show more
                                             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                                             </svg>
-                                        </button>
+                                        </Button>
                                     </div>
                                 )}
 
                                 {showFullDetails && (
                                     <div className="mt-4 flex justify-center">
-                                        <button
+                                        <Button
                                             onClick={() => setShowFullDetails(false)}
+                                            variant="outline"
+                                            size="small"
                                             className="bg-gray-100 hover:bg-gray-200 text-gray-600 font-medium py-1.5 px-4 rounded-full shadow-sm border border-gray-200 transition-all duration-200 flex items-center gap-1.5 text-sm hover:shadow-md hover:scale-105"
                                         >
                                             Show less
                                             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
                                             </svg>
-                                        </button>
+                                        </Button>
                                     </div>
                                 )}
 

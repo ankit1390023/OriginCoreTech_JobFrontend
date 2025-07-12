@@ -5,8 +5,9 @@ import { z } from "zod";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import StudentSignUpLayout from "../student/studentFillAccountDetails/StudentSignUpLayout";
-import { Link } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
+import { Input, Textarea, Button, ErrorMessage, Link } from "../ui";
+
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const schema = z.object({
@@ -38,7 +39,7 @@ export default function UniversityFillDetails() {
 
         try {
             const response = await axios.post(`${BASE_URL}/universitydetail`, {
-                
+
                 ...data,
                 emailIdVerified: true,
                 adharVerified: false,
@@ -65,174 +66,106 @@ export default function UniversityFillDetails() {
             heading="University Sign Up"
             subheading="Complete your university profile."
         >
-                <div className="bg-white rounded-lg shadow-md p-6">
-                    {error && (
-                        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                            {error}
-                        </div>
-                    )}
+            <div className="bg-white rounded-lg shadow-md p-6">
+                {error && (
+                    <ErrorMessage onClose={() => setError("")}>
+                        {error}
+                    </ErrorMessage>
+                )}
 
-                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                College/University Name *
-                            </label>
-                            <input
-                                type="text"
-                                {...register("collegeName")}
-                                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.collegeName ? "border-red-500" : "border-gray-300"
-                                    }`}
-                                placeholder="Enter your college/university name"
-                            />
-                            {errors.collegeName && (
-                                <span className="text-sm text-red-500 mt-1">
-                                    {errors.collegeName.message}
-                                </span>
-                            )}
-                        </div>
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                    <Input
+                        label="College/University Name"
+                        required
+                        placeholder="Enter your college/university name"
+                        error={errors.collegeName?.message}
+                        {...register("collegeName")}
+                    />
 
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Course/Program *
-                            </label>
-                            <input
-                                type="text"
-                                {...register("course")}
-                                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.course ? "border-red-500" : "border-gray-300"
-                                    }`}
-                                placeholder="e.g., BTech, MTech, MBA, etc."
-                            />
-                            {errors.course && (
-                                <span className="text-sm text-red-500 mt-1">
-                                    {errors.course.message}
-                                </span>
-                            )}
-                        </div>
+                    <Input
+                        label="Course/Program"
+                        required
+                        placeholder="e.g., BTech, MTech, MBA, etc."
+                        error={errors.course?.message}
+                        {...register("course")}
+                    />
 
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Address *
-                            </label>
-                            <textarea
-                                {...register("address")}
-                                rows={3}
-                                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.address ? "border-red-500" : "border-gray-300"
-                                    }`}
-                                placeholder="Enter complete address"
-                            />
-                            {errors.address && (
-                                <span className="text-sm text-red-500 mt-1">
-                                    {errors.address.message}
-                                </span>
-                            )}
-                        </div>
+                    <Textarea
+                        label="Address"
+                        required
+                        placeholder="Enter complete address"
+                        error={errors.address?.message}
+                        {...register("address")}
+                    />
 
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Pincode *
-                            </label>
-                            <input
-                                type="text"
-                                {...register("pincode")}
-                                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.pincode ? "border-red-500" : "border-gray-300"
-                                    }`}
-                                placeholder="Enter 6-digit pincode"
-                                maxLength={6}
-                            />
-                            {errors.pincode && (
-                                <span className="text-sm text-red-500 mt-1">
-                                    {errors.pincode.message}
-                                </span>
-                            )}
-                        </div>
+                    <Input
+                        label="Pincode"
+                        required
+                        placeholder="Enter 6-digit pincode"
+                        maxLength={6}
+                        error={errors.pincode?.message}
+                        {...register("pincode")}
+                    />
 
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Website Link *
-                            </label>
-                            <input
-                                type="url"
-                                {...register("websiteLink")}
-                                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.websiteLink ? "border-red-500" : "border-gray-300"
-                                    }`}
-                                placeholder="https://www.youruniversity.edu"
-                            />
-                            {errors.websiteLink && (
-                                <span className="text-sm text-red-500 mt-1">
-                                    {errors.websiteLink.message}
-                                </span>
-                            )}
-                        </div>
+                    <Input
+                        label="Website Link"
+                        required
+                        type="url"
+                        placeholder="https://www.youruniversity.edu"
+                        error={errors.websiteLink?.message}
+                        {...register("websiteLink")}
+                    />
 
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                About University *
-                            </label>
-                            <textarea
-                                {...register("about")}
-                                rows={4}
-                                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.about ? "border-red-500" : "border-gray-300"
-                                    }`}
-                                placeholder="Tell us about your university, its mission, and what makes it special..."
-                            />
-                            {errors.about && (
-                                <span className="text-sm text-red-500 mt-1">
-                                    {errors.about.message}
-                                </span>
-                            )}
-                        </div>
+                    <Textarea
+                        label="About University"
+                        required
+                        placeholder="Tell us about your university, its mission, and what makes it special..."
+                        error={errors.about?.message}
+                        {...register("about")}
+                    />
 
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Social Media Link (Optional)
-                            </label>
-                            <input
-                                type="url"
-                                {...register("socialMediaLink")}
-                                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.socialMediaLink ? "border-red-500" : "border-gray-300"
-                                    }`}
-                                placeholder="https://linkedin.com/company/youruniversity"
-                            />
-                            {errors.socialMediaLink && (
-                                <span className="text-sm text-red-500 mt-1">
-                                    {errors.socialMediaLink.message}
-                                </span>
-                            )}
-                        </div>
+                    <Input
+                        label="Social Media Link (Optional)"
+                        type="url"
+                        placeholder="https://linkedin.com/company/youruniversity"
+                        error={errors.socialMediaLink?.message}
+                        {...register("socialMediaLink")}
+                    />
 
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className={`w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-md transition-colors ${loading ? "opacity-50 cursor-not-allowed" : ""
-                                }`}
-                        >
-                            {loading ? "Saving..." : "Save University Details"}
-                    </button>
-                    
+                    <Button
+                        variant="secondary"
+                        loading={loading}
+                        disabled={loading}
+                        className="w-full"
+                        type="submit"
+                    >
+                        {loading ? "Saving..." : "Save University Details"}
+                    </Button>
+
                     <div className="flex items-center my-4 sm:my-6">
                         <div className="flex-grow h-px bg-gray-300"></div>
                         <span className="mx-3 sm:mx-4 text-gray-400 text-sm sm:text-base font-medium">Or</span>
                         <div className="flex-grow h-px bg-gray-300"></div>
                     </div>
 
-                    <button
-                        type="button"
+                    <Button
+                        variant="outline"
                         disabled={loading}
-                        className={`w-full flex items-center justify-center border border-gray-300 py-2.5 sm:py-3 md:py-4 rounded-xl font-semibold text-gray-700 bg-white transition-all duration-200 transform hover:scale-[1.01] active:scale-[0.99] ${loading ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-50"
-                            }`}
+                        className="w-full flex items-center justify-center"
+                        type="button"
                     >
                         <FcGoogle size={20} className="sm:w-6 sm:h-6 mr-2 sm:mr-3" />
                         <span className="text-sm sm:text-base">Sign up with Google</span>
-                    </button>
+                    </Button>
 
                     <p className="text-center text-sm sm:text-base text-gray-600 mt-6 sm:mt-8">
                         Already have an account?{" "}
-                        <Link to="/login" className="text-red-500 font-semibold hover:text-red-600 transition-colors duration-200">
+                        <Link to="/login" variant="primary">
                             Login
                         </Link>
                     </p>
-                    </form>
-                </div>
+                </form>
+            </div>
         </StudentSignUpLayout>
     );
 } 

@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { FaCheckCircle } from "react-icons/fa";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import SignUpIllustration from "../../assets/SignUp_Illustration.png";
 import StudentSignUpLayout from "../../components/student/studentFillAccountDetails/StudentSignUpLayout";
+import { Button, Link } from "../ui";
 
 const roles = [
   {
@@ -74,19 +75,22 @@ export default function SignUpChooseRole() {
               </div>
             ))}
           </div>
-          {/* Continue Button */}
-          <button
+
+          {/* Continue Button - Using new UI component */}
+          <Button
             onClick={handleContinue}
-            className="w-full py-2 rounded-md font-semibold text-base mb-2 transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-md hover:shadow-lg bg-[#f44336] text-white hover:bg-[#d32f2f]"
+            size="large"
+            className="w-full mb-2"
           >
             Continue
-          </button>
-          {/* Login Link */}
+          </Button>
+
+          {/* Login Link - Using new UI component */}
           <div className="text-center mt-2 text-gray-500 text-sm">
             Already have an account?{' '}
             <Link
               to="/login"
-              className="text-red-500 font-semibold hover:text-red-600 transition-colors duration-200"
+              variant="primary"
             >
               Login
             </Link>

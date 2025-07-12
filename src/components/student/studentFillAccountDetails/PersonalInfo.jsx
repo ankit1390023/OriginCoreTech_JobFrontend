@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useFormContext } from "react-hook-form";
 import { useEducationData } from "../../../hooks/useEducationData";
-import LoadingSpinner from "../../shared/LoadingSpinner";
+import { Loader, Input, Select, Label, ErrorMessage } from "../../ui";
 
 export default function PersonalInfo() {
   const {
@@ -25,7 +25,7 @@ export default function PersonalInfo() {
     }
   }, [setValue]);
 
-  const ErrorMessage = ({ message }) => (
+  const CustomErrorMessage = ({ message }) => (
     <div className="w-full p-3 border rounded bg-red-50 text-red-500 text-xs">
       <div className="flex items-center justify-between">
         <span>{message}</span>
@@ -43,97 +43,71 @@ export default function PersonalInfo() {
     <div className="space-y-2 sm:space-y-3">
       <div className="flex gap-1 sm:gap-2 mb-2 sm:mb-3">
         <div className="flex-1">
-          <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">First Name</label>
-          <input
-            {...register("firstName")}
-            className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border rounded-md focus:outline-none focus:border-blue-500 text-xs transition-all duration-200 border-gray-300 hover:border-gray-400"
+          <Input
+            label="First Name"
             placeholder="Enter your first name"
+            error={errors.firstName?.message}
+            {...register("firstName")}
           />
-          {errors.firstName && (
-            <p className="text-xs text-red-500 mt-0.5 block">{errors.firstName.message}</p>
-          )}
         </div>
         <div className="flex-1">
-          <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">Last Name</label>
-          <input
-            {...register("lastName")}
-            className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border rounded-md focus:outline-none focus:border-blue-500 text-xs transition-all duration-200 border-gray-300 hover:border-gray-400"
+          <Input
+            label="Last Name"
             placeholder="Enter your last name"
+            error={errors.lastName?.message}
+            {...register("lastName")}
           />
-          {errors.lastName && (
-            <p className="text-xs text-red-500 mt-0.5 block">{errors.lastName.message}</p>
-          )}
         </div>
       </div>
+      <Input
+        label="Email ID"
+        type="email"
+        placeholder="example@email.com"
+        error={errors.email?.message}
+        className="bg-gray-50 cursor-not-allowed"
+        readOnly
+        {...register("email")}
+      />
+      <Input
+        label="Phone Number"
+        type="tel"
+        placeholder="+91 98765 43210"
+        error={errors.phone?.message}
+        {...register("phone")}
+      />
+      <Input
+        label="Date of Birth"
+        type="date"
+        placeholder="Select your date of birth"
+        error={errors.dob?.message}
+        {...register("dob")}
+      />
       <div className="mb-2 sm:mb-3">
-        <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">Email ID</label>
-        <input
-          {...register("email")}
-          className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border rounded-md focus:outline-none focus:border-blue-500 text-xs transition-all duration-200 border-gray-300 hover:border-gray-400 bg-gray-50 cursor-not-allowed"
-          placeholder="example@email.com"
-          type="email"
-          readOnly
-        />
-        {errors.email && (
-          <p className="text-xs text-red-500 mt-0.5 block">{errors.email.message}</p>
-        )}
-      </div>
-      <div className="mb-2 sm:mb-3">
-        <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">Phone Number</label>
-        <input
-          {...register("phone")}
-          className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border rounded-md focus:outline-none focus:border-blue-500 text-xs transition-all duration-200 border-gray-300 hover:border-gray-400"
-          placeholder="+91 98765 43210"
-          type="tel"
-        />
-        {errors.phone && (
-          <p className="text-xs text-red-500 mt-0.5 block">{errors.phone.message}</p>
-        )}
-      </div>
-      <div className="mb-2 sm:mb-3">
-        <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">Date of Birth</label>
-        <input
-          type="date"
-          {...register("dob")}
-          className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border rounded-md focus:outline-none focus:border-blue-500 text-xs transition-all duration-200 border-gray-300 hover:border-gray-400"
-          placeholder="Select your date of birth"
-        />
-        {errors.dob && (
-          <p className="text-xs text-red-500 mt-0.5 block">{errors.dob.message}</p>
-        )}
-      </div>
-      <div className="mb-2 sm:mb-3">
-        <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">Current City</label>
+        <Label>Current City</Label>
         {loading ? (
-          <LoadingSpinner message="Loading locations..." />
+          <Loader message="Loading locations..." />
         ) : error ? (
-          <ErrorMessage message={error} />
+          <CustomErrorMessage message={error} />
         ) : (
-          <select {...register("city")} className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border rounded-md focus:outline-none focus:border-blue-500 text-xs transition-all duration-200 border-gray-300 hover:border-gray-400">
-            <option value="">Select your current city</option>
-            {locations.map((location, index) => (
-              <option key={index} value={location}>
-                {location}
-              </option>
-            ))}
-          </select>
-        )}
-        {errors.city && (
-          <p className="text-xs text-red-500 mt-0.5 block">{errors.city.message}</p>
+          <Select
+            options={locations.map(location => ({ value: location, label: location }))}
+            placeholder="Select your current city"
+            error={errors.city?.message}
+            {...register("city")}
+          />
         )}
       </div>
-      <div className="mb-2 sm:mb-3">
-        <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">Gender</label>
-        <select {...register("gender")} className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border rounded-md focus:outline-none focus:border-blue-500 text-xs transition-all duration-200 border-gray-300 hover:border-gray-400">
-          <option value="">Select your gender</option>
-          <option value="Male">Male</option>
-          <option value="Female">Female</option>
-          <option value="Other">Other</option>
-        </select>
-        {errors.gender && (
-          <p className="text-xs text-red-500 mt-0.5 block">{errors.gender.message}</p>
-        )}
-      </div>
+      <Select
+        label="Gender"
+        options={[
+          { value: "Male", label: "Male" },
+          { value: "Female", label: "Female" },
+          { value: "Other", label: "Other" }
+        ]}
+        placeholder="Select your gender"
+        error={errors.gender?.message}
+        {...register("gender")}
+      />
     </div>
   );
 }

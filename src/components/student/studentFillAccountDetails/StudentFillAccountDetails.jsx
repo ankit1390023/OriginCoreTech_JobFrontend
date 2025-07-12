@@ -10,6 +10,7 @@ import StudentSignUpLayout from "./StudentSignUpLayout";
 import SkillsForm from "./SkillsForm";
 import PreferencesForm from "./PreferencesForm";
 import { userDetailsApi } from "../../../api/userDetailsApi";
+import { Button } from "../../ui";
 
 const steps = [
   "Personal Info",
@@ -247,36 +248,31 @@ export default function StudentFillAccountDetails() {
               {step === 3 && <PreferencesForm />}
               <div className="flex justify-between mt-8">
                 {step > 0 ? (
-                  <button
-                    type="button"
+                  <Button
+                    variant="outline"
                     onClick={onBack}
-                    className="px-6 py-2 rounded bg-gray-200 text-gray-700 font-semibold"
                   >
                     Back
-                  </button>
+                  </Button>
                 ) : (
                   <div />
                 )}
                 {step < steps.length - 1 ? (
-                  <button
-                    type="button"
+                  <Button
+                    variant="secondary"
                     onClick={onNext}
-                    className="px-6 py-2 rounded bg-blue-500 text-white font-semibold"
                   >
                     Next
-                  </button>
+                  </Button>
                 ) : (
-                  <button
-                    type="button"
-                    onClick={handleSubmitClick}
+                  <Button
+                    variant="primary"
+                    loading={isSubmitting}
                     disabled={isSubmitting}
-                    className={`px-6 py-2 rounded font-semibold ${isSubmitting
-                      ? "bg-gray-400 text-gray-200 cursor-not-allowed"
-                      : "bg-green-500 text-white hover:bg-green-600"
-                      }`}
+                    onClick={handleSubmitClick}
                   >
                     {isSubmitting ? "Submitting..." : "Submit"}
-                  </button>
+                  </Button>
                 )}
               </div>
             </form>

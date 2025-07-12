@@ -6,6 +6,15 @@ import RecruiterPostJobInternLayout from "./RecruiterPostJobInternLayout";
 import { jobPostApi } from "../../../api/jobPostApi";
 import { domainApi } from "../../../api/domainApi";
 import { useEducationData } from "../../../hooks/useEducationData";
+import {
+  Input,
+  Button,
+  Textarea,
+  Select,
+  SuccessMessage,
+  ErrorMessage,
+  Label
+} from "../../ui";
 
 const formSchema = z.object({
   opportunityType: z.enum(["Internship", "Job", "Project"]),
@@ -468,16 +477,9 @@ export default function RecruiterPostJobInternDetails() {
   };
 
   // Common input styles
-  const inputStyles = "w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200";
-  const textareaStyles = "w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-vertical";
-  const selectStyles = "w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white";
   const radioStyles = "w-3 h-3 text-blue-600 border-gray-300 focus:outline-none focus:ring-0";
   const checkboxStyles = "w-3 h-3 text-blue-600 border-gray-300 rounded focus:outline-none focus:ring-0";
   const radioContainerStyles = "flex gap-3 p-2 border border-gray-300 rounded-lg bg-white";
-  const numberInputStyles = "w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200";
-  const phoneInputStyles = "flex-1 px-3 py-2 text-sm border border-gray-300 rounded-r-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200";
-  const labelStyles = "block text-xs font-semibold text-gray-700 mb-1";
-  const errorStyles = "text-red-500 text-xs mt-1";
 
   // Watch startDateType for conditional rendering
   const startDateType = methods.watch("startDateType");
@@ -522,65 +524,43 @@ export default function RecruiterPostJobInternDetails() {
         >
           {/* Success Message */}
           {successMessage && (
-            <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
-              <div className="flex">
-                <div className="flex-shrink-0">
-                  <svg className="h-4 w-4 text-green-400" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                  </svg>
-                </div>
-                <div className="ml-2 flex-1">
-                  <p className="text-xs font-medium text-green-800">
-                    {successMessage}
-                  </p>
-                </div>
-                <div className="ml-auto pl-2">
-                  <button
-                    type="button"
-                    onClick={() => setSuccessMessage("")}
-                    className="inline-flex text-green-400 hover:text-green-600 focus:outline-none"
-                  >
-                    <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
+            <div className="relative">
+              <SuccessMessage size="large">
+                {successMessage}
+              </SuccessMessage>
+              <button
+                type="button"
+                onClick={() => setSuccessMessage("")}
+                className="absolute top-2 right-2 text-green-600 hover:text-green-800 focus:outline-none"
+              >
+                <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                </svg>
+              </button>
             </div>
           )}
 
           {/* Error Message */}
           {errorMessage && (
-            <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-              <div className="flex">
-                <div className="flex-shrink-0">
-                  <svg className="h-4 w-4 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clipRule="evenodd" />
-                  </svg>
-                </div>
-                <div className="ml-2 flex-1">
-                  <p className="text-xs font-medium text-red-800">
-                    {errorMessage}
-                  </p>
-                </div>
-                <div className="ml-auto pl-2">
-                  <button
-                    type="button"
-                    onClick={() => setErrorMessage("")}
-                    className="inline-flex text-red-400 hover:text-red-600 focus:outline-none"
-                  >
-                    <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
+            <div className="relative">
+              <ErrorMessage size="large">
+                {errorMessage}
+              </ErrorMessage>
+              <button
+                type="button"
+                onClick={() => setErrorMessage("")}
+                className="absolute top-2 right-2 text-red-600 hover:text-red-800 focus:outline-none"
+              >
+                <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                </svg>
+              </button>
             </div>
           )}
 
           {/* Opportunity Type */}
           <div>
-            <label className={labelStyles}>Opportunity type</label>
+            <Label htmlFor="opportunityType">Opportunity type</Label>
             <div className={radioContainerStyles}>
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
@@ -613,62 +593,43 @@ export default function RecruiterPostJobInternDetails() {
                 <span className="text-sm text-gray-700">Project</span>
               </label>
             </div>
-            <p className={errorStyles}>
-              {methods.formState.errors.opportunityType?.message}
-            </p>
+
           </div>
 
           {/* Job title (only for Job and Project) */}
           {(opportunityType === "Job" || opportunityType === "Project") && (
-            <div>
-              <label className={labelStyles}>{opportunityType === "Job" ? "Job title" : "Project title"}</label>
-              <input
-                type="text"
-                className={inputStyles}
-                placeholder={opportunityType === "Job" ? "e.g. Digital Marketing" : "e.g. Web Development Project"}
-                {...methods.register("jobTitle")}
-              />
-              <p className={errorStyles}>
-                {methods.formState.errors.jobTitle?.message}
-              </p>
-            </div>
+            <Input
+              label={opportunityType === "Job" ? "Job title" : "Project title"}
+              type="text"
+              placeholder={opportunityType === "Job" ? "e.g. Digital Marketing" : "e.g. Web Development Project"}
+              error={methods.formState.errors.jobTitle?.message}
+              {...methods.register("jobTitle")}
+            />
           )}
 
           {/* Internship Profile (only for Internship) */}
           {opportunityType === "Internship" && (
-            <div>
-              <label className={labelStyles}>
-                Internship profile
-              </label>
-              <input
-                type="text"
-                className={inputStyles}
-                placeholder="e.g. Digital Marketing"
-                {...methods.register("profile")}
-              />
-              <p className={errorStyles}>
-                {methods.formState.errors.profile?.message}
-              </p>
-            </div>
+            <Input
+              label="Internship profile"
+              type="text"
+              placeholder="e.g. Digital Marketing"
+              error={methods.formState.errors.profile?.message}
+              {...methods.register("profile")}
+            />
           )}
 
           {/* Skills Required */}
-          <div>
-            <label className={labelStyles}>Skills required</label>
-            <input
-              type="text"
-              className={inputStyles}
-              placeholder="e.g. SEO, Social Media Marketing, Content Writing"
-              {...methods.register("skills")}
-            />
-            <p className={errorStyles}>
-              {methods.formState.errors.skills?.message}
-            </p>
-          </div>
+          <Input
+            label="Skills required"
+            type="text"
+            placeholder="e.g. SEO, Social Media Marketing, Content Writing"
+            error={methods.formState.errors.skills?.message}
+            {...methods.register("skills")}
+          />
 
           {/* Domain-based Skill Selection */}
           <div>
-            <label className={labelStyles}>Select skills by domain</label>
+            <Label htmlFor="domainSkills">Select skills by domain</Label>
 
             {domainError && (
               <div className="p-2 bg-red-50 border border-red-200 rounded-lg mb-2">
@@ -751,7 +712,7 @@ export default function RecruiterPostJobInternDetails() {
           {opportunityType === "Internship" && (
             <>
               <div>
-                <label className={labelStyles}>Internship type</label>
+                <Label htmlFor="internshipType">Internship type</Label>
                 <div className={radioContainerStyles}>
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input
@@ -781,14 +742,12 @@ export default function RecruiterPostJobInternDetails() {
                     <span className="text-sm text-gray-700">Remote</span>
                   </label>
                 </div>
-                <p className={errorStyles}>
-                  {methods.formState.errors.internshipType?.message}
-                </p>
+
               </div>
               {/* No. of in-office days in a week (for Hybrid) */}
               {internshipType === "Hybrid" && (
                 <div className="my-3">
-                  <label className={labelStyles}>No. of in-office days in a week:</label>
+                  <Label htmlFor="inOfficeDays">No. of in-office days in a week:</Label>
                   <div className="flex gap-1 sm:gap-3 md:gap-8">
                     {[1, 2, 3, 4, 5].map((day) => (
                       <button
@@ -805,17 +764,15 @@ export default function RecruiterPostJobInternDetails() {
                       </button>
                     ))}
                   </div>
-                  <p className={errorStyles}>
-                    {methods.formState.errors.inOfficeDays?.message}
-                  </p>
+
                 </div>
               )}
 
               {/* Internship start date (only for Internship) */}
               <div>
-                <label className={labelStyles}>
+                <Label htmlFor="startDateType">
                   Internship start date
-                </label>
+                </Label>
                 <div className={radioContainerStyles}>
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input
@@ -836,27 +793,23 @@ export default function RecruiterPostJobInternDetails() {
                     <span className="text-sm text-gray-700">Custom</span>
                   </label>
                 </div>
-                <p className={errorStyles}>
-                  {methods.formState.errors.startDateType?.message}
-                </p>
+
               </div>
 
               {/* Show date pickers if Custom is selected */}
               {startDateType === "Custom" && (
                 <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mb-3">
                   <div className="flex-1">
-                    <label className={labelStyles}>From</label>
-                    <input
+                    <Input
+                      label="From"
                       type="date"
-                      className={inputStyles}
                       {...methods.register("startDateFrom")}
                     />
                   </div>
                   <div className="flex-1">
-                    <label className={labelStyles}>To</label>
-                    <input
+                    <Input
+                      label="To"
                       type="date"
-                      className={inputStyles}
                       {...methods.register("startDateTo")}
                     />
                   </div>
@@ -864,36 +817,22 @@ export default function RecruiterPostJobInternDetails() {
               )}
 
               {/* Internship duration (only for Internship) */}
-              <div>
-                <label className={labelStyles}>
-                  Internship duration
-                </label>
-                <input
-                  type="text"
-                  className={inputStyles}
-                  placeholder="e.g. 6 months"
-                  {...methods.register("duration")}
-                />
-                <p className={errorStyles}>
-                  {methods.formState.errors.duration?.message}
-                </p>
-              </div>
+              <Input
+                label="Internship duration"
+                type="text"
+                placeholder="e.g. 6 months"
+                error={methods.formState.errors.duration?.message}
+                {...methods.register("duration")}
+              />
 
               {/* Intern's responsibility (only for Internship) */}
-              <div>
-                <label className={labelStyles}>
-                  Intern's responsibility
-                </label>
-                <textarea
-                  className={textareaStyles}
-                  rows={4}
-                  placeholder="Selected intern day-to-day responsibilities include..."
-                  {...methods.register("responsibilities")}
-                />
-                <p className={errorStyles}>
-                  {methods.formState.errors.responsibilities?.message}
-                </p>
-              </div>
+              <Textarea
+                label="Intern's responsibility"
+                rows={4}
+                placeholder="Selected intern day-to-day responsibilities include..."
+                error={methods.formState.errors.responsibilities?.message}
+                {...methods.register("responsibilities")}
+              />
             </>
           )}
 
@@ -901,7 +840,7 @@ export default function RecruiterPostJobInternDetails() {
           {opportunityType === "Job" && (
             <>
               <div>
-                <label className={labelStyles}>Job type</label>
+                <Label htmlFor="jobType">Job type</Label>
                 <div className={radioContainerStyles}>
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input
@@ -931,37 +870,26 @@ export default function RecruiterPostJobInternDetails() {
                     <span className="text-sm text-gray-700">Remote</span>
                   </label>
                 </div>
-                <p className={errorStyles}>
-                  {methods.formState.errors.jobType?.message}
-                </p>
               </div>
 
 
 
               {/* Job description */}
-              <div>
-                <label className={labelStyles}>Job description</label>
-                <textarea
-                  className={textareaStyles}
-                  rows={4}
-                  placeholder={"Key responsibilities:\n1.\n2.\n3."}
-                  {...methods.register("responsibilities")}
-                />
-                <p className={errorStyles}>
-                  {methods.formState.errors.responsibilities?.message}
-                </p>
-              </div>
+              <Textarea
+                label="Job description"
+                rows={4}
+                placeholder={"Key responsibilities:\n1.\n2.\n3."}
+                error={methods.formState.errors.responsibilities?.message}
+                {...methods.register("responsibilities")}
+              />
 
               {/* Additional candidate preferences */}
-              <div>
-                <label className={labelStyles}>Additional candidate preferences</label>
-                <textarea
-                  className={textareaStyles}
-                  rows={3}
-                  placeholder="e.g. Candidates pursuing B.Tech. preferred"
-                  {...methods.register("preferences")}
-                />
-              </div>
+              <Textarea
+                label="Additional candidate preferences"
+                rows={3}
+                placeholder="e.g. Candidates pursuing B.Tech. preferred"
+                {...methods.register("preferences")}
+              />
 
               {/* Women only checkbox */}
               <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
@@ -977,18 +905,16 @@ export default function RecruiterPostJobInternDetails() {
 
               {/* Fixed pay (per year) */}
               <div>
-                <label className={labelStyles}>Fixed pay (per year)</label>
+                <Label htmlFor="stipendMin">Fixed pay (per year)</Label>
                 <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-                  <input
+                  <Input
                     type="number"
-                    className="w-full sm:w-32 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                     placeholder="₹ Min"
                     min="0"
                     {...methods.register("stipendMin")}
                   />
-                  <input
+                  <Input
                     type="number"
-                    className="w-full sm:w-32 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                     placeholder="₹ Max"
                     min="0"
                     {...methods.register("stipendMax")}
@@ -998,18 +924,16 @@ export default function RecruiterPostJobInternDetails() {
 
               {/* Variables/Incentives (per year) */}
               <div>
-                <label className={labelStyles}>Variables/ Incentives (per year)</label>
+                <Label htmlFor="incentivesMin">Variables/ Incentives (per year)</Label>
                 <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-                  <input
+                  <Input
                     type="number"
-                    className="w-full sm:w-32 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                     placeholder="₹ Min"
                     min="0"
                     {...methods.register("incentivesMin")}
                   />
-                  <input
+                  <Input
                     type="number"
-                    className="w-full sm:w-32 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                     placeholder="₹ Max"
                     min="0"
                     {...methods.register("incentivesMax")}
@@ -1019,7 +943,7 @@ export default function RecruiterPostJobInternDetails() {
 
               {/* Perks (Job-specific) */}
               <div>
-                <label className={labelStyles}>Perks: (Select all that apply)</label>
+                <Label htmlFor="perks">Perks: (Select all that apply)</Label>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2 p-3 bg-gray-50 rounded-lg">
                   {["5 days a week", "Health Insurance", "Life Insurance"].map((perk) => (
                     <label key={perk} className="flex items-center gap-2 cursor-pointer">
@@ -1037,9 +961,8 @@ export default function RecruiterPostJobInternDetails() {
 
               {/* Screening Questions */}
               <div>
-                <label className={labelStyles}>Screening Questions</label>
-                <textarea
-                  className={textareaStyles}
+                <Label htmlFor="screeningQuestions">Screening Questions</Label>
+                <Textarea
                   rows={3}
                   placeholder="Add screening questions (optional)"
                   defaultValue={"Please confirm your availability for this job. If not available immediately, how early would you be able to join?"}
@@ -1051,7 +974,7 @@ export default function RecruiterPostJobInternDetails() {
 
               {/* Primary phone number */}
               <div>
-                <label className={labelStyles}>Primary phone number</label>
+                <Label htmlFor="phoneContact">Primary phone number</Label>
                 <div className="flex">
                   <span className="inline-flex items-center px-2 py-2 border border-r-0 border-gray-300 bg-gray-50 rounded-l-lg text-gray-600 text-sm">
                     <img
@@ -1061,21 +984,18 @@ export default function RecruiterPostJobInternDetails() {
                     />
                     +91
                   </span>
-                  <input
+                  <Input
                     type="tel"
-                    className={phoneInputStyles}
                     placeholder="9812345678"
+                    error={methods.formState.errors.phoneContact?.message}
                     {...methods.register("phoneContact")}
                   />
                 </div>
-                <p className={errorStyles}>
-                  {methods.formState.errors.phoneContact?.message}
-                </p>
               </div>
 
               {/* Alternate phone number */}
               <div>
-                <label className={labelStyles}>Alternate phone number for this listing (Optional)</label>
+                <Label htmlFor="alternatePhone">Alternate phone number for this listing (Optional)</Label>
                 <div className="flex">
                   <span className="inline-flex items-center px-2 py-2 border border-r-0 border-gray-300 bg-gray-50 rounded-l-lg text-gray-600 text-sm">
                     <img
@@ -1085,9 +1005,8 @@ export default function RecruiterPostJobInternDetails() {
                     />
                     +91
                   </span>
-                  <input
+                  <Input
                     type="tel"
-                    className={phoneInputStyles}
                     placeholder="9876543210"
                     {...methods.register("alternatePhone")}
                   />
@@ -1100,7 +1019,7 @@ export default function RecruiterPostJobInternDetails() {
           {opportunityType === "Project" && (
             <>
               <div>
-                <label className={labelStyles}>Project type</label>
+                <Label htmlFor="jobType">Project type</Label>
                 <div className={radioContainerStyles}>
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input
@@ -1130,37 +1049,26 @@ export default function RecruiterPostJobInternDetails() {
                     <span className="text-sm text-gray-700">Remote</span>
                   </label>
                 </div>
-                <p className={errorStyles}>
-                  {methods.formState.errors.jobType?.message}
-                </p>
               </div>
 
 
 
               {/* Project description */}
-              <div>
-                <label className={labelStyles}>Project description</label>
-                <textarea
-                  className={textareaStyles}
-                  rows={4}
-                  placeholder={"Project requirements:\n1.\n2.\n3."}
-                  {...methods.register("responsibilities")}
-                />
-                <p className={errorStyles}>
-                  {methods.formState.errors.responsibilities?.message}
-                </p>
-              </div>
+              <Textarea
+                label="Project description"
+                rows={4}
+                placeholder={"Project requirements:\n1.\n2.\n3."}
+                error={methods.formState.errors.responsibilities?.message}
+                {...methods.register("responsibilities")}
+              />
 
               {/* Additional candidate preferences */}
-              <div>
-                <label className={labelStyles}>Additional candidate preferences</label>
-                <textarea
-                  className={textareaStyles}
-                  rows={3}
-                  placeholder="e.g. Experience with similar projects preferred"
-                  {...methods.register("preferences")}
-                />
-              </div>
+              <Textarea
+                label="Additional candidate preferences"
+                rows={3}
+                placeholder="e.g. Experience with similar projects preferred"
+                {...methods.register("preferences")}
+              />
 
               {/* Women only checkbox */}
               <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
@@ -1176,18 +1084,16 @@ export default function RecruiterPostJobInternDetails() {
 
               {/* Project budget */}
               <div>
-                <label className={labelStyles}>Project budget</label>
+                <Label htmlFor="stipendMin">Project budget</Label>
                 <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-                  <input
+                  <Input
                     type="number"
-                    className="w-full sm:w-32 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                     placeholder="₹ Min"
                     min="0"
                     {...methods.register("stipendMin")}
                   />
-                  <input
+                  <Input
                     type="number"
-                    className="w-full sm:w-32 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                     placeholder="₹ Max"
                     min="0"
                     {...methods.register("stipendMax")}
@@ -1197,9 +1103,8 @@ export default function RecruiterPostJobInternDetails() {
 
               {/* Screening Questions */}
               <div>
-                <label className={labelStyles}>Screening Questions</label>
-                <textarea
-                  className={textareaStyles}
+                <Label htmlFor="screeningQuestions">Screening Questions</Label>
+                <Textarea
                   rows={3}
                   placeholder="Add screening questions (optional)"
                   defaultValue={"Please confirm your availability for this project. Share your relevant project experience."}
@@ -1210,7 +1115,7 @@ export default function RecruiterPostJobInternDetails() {
 
               {/* Primary phone number */}
               <div>
-                <label className={labelStyles}>Primary phone number</label>
+                <Label htmlFor="phoneContact">Primary phone number</Label>
                 <div className="flex">
                   <span className="inline-flex items-center px-2 py-2 border border-r-0 border-gray-300 bg-gray-50 rounded-l-lg text-gray-600 text-sm">
                     <img
@@ -1220,21 +1125,18 @@ export default function RecruiterPostJobInternDetails() {
                     />
                     +91
                   </span>
-                  <input
+                  <Input
                     type="tel"
-                    className={phoneInputStyles}
                     placeholder="9812345678"
+                    error={methods.formState.errors.phoneContact?.message}
                     {...methods.register("phoneContact")}
                   />
                 </div>
-                <p className={errorStyles}>
-                  {methods.formState.errors.phoneContact?.message}
-                </p>
               </div>
 
               {/* Alternate phone number */}
               <div>
-                <label className={labelStyles}>Alternate phone number for this listing (Optional)</label>
+                <Label htmlFor="alternatePhone">Alternate phone number for this listing (Optional)</Label>
                 <div className="flex">
                   <span className="inline-flex items-center px-2 py-2 border border-r-0 border-gray-300 bg-gray-50 rounded-l-lg text-gray-600 text-sm">
                     <img
@@ -1244,9 +1146,8 @@ export default function RecruiterPostJobInternDetails() {
                     />
                     +91
                   </span>
-                  <input
+                  <Input
                     type="tel"
-                    className={phoneInputStyles}
                     placeholder="9876543210"
                     {...methods.register("alternatePhone")}
                   />
@@ -1254,52 +1155,38 @@ export default function RecruiterPostJobInternDetails() {
               </div>
 
               {/* Number of openings for Project */}
-              <div>
-                <label className={labelStyles}>
-                  Number of openings
-                </label>
-                <input
-                  type="number"
-                  className={inputStyles}
-                  placeholder="e.g. 2"
-                  min="1"
-                  {...methods.register("openings")}
-                />
-                <p className={errorStyles}>
-                  {methods.formState.errors.openings?.message}
-                </p>
-              </div>
+              <Input
+                label="Number of openings"
+                type="number"
+                placeholder="e.g. 2"
+                min="1"
+                error={methods.formState.errors.openings?.message}
+                {...methods.register("openings")}
+              />
             </>
           )}
 
           {/* City/Cities */}
-          <div>
-            <label className={labelStyles}>City/Cities</label>
-            {educationLoading ? (
-              <div className="p-2 bg-gray-50 rounded-lg">
-                <p className="text-xs text-gray-600">Loading cities...</p>
-              </div>
-            ) : educationError ? (
-              <div className="p-2 bg-red-50 border border-red-200 rounded-lg">
-                <p className="text-red-800 text-xs">{educationError}</p>
-              </div>
-            ) : (
-              <select
-                className={selectStyles}
-                {...methods.register("city")}
-              >
-                <option value="">Select a city</option>
-                {educationData.locations && educationData.locations.map((location) => (
-                  <option key={location} value={location}>
-                    {location}
-                  </option>
-                ))}
-              </select>
-            )}
-            <p className={errorStyles}>
-              {methods.formState.errors.city?.message}
-            </p>
-          </div>
+          {educationLoading ? (
+            <div className="p-2 bg-gray-50 rounded-lg">
+              <p className="text-xs text-gray-600">Loading cities...</p>
+            </div>
+          ) : educationError ? (
+            <div className="p-2 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-red-800 text-xs">{educationError}</p>
+            </div>
+          ) : (
+            <Select
+              label="City/Cities"
+              placeholder="Select a city"
+              error={methods.formState.errors.city?.message}
+              options={educationData.locations ? educationData.locations.map(location => ({
+                value: location,
+                label: location
+              })) : []}
+              {...methods.register("city")}
+            />
+          )}
 
           {/* Only this city checkbox */}
           <div className="flex items-center gap-3 p-2 mt-[10px] rounded-lg">
@@ -1315,9 +1202,9 @@ export default function RecruiterPostJobInternDetails() {
 
           {/* Part-time/Full-time (Common for all opportunity types) */}
           <div>
-            <label className={labelStyles}>
+            <Label htmlFor="partFullTime">
               Part-time/ Full-time
-            </label>
+            </Label>
             <div className={radioContainerStyles}>
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
@@ -1338,34 +1225,24 @@ export default function RecruiterPostJobInternDetails() {
                 <span className="text-sm text-gray-700">Full-time</span>
               </label>
             </div>
-            <p className={errorStyles}>
-              {methods.formState.errors.partFullTime?.message}
-            </p>
           </div>
 
           {/* Number of openings */}
           {opportunityType === "Internship" && (
-            <div>
-              <label className={labelStyles}>
-                Number of openings
-              </label>
-              <input
-                type="number"
-                className={inputStyles}
-                placeholder="e.g. 4"
-                min="1"
-                {...methods.register("openings")}
-              />
-              <p className={errorStyles}>
-                {methods.formState.errors.openings?.message}
-              </p>
-            </div>
+            <Input
+              label="Number of openings"
+              type="number"
+              placeholder="e.g. 4"
+              min="1"
+              error={methods.formState.errors.openings?.message}
+              {...methods.register("openings")}
+            />
           )}
 
           {/* Stipend */}
           {opportunityType !== "Job" && opportunityType !== "Project" && (
             <div>
-              <label className={labelStyles}>Stipend</label>
+              <Label htmlFor="stipendType">Stipend</Label>
               <div className={radioContainerStyles}>
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
@@ -1397,16 +1274,14 @@ export default function RecruiterPostJobInternDetails() {
               </div>
               {stipendType === "Paid" && (
                 <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-                  <input
+                  <Input
                     type="number"
-                    className="w-full sm:w-32 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                     placeholder="₹ Min"
                     min="0"
                     {...methods.register("stipendMin")}
                   />
-                  <input
+                  <Input
                     type="number"
-                    className="w-full sm:w-32 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                     placeholder="₹ Max"
                     min="0"
                     {...methods.register("stipendMax")}
@@ -1426,10 +1301,12 @@ export default function RecruiterPostJobInternDetails() {
           {/* College Name & Course (Internship only, below stipend) */}
           {opportunityType === "Internship" && (
             <div className="mt-6">
-              <label className={labelStyles}>
-                College Name
+              <div className="flex items-center mb-2">
+                <Label htmlFor="collegeName">
+                  College Name
+                </Label>
                 <span className="ml-2 align-middle inline-block px-2 py-0.5 text-xs font-semibold bg-green-100 text-green-700 rounded-full border border-green-300">PRO Plan</span>
-              </label>
+              </div>
               {educationLoading ? (
                 <div className="p-3 bg-gray-50 rounded-lg">
                   <p className="text-gray-600">Loading colleges...</p>
@@ -1439,17 +1316,14 @@ export default function RecruiterPostJobInternDetails() {
                   <p className="text-red-800 text-sm">{educationError}</p>
                 </div>
               ) : (
-                <select
-                  className={selectStyles}
+                <Select
+                  placeholder="Select a college"
+                  options={educationData.colleges ? educationData.colleges.map(college => ({
+                    value: college,
+                    label: college
+                  })) : []}
                   {...methods.register("collegeName")}
-                >
-                  <option value="">Select a college</option>
-                  {educationData.colleges && educationData.colleges.map((college) => (
-                    <option key={college} value={college}>
-                      {college}
-                    </option>
-                  ))}
-                </select>
+                />
               )}
               <div className="flex items-center mt-2 mb-4">
                 <input
@@ -1462,7 +1336,6 @@ export default function RecruiterPostJobInternDetails() {
                 </label>
               </div>
 
-              <div className="mb-2 font-semibold text-gray-700 text-sm">Course</div>
               {educationLoading ? (
                 <div className="p-3 bg-gray-50 rounded-lg">
                   <p className="text-gray-600">Loading courses...</p>
@@ -1472,17 +1345,15 @@ export default function RecruiterPostJobInternDetails() {
                   <p className="text-red-800 text-sm">{educationError}</p>
                 </div>
               ) : (
-                <select
-                  className={selectStyles}
+                <Select
+                  label="Course"
+                  placeholder="Select a course"
+                  options={educationData.courses ? educationData.courses.map(course => ({
+                    value: course,
+                    label: course
+                  })) : []}
                   {...methods.register("course")}
-                >
-                  <option value="">Select a course</option>
-                  {educationData.courses && educationData.courses.map((course) => (
-                    <option key={course} value={course}>
-                      {course}
-                    </option>
-                  ))}
-                </select>
+                />
               )}
             </div>
           )}
@@ -1490,18 +1361,16 @@ export default function RecruiterPostJobInternDetails() {
           {/* Incentives */}
           {opportunityType !== "Job" && opportunityType !== "Project" && stipendType === "Paid" && (
             <div>
-              <label className={labelStyles}>Incentives</label>
+              <Label htmlFor="incentivesMin">Incentives</Label>
               <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-                <input
+                <Input
                   type="number"
-                  className="w-full sm:w-32 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                   placeholder="₹ Min"
                   min="0"
                   {...methods.register("incentivesMin")}
                 />
-                <input
+                <Input
                   type="number"
-                  className="w-full sm:w-32 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                   placeholder="₹ Max"
                   min="0"
                   {...methods.register("incentivesMax")}
@@ -1520,9 +1389,9 @@ export default function RecruiterPostJobInternDetails() {
           {/* Perks */}
           {opportunityType !== "Job" && opportunityType !== "Project" && (
             <div>
-              <label className={labelStyles}>
+              <Label htmlFor="perks">
                 Perks (Select all that apply)
-              </label>
+              </Label>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 p-3 bg-gray-50 rounded-lg">
                 {[
                   "Certificate of completion",
@@ -1564,23 +1433,20 @@ export default function RecruiterPostJobInternDetails() {
 
           {/* Submit Buttons */}
           <div className="flex flex-col sm:flex-row justify-between gap-2 sm:gap-4 mt-6 pt-4 border-t border-gray-200">
-            <button
+            <Button
               type="button"
-              className="w-full sm:w-auto px-6 py-2 text-sm font-semibold text-gray-700 bg-gray-100 border border-gray-300 rounded-lg hover:bg-gray-200 transition-all duration-200"
+              variant="outline"
               onClick={() => alert("Draft saved (not implemented)")}
             >
               Save Draft
-            </button>
-            <button
+            </Button>
+            <Button
               type="submit"
-              disabled={isSubmitting}
-              className={`w-full sm:w-auto px-6 py-2 text-sm font-semibold rounded-lg transition-all duration-200 ${isSubmitting
-                ? "bg-gray-400 text-gray-200 cursor-not-allowed"
-                : "bg-blue-600 text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                }`}
+              loading={isSubmitting}
+              variant="primary"
             >
               {isSubmitting ? "Posting..." : `Post ${opportunityType}`}
-            </button>
+            </Button>
           </div>
         </form>
       </FormProvider>
