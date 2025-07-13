@@ -1,6 +1,6 @@
 import React from "react";
 import { useFormContext } from "react-hook-form";
-import { Label, Badge } from "../../ui";
+import { Label, Badge } from "../../../components/ui";
 
 const lookingForOptions = ["Jobs", "Internship", "Project"];
 const workModes = ["In-office", "Hybrid", "Work from home"];

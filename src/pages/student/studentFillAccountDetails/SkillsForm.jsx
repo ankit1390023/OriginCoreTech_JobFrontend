@@ -3,7 +3,7 @@ import { FaTimes, FaInfoCircle } from "react-icons/fa";
 import { useDomainsApi } from "../../../hooks/useDomainsApi";
 import { useSkillApi } from "../../../hooks/useSkillApi";
 import { domainApi } from "../../../api/domainApi";
-import { Input, Label, Button, ErrorMessage, Loader } from "../../ui";
+import { Input, Label, Button, ErrorMessage, Loader } from "../../../components/ui";
 
 const initialDomains = [];
 

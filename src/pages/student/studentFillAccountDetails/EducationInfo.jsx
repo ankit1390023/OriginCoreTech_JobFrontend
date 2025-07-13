@@ -1,6 +1,6 @@
 import React from "react";
 import { useEducationData } from "../../../hooks/useEducationData";
-import { Loader, Input, Select, Label, ErrorMessage } from "../../ui";
+import { Loader, Input, Select, Label, ErrorMessage } from "../../../components/ui";
 
 export default function EducationInfo({ register, errors, watch }) {
   const {

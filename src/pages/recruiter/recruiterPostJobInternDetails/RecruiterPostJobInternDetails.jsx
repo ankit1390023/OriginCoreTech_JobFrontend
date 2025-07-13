@@ -14,7 +14,7 @@ import {
   SuccessMessage,
   ErrorMessage,
   Label
-} from "../../ui";
+} from "../../../components/ui";
 
 const formSchema = z.object({
   opportunityType: z.enum(["Internship", "Job", "Project"]),

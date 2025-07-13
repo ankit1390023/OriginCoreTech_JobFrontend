@@ -7,9 +7,10 @@ const Button = ({
     loading = false,
     disabled = false,
     className = "",
+    as,
     ...props
 }) => {
-    const baseStyles = "font-semibold rounded-md transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-md hover:shadow-lg focus:outline-none active:outline-none";
+    const baseStyles = "font-semibold rounded-md transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-md hover:shadow-lg focus:outline-none active:outline-none no-underline hover:no-underline";
 
     const sizeStyles = {
         small: "py-1 sm:py-1.5 text-xs",
@@ -29,8 +30,10 @@ const Button = ({
     const buttonClasses = `${baseStyles} ${sizeStyles[size]} ${disabled || loading ? disabledStyles : variantStyles[variant]
         } ${className}`;
 
+    const Component = as || 'button';
+
     return (
-        <button
+        <Component
             className={buttonClasses}
             disabled={disabled || loading}
             {...props}
@@ -62,7 +65,7 @@ const Button = ({
             ) : (
                 children
             )}
-        </button>
+        </Component>
     );
 };
 

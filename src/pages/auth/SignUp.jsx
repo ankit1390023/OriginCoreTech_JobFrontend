@@ -8,7 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import SignUpIllustration from "../../assets/SignUp_Illustration.png";
 import StudentSignUpLayout from "../student/studentFillAccountDetails/StudentSignUpLayout";
 import { FcGoogle } from "react-icons/fc";
-import { Input, Button, Link } from "../ui";
+import { Input, Button, Link } from "../../components/ui";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 console.log("BASE_URL:", BASE_URL); // should print: http://localhost:5000

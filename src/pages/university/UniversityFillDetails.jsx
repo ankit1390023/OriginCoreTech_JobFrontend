@@ -6,7 +6,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import StudentSignUpLayout from "../student/studentFillAccountDetails/StudentSignUpLayout";
 import { FcGoogle } from "react-icons/fc";
-import { Input, Textarea, Button, ErrorMessage, Link } from "../ui";
+import { Input, Textarea, Button, ErrorMessage, Link } from "../../components/ui";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 

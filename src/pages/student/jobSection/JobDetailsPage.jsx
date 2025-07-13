@@ -1,10 +1,10 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { FaMapMarkerAlt, FaUserTie, FaMoneyBillWave, FaBuilding, FaCalendarAlt, FaUsers, FaClock, FaGraduationCap, FaPhone, FaEnvelope, FaStar, FaBars, FaTimes, FaBriefcase, FaLaptop, FaCertificate, FaGift, FaCheckCircle, FaQuestionCircle, FaIndustry, FaGlobe, FaUserGraduate, FaLanguage, FaVenus } from "react-icons/fa";
-import Header from "../../shared/Header";
+import Header from "../../../components/shared/Header";
 import { useGetJobApi } from "../../../hooks/useGetJobApi";
 import { useGetJobById } from "../../../hooks/useGetJobApi";
-import { Button, Loader, Badge } from '../../ui';
+import { Button, Loader, Badge } from '../../../components/ui';
 
 export default function JobDetailsPage() {
     const { jobId } = useParams();

@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { FaCheckCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import SignUpIllustration from "../../assets/SignUp_Illustration.png";
-import StudentSignUpLayout from "../../components/student/studentFillAccountDetails/StudentSignUpLayout";
-import { Button, Link } from "../ui";
+import StudentSignUpLayout from "../student/studentFillAccountDetails/StudentSignUpLayout";
+import { Button, Link } from "../../components/ui";
 
 const roles = [
   {

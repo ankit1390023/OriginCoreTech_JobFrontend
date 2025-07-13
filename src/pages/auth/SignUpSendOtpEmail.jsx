@@ -5,7 +5,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import SignUpIllustration from "../../assets/SignUp_Illustration.png";
 import AuthLayout from "./authLayout";
-import { Input, Button, Link } from "../ui";
+import { Input, Button, Link } from "../../components/ui";
 
 // Zod schema for OTP validation
 const otpSchema = z.object({

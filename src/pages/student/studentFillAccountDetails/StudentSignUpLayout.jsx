@@ -1,7 +1,7 @@
 import React from "react";
 import SignUpIllustration from "../../../assets/SignUp_Illustration.png";
 import websiteLogo from "../../../assets/websiteLogo.svg";
-import { Link } from "../../ui";
+import { Link } from "../../../components/ui";
 
 export default function StudentSignUpLayout({ children, heading, subheading, hideMobileIllustration = false, centerMobileContent = false }) {
   return (

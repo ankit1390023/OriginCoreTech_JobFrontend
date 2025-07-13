@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import AuthLayout from "./authLayout";
-import { Input, Button, Link, SuccessMessage, ErrorMessage } from "../ui";
+import { Input, Button, Link, SuccessMessage, ErrorMessage } from "../../components/ui";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 

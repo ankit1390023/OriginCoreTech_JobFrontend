@@ -10,7 +10,7 @@ import StudentSignUpLayout from "./StudentSignUpLayout";
 import SkillsForm from "./SkillsForm";
 import PreferencesForm from "./PreferencesForm";
 import { userDetailsApi } from "../../../api/userDetailsApi";
-import { Button } from "../../ui";
+import { Button } from "../../../components/ui";
 
 const steps = [
   "Personal Info",

@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useFormContext } from "react-hook-form";
 import { useEducationData } from "../../../hooks/useEducationData";
-import { Loader, Input, Select, Label, ErrorMessage } from "../../ui";
+import { Loader, Input, Select, Label, ErrorMessage } from "../../../components/ui";
 
 export default function PersonalInfo() {
   const {
