@@ -9,7 +9,7 @@ import SignUp from "../pages/auth/SignUp";
 import SignUpSendOtpEmail from "../pages/auth/SignUpSendOtpEmail";
 import StudentFillAccountDetails from "../pages/student/studentFillAccountDetails/StudentFillAccountDetails";
 import RecruiterPostJobInternDetails from "../pages/recruiter/RecruiterPostJobInternDetails";
-import RecruiterProfile from "../pages/recruiter/recuiterProfile";
+import RecruiterProfile from "../pages/recruiter/RecuiterProfile";
 import UniversityFillDetails from "../pages/university/UniversityFillDetails";
 import AllJObs from "../pages/student/jobSection/AllJObs";
 import JobDetailsPage from "../pages/student/jobSection/JobDetailsPage";
