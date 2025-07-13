@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { FaCheckCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import SignUpIllustration from "../../assets/SignUp_Illustration.png";
-import StudentSignUpLayout from "../student/studentFillAccountDetails/StudentSignUpLayout";
+import SignUpLayout from "../../components/layout/SignUpLayout";
 import { Button, Link } from "../../components/ui";
 
 const roles = [
@@ -45,15 +45,15 @@ export default function SignUpChooseRole() {
   };
 
   return (
-    <StudentSignUpLayout
+    <SignUpLayout
       heading="Create a new account"
       subheading="Join us and find your dream job or recruit talented candidates."
       illustration={SignUpIllustration}
       centerMobileContent={true}
     >
       {/* Main Content */}
-      <div className="w-full max-w-xs sm:max-w-sm mx-auto flex flex-col items-center justify-center">
-        <div className="bg-white rounded-lg shadow-md w-full p-4 sm:p-6">
+      <div className="w-full max-w-full sm:max-w-sm mx-auto flex flex-col items-center justify-center -mt-4 sm:-mt-2">
+        <div className="bg-white rounded-lg shadow-none sm:shadow-md w-full p-4 sm:p-6">
           {/* Role Options */}
           <div className="w-full flex flex-col gap-3 mb-4">
             {roles.map((role, idx) => (
@@ -97,6 +97,6 @@ export default function SignUpChooseRole() {
           </div>
         </div>
       </div>
-    </StudentSignUpLayout>
+    </SignUpLayout>
   );
 }

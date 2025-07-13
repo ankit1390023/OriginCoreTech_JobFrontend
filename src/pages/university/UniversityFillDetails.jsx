@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import StudentSignUpLayout from "../student/studentFillAccountDetails/StudentSignUpLayout";
+import SignUpLayout from "../../components/layout/SignUpLayout";
 import { FcGoogle } from "react-icons/fc";
 import { Input, Textarea, Button, ErrorMessage, Link } from "../../components/ui";
 
@@ -62,7 +62,7 @@ export default function UniversityFillDetails() {
     };
 
     return (
-        <StudentSignUpLayout
+        <SignUpLayout
             heading="University Sign Up"
             subheading="Complete your university profile."
         >
@@ -166,6 +166,6 @@ export default function UniversityFillDetails() {
                     </p>
                 </form>
             </div>
-        </StudentSignUpLayout>
+        </SignUpLayout>
     );
 } 

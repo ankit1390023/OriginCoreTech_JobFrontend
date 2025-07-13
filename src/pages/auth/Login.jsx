@@ -5,7 +5,7 @@ import { z } from "zod";
 import { FcGoogle } from "react-icons/fc";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import AuthLayout from "./authLayout";
+import AuthLayout from "../../components/layout/authLayout";
 import { Input, Button, Link } from "../../components/ui";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -101,7 +101,7 @@ export default function Login() {
           {...register("password")}
         />
 
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2 sm:mb-3 gap-1 sm:gap-0">
+        <div className="flex flex-row items-center justify-between mb-2 sm:mb-3 gap-1 sm:gap-0">
           <label className="flex items-center text-[10px] cursor-pointer space-x-1">
             <input
               type="checkbox"

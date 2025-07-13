@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import PersonalInfo from "./PersonalInfo";
 import EducationInfo from "./EducationInfo";
 import ProgressBar from "./ProgressBar";
-import StudentSignUpLayout from "./StudentSignUpLayout";
+import StudentFillAccountDetailsLayout from "../../../components/layout/StudentFillAccountDetailsLayout";
 import SkillsForm from "./SkillsForm";
 import PreferencesForm from "./PreferencesForm";
 import { userDetailsApi } from "../../../api/userDetailsApi";
@@ -215,14 +215,14 @@ export default function StudentFillAccountDetails() {
   };
 
   return (
-    <StudentSignUpLayout
+    <StudentFillAccountDetailsLayout
       heading="Create a New Account"
       subheading="Join us and find your dream job or recruit talented candidates."
       hideMobileIllustration={true}
     >
       {/* Right Section */}
       <div className="flex-1 w-full flex justify-center">
-        <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl p-6 sm:p-8">
+        <div className="bg-white mt-4 rounded-xl shadow-none sm:shadow-xl w-full max-w-full sm:max-w-2xl p-6 sm:p-8">
           <ProgressBar currentStep={step} steps={steps} />
           <FormProvider {...methods}>
             <form
@@ -279,6 +279,6 @@ export default function StudentFillAccountDetails() {
           </FormProvider>
         </div>
       </div>
-    </StudentSignUpLayout>
+    </StudentFillAccountDetailsLayout>
   );
 }

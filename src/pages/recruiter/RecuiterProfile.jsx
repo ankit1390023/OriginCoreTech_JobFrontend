@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { recruiterApi } from "../../../api/recuiterApi";
-import RecruiterPostJobInternLayout from "../recruiterPostJobInternDetails/RecruiterPostJobInternLayout";
+import { recruiterApi } from "../../api/recuiterApi";
+import RecruiterPostJobInternLayout from "../../components/layout/RecruiterPostJobInternLayout";
 import { useNavigate } from "react-router-dom";
-import { Input, Textarea, Label, Button, SuccessMessage, ErrorMessage, Checkbox } from "../../../components/ui";
+import { Input, Textarea, Label, Button, SuccessMessage, ErrorMessage, Checkbox } from "../../components/ui";   
 
 const formSchema = z.object({
     designation: z.string().min(1, { message: "Designation is required" }),

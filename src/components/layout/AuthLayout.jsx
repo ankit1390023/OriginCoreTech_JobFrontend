@@ -12,20 +12,20 @@ export default function AuthLayout({ children, title, subtitle, showIllustration
             </div>
 
             {/* Logo for large devices (top left) */}
-            <div className="hidden lg:block absolute top-8 left-8 z-30">
+            <div className="hidden lg:block absolute top-8 left-6 z-30">
                 <img src={websiteLogo} alt="Logo" className="w-12 h-12" />
             </div>
 
             {/* Mobile Header (Blue Top) - Only for small devices */}
-            <div className="block lg:hidden w-full bg-[#072366] pt-8 pb-6 px-6">
+            <div className="block lg:hidden w-full bg-[#072366] h-48 sm:h-56 md:h-64 px-2 sm:px-4 md:px-6 flex flex-col justify-start pt-8">
                 <div className="flex items-center mb-6">
                     <img src={websiteLogo} alt="Logo" className="w-10 h-10" />
                 </div>
-                <h1 className="text-2xl font-bold text-white leading-tight mb-1">
+                <h1 className="text-2xl font-bold text-white leading-tight mb-1 text-left">
                     {title}
                 </h1>
                 {subtitle && (
-                    <p className="text-sm font-medium text-white leading-relaxed">
+                    <p className="text-sm font-medium text-white leading-relaxed text-left">
                         {subtitle}
                     </p>
                 )}

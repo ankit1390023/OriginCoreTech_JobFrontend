@@ -4,7 +4,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import AuthLayout from "./authLayout";
+import AuthLayout from "../../components/layout/AuthLayout";
 import { Input, Button, Link, SuccessMessage, ErrorMessage } from "../../components/ui";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -156,7 +156,7 @@ export default function ForgotPassword() {
     >
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="bg-white rounded-lg shadow-md p-4 sm:p-6 w-full max-w-xs sm:max-w-sm md:max-w-md"
+        className="bg-white rounded-lg shadow-md p-4 sm:p-6 w-full max-w-full sm:max-w-sm md:max-w-md"
       >
         {/* Email Input - Using new UI component */}
         <Input

@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import RecruiterPostJobInternLayout from "./RecruiterPostJobInternLayout";
-import { jobPostApi } from "../../../api/jobPostApi";
-import { domainApi } from "../../../api/domainApi";
-import { useEducationData } from "../../../hooks/useEducationData";
+  import RecruiterPostJobInternLayout from "../../components/layout/RecruiterPostJobInternLayout";
+import { jobPostApi } from "../../api/jobPostApi";
+import { domainApi } from "../../api/domainApi";
+import { useEducationData } from "../../hooks/useEducationData";
 import {
   Input,
   Button,
@@ -14,7 +14,7 @@ import {
   SuccessMessage,
   ErrorMessage,
   Label
-} from "../../../components/ui";
+} from "../../components/ui";
 
 const formSchema = z.object({
   opportunityType: z.enum(["Internship", "Job", "Project"]),
