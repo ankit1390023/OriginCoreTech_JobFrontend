@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import SignUpLayout from "../../components/layout/SignUpLayout";
+import SignUpLayoutForLarge from "../../components/layout/SignUpLayoutForLarge";
+import SignUpLayoutForSmall from "../../components/layout/SignUpLayoutForSmall";
 import { FcGoogle } from "react-icons/fc";
 import { Input, Textarea, Button, ErrorMessage, Link } from "../../components/ui";
 
@@ -20,6 +21,7 @@ const schema = z.object({
     socialMediaLink: z.string().url({ message: "Please enter a valid social media URL" }).optional().or(z.literal("")),
 });
 
+
 export default function UniversityFillDetails() {
     const {
         register,
@@ -32,6 +34,7 @@ export default function UniversityFillDetails() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const navigate = useNavigate();
+    const {isLargeDevice} = useResponsiveLayout();
 
     const onSubmit = async (data) => {
         setLoading(true);
@@ -39,7 +42,6 @@ export default function UniversityFillDetails() {
 
         try {
             const response = await axios.post(`${BASE_URL}/universitydetail`, {
-
                 ...data,
                 emailIdVerified: true,
                 adharVerified: false,
@@ -61,111 +63,132 @@ export default function UniversityFillDetails() {
         }
     };
 
-    return (
-        <SignUpLayout
-            heading="University Sign Up"
-            subheading="Complete your university profile."
-        >
-            <div className="bg-white rounded-lg shadow-md p-6">
-                {error && (
-                    <ErrorMessage onClose={() => setError("")}>
-                        {error}
-                    </ErrorMessage>
-                )}
+    const FormContent = () => (
+        <div className="bg-white rounded-lg shadow-md p-6">
+            {error && (
+                <ErrorMessage onClose={() => setError("")}>
+                    {error}
+                </ErrorMessage>
+            )}
 
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                    <Input
-                        label="College/University Name"
-                        required
-                        placeholder="Enter your college/university name"
-                        error={errors.collegeName?.message}
-                        {...register("collegeName")}
-                    />
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                <Input
+                    label="College/University Name"
+                    required
+                    placeholder="Enter your college/university name"
+                    error={errors.collegeName?.message}
+                    {...register("collegeName")}
+                />
 
-                    <Input
-                        label="Course/Program"
-                        required
-                        placeholder="e.g., BTech, MTech, MBA, etc."
-                        error={errors.course?.message}
-                        {...register("course")}
-                    />
+                <Input
+                    label="Course/Program"
+                    required
+                    placeholder="e.g., BTech, MTech, MBA, etc."
+                    error={errors.course?.message}
+                    {...register("course")}
+                />
 
-                    <Textarea
-                        label="Address"
-                        required
-                        placeholder="Enter complete address"
-                        error={errors.address?.message}
-                        {...register("address")}
-                    />
+                <Textarea
+                    label="Address"
+                    required
+                    placeholder="Enter complete address"
+                    error={errors.address?.message}
+                    {...register("address")}
+                />
 
-                    <Input
-                        label="Pincode"
-                        required
-                        placeholder="Enter 6-digit pincode"
-                        maxLength={6}
-                        error={errors.pincode?.message}
-                        {...register("pincode")}
-                    />
+                <Input
+                    label="Pincode"
+                    required
+                    placeholder="Enter 6-digit pincode"
+                    maxLength={6}
+                    error={errors.pincode?.message}
+                    {...register("pincode")}
+                />
 
-                    <Input
-                        label="Website Link"
-                        required
-                        type="url"
-                        placeholder="https://www.youruniversity.edu"
-                        error={errors.websiteLink?.message}
-                        {...register("websiteLink")}
-                    />
+                <Input
+                    label="Website Link"
+                    required
+                    type="url"
+                    placeholder="https://www.youruniversity.edu"
+                    error={errors.websiteLink?.message}
+                    {...register("websiteLink")}
+                />
 
-                    <Textarea
-                        label="About University"
-                        required
-                        placeholder="Tell us about your university, its mission, and what makes it special..."
-                        error={errors.about?.message}
-                        {...register("about")}
-                    />
+                <Textarea
+                    label="About University"
+                    required
+                    placeholder="Tell us about your university, its mission, and what makes it special..."
+                    error={errors.about?.message}
+                    {...register("about")}
+                />
 
-                    <Input
-                        label="Social Media Link (Optional)"
-                        type="url"
-                        placeholder="https://linkedin.com/company/youruniversity"
-                        error={errors.socialMediaLink?.message}
-                        {...register("socialMediaLink")}
-                    />
+                <Input
+                    label="Social Media Link (Optional)"
+                    type="url"
+                    placeholder="https://linkedin.com/company/youruniversity"
+                    error={errors.socialMediaLink?.message}
+                    {...register("socialMediaLink")}
+                />
 
-                    <Button
-                        variant="secondary"
-                        loading={loading}
-                        disabled={loading}
-                        className="w-full"
-                        type="submit"
-                    >
-                        {loading ? "Saving..." : "Save University Details"}
-                    </Button>
+                <Button
+                    variant="secondary"
+                    loading={loading}
+                    disabled={loading}
+                    className="w-full"
+                    type="submit"
+                >
+                    {loading ? "Saving..." : "Save University Details"}
+                </Button>
 
-                    <div className="flex items-center my-4 sm:my-6">
-                        <div className="flex-grow h-px bg-gray-300"></div>
-                        <span className="mx-3 sm:mx-4 text-gray-400 text-sm sm:text-base font-medium">Or</span>
-                        <div className="flex-grow h-px bg-gray-300"></div>
-                    </div>
+                <div className="flex items-center my-4 sm:my-6">
+                    <div className="flex-grow h-px bg-gray-300"></div>
+                    <span className="mx-3 sm:mx-4 text-gray-400 text-sm sm:text-base font-medium">Or</span>
+                    <div className="flex-grow h-px bg-gray-300"></div>
+                </div>
 
-                    <Button
-                        variant="outline"
-                        disabled={loading}
-                        className="w-full flex items-center justify-center"
-                        type="button"
-                    >
-                        <FcGoogle size={20} className="sm:w-6 sm:h-6 mr-2 sm:mr-3" />
-                        <span className="text-sm sm:text-base">Sign up with Google</span>
-                    </Button>
+                <Button
+                    variant="outline"
+                    disabled={loading}
+                    className="w-full flex items-center justify-center"
+                    type="button"
+                >
+                    <FcGoogle size={20} className="sm:w-6 sm:h-6 mr-2 sm:mr-3" />
+                    <span className="text-sm sm:text-base">Sign up with Google</span>
+                </Button>
 
-                    <p className="text-center text-sm sm:text-base text-gray-600 mt-6 sm:mt-8">
-                        Already have an account?{" "}
-                        <Link to="/login" variant="primary">
-                            Login
-                        </Link>
-                    </p>
-                </form>
-            </div>
-        </SignUpLayout>
+                <p className="text-center text-sm sm:text-base text-gray-600 mt-6 sm:mt-8">
+                    Already have an account?{" "}
+                    <Link to="/login" variant="primary">
+                        Login
+                    </Link>
+                </p>
+            </form>
+        </div>
     );
+
+    // Render different layouts based on device size
+    if (isLargeDevice) {
+        // Large devices (laptop/desktop) - use SignUpLayoutForLarge
+        return (
+            <SignUpLayoutForLarge
+                heading="University Details"
+                subheading="Complete your university profile!"
+                hideMobileIllustration={false}
+                centerMobileContent={false}
+            >
+                <FormContent />
+            </SignUpLayoutForLarge>
+        );
+    } else {
+        // Small devices (mobile/tablet) - use SignUpLayoutForSmall
+        return (
+            <SignUpLayoutForSmall
+                title="University Details"
+                subtitle="Complete your university profile!"
+                showIllustration={false}
+            >
+                <FormContent />
+            </SignUpLayoutForSmall>
+        );
+    }
 } 

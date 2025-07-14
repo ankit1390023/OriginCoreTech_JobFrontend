@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { FaCheckCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import SignUpIllustration from "../../assets/SignUp_Illustration.png";
-import SignUpLayout from "../../components/layout/SignUpLayout";
+import SignUpLayoutForLarge from "../../components/layout/SignUpLayoutForLarge";
 import { Button, Link } from "../../components/ui";
 
 const roles = [
@@ -45,7 +45,7 @@ export default function SignUpChooseRole() {
   };
 
   return (
-    <SignUpLayout
+    <SignUpLayoutForLarge
       heading="Create a new account"
       subheading="Join us and find your dream job or recruit talented candidates."
       illustration={SignUpIllustration}
@@ -97,6 +97,6 @@ export default function SignUpChooseRole() {
           </div>
         </div>
       </div>
-    </SignUpLayout>
+    </SignUpLayoutForLarge>
   );
 }

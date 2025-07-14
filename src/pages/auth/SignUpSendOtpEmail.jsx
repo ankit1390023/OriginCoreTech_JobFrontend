@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaCheckCircle, FaEnvelope, FaSpinner } from "react-icons/fa";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import SignUpIllustration from "../../assets/SignUp_Illustration.png";
-import AuthLayout from "../../components/layout/AuthLayout";
 import { Input, Button, Link } from "../../components/ui";
+import SignUpLayoutForLarge from "../../components/layout/SignUpLayoutForLarge";
+import SignUpLayoutForSmall from "../../components/layout/SignUpLayoutForSmall";
+import useResponsiveLayout from "../../hooks/useResponsiveLayout";
 
 // Zod schema for OTP validation
 const otpSchema = z.object({
@@ -18,6 +20,7 @@ const otpSchema = z.object({
 
 export default function SignUpSendOtpEmail() {
   const [loading, setLoading] = useState(false);
+  const {isLargeDevice} = useResponsiveLayout();
 
   const {
     register,
@@ -61,76 +64,97 @@ export default function SignUpSendOtpEmail() {
     setValue("otp", value.slice(0, 4)); // Limit to 4 digits
   };
 
-  return (
-    <AuthLayout
-      title="Verify Your Email"
-      subtitle="Create an account to continue!"
-      showIllustration={false}
-    >
-      <div className="flex-1 w-full flex justify-center">
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="bg-white rounded-lg shadow-md p-4 sm:p-6 w-full max-w-xs sm:max-w-sm md:max-w-md"
+  // Form content component
+  const FormContent = () => (
+    <div className="flex-1 w-full flex justify-center">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="bg-white rounded-lg shadow-md p-4 sm:p-6 w-full max-w-xs sm:max-w-sm md:max-w-md"
+      >
+        <div className="mb-2 sm:mb-3">
+          <p className="text-gray-600 text-xs mb-2">
+            One Time Password (OTP) has been sent to your email on
+            amangupta@gmail.com
+          </p>
+
+          {/* OTP Input - Using new UI component */}
+          <Input
+            label="Enter OTP to verify your email"
+            type="text"
+            placeholder="0000"
+            maxLength={4}
+            disabled={loading}
+            error={errors.otp?.message}
+            variant={errors.otp ? "error" : "default"}
+            className="text-center font-semibold tracking-widest"
+            {...register("otp")}
+            onChange={handleOtpChange}
+          />
+
+          {!errors.otp && (
+            <span className="text-xs text-gray-500 mt-0.5 block">
+              Enter the 4-digit verification code
+            </span>
+          )}
+        </div>
+
+        {/* Submit Button - Using new UI component */}
+        <Button
+          type="submit"
+          loading={loading}
+          disabled={loading || watchedOtp.length !== 4}
+          className="w-full mb-2 sm:mb-3"
         >
-          <div className="mb-2 sm:mb-3">
-            <p className="text-gray-600 text-xs mb-2">
-              One Time Password (OTP) has been sent to your email on
-              amangupta@gmail.com
-            </p>
+          {loading ? "Verifying..." : "Verify Email"}
+        </Button>
 
-            {/* OTP Input - Using new UI component */}
-            <Input
-              label="Enter OTP to verify your email"
-              type="text"
-              placeholder="0000"
-              maxLength={4}
-              disabled={loading}
-              error={errors.otp?.message}
-              variant={errors.otp ? "error" : "default"}
-              className="text-center font-semibold tracking-widest"
-              {...register("otp")}
-              onChange={handleOtpChange}
-            />
+        {/* Help Text */}
+        <div className="mt-2 p-2 bg-gray-50 rounded-md">
+          <p className="text-xs text-gray-600 text-center">
+            <FaEnvelope className="inline mr-1 text-gray-400" />
+            Can't find our email? Check spam folders or promotion tabs too!
+          </p>
+        </div>
 
-            {!errors.otp && (
-              <span className="text-xs text-gray-500 mt-0.5 block">
-                Enter the 4-digit verification code
-              </span>
-            )}
-          </div>
-
-          {/* Submit Button - Using new UI component */}
-          <Button
-            type="submit"
-            loading={loading}
-            disabled={loading || watchedOtp.length !== 4}
-            className="w-full mb-2 sm:mb-3"
-          >
-            {loading ? "Verifying..." : "Verify Email"}
-          </Button>
-
-          {/* Help Text */}
-          <div className="mt-2 p-2 bg-gray-50 rounded-md">
-            <p className="text-xs text-gray-600 text-center">
-              <FaEnvelope className="inline mr-1 text-gray-400" />
-              Can't find our email? Check spam folders or promotion tabs too!
-            </p>
-          </div>
-
-          {/* Login Link - Using new UI component */}
-          <div className="text-center mt-2 pt-2 border-t border-gray-200">
-            <p className="text-gray-500 text-xs">
-              Already have an account?{" "}
-              <Link
-                to="/login"
-                variant="primary"
-              >
-                Login
-              </Link>
-            </p>
-          </div>
-        </form>
-      </div>
-    </AuthLayout>
+        {/* Login Link - Using new UI component */}
+        <div className="text-center mt-2 pt-2 border-t border-gray-200">
+          <p className="text-gray-500 text-xs">
+            Already have an account?{" "}
+            <Link
+              to="/login"
+              variant="primary"
+            >
+              Login
+            </Link>
+          </p>
+        </div>
+      </form>
+    </div>
   );
+
+  // Render different layouts based on device size
+  if (isLargeDevice) {
+    // Large devices (laptop/desktop) - use SignUpLayout
+    return (
+      <SignUpLayoutForLarge
+        heading="Verify Your Email"
+        subheading="Create an account to continue!"
+        hideMobileIllustration={false}
+        centerMobileContent={false}
+      >
+        <FormContent />
+      </SignUpLayoutForLarge>
+    );
+  } else {
+    // Small devices (mobile/tablet) - use SignUpSendOtpEmailLayout
+    return (
+      <SignUpLayoutForSmall
+        title="Verify Your Email"
+        subtitle="Create an account to continue!"
+        showIllustration={false}
+      >
+        <FormContent />
+      </SignUpLayoutForSmall>
+    );
+  }
 }

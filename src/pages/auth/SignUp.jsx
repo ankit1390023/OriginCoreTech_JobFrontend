@@ -105,7 +105,7 @@ export default function SignUp() {
       });
       if (response.status === 201) {
         alert("Signup successful!");
-        navigate("/send-otp-email");
+        navigate("/signup-send-otp-email");
       } else {
         alert("Signup failed. Please try again.");
       }

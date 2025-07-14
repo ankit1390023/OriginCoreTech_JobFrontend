@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -6,11 +6,13 @@ import { useNavigate } from "react-router-dom";
 import PersonalInfo from "./PersonalInfo";
 import EducationInfo from "./EducationInfo";
 import ProgressBar from "./ProgressBar";
-import StudentFillAccountDetailsLayout from "../../../components/layout/StudentFillAccountDetailsLayout";
+import SignUpLayoutForLarge from "../../../components/layout/SignUpLayoutForLarge";
+import SignUpLayoutForSmall from "../../../components/layout/SignUpLayoutForSmall";
 import SkillsForm from "./SkillsForm";
 import PreferencesForm from "./PreferencesForm";
 import { userDetailsApi } from "../../../api/userDetailsApi";
 import { Button } from "../../../components/ui";
+import useResponsiveLayout from "../../../hooks/useResponsiveLayout";
 
 const steps = [
   "Personal Info",
@@ -49,8 +51,9 @@ const formSchema = z.object({
   ...personalInfoSchema.shape,
   // Add other step schemas here as needed
 });
-
 export default function StudentFillAccountDetails() {
+  const {isLargeDevice}=useResponsiveLayout();
+
   const methods = useForm({
     mode: "onTouched",
     resolver: zodResolver(formSchema),
@@ -213,74 +216,91 @@ export default function StudentFillAccountDetails() {
     // It will be called by react-hook-form validation
     return false;
   };
-
-  return (
-    <StudentFillAccountDetailsLayout
-      heading="Create a New Account"
-      subheading="Join us and find your dream job or recruit talented candidates."
-      hideMobileIllustration={true}
-    >
-      {/* Right Section */}
-      <div className="flex-1 w-full flex justify-center">
-        <div className="bg-white mt-4 rounded-xl shadow-none sm:shadow-xl w-full max-w-full sm:max-w-2xl p-6 sm:p-8">
-          <div className="-mt-2 mb-6">
-            <ProgressBar currentStep={step} steps={steps} />
-          </div>
-          <FormProvider {...methods}>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                console.log("Form submit event prevented");
-              }}
-            >
-              {step === 0 && (
-                <PersonalInfo
-                  register={methods.register}
-                  errors={methods.formState.errors}
-                />
-              )}
-              {step === 1 && (
-                <EducationInfo
-                  register={methods.register}
-                  errors={methods.formState.errors}
-                  watch={methods.watch}
-                />
-              )}
-              {step === 2 && <SkillsForm />}
-              {step === 3 && <PreferencesForm />}
-              <div className="flex justify-between mt-8">
-                {step > 0 ? (
-                  <Button
-                    variant="outline"
-                    onClick={onBack}
-                  >
-                    Back
-                  </Button>
-                ) : (
-                  <div />
-                )}
-                {step < steps.length - 1 ? (
-                  <Button
-                    variant="secondary"
-                    onClick={onNext}
-                  >
-                    Next
-                  </Button>
-                ) : (
-                  <Button
-                    variant="primary"
-                    loading={isSubmitting}
-                    disabled={isSubmitting}
-                    onClick={handleSubmitClick}
-                  >
-                    {isSubmitting ? "Submitting..." : "Submit"}
-                  </Button>
-                )}
-              </div>
-            </form>
-          </FormProvider>
+  const FormContent = () => (
+    <div className="flex-1 w-full flex justify-center">
+      <div className="bg-white mt-4 rounded-xl shadow-none sm:shadow-xl w-full max-w-full sm:max-w-2xl p-6 sm:p-8">
+        <div className="-mt-2 mb-6">
+          <ProgressBar currentStep={step} steps={steps} />
         </div>
+        <FormProvider {...methods}>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              console.log("Form submit event prevented");
+            }}
+          >
+            {step === 0 && (
+              <PersonalInfo
+                register={methods.register}
+                errors={methods.formState.errors}
+              />
+            )}
+            {step === 1 && (
+              <EducationInfo
+                register={methods.register}
+                errors={methods.formState.errors}
+                watch={methods.watch}
+              />
+            )}
+            {step === 2 && <SkillsForm />}
+            {step === 3 && <PreferencesForm />}
+            <div className="flex justify-between mt-8">
+              {step > 0 ? (
+                <Button
+                  variant="outline"
+                  onClick={onBack}
+                >
+                  Back
+                </Button>
+              ) : (
+                <div />
+              )}
+              {step < steps.length - 1 ? (
+                <Button
+                  variant="secondary"
+                  onClick={onNext}
+                >
+                  Next
+                </Button>
+              ) : (
+                <Button
+                  variant="primary"
+                  loading={isSubmitting}
+                  disabled={isSubmitting}
+                  onClick={handleSubmitClick}
+                >
+                  {isSubmitting ? "Submitting..." : "Submit"}
+                </Button>
+              )}
+            </div>
+          </form>
+        </FormProvider>
       </div>
-    </StudentFillAccountDetailsLayout>
+    </div>
   );
+  // Render different layouts based on device size
+  if (isLargeDevice) {
+    // Large devices (laptop/desktop) - use SignUpLayout
+    return (
+      <SignUpLayoutForLarge
+        heading="Verify Your Email"
+        subheading="Create an account to continue!"
+        hideMobileIllustration={false}
+        centerMobileContent={false}
+      >
+        <FormContent />
+      </SignUpLayoutForLarge>
+    );
+  } else {
+    // Small devices (mobile/tablet) - use SignUpSendOtpEmailLayout
+    return (
+      <SignUpLayoutForSmall
+        title="Verify Your Email"
+        subtitle="Create an account to continue!"
+        showIllustration={false}
+      >
+        <FormContent />
+      </SignUpLayoutForSmall>
+    );
+  }
 }
