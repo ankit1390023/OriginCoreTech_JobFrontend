@@ -1,6 +1,6 @@
 import React from "react";
 import SignUpIllustration from "../../assets/SignUp_Illustration.png";
-import websiteLogo from "../../assets/websiteLogo.svg";
+import websiteLogo from "../../assets/WebsiteLogo.svg";
 import { Button, Link } from "../../components/ui";
 
 export default function RecruiterPostJobInternLayout({
