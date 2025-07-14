@@ -2,7 +2,7 @@ import { NavLink } from "react-router-dom";
 import { FaSearch, FaBell, FaUser, FaBars, FaTimes } from "react-icons/fa";
 import { FiMessageCircle } from "react-icons/fi";
 import { useState } from "react";
-import websiteLogo from "../../assets/websiteLogo.svg";
+import websiteLogo from "../../assets/WebsiteLogo.svg";
 export default function Header() {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isSearchExpanded, setIsSearchExpanded] = useState(false);

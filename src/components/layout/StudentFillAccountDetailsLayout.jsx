@@ -1,6 +1,6 @@
 import React from "react";
 import SignUpIllustration from "../../assets/SignUp_Illustration.png";
-import websiteLogo from "../../assets/websiteLogo.svg";
+import websiteLogo from "../../assets/WebsiteLogo.svg";
 import { Link } from "../ui";
 
 export default function StudentFillAccountDetailsLayout({ children, heading, subheading, hideMobileIllustration = false, centerMobileContent = false }) {
@@ -55,7 +55,7 @@ export default function StudentFillAccountDetailsLayout({ children, heading, sub
                         <h1 className="text-2xl font-bold text-black  w-full px-4">{heading}</h1>
                         <p className="text-sm text-gray-700  w-full px-4">{subheading}</p>
                     </div>
-                    <div className="w-full lg:p-0 bg-white">
+                    <div className="w-full lg:p-0 bg-white lg:bg-transparent">
                         {children}
                     </div>
                 </div>

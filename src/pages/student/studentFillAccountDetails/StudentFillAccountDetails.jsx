@@ -223,7 +223,9 @@ export default function StudentFillAccountDetails() {
       {/* Right Section */}
       <div className="flex-1 w-full flex justify-center">
         <div className="bg-white mt-4 rounded-xl shadow-none sm:shadow-xl w-full max-w-full sm:max-w-2xl p-6 sm:p-8">
-          <ProgressBar currentStep={step} steps={steps} />
+          <div className="-mt-2 mb-6">
+            <ProgressBar currentStep={step} steps={steps} />
+          </div>
           <FormProvider {...methods}>
             <form
               onSubmit={(e) => {

@@ -1,6 +1,6 @@
 import React from "react";
 import SignUpIllustration from "../../assets/SignUp_Illustration.png";
-import websiteLogo from "../../assets/websiteLogo.svg";
+import websiteLogo from "../../assets/WebsiteLogo.svg";
 import { Link } from "../ui";
 
 export default function SignUpLayout({ children, heading, subheading, hideMobileIllustration = false, centerMobileContent = false }) {

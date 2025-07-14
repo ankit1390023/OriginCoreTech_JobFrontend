@@ -41,7 +41,7 @@ export default function PersonalInfo() {
 
   return (
     <div className="space-y-2 sm:space-y-3">
-      <div className="flex gap-1 sm:gap-2 mb-2 sm:mb-3">
+      <div className="flex gap-1 sm:gap-2">
         <div className="flex-1">
           <Input
             label="First Name"
