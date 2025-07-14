@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useFormContext } from "react-hook-form";
 import { useEducationData } from "../../../hooks/useEducationData";
-import { Loader, Input, Select, Label, ErrorMessage } from "../../../components/ui";
+import { Loader, Input, Select, Label, ErrorMessage, PhoneInput } from "../../../components/ui";
 
 export default function PersonalInfo() {
   const {
@@ -68,7 +68,7 @@ export default function PersonalInfo() {
         readOnly
         {...register("email")}
       />
-      <Input
+      <PhoneInput
         label="Phone Number"
         type="tel"
         placeholder="+91 98765 43210"

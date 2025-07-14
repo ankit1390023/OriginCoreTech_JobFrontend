@@ -5,7 +5,7 @@ import { z } from "zod";
 import { FcGoogle } from "react-icons/fc";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import AuthLayout from "../../components/layout/AuthLayout";
+import AuthLayout from "../../components/layout/authLayout";
 import { Input, Button, Link } from "../../components/ui";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
