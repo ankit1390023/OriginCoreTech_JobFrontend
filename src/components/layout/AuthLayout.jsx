@@ -1,6 +1,6 @@
 import React from "react";
 import LoginIllustration from "../../assets/Login_Illustration.png";
-import websiteLogo from "../../assets/websiteLogo.svg";
+import websiteLogo from "../../assets/WebsiteLogo.svg";
 
 export default function AuthLayout({ children, title, subtitle, showIllustration = true }) {
     return (
