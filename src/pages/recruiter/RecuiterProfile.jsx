@@ -3,10 +3,11 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { recruiterApi } from "../../api/recuiterApi";
-import RecruiterPostJobInternLayout from "../../components/layout/RecruiterPostJobInternLayout";
+import useResponsiveLayout from "../../hooks/useResponsiveLayout";
 import { useNavigate } from "react-router-dom";
-import { Input, Textarea, Label, Button, SuccessMessage, ErrorMessage, Checkbox } from "../../components/ui";   
-
+import { Input, Textarea, Label, Button, SuccessMessage, ErrorMessage, Checkbox } from "../../components/ui";
+import SignUpLayoutForLarge from "../../components/layout/SignUpLayoutForLarge";
+import SignUpLayoutForSmall from "../../components/layout/SignUpLayoutForSmall";
 const formSchema = z.object({
     designation: z.string().min(1, { message: "Designation is required" }),
     companyName: z.string().min(1, { message: "Company name is required" }),
@@ -30,6 +31,7 @@ export default function CompanyRecruiterProfile() {
     const [existingProfile, setExistingProfile] = useState(null);
     const [logoPreview, setLogoPreview] = useState("");
     const [profilePicPreview, setProfilePicPreview] = useState("");
+    const { isLargeDevice } = useResponsiveLayout();
     const navigate = useNavigate();
     const {
         register,
@@ -183,200 +185,217 @@ export default function CompanyRecruiterProfile() {
     // File input styles
     const fileInputStyles = "w-full px-4 py-3 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100";
 
-    return (
-        <RecruiterPostJobInternLayout
-            heading={isEditMode ? "Edit Company Profile" : "Create Company Profile"}
-            subheading={isEditMode ? "Update your company recruiter profile information." : "Set up your company recruiter profile to start posting jobs and internships."}
-        >
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-w-2xl mx-auto bg-white rounded-xl p-1">
-                {/* Success Message */}
-                {successMessage && (
-                    <SuccessMessage onClose={() => setSuccessMessage("")}>
-                        {successMessage}
-                    </SuccessMessage>
-                )}
 
-                {/* Error Message */}
-                {errorMessage && (
-                    <ErrorMessage onClose={() => setErrorMessage("")}>
-                        {errorMessage}
-                    </ErrorMessage>
-                )}
+    const FormContent = () => (
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-w-2xl mx-auto bg-white rounded-xl p-1">
+            {/* Success Message */}
+            {successMessage && (
+                <SuccessMessage onClose={() => setSuccessMessage("")}>
+                    {successMessage}
+                </SuccessMessage>
+            )}
 
-                {/* Basic Information */}
-                <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">
-                        Basic Information
-                    </h3>
+            {/* Error Message */}
+            {errorMessage && (
+                <ErrorMessage onClose={() => setErrorMessage("")}>
+                    {errorMessage}
+                </ErrorMessage>
+            )}
 
-                    {/* Designation */}
-                    <Input
-                        label="Designation"
-                        required
-                        placeholder="e.g., HR Manager, Recruiter, Hiring Manager"
-                        error={errors.designation?.message}
-                        {...register("designation")}
+            {/* Basic Information */}
+            <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">
+                    Basic Information
+                </h3>
+
+                {/* Designation */}
+                <Input
+                    label="Designation"
+                    required
+                    placeholder="e.g., HR Manager, Recruiter, Hiring Manager"
+                    error={errors.designation?.message}
+                    {...register("designation")}
+                />
+
+                {/* Company Name */}
+                <Input
+                    label="Company Name"
+                    required
+                    placeholder="e.g., Tech Solutions Inc."
+                    error={errors.companyName?.message}
+                    {...register("companyName")}
+                />
+
+                {/* Industry */}
+                <Input
+                    label="Industry"
+                    required
+                    placeholder="e.g., Technology, Healthcare, Finance"
+                    error={errors.industry?.message}
+                    {...register("industry")}
+                />
+
+                {/* Location */}
+                <Input
+                    label="Location"
+                    required
+                    placeholder="e.g., Mumbai, Maharashtra"
+                    error={errors.location?.message}
+                    {...register("location")}
+                />
+            </div>
+
+            {/* Company Details */}
+            <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">
+                    Company Details
+                </h3>
+
+                {/* About Company */}
+                <Textarea
+                    label="About Company"
+                    required
+                    placeholder="Describe your company, its mission, values, and what makes it unique..."
+                    error={errors.about?.message}
+                    {...register("about")}
+                />
+
+                {/* Company Logo Upload */}
+                <div>
+                    <Label>Company Logo</Label>
+                    <input
+                        type="file"
+                        accept="image/*"
+                        {...register("logo")}
+                        className={fileInputStyles}
                     />
+                    {errors.logo && <p className="text-red-500 text-sm mt-1">{errors.logo.message}</p>}
 
-                    {/* Company Name */}
-                    <Input
-                        label="Company Name"
-                        required
-                        placeholder="e.g., Tech Solutions Inc."
-                        error={errors.companyName?.message}
-                        {...register("companyName")}
-                    />
-
-                    {/* Industry */}
-                    <Input
-                        label="Industry"
-                        required
-                        placeholder="e.g., Technology, Healthcare, Finance"
-                        error={errors.industry?.message}
-                        {...register("industry")}
-                    />
-
-                    {/* Location */}
-                    <Input
-                        label="Location"
-                        required
-                        placeholder="e.g., Mumbai, Maharashtra"
-                        error={errors.location?.message}
-                        {...register("location")}
-                    />
+                    {/* Logo Preview */}
+                    {logoPreview && (
+                        <div className="mt-3">
+                            <p className="text-sm text-gray-600 mb-2">Preview:</p>
+                            <img
+                                src={logoPreview}
+                                alt="Company Logo Preview"
+                                className="w-32 h-32 object-contain border border-gray-300 rounded-lg"
+                            />
+                        </div>
+                    )}
                 </div>
 
-                {/* Company Details */}
-                <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">
-                        Company Details
-                    </h3>
-
-                    {/* About Company */}
-                    <Textarea
-                        label="About Company"
-                        required
-                        placeholder="Describe your company, its mission, values, and what makes it unique..."
-                        error={errors.about?.message}
-                        {...register("about")}
+                {/* Profile Picture Upload */}
+                <div>
+                    <Label>Profile Picture</Label>
+                    <input
+                        type="file"
+                        accept="image/*"
+                        {...register("profilePic")}
+                        className={fileInputStyles}
                     />
+                    {errors.profilePic && <p className="text-red-500 text-sm mt-1">{errors.profilePic.message}</p>}
 
-                    {/* Company Logo Upload */}
-                    <div>
-                        <Label>Company Logo</Label>
-                        <input
-                            type="file"
-                            accept="image/*"
-                            {...register("logo")}
-                            className={fileInputStyles}
-                        />
-                        {errors.logo && <p className="text-red-500 text-sm mt-1">{errors.logo.message}</p>}
-
-                        {/* Logo Preview */}
-                        {logoPreview && (
-                            <div className="mt-3">
-                                <p className="text-sm text-gray-600 mb-2">Preview:</p>
-                                <img
-                                    src={logoPreview}
-                                    alt="Company Logo Preview"
-                                    className="w-32 h-32 object-contain border border-gray-300 rounded-lg"
-                                />
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Profile Picture Upload */}
-                    <div>
-                        <Label>Profile Picture</Label>
-                        <input
-                            type="file"
-                            accept="image/*"
-                            {...register("profilePic")}
-                            className={fileInputStyles}
-                        />
-                        {errors.profilePic && <p className="text-red-500 text-sm mt-1">{errors.profilePic.message}</p>}
-
-                        {/* Profile Picture Preview */}
-                        {profilePicPreview && (
-                            <div className="mt-3">
-                                <p className="text-sm text-gray-600 mb-2">Preview:</p>
-                                <img
-                                    src={profilePicPreview}
-                                    alt="Profile Picture Preview"
-                                    className="w-32 h-32 object-cover border border-gray-300 rounded-lg"
-                                />
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Hiring Preferences */}
-                    <Textarea
-                        label="Hiring Preferences"
-                        placeholder="Describe your hiring preferences, ideal candidate qualities..."
-                        error={errors.hiringPreferences?.message}
-                        {...register("hiringPreferences")}
-                    />
-
-                    {/* Languages Known */}
-                    <Input
-                        label="Languages Known"
-                        placeholder="e.g., English, Hindi, Spanish"
-                        error={errors.languagesKnown?.message}
-                        {...register("languagesKnown")}
-                    />
+                    {/* Profile Picture Preview */}
+                    {profilePicPreview && (
+                        <div className="mt-3">
+                            <p className="text-sm text-gray-600 mb-2">Preview:</p>
+                            <img
+                                src={profilePicPreview}
+                                alt="Profile Picture Preview"
+                                className="w-32 h-32 object-cover border border-gray-300 rounded-lg"
+                            />
+                        </div>
+                    )}
                 </div>
 
-                {/* Verification Status */}
-                <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">
-                        Verification Status
-                    </h3>
+                {/* Hiring Preferences */}
+                <Textarea
+                    label="Hiring Preferences"
+                    placeholder="Describe your hiring preferences, ideal candidate qualities..."
+                    error={errors.hiringPreferences?.message}
+                    {...register("hiringPreferences")}
+                />
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        {/* Email Verification */}
-                        <Checkbox
-                            id="isEmailVerified"
-                            {...register("isEmailVerified")}
-                        >
-                            Email Verified
-                        </Checkbox>
+                {/* Languages Known */}
+                <Input
+                    label="Languages Known"
+                    placeholder="e.g., English, Hindi, Spanish"
+                    error={errors.languagesKnown?.message}
+                    {...register("languagesKnown")}
+                />
+            </div>
 
-                        {/* Phone Verification */}
-                        <Checkbox
-                            id="isPhoneVerified"
-                            {...register("isPhoneVerified")}
-                        >
-                            Phone Verified
-                        </Checkbox>
+            {/* Verification Status */}
+            <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">
+                    Verification Status
+                </h3>
 
-                        {/* GST Verification */}
-                        <Checkbox
-                            id="isGstVerified"
-                            {...register("isGstVerified")}
-                        >
-                            GST Verified
-                        </Checkbox>
-                    </div>
-                </div>
-
-                {/* Submit Button */}
-                <div className="flex justify-end space-x-4 pt-6">
-                    <Button
-                        variant="outline"
-                        onClick={clearMessages}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {/* Email Verification */}
+                    <Checkbox
+                        id="isEmailVerified"
+                        {...register("isEmailVerified")}
                     >
-                        Clear
-                    </Button>
-                    <Button
-                        variant="secondary"
-                        loading={isSubmitting}
-                        disabled={isSubmitting}
-                        type="submit"
+                        Email Verified
+                    </Checkbox>
+
+                    {/* Phone Verification */}
+                    <Checkbox
+                        id="isPhoneVerified"
+                        {...register("isPhoneVerified")}
                     >
-                        {isEditMode ? "Update Profile" : "Create Profile"}
-                    </Button>
+                        Phone Verified
+                    </Checkbox>
+
+                    {/* GST Verification */}
+                    <Checkbox
+                        id="isGstVerified"
+                        {...register("isGstVerified")}
+                    >
+                        GST Verified
+                    </Checkbox>
                 </div>
-            </form>
-        </RecruiterPostJobInternLayout>
+            </div>
+
+            {/* Submit Button */}
+            <div className="flex justify-end space-x-4 pt-6">
+                <Button
+                    variant="outline"
+                    onClick={clearMessages}
+                >
+                    Clear
+                </Button>
+                <Button
+                    variant="secondary"
+                    loading={isSubmitting}
+                    disabled={isSubmitting}
+                    type="submit"
+                >
+                    {isEditMode ? "Update Profile" : "Create Profile"}
+                </Button>
+            </div>
+        </form>
     );
+    if (isLargeDevice) {
+        return (
+            <SignUpLayoutForLarge
+                heading={isEditMode ? "Edit Company Profile" : "Create Company Profile"}
+                subheading={isEditMode ? "Update your company recruiter profile information." : "Set up your company recruiter profile to start posting jobs and internships."}
+            >
+                <FormContent />
+            </SignUpLayoutForLarge>
+        )
+    } else {
+        return (
+            <SignUpLayoutForSmall
+                title={isEditMode ? "Edit Company Profile" : "Create Company Profile"}
+                subtitle={isEditMode ? "Update your company recruiter profile information." : "Set up your company recruiter profile to start posting jobs and internships."}
+                showIllustration={false}
+            >
+                <FormContent />
+            </SignUpLayoutForSmall>
+        )
+    }
+
 } 

@@ -52,7 +52,7 @@ export default function SignUpChooseRole() {
       centerMobileContent={true}
     >
       {/* Main Content */}
-      <div className="w-full max-w-full sm:max-w-sm mx-auto flex flex-col items-center justify-center -mt-4 sm:-mt-2">
+      <div className="w-full px-0 sm:max-w-sm mx-auto flex flex-col items-center justify-center -mt-4 sm:-mt-2">
         <div className="bg-white rounded-lg shadow-none sm:shadow-md w-full p-4 sm:p-6">
           {/* Role Options */}
           <div className="w-full flex flex-col gap-3 mb-4">

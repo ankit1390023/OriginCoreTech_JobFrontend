@@ -17,7 +17,7 @@ export default function SignUpSendOtpEmailLayout({ children, title, subtitle, sh
             </div>
 
             {/* Mobile Header (Blue Top) - Only for small devices */}
-            <div className="block lg:hidden w-full bg-[#6EB5DD66] h-48 sm:h-56 md:h-64 px-2 sm:px-4 md:px-6 flex flex-col justify-start pt-8">
+            <div className="block lg:hidden w-full bg-[#6EB5DD66] h-48 sm:h-56 md:h-64 px-4 sm:px-6 flex flex-col justify-start pt-8">
                 <div className="flex items-center mb-6">
                     <img src={websiteLogo} alt="Logo" className="w-10 h-10" />
                 </div>
@@ -37,7 +37,7 @@ export default function SignUpSendOtpEmailLayout({ children, title, subtitle, sh
             </div>
 
             {/* Desktop/Large Screen Layout (unchanged, but now above split background) */}
-            <div className="hidden lg:flex relative z-20 flex-col lg:flex-row items-start justify-start max-w-5xl lg:max-w-6xl xl:max-w-7xl mx-auto px-2 sm:px-4 lg:px-6 py-8 sm:py-12 md:py-16 gap-y-6 sm:gap-y-8 md:gap-y-10 lg:gap-x-2 mt-20 sm:mt-24 md:mt-28 lg:mt-12 lg:mt-16 lg:mt-20">
+            <div className="hidden lg:flex relative z-20 flex-col lg:flex-row items-start justify-start max-w-5xl lg:max-w-6xl xl:max-w-7xl mx-auto px-4 sm:px-6 lg:px-6 py-8 sm:py-12 md:py-16 gap-y-6 sm:gap-y-8 md:gap-y-10 lg:gap-x-2 mt-20 sm:mt-24 md:mt-28 lg:mt-12 lg:mt-16 lg:mt-20">
                 {/* Left Section - Desktop Only */}
                 <div className="hidden ml-14 lg:flex flex-1 flex-col items-center lg:items-start text-center lg:text-left space-y-2 sm:space-y-3 lg:sticky lg:top-28">
                     <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-white">

@@ -200,7 +200,7 @@ export default function SignUp() {
         </div>
 
         {/* Right Section */}
-        <div className="flex-1 w-full flex flex-col items-center justify-center">
+        <div className="flex-1  w-full flex flex-col items-center justify-center">
           {/* Heading and Subheading for mobile/tablet only */}
           <div className="block lg:hidden flex flex-col mb-12 sm:mb-16 md:mb-20 w-full items-start text-left">
             <h1 className="text-2xl font-bold text-black mb-1">Sign Up</h1>

@@ -3,11 +3,11 @@ import SignUpIllustration from "../../assets/SignUp_Illustration.png";
 import websiteLogo from "../../assets/WebsiteLogo.svg";
 import { Link } from "../ui";
 
-export default function SignUpLayout({ children, heading, subheading, hideMobileIllustration = false, centerMobileContent = false }) {
+export default function SignUpLayoutForLarge({ children, heading, subheading, hideMobileIllustration = false, centerMobileContent = false }) {
     return (
         <div className="w-full min-h-screen bg-white overflow-hidden relative">
             {/* Logo */}
-            <div className="absolute top-4 left-2 sm:top-6 sm:left-4 md:top-8 md:left-6 lg:top-8 lg:left-8 z-30">
+            <div className="absolute top-4 left-4 sm:top-6 sm:left-6 md:top-8 md:left-6 lg:top-8 lg:left-8 z-30">
                 <Link to="/" className="text-xl sm:text-2xl font-bold text-white tracking-wide hover:opacity-80 transition-opacity">
                     <img src={websiteLogo} alt="Logo" className="w-10 h-10" />
                 </Link>
@@ -26,7 +26,7 @@ export default function SignUpLayout({ children, heading, subheading, hideMobile
                 </svg>
             </div>
             {/* Main Content */}
-            <div className="relative z-20 flex flex-col lg:flex-row items-start justify-start max-w-5xl lg:max-w-6xl xl:max-w-7xl mx-auto px-2 sm:px-4 lg:px-6 py-8 sm:py-12 md:py-16 gap-y-6 sm:gap-y-8 md:gap-y-10 lg:gap-x-2 mt-20 sm:mt-24 md:mt-28 lg:mt-12 lg:mt-16 lg:mt-20">
+            <div className="relative z-20 flex flex-col lg:flex-row items-start justify-start max-w-5xl lg:max-w-6xl xl:max-w-7xl mx-auto lg:px-6 py-8 sm:py-12 md:py-16 gap-y-6 sm:gap-y-8 md:gap-y-10 lg:gap-x-2 mt-20 sm:mt-24 md:mt-28 lg:mt-12 lg:mt-16 lg:mt-20">
                 {/* Left Section - Desktop Only */}
                 <div className="hidden ml-14 lg:flex flex-1 flex-col items-center lg:items-start text-center lg:text-left space-y-2 sm:space-y-3 lg:sticky lg:top-28">
                     <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-black">

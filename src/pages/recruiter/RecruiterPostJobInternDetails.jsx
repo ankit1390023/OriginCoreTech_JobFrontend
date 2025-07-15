@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-  import RecruiterPostJobInternLayout from "../../components/layout/RecruiterPostJobInternLayout";
+
 import { jobPostApi } from "../../api/jobPostApi";
 import { domainApi } from "../../api/domainApi";
 import { useEducationData } from "../../hooks/useEducationData";
@@ -15,6 +15,9 @@ import {
   ErrorMessage,
   Label
 } from "../../components/ui";
+import useResponsiveLayout from "../../hooks/useResponsiveLayout";
+import SignUpLayoutForLarge from "../../components/layout/SignUpLayoutForLarge";
+import SignUpLayoutForSmall from "../../components/layout/SignUpLayoutForSmall";
 
 const formSchema = z.object({
   opportunityType: z.enum(["Internship", "Job", "Project"]),
@@ -293,6 +296,7 @@ export default function RecruiterPostJobInternDetails() {
   const [domainError, setDomainError] = useState("");
   const [skillsLoading, setSkillsLoading] = useState(false);
   const [showAllDomains, setShowAllDomains] = useState(false);
+  const { isLargeDevice } = useResponsiveLayout();
 
   // Education data hook for cities
   const { data: educationData, loading: educationLoading, error: educationError } = useEducationData();
@@ -510,946 +514,969 @@ export default function RecruiterPostJobInternDetails() {
     setShowAllDomains(false);
   };
 
+  const FormContent = () => {
+    return (
+      <div className={`flex-1 w-full ${isLargeDevice ? 'flex justify-center' : ''}`}>
+        <div className={`bg-white rounded-xl shadow-none sm:shadow-xl w-full ${isLargeDevice ? 'mt-4 max-w-full sm:max-w-2xl' : '-mt-4'} ${isLargeDevice ? 'p-6 sm:p-8' : 'px-0 py-6 sm:py-8'}`}>
+          <FormProvider {...methods}>
+            <form
+              onSubmit={methods.handleSubmit(onSubmit)}
+              className="space-y-4"
+            >
+              {/* Success Message */}
+              {successMessage && (
+                <div className="relative">
+                  <SuccessMessage size="large">
+                    {successMessage}
+                  </SuccessMessage>
+                  <button
+                    type="button"
+                    onClick={() => setSuccessMessage("")}
+                    className="absolute top-2 right-2 text-green-600 hover:text-green-800 focus:outline-none"
+                  >
+                    <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                    </svg>
+                  </button>
+                </div>
+              )}
 
+              {/* Error Message */}
+              {errorMessage && (
+                <div className="relative">
+                  <ErrorMessage size="large">
+                    {errorMessage}
+                  </ErrorMessage>
+                  <button
+                    type="button"
+                    onClick={() => setErrorMessage("")}
+                    className="absolute top-2 right-2 text-red-600 hover:text-red-800 focus:outline-none"
+                  >
+                    <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                    </svg>
+                  </button>
+                </div>
+              )}
 
-  return (
-    <RecruiterPostJobInternLayout
-      heading="Post Internship/Job"
-      subheading="Post your internship/job to attract the best candidates."
-    >
-      <FormProvider {...methods}>
-        <form
-          onSubmit={methods.handleSubmit(onSubmit)}
-          className="space-y-4 max-w-2xl mx-auto bg-white rounded-xl p-1 "
-        >
-          {/* Success Message */}
-          {successMessage && (
-            <div className="relative">
-              <SuccessMessage size="large">
-                {successMessage}
-              </SuccessMessage>
-              <button
-                type="button"
-                onClick={() => setSuccessMessage("")}
-                className="absolute top-2 right-2 text-green-600 hover:text-green-800 focus:outline-none"
-              >
-                <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                </svg>
-              </button>
-            </div>
-          )}
+              {/* Opportunity Type */}
+              <div>
+                <Label htmlFor="opportunityType">Opportunity type</Label>
+                <div className={radioContainerStyles}>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      value="Internship"
+                      className={radioStyles}
+                      checked={opportunityType === "Internship"}
+                      onChange={handleOpportunityTypeChange}
+                    />
+                    <span className="text-sm text-gray-700">Internship</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      value="Job"
+                      className={radioStyles}
+                      checked={opportunityType === "Job"}
+                      onChange={handleOpportunityTypeChange}
+                    />
+                    <span className="text-sm text-gray-700">Job</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      value="Project"
+                      className={radioStyles}
+                      checked={opportunityType === "Project"}
+                      onChange={handleOpportunityTypeChange}
+                    />
+                    <span className="text-sm text-gray-700">Project</span>
+                  </label>
+                </div>
 
-          {/* Error Message */}
-          {errorMessage && (
-            <div className="relative">
-              <ErrorMessage size="large">
-                {errorMessage}
-              </ErrorMessage>
-              <button
-                type="button"
-                onClick={() => setErrorMessage("")}
-                className="absolute top-2 right-2 text-red-600 hover:text-red-800 focus:outline-none"
-              >
-                <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                </svg>
-              </button>
-            </div>
-          )}
-
-          {/* Opportunity Type */}
-          <div>
-            <Label htmlFor="opportunityType">Opportunity type</Label>
-            <div className={radioContainerStyles}>
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="radio"
-                  value="Internship"
-                  className={radioStyles}
-                  checked={opportunityType === "Internship"}
-                  onChange={handleOpportunityTypeChange}
-                />
-                <span className="text-sm text-gray-700">Internship</span>
-              </label>
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="radio"
-                  value="Job"
-                  className={radioStyles}
-                  checked={opportunityType === "Job"}
-                  onChange={handleOpportunityTypeChange}
-                />
-                <span className="text-sm text-gray-700">Job</span>
-              </label>
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="radio"
-                  value="Project"
-                  className={radioStyles}
-                  checked={opportunityType === "Project"}
-                  onChange={handleOpportunityTypeChange}
-                />
-                <span className="text-sm text-gray-700">Project</span>
-              </label>
-            </div>
-
-          </div>
-
-          {/* Job title (only for Job and Project) */}
-          {(opportunityType === "Job" || opportunityType === "Project") && (
-            <Input
-              label={opportunityType === "Job" ? "Job title" : "Project title"}
-              type="text"
-              placeholder={opportunityType === "Job" ? "e.g. Digital Marketing" : "e.g. Web Development Project"}
-              error={methods.formState.errors.jobTitle?.message}
-              {...methods.register("jobTitle")}
-            />
-          )}
-
-          {/* Internship Profile (only for Internship) */}
-          {opportunityType === "Internship" && (
-            <Input
-              label="Internship profile"
-              type="text"
-              placeholder="e.g. Digital Marketing"
-              error={methods.formState.errors.profile?.message}
-              {...methods.register("profile")}
-            />
-          )}
-
-          {/* Skills Required */}
-          <Input
-            label="Skills required"
-            type="text"
-            placeholder="e.g. SEO, Social Media Marketing, Content Writing"
-            error={methods.formState.errors.skills?.message}
-            {...methods.register("skills")}
-          />
-
-          {/* Domain-based Skill Selection */}
-          <div>
-            <Label htmlFor="domainSkills">Select skills by domain</Label>
-
-            {domainError && (
-              <div className="p-2 bg-red-50 border border-red-200 rounded-lg mb-2">
-                <p className="text-xs text-red-800">{domainError}</p>
-                <button
-                  type="button"
-                  onClick={fetchAllDomains}
-                  className="text-xs text-red-600 hover:text-red-800 underline mt-1"
-                >
-                  Retry
-                </button>
               </div>
-            )}
 
-            {domainsLoading ? (
-              <div className="p-3 bg-gray-50 rounded-lg">
-                <p className="text-xs text-gray-600">Loading domains...</p>
+              {/* Job title (only for Job and Project) */}
+              {(opportunityType === "Job" || opportunityType === "Project") && (
+                <Input
+                  label={opportunityType === "Job" ? "Job title" : "Project title"}
+                  type="text"
+                  placeholder={opportunityType === "Job" ? "e.g. Digital Marketing" : "e.g. Web Development Project"}
+                  error={methods.formState.errors.jobTitle?.message}
+                  {...methods.register("jobTitle")}
+                />
+              )}
+
+              {/* Internship Profile (only for Internship) */}
+              {opportunityType === "Internship" && (
+                <Input
+                  label="Internship profile"
+                  type="text"
+                  placeholder="e.g. Digital Marketing"
+                  error={methods.formState.errors.profile?.message}
+                  {...methods.register("profile")}
+                />
+              )}
+
+              {/* Skills Required */}
+              <Input
+                label="Skills required"
+                type="text"
+                placeholder="e.g. SEO, Social Media Marketing, Content Writing"
+                error={methods.formState.errors.skills?.message}
+                {...methods.register("skills")}
+              />
+
+              {/* Domain-based Skill Selection */}
+              <div>
+                <Label htmlFor="domainSkills">Select skills by domain</Label>
+
+                {domainError && (
+                  <div className="p-2 bg-red-50 border border-red-200 rounded-lg mb-2">
+                    <p className="text-xs text-red-800">{domainError}</p>
+                    <button
+                      type="button"
+                      onClick={fetchAllDomains}
+                      className="text-xs text-red-600 hover:text-red-800 underline mt-1"
+                    >
+                      Retry
+                    </button>
+                  </div>
+                )}
+
+                {domainsLoading ? (
+                  <div className="p-3 bg-gray-50 rounded-lg">
+                    <p className="text-xs text-gray-600">Loading domains...</p>
+                  </div>
+                ) : allDomains.length === 0 ? (
+                  <div className="p-3 bg-gray-50 rounded-lg">
+                    <p className="text-xs text-gray-600">No domains available at the moment.</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {/* Domain Selection */}
+                    <div>
+                      <p className="text-xs text-gray-600 mb-1">Click on a domain to see related skills:</p>
+
+                      {/* Display domains as rounded badges */}
+                      <div className="flex flex-wrap gap-1 sm:gap-2 mb-2">
+                        {(showAllDomains ? allDomains : allDomains.slice(0, 4)).map((domain) => (
+                          <button
+                            key={domain}
+                            type="button"
+                            onClick={() => handleDomainClick(domain)}
+                            className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium transition-colors ${selectedDomain === domain
+                              ? "bg-blue-100 text-blue-800 border border-blue-300"
+                              : "bg-gray-100 text-gray-700 border border-gray-300 hover:bg-gray-200 hover:text-gray-800"
+                              }`}
+                          >
+                            {domain}
+                          </button>
+                        ))}
+
+                        {/* Show More/Less button */}
+                        {allDomains.length > 4 && (
+                          <button
+                            type="button"
+                            onClick={() => setShowAllDomains(!showAllDomains)}
+                            className="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-medium hover:bg-gray-200 hover:text-gray-800 transition-colors"
+                          >
+                            <span>{showAllDomains ? "Show Less" : "Show More"}</span>
+                          </button>
+                        )}
+                      </div>
+
+                      {/* Select All button for selected domain */}
+                      {selectedDomain && domainSkills[selectedDomain] && (
+                        <div className="mt-2">
+                          <button
+                            type="button"
+                            onClick={handleSelectAllSkills}
+                            className="inline-flex items-center gap-1 px-3 py-1 bg-green-600 text-white rounded-lg text-xs font-medium hover:bg-green-700 transition-colors"
+                          >
+                            <span className="text-sm">+</span>
+                            Add All Skills from {selectedDomain}
+                          </button>
+                        </div>
+                      )}
+                    </div>
+
+
+
+                  </div>
+                )}
               </div>
-            ) : allDomains.length === 0 ? (
-              <div className="p-3 bg-gray-50 rounded-lg">
-                <p className="text-xs text-gray-600">No domains available at the moment.</p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {/* Domain Selection */}
-                <div>
-                  <p className="text-xs text-gray-600 mb-1">Click on a domain to see related skills:</p>
 
-                  {/* Display domains as rounded badges */}
-                  <div className="flex flex-wrap gap-1 sm:gap-2 mb-2">
-                    {(showAllDomains ? allDomains : allDomains.slice(0, 4)).map((domain) => (
-                      <button
-                        key={domain}
-                        type="button"
-                        onClick={() => handleDomainClick(domain)}
-                        className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium transition-colors ${selectedDomain === domain
-                          ? "bg-blue-100 text-blue-800 border border-blue-300"
-                          : "bg-gray-100 text-gray-700 border border-gray-300 hover:bg-gray-200 hover:text-gray-800"
-                          }`}
-                      >
-                        {domain}
-                      </button>
-                    ))}
 
-                    {/* Show More/Less button */}
-                    {allDomains.length > 4 && (
-                      <button
-                        type="button"
-                        onClick={() => setShowAllDomains(!showAllDomains)}
-                        className="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-medium hover:bg-gray-200 hover:text-gray-800 transition-colors"
-                      >
-                        <span>{showAllDomains ? "Show Less" : "Show More"}</span>
-                      </button>
-                    )}
+              {/* Internship Type */}
+              {opportunityType === "Internship" && (
+                <>
+                  <div>
+                    <Label htmlFor="internshipType">Internship type</Label>
+                    <div className={radioContainerStyles}>
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="radio"
+                          value="In office"
+                          className={radioStyles}
+                          {...methods.register("internshipType")}
+                        />
+                        <span className="text-sm text-gray-700">In office</span>
+                      </label>
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="radio"
+                          value="Hybrid"
+                          className={radioStyles}
+                          {...methods.register("internshipType")}
+                        />
+                        <span className="text-sm text-gray-700">Hybrid</span>
+                      </label>
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="radio"
+                          value="Remote"
+                          className={radioStyles}
+                          {...methods.register("internshipType")}
+                        />
+                        <span className="text-sm text-gray-700">Remote</span>
+                      </label>
+                    </div>
+
+                  </div>
+                  {/* No. of in-office days in a week (for Hybrid) */}
+                  {internshipType === "Hybrid" && (
+                    <div className="my-3">
+                      <Label htmlFor="inOfficeDays">No. of in-office days in a week:</Label>
+                      <div className="flex gap-1 sm:gap-3 md:gap-8">
+                        {[1, 2, 3, 4, 5].map((day) => (
+                          <button
+                            key={day}
+                            type="button"
+                            className={`w-10 h-10 rounded-full border text-sm font-semibold flex items-center justify-center
+                                ${methods.getValues("inOfficeDays") === String(day)
+                                ? "bg-blue-600 text-white border-blue-600"
+                                : "bg-white text-gray-700 border-gray-300"}
+                                hover:border-blue-400 transition`}
+                            onClick={() => methods.setValue("inOfficeDays", String(day), { shouldValidate: true })}
+                          >
+                            {day}
+                          </button>
+                        ))}
+                      </div>
+
+                    </div>
+                  )}
+
+                  {/* Internship start date (only for Internship) */}
+                  <div>
+                    <Label htmlFor="startDateType">
+                      Internship start date
+                    </Label>
+                    <div className={radioContainerStyles}>
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="radio"
+                          value="Immediately"
+                          className={radioStyles}
+                          {...methods.register("startDateType")}
+                        />
+                        <span className="text-sm text-gray-700">Immediately (within 30 days)</span>
+                      </label>
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="radio"
+                          value="Custom"
+                          className={radioStyles}
+                          {...methods.register("startDateType")}
+                        />
+                        <span className="text-sm text-gray-700">Custom</span>
+                      </label>
+                    </div>
+
                   </div>
 
-                  {/* Select All button for selected domain */}
-                  {selectedDomain && domainSkills[selectedDomain] && (
-                    <div className="mt-2">
-                      <button
-                        type="button"
-                        onClick={handleSelectAllSkills}
-                        className="inline-flex items-center gap-1 px-3 py-1 bg-green-600 text-white rounded-lg text-xs font-medium hover:bg-green-700 transition-colors"
+                  {/* Show date pickers if Custom is selected */}
+                  {startDateType === "Custom" && (
+                    <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mb-3">
+                      <div className="flex-1">
+                        <Input
+                          label="From"
+                          type="date"
+                          {...methods.register("startDateFrom")}
+                        />
+                      </div>
+                      <div className="flex-1">
+                        <Input
+                          label="To"
+                          type="date"
+                          {...methods.register("startDateTo")}
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Internship duration (only for Internship) */}
+                  <Input
+                    label="Internship duration"
+                    type="text"
+                    placeholder="e.g. 6 months"
+                    error={methods.formState.errors.duration?.message}
+                    {...methods.register("duration")}
+                  />
+
+                  {/* Intern's responsibility (only for Internship) */}
+                  <Textarea
+                    label="Intern's responsibility"
+                    rows={4}
+                    placeholder="Selected intern day-to-day responsibilities include..."
+                    error={methods.formState.errors.responsibilities?.message}
+                    {...methods.register("responsibilities")}
+                  />
+                </>
+              )}
+
+              {/* Job type (only for Job) */}
+              {opportunityType === "Job" && (
+                <>
+                  <div>
+                    <Label htmlFor="jobType">Job type</Label>
+                    <div className={radioContainerStyles}>
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="radio"
+                          value="In office"
+                          className={radioStyles}
+                          {...methods.register("jobType")}
+                        />
+                        <span className="text-sm text-gray-700">In office</span>
+                      </label>
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="radio"
+                          value="Hybrid"
+                          className={radioStyles}
+                          {...methods.register("jobType")}
+                        />
+                        <span className="text-sm text-gray-700">Hybrid</span>
+                      </label>
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="radio"
+                          value="Remote"
+                          className={radioStyles}
+                          {...methods.register("jobType")}
+                        />
+                        <span className="text-sm text-gray-700">Remote</span>
+                      </label>
+                    </div>
+                  </div>
+
+
+
+                  {/* Job description */}
+                  <Textarea
+                    label="Job description"
+                    rows={4}
+                    placeholder={"Key responsibilities:\n1.\n2.\n3."}
+                    error={methods.formState.errors.responsibilities?.message}
+                    {...methods.register("responsibilities")}
+                  />
+
+                  {/* Additional candidate preferences */}
+                  <Textarea
+                    label="Additional candidate preferences"
+                    rows={3}
+                    placeholder="e.g. Candidates pursuing B.Tech. preferred"
+                    {...methods.register("preferences")}
+                  />
+
+                  {/* Women only checkbox */}
+                  <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
+                    <input
+                      type="checkbox"
+                      className={checkboxStyles}
+                      {...methods.register("womenOnly")}
+                    />
+                    <span className="text-sm text-gray-700">
+                      Allow applications from women who are willing to start/restart their career.
+                    </span>
+                  </div>
+
+                  {/* Fixed pay (per year) */}
+                  <div>
+                    <Label htmlFor="stipendMin">Fixed pay (per year)</Label>
+                    <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                      <Input
+                        type="number"
+                        placeholder="₹ Min"
+                        min="0"
+                        {...methods.register("stipendMin")}
+                      />
+                      <Input
+                        type="number"
+                        placeholder="₹ Max"
+                        min="0"
+                        {...methods.register("stipendMax")}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Variables/Incentives (per year) */}
+                  <div>
+                    <Label htmlFor="incentivesMin">Variables/ Incentives (per year)</Label>
+                    <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                      <Input
+                        type="number"
+                        placeholder="₹ Min"
+                        min="0"
+                        {...methods.register("incentivesMin")}
+                      />
+                      <Input
+                        type="number"
+                        placeholder="₹ Max"
+                        min="0"
+                        {...methods.register("incentivesMax")}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Perks (Job-specific) */}
+                  <div>
+                    <Label htmlFor="perks">Perks: (Select all that apply)</Label>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2 p-3 bg-gray-50 rounded-lg">
+                      {["5 days a week", "Health Insurance", "Life Insurance"].map((perk) => (
+                        <label key={perk} className="flex items-center gap-2 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            value={perk}
+                            className={checkboxStyles}
+                            {...methods.register("perks")}
+                          />
+                          <span className="text-sm text-gray-700">{perk}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Screening Questions */}
+                  <div>
+                    <Label htmlFor="screeningQuestions">Screening Questions</Label>
+                    <Textarea
+                      rows={3}
+                      placeholder="Add screening questions (optional)"
+                      defaultValue={"Please confirm your availability for this job. If not available immediately, how early would you be able to join?"}
+                      {...methods.register("screeningQuestions")}
+                    />
+                    {/* Add more questions (Optional) - UI only, not functional */}
+                    <button type="button" className="text-blue-600 mt-2 text-xs">+ Add more questions (Optional)</button>
+                  </div>
+
+                  {/* Primary phone number */}
+                  <div>
+                    <Label htmlFor="phoneContact">Primary phone number</Label>
+                    <div className="flex">
+                      <span className="inline-flex items-center px-2 py-2 border border-r-0 border-gray-300 bg-gray-50 rounded-l-lg text-gray-600 text-sm">
+                        <img
+                          src="https://flagcdn.com/in.svg"
+                          alt="IN"
+                          className="w-4 h-4 mr-1"
+                        />
+                        +91
+                      </span>
+                      <Input
+                        type="tel"
+                        placeholder="9812345678"
+                        error={methods.formState.errors.phoneContact?.message}
+                        {...methods.register("phoneContact")}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Alternate phone number */}
+                  <div>
+                    <Label htmlFor="alternatePhone">Alternate phone number for this listing (Optional)</Label>
+                    <div className="flex">
+                      <span className="inline-flex items-center px-2 py-2 border border-r-0 border-gray-300 bg-gray-50 rounded-l-lg text-gray-600 text-sm">
+                        <img
+                          src="https://flagcdn.com/in.svg"
+                          alt="IN"
+                          className="w-4 h-4 mr-1"
+                        />
+                        +91
+                      </span>
+                      <Input
+                        type="tel"
+                        placeholder="9876543210"
+                        {...methods.register("alternatePhone")}
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {/* Project type (only for Project) */}
+              {opportunityType === "Project" && (
+                <>
+                  <div>
+                    <Label htmlFor="jobType">Project type</Label>
+                    <div className={radioContainerStyles}>
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="radio"
+                          value="In office"
+                          className={radioStyles}
+                          {...methods.register("jobType")}
+                        />
+                        <span className="text-sm text-gray-700">In office</span>
+                      </label>
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="radio"
+                          value="Hybrid"
+                          className={radioStyles}
+                          {...methods.register("jobType")}
+                        />
+                        <span className="text-sm text-gray-700">Hybrid</span>
+                      </label>
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="radio"
+                          value="Remote"
+                          className={radioStyles}
+                          {...methods.register("jobType")}
+                        />
+                        <span className="text-sm text-gray-700">Remote</span>
+                      </label>
+                    </div>
+                  </div>
+
+
+
+                  {/* Project description */}
+                  <Textarea
+                    label="Project description"
+                    rows={4}
+                    placeholder={"Project requirements:\n1.\n2.\n3."}
+                    error={methods.formState.errors.responsibilities?.message}
+                    {...methods.register("responsibilities")}
+                  />
+
+                  {/* Additional candidate preferences */}
+                  <Textarea
+                    label="Additional candidate preferences"
+                    rows={3}
+                    placeholder="e.g. Experience with similar projects preferred"
+                    {...methods.register("preferences")}
+                  />
+
+                  {/* Women only checkbox */}
+                  <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
+                    <input
+                      type="checkbox"
+                      className={checkboxStyles}
+                      {...methods.register("womenOnly")}
+                    />
+                    <span className="text-sm text-gray-700">
+                      Allow applications from women who are willing to start/restart their career.
+                    </span>
+                  </div>
+
+                  {/* Project budget */}
+                  <div>
+                    <Label htmlFor="stipendMin">Project budget</Label>
+                    <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                      <Input
+                        type="number"
+                        placeholder="₹ Min"
+                        min="0"
+                        {...methods.register("stipendMin")}
+                      />
+                      <Input
+                        type="number"
+                        placeholder="₹ Max"
+                        min="0"
+                        {...methods.register("stipendMax")}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Screening Questions */}
+                  <div>
+                    <Label htmlFor="screeningQuestions">Screening Questions</Label>
+                    <Textarea
+                      rows={3}
+                      placeholder="Add screening questions (optional)"
+                      defaultValue={"Please confirm your availability for this project. Share your relevant project experience."}
+                      {...methods.register("screeningQuestions")}
+                    />
+                    <button type="button" className="text-blue-600 mt-2 text-xs">+ Add more questions (Optional)</button>
+                  </div>
+
+                  {/* Primary phone number */}
+                  <div>
+                    <Label htmlFor="phoneContact">Primary phone number</Label>
+                    <div className="flex">
+                      <span className="inline-flex items-center px-2 py-2 border border-r-0 border-gray-300 bg-gray-50 rounded-l-lg text-gray-600 text-sm">
+                        <img
+                          src="https://flagcdn.com/in.svg"
+                          alt="IN"
+                          className="w-4 h-4 mr-1"
+                        />
+                        +91
+                      </span>
+                      <Input
+                        type="tel"
+                        placeholder="9812345678"
+                        error={methods.formState.errors.phoneContact?.message}
+                        {...methods.register("phoneContact")}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Alternate phone number */}
+                  <div>
+                    <Label htmlFor="alternatePhone">Alternate phone number for this listing (Optional)</Label>
+                    <div className="flex">
+                      <span className="inline-flex items-center px-2 py-2 border border-r-0 border-gray-300 bg-gray-50 rounded-l-lg text-gray-600 text-sm">
+                        <img
+                          src="https://flagcdn.com/in.svg"
+                          alt="IN"
+                          className="w-4 h-4 mr-1"
+                        />
+                        +91
+                      </span>
+                      <Input
+                        type="tel"
+                        placeholder="9876543210"
+                        {...methods.register("alternatePhone")}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Number of openings for Project */}
+                  <Input
+                    label="Number of openings"
+                    type="number"
+                    placeholder="e.g. 2"
+                    min="1"
+                    error={methods.formState.errors.openings?.message}
+                    {...methods.register("openings")}
+                  />
+                </>
+              )}
+
+              {/* City/Cities */}
+              {educationLoading ? (
+                <div className="p-2 bg-gray-50 rounded-lg">
+                  <p className="text-xs text-gray-600">Loading cities...</p>
+                </div>
+              ) : educationError ? (
+                <div className="p-2 bg-red-50 border border-red-200 rounded-lg">
+                  <p className="text-red-800 text-xs">{educationError}</p>
+                </div>
+              ) : (
+                <Select
+                  label="City/Cities"
+                  placeholder="Select a city"
+                  error={methods.formState.errors.city?.message}
+                  options={educationData.locations ? educationData.locations.map(location => ({
+                    value: location,
+                    label: location
+                  })) : []}
+                  {...methods.register("city")}
+                />
+              )}
+
+              {/* Only this city checkbox */}
+              <div className="flex items-center gap-3 p-2 mt-[10px] rounded-lg">
+                <input
+                  type="checkbox"
+                  className={checkboxStyles}
+                  {...methods.register("onlyThisCity")}
+                />
+                <span className="text-sm text-gray-700">
+                  Candidates from ONLY the above city should be allowed to apply.
+                </span>
+              </div>
+
+              {/* Part-time/Full-time (Common for all opportunity types) */}
+              <div>
+                <Label htmlFor="partFullTime">
+                  Part-time/ Full-time
+                </Label>
+                <div className={radioContainerStyles}>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      value="Part-time"
+                      className={radioStyles}
+                      {...methods.register("partFullTime")}
+                    />
+                    <span className="text-sm text-gray-700">Part-time</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      value="Full-time"
+                      className={radioStyles}
+                      {...methods.register("partFullTime")}
+                    />
+                    <span className="text-sm text-gray-700">Full-time</span>
+                  </label>
+                </div>
+              </div>
+
+              {/* Number of openings */}
+              {opportunityType === "Internship" && (
+                <Input
+                  label="Number of openings"
+                  type="number"
+                  placeholder="e.g. 4"
+                  min="1"
+                  error={methods.formState.errors.openings?.message}
+                  {...methods.register("openings")}
+                />
+              )}
+
+              {/* Stipend */}
+              {opportunityType !== "Job" && opportunityType !== "Project" && (
+                <div>
+                  <Label htmlFor="stipendType">Stipend</Label>
+                  <div className={radioContainerStyles}>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="radio"
+                        value="Paid"
+                        className={radioStyles}
+                        {...methods.register("stipendType")}
+                      />
+                      <span className="text-sm text-gray-700">Paid</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="radio"
+                        value="Unpaid"
+                        className={radioStyles}
+                        {...methods.register("stipendType")}
+                      />
+                      <span className="text-sm text-gray-700">Unpaid</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="radio"
+                        value="Fixed"
+                        className={radioStyles}
+                        {...methods.register("stipendType")}
+                      />
+                      <span className="text-sm text-gray-700">Fixed</span>
+                    </label>
+                  </div>
+                  {stipendType === "Paid" && (
+                    <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                      <Input
+                        type="number"
+                        placeholder="₹ Min"
+                        min="0"
+                        {...methods.register("stipendMin")}
+                      />
+                      <Input
+                        type="number"
+                        placeholder="₹ Max"
+                        min="0"
+                        {...methods.register("stipendMax")}
+                      />
+                      <select
+                        className="w-full sm:w-32 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white"
+                        {...methods.register("stipendMode")}
                       >
-                        <span className="text-sm">+</span>
-                        Add All Skills from {selectedDomain}
-                      </button>
+                        <option value="Month" className="text-sm">Month</option>
+                        <option value="Lump sum" className="text-sm">Lump sum</option>
+                      </select>
                     </div>
                   )}
                 </div>
+              )}
 
-
-
-              </div>
-            )}
-          </div>
-
-
-          {/* Internship Type */}
-          {opportunityType === "Internship" && (
-            <>
-              <div>
-                <Label htmlFor="internshipType">Internship type</Label>
-                <div className={radioContainerStyles}>
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="radio"
-                      value="In office"
-                      className={radioStyles}
-                      {...methods.register("internshipType")}
-                    />
-                    <span className="text-sm text-gray-700">In office</span>
-                  </label>
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="radio"
-                      value="Hybrid"
-                      className={radioStyles}
-                      {...methods.register("internshipType")}
-                    />
-                    <span className="text-sm text-gray-700">Hybrid</span>
-                  </label>
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="radio"
-                      value="Remote"
-                      className={radioStyles}
-                      {...methods.register("internshipType")}
-                    />
-                    <span className="text-sm text-gray-700">Remote</span>
-                  </label>
-                </div>
-
-              </div>
-              {/* No. of in-office days in a week (for Hybrid) */}
-              {internshipType === "Hybrid" && (
-                <div className="my-3">
-                  <Label htmlFor="inOfficeDays">No. of in-office days in a week:</Label>
-                  <div className="flex gap-1 sm:gap-3 md:gap-8">
-                    {[1, 2, 3, 4, 5].map((day) => (
-                      <button
-                        key={day}
-                        type="button"
-                        className={`w-10 h-10 rounded-full border text-sm font-semibold flex items-center justify-center
-                          ${methods.getValues("inOfficeDays") === String(day)
-                            ? "bg-blue-600 text-white border-blue-600"
-                            : "bg-white text-gray-700 border-gray-300"}
-                          hover:border-blue-400 transition`}
-                        onClick={() => methods.setValue("inOfficeDays", String(day), { shouldValidate: true })}
-                      >
-                        {day}
-                      </button>
-                    ))}
+              {/* College Name & Course (Internship only, below stipend) */}
+              {opportunityType === "Internship" && (
+                <div className="mt-6">
+                  <div className="flex items-center mb-2">
+                    <Label htmlFor="collegeName">
+                      College Name
+                    </Label>
+                    <span className="ml-2 align-middle inline-block px-2 py-0.5 text-xs font-semibold bg-green-100 text-green-700 rounded-full border border-green-300">PRO Plan</span>
                   </div>
-
-                </div>
-              )}
-
-              {/* Internship start date (only for Internship) */}
-              <div>
-                <Label htmlFor="startDateType">
-                  Internship start date
-                </Label>
-                <div className={radioContainerStyles}>
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="radio"
-                      value="Immediately"
-                      className={radioStyles}
-                      {...methods.register("startDateType")}
+                  {educationLoading ? (
+                    <div className="p-3 bg-gray-50 rounded-lg">
+                      <p className="text-gray-600">Loading colleges...</p>
+                    </div>
+                  ) : educationError ? (
+                    <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+                      <p className="text-red-800 text-sm">{educationError}</p>
+                    </div>
+                  ) : (
+                    <Select
+                      placeholder="Select a college"
+                      options={educationData.colleges ? educationData.colleges.map(college => ({
+                        value: college,
+                        label: college
+                      })) : []}
+                      {...methods.register("collegeName")}
                     />
-                    <span className="text-sm text-gray-700">Immediately (within 30 days)</span>
-                  </label>
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="radio"
-                      value="Custom"
-                      className={radioStyles}
-                      {...methods.register("startDateType")}
-                    />
-                    <span className="text-sm text-gray-700">Custom</span>
-                  </label>
-                </div>
-
-              </div>
-
-              {/* Show date pickers if Custom is selected */}
-              {startDateType === "Custom" && (
-                <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mb-3">
-                  <div className="flex-1">
-                    <Input
-                      label="From"
-                      type="date"
-                      {...methods.register("startDateFrom")}
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <Input
-                      label="To"
-                      type="date"
-                      {...methods.register("startDateTo")}
-                    />
-                  </div>
-                </div>
-              )}
-
-              {/* Internship duration (only for Internship) */}
-              <Input
-                label="Internship duration"
-                type="text"
-                placeholder="e.g. 6 months"
-                error={methods.formState.errors.duration?.message}
-                {...methods.register("duration")}
-              />
-
-              {/* Intern's responsibility (only for Internship) */}
-              <Textarea
-                label="Intern's responsibility"
-                rows={4}
-                placeholder="Selected intern day-to-day responsibilities include..."
-                error={methods.formState.errors.responsibilities?.message}
-                {...methods.register("responsibilities")}
-              />
-            </>
-          )}
-
-          {/* Job type (only for Job) */}
-          {opportunityType === "Job" && (
-            <>
-              <div>
-                <Label htmlFor="jobType">Job type</Label>
-                <div className={radioContainerStyles}>
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="radio"
-                      value="In office"
-                      className={radioStyles}
-                      {...methods.register("jobType")}
-                    />
-                    <span className="text-sm text-gray-700">In office</span>
-                  </label>
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="radio"
-                      value="Hybrid"
-                      className={radioStyles}
-                      {...methods.register("jobType")}
-                    />
-                    <span className="text-sm text-gray-700">Hybrid</span>
-                  </label>
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="radio"
-                      value="Remote"
-                      className={radioStyles}
-                      {...methods.register("jobType")}
-                    />
-                    <span className="text-sm text-gray-700">Remote</span>
-                  </label>
-                </div>
-              </div>
-
-
-
-              {/* Job description */}
-              <Textarea
-                label="Job description"
-                rows={4}
-                placeholder={"Key responsibilities:\n1.\n2.\n3."}
-                error={methods.formState.errors.responsibilities?.message}
-                {...methods.register("responsibilities")}
-              />
-
-              {/* Additional candidate preferences */}
-              <Textarea
-                label="Additional candidate preferences"
-                rows={3}
-                placeholder="e.g. Candidates pursuing B.Tech. preferred"
-                {...methods.register("preferences")}
-              />
-
-              {/* Women only checkbox */}
-              <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
-                <input
-                  type="checkbox"
-                  className={checkboxStyles}
-                  {...methods.register("womenOnly")}
-                />
-                <span className="text-sm text-gray-700">
-                  Allow applications from women who are willing to start/restart their career.
-                </span>
-              </div>
-
-              {/* Fixed pay (per year) */}
-              <div>
-                <Label htmlFor="stipendMin">Fixed pay (per year)</Label>
-                <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-                  <Input
-                    type="number"
-                    placeholder="₹ Min"
-                    min="0"
-                    {...methods.register("stipendMin")}
-                  />
-                  <Input
-                    type="number"
-                    placeholder="₹ Max"
-                    min="0"
-                    {...methods.register("stipendMax")}
-                  />
-                </div>
-              </div>
-
-              {/* Variables/Incentives (per year) */}
-              <div>
-                <Label htmlFor="incentivesMin">Variables/ Incentives (per year)</Label>
-                <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-                  <Input
-                    type="number"
-                    placeholder="₹ Min"
-                    min="0"
-                    {...methods.register("incentivesMin")}
-                  />
-                  <Input
-                    type="number"
-                    placeholder="₹ Max"
-                    min="0"
-                    {...methods.register("incentivesMax")}
-                  />
-                </div>
-              </div>
-
-              {/* Perks (Job-specific) */}
-              <div>
-                <Label htmlFor="perks">Perks: (Select all that apply)</Label>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 p-3 bg-gray-50 rounded-lg">
-                  {["5 days a week", "Health Insurance", "Life Insurance"].map((perk) => (
-                    <label key={perk} className="flex items-center gap-2 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        value={perk}
-                        className={checkboxStyles}
-                        {...methods.register("perks")}
-                      />
-                      <span className="text-sm text-gray-700">{perk}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              {/* Screening Questions */}
-              <div>
-                <Label htmlFor="screeningQuestions">Screening Questions</Label>
-                <Textarea
-                  rows={3}
-                  placeholder="Add screening questions (optional)"
-                  defaultValue={"Please confirm your availability for this job. If not available immediately, how early would you be able to join?"}
-                  {...methods.register("screeningQuestions")}
-                />
-                {/* Add more questions (Optional) - UI only, not functional */}
-                <button type="button" className="text-blue-600 mt-2 text-xs">+ Add more questions (Optional)</button>
-              </div>
-
-              {/* Primary phone number */}
-              <div>
-                <Label htmlFor="phoneContact">Primary phone number</Label>
-                <div className="flex">
-                  <span className="inline-flex items-center px-2 py-2 border border-r-0 border-gray-300 bg-gray-50 rounded-l-lg text-gray-600 text-sm">
-                    <img
-                      src="https://flagcdn.com/in.svg"
-                      alt="IN"
-                      className="w-4 h-4 mr-1"
-                    />
-                    +91
-                  </span>
-                  <Input
-                    type="tel"
-                    placeholder="9812345678"
-                    error={methods.formState.errors.phoneContact?.message}
-                    {...methods.register("phoneContact")}
-                  />
-                </div>
-              </div>
-
-              {/* Alternate phone number */}
-              <div>
-                <Label htmlFor="alternatePhone">Alternate phone number for this listing (Optional)</Label>
-                <div className="flex">
-                  <span className="inline-flex items-center px-2 py-2 border border-r-0 border-gray-300 bg-gray-50 rounded-l-lg text-gray-600 text-sm">
-                    <img
-                      src="https://flagcdn.com/in.svg"
-                      alt="IN"
-                      className="w-4 h-4 mr-1"
-                    />
-                    +91
-                  </span>
-                  <Input
-                    type="tel"
-                    placeholder="9876543210"
-                    {...methods.register("alternatePhone")}
-                  />
-                </div>
-              </div>
-            </>
-          )}
-
-          {/* Project type (only for Project) */}
-          {opportunityType === "Project" && (
-            <>
-              <div>
-                <Label htmlFor="jobType">Project type</Label>
-                <div className={radioContainerStyles}>
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="radio"
-                      value="In office"
-                      className={radioStyles}
-                      {...methods.register("jobType")}
-                    />
-                    <span className="text-sm text-gray-700">In office</span>
-                  </label>
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="radio"
-                      value="Hybrid"
-                      className={radioStyles}
-                      {...methods.register("jobType")}
-                    />
-                    <span className="text-sm text-gray-700">Hybrid</span>
-                  </label>
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="radio"
-                      value="Remote"
-                      className={radioStyles}
-                      {...methods.register("jobType")}
-                    />
-                    <span className="text-sm text-gray-700">Remote</span>
-                  </label>
-                </div>
-              </div>
-
-
-
-              {/* Project description */}
-              <Textarea
-                label="Project description"
-                rows={4}
-                placeholder={"Project requirements:\n1.\n2.\n3."}
-                error={methods.formState.errors.responsibilities?.message}
-                {...methods.register("responsibilities")}
-              />
-
-              {/* Additional candidate preferences */}
-              <Textarea
-                label="Additional candidate preferences"
-                rows={3}
-                placeholder="e.g. Experience with similar projects preferred"
-                {...methods.register("preferences")}
-              />
-
-              {/* Women only checkbox */}
-              <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
-                <input
-                  type="checkbox"
-                  className={checkboxStyles}
-                  {...methods.register("womenOnly")}
-                />
-                <span className="text-sm text-gray-700">
-                  Allow applications from women who are willing to start/restart their career.
-                </span>
-              </div>
-
-              {/* Project budget */}
-              <div>
-                <Label htmlFor="stipendMin">Project budget</Label>
-                <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-                  <Input
-                    type="number"
-                    placeholder="₹ Min"
-                    min="0"
-                    {...methods.register("stipendMin")}
-                  />
-                  <Input
-                    type="number"
-                    placeholder="₹ Max"
-                    min="0"
-                    {...methods.register("stipendMax")}
-                  />
-                </div>
-              </div>
-
-              {/* Screening Questions */}
-              <div>
-                <Label htmlFor="screeningQuestions">Screening Questions</Label>
-                <Textarea
-                  rows={3}
-                  placeholder="Add screening questions (optional)"
-                  defaultValue={"Please confirm your availability for this project. Share your relevant project experience."}
-                  {...methods.register("screeningQuestions")}
-                />
-                <button type="button" className="text-blue-600 mt-2 text-xs">+ Add more questions (Optional)</button>
-              </div>
-
-              {/* Primary phone number */}
-              <div>
-                <Label htmlFor="phoneContact">Primary phone number</Label>
-                <div className="flex">
-                  <span className="inline-flex items-center px-2 py-2 border border-r-0 border-gray-300 bg-gray-50 rounded-l-lg text-gray-600 text-sm">
-                    <img
-                      src="https://flagcdn.com/in.svg"
-                      alt="IN"
-                      className="w-4 h-4 mr-1"
-                    />
-                    +91
-                  </span>
-                  <Input
-                    type="tel"
-                    placeholder="9812345678"
-                    error={methods.formState.errors.phoneContact?.message}
-                    {...methods.register("phoneContact")}
-                  />
-                </div>
-              </div>
-
-              {/* Alternate phone number */}
-              <div>
-                <Label htmlFor="alternatePhone">Alternate phone number for this listing (Optional)</Label>
-                <div className="flex">
-                  <span className="inline-flex items-center px-2 py-2 border border-r-0 border-gray-300 bg-gray-50 rounded-l-lg text-gray-600 text-sm">
-                    <img
-                      src="https://flagcdn.com/in.svg"
-                      alt="IN"
-                      className="w-4 h-4 mr-1"
-                    />
-                    +91
-                  </span>
-                  <Input
-                    type="tel"
-                    placeholder="9876543210"
-                    {...methods.register("alternatePhone")}
-                  />
-                </div>
-              </div>
-
-              {/* Number of openings for Project */}
-              <Input
-                label="Number of openings"
-                type="number"
-                placeholder="e.g. 2"
-                min="1"
-                error={methods.formState.errors.openings?.message}
-                {...methods.register("openings")}
-              />
-            </>
-          )}
-
-          {/* City/Cities */}
-          {educationLoading ? (
-            <div className="p-2 bg-gray-50 rounded-lg">
-              <p className="text-xs text-gray-600">Loading cities...</p>
-            </div>
-          ) : educationError ? (
-            <div className="p-2 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-red-800 text-xs">{educationError}</p>
-            </div>
-          ) : (
-            <Select
-              label="City/Cities"
-              placeholder="Select a city"
-              error={methods.formState.errors.city?.message}
-              options={educationData.locations ? educationData.locations.map(location => ({
-                value: location,
-                label: location
-              })) : []}
-              {...methods.register("city")}
-            />
-          )}
-
-          {/* Only this city checkbox */}
-          <div className="flex items-center gap-3 p-2 mt-[10px] rounded-lg">
-            <input
-              type="checkbox"
-              className={checkboxStyles}
-              {...methods.register("onlyThisCity")}
-            />
-            <span className="text-sm text-gray-700">
-              Candidates from ONLY the above city should be allowed to apply.
-            </span>
-          </div>
-
-          {/* Part-time/Full-time (Common for all opportunity types) */}
-          <div>
-            <Label htmlFor="partFullTime">
-              Part-time/ Full-time
-            </Label>
-            <div className={radioContainerStyles}>
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="radio"
-                  value="Part-time"
-                  className={radioStyles}
-                  {...methods.register("partFullTime")}
-                />
-                <span className="text-sm text-gray-700">Part-time</span>
-              </label>
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="radio"
-                  value="Full-time"
-                  className={radioStyles}
-                  {...methods.register("partFullTime")}
-                />
-                <span className="text-sm text-gray-700">Full-time</span>
-              </label>
-            </div>
-          </div>
-
-          {/* Number of openings */}
-          {opportunityType === "Internship" && (
-            <Input
-              label="Number of openings"
-              type="number"
-              placeholder="e.g. 4"
-              min="1"
-              error={methods.formState.errors.openings?.message}
-              {...methods.register("openings")}
-            />
-          )}
-
-          {/* Stipend */}
-          {opportunityType !== "Job" && opportunityType !== "Project" && (
-            <div>
-              <Label htmlFor="stipendType">Stipend</Label>
-              <div className={radioContainerStyles}>
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="radio"
-                    value="Paid"
-                    className={radioStyles}
-                    {...methods.register("stipendType")}
-                  />
-                  <span className="text-sm text-gray-700">Paid</span>
-                </label>
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="radio"
-                    value="Unpaid"
-                    className={radioStyles}
-                    {...methods.register("stipendType")}
-                  />
-                  <span className="text-sm text-gray-700">Unpaid</span>
-                </label>
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="radio"
-                    value="Fixed"
-                    className={radioStyles}
-                    {...methods.register("stipendType")}
-                  />
-                  <span className="text-sm text-gray-700">Fixed</span>
-                </label>
-              </div>
-              {stipendType === "Paid" && (
-                <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-                  <Input
-                    type="number"
-                    placeholder="₹ Min"
-                    min="0"
-                    {...methods.register("stipendMin")}
-                  />
-                  <Input
-                    type="number"
-                    placeholder="₹ Max"
-                    min="0"
-                    {...methods.register("stipendMax")}
-                  />
-                  <select
-                    className="w-full sm:w-32 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white"
-                    {...methods.register("stipendMode")}
-                  >
-                    <option value="Month" className="text-sm">Month</option>
-                    <option value="Lump sum" className="text-sm">Lump sum</option>
-                  </select>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* College Name & Course (Internship only, below stipend) */}
-          {opportunityType === "Internship" && (
-            <div className="mt-6">
-              <div className="flex items-center mb-2">
-                <Label htmlFor="collegeName">
-                  College Name
-                </Label>
-                <span className="ml-2 align-middle inline-block px-2 py-0.5 text-xs font-semibold bg-green-100 text-green-700 rounded-full border border-green-300">PRO Plan</span>
-              </div>
-              {educationLoading ? (
-                <div className="p-3 bg-gray-50 rounded-lg">
-                  <p className="text-gray-600">Loading colleges...</p>
-                </div>
-              ) : educationError ? (
-                <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-                  <p className="text-red-800 text-sm">{educationError}</p>
-                </div>
-              ) : (
-                <Select
-                  placeholder="Select a college"
-                  options={educationData.colleges ? educationData.colleges.map(college => ({
-                    value: college,
-                    label: college
-                  })) : []}
-                  {...methods.register("collegeName")}
-                />
-              )}
-              <div className="flex items-center mt-2 mb-4">
-                <input
-                  type="checkbox"
-                  className={checkboxStyles}
-                  id="onlyThisCollege"
-                />
-                <label htmlFor="onlyThisCollege" className="ml-2 text-gray-500 text-sm">
-                  Candidates from ONLY the above college should be allowed to apply.
-                </label>
-              </div>
-
-              {educationLoading ? (
-                <div className="p-3 bg-gray-50 rounded-lg">
-                  <p className="text-gray-600">Loading courses...</p>
-                </div>
-              ) : educationError ? (
-                <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-                  <p className="text-red-800 text-sm">{educationError}</p>
-                </div>
-              ) : (
-                <Select
-                  label="Course"
-                  placeholder="Select a course"
-                  options={educationData.courses ? educationData.courses.map(course => ({
-                    value: course,
-                    label: course
-                  })) : []}
-                  {...methods.register("course")}
-                />
-              )}
-            </div>
-          )}
-
-          {/* Incentives */}
-          {opportunityType !== "Job" && opportunityType !== "Project" && stipendType === "Paid" && (
-            <div>
-              <Label htmlFor="incentivesMin">Incentives</Label>
-              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-                <Input
-                  type="number"
-                  placeholder="₹ Min"
-                  min="0"
-                  {...methods.register("incentivesMin")}
-                />
-                <Input
-                  type="number"
-                  placeholder="₹ Max"
-                  min="0"
-                  {...methods.register("incentivesMax")}
-                />
-                <select
-                  className="w-full sm:w-32 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white"
-                  {...methods.register("incentivesMode")}
-                >
-                  <option value="Month" className="text-sm">Month</option>
-                  <option value="Lump sum" className="text-sm">Lump sum</option>
-                </select>
-              </div>
-            </div>
-          )}
-
-          {/* Perks */}
-          {opportunityType !== "Job" && opportunityType !== "Project" && (
-            <div>
-              <Label htmlFor="perks">
-                Perks (Select all that apply)
-              </Label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 p-3 bg-gray-50 rounded-lg">
-                {[
-                  "Certificate of completion",
-                  "Letter of recommendation",
-                  "Flexible work hours",
-                  "5 days a week",
-                  "Informal dress code",
-                  "Free snacks & beverages",
-                  "Pre-placement offer (PPO)",
-                ].map((perk) => (
-                  <label key={perk} className="flex items-center gap-2 cursor-pointer">
+                  )}
+                  <div className="flex items-center mt-2 mb-4">
                     <input
                       type="checkbox"
-                      value={perk}
                       className={checkboxStyles}
-                      {...methods.register("perks")}
+                      id="onlyThisCollege"
                     />
-                    <span className="text-sm text-gray-700">{perk}</span>
-                  </label>
-                ))}
+                    <label htmlFor="onlyThisCollege" className="ml-2 text-gray-500 text-sm">
+                      Candidates from ONLY the above college should be allowed to apply.
+                    </label>
+                  </div>
+
+                  {educationLoading ? (
+                    <div className="p-3 bg-gray-50 rounded-lg">
+                      <p className="text-gray-600">Loading courses...</p>
+                    </div>
+                  ) : educationError ? (
+                    <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+                      <p className="text-red-800 text-sm">{educationError}</p>
+                    </div>
+                  ) : (
+                    <Select
+                      label="Course"
+                      placeholder="Select a course"
+                      options={educationData.courses ? educationData.courses.map(course => ({
+                        value: course,
+                        label: course
+                      })) : []}
+                      {...methods.register("course")}
+                    />
+                  )}
+                </div>
+              )}
+
+              {/* Incentives */}
+              {opportunityType !== "Job" && opportunityType !== "Project" && stipendType === "Paid" && (
+                <div>
+                  <Label htmlFor="incentivesMin">Incentives</Label>
+                  <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                    <Input
+                      type="number"
+                      placeholder="₹ Min"
+                      min="0"
+                      {...methods.register("incentivesMin")}
+                    />
+                    <Input
+                      type="number"
+                      placeholder="₹ Max"
+                      min="0"
+                      {...methods.register("incentivesMax")}
+                    />
+                    <select
+                      className="w-full sm:w-32 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white"
+                      {...methods.register("incentivesMode")}
+                    >
+                      <option value="Month" className="text-sm">Month</option>
+                      <option value="Lump sum" className="text-sm">Lump sum</option>
+                    </select>
+                  </div>
+                </div>
+              )}
+
+              {/* Perks */}
+              {opportunityType !== "Job" && opportunityType !== "Project" && (
+                <div>
+                  <Label htmlFor="perks">
+                    Perks (Select all that apply)
+                  </Label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 p-3 bg-gray-50 rounded-lg">
+                    {[
+                      "Certificate of completion",
+                      "Letter of recommendation",
+                      "Flexible work hours",
+                      "5 days a week",
+                      "Informal dress code",
+                      "Free snacks & beverages",
+                      "Pre-placement offer (PPO)",
+                    ].map((perk) => (
+                      <label key={perk} className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          value={perk}
+                          className={checkboxStyles}
+                          {...methods.register("perks")}
+                        />
+                        <span className="text-sm text-gray-700">{perk}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* PPO Question */}
+              {opportunityType === "Internship" && (
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 p-3 bg-gray-50 rounded-lg">
+                  <input
+                    type="radio"
+                    value="Yes"
+                    className={radioStyles}
+                    {...methods.register("ppo")}
+                  />
+                  <span className="text-sm font-semibold text-blue-700">
+                    Does this internship come with a pre-placement offer (PPO)?
+                  </span>
+                </div>
+              )}
+
+              {/* Submit Buttons */}
+              <div className="flex flex-col sm:flex-row justify-between gap-2 sm:gap-4 mt-6 pt-4 border-t border-gray-200">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => alert("Draft saved (not implemented)")}
+                >
+                  Save Draft
+                </Button>
+                <Button
+                  type="submit"
+                  loading={isSubmitting}
+                  variant="primary"
+                >
+                  {isSubmitting ? "Posting..." : `Post ${opportunityType}`}
+                </Button>
               </div>
-            </div>
-          )}
+            </form>
+          </FormProvider>
+        </div>
+      </div>
+    );
+  }
 
-          {/* PPO Question */}
-          {opportunityType === "Internship" && (
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 p-3 bg-gray-50 rounded-lg">
-              <input
-                type="radio"
-                value="Yes"
-                className={radioStyles}
-                {...methods.register("ppo")}
-              />
-              <span className="text-sm font-semibold text-blue-700">
-                Does this internship come with a pre-placement offer (PPO)?
-              </span>
-            </div>
-          )}
+  if (isLargeDevice) {
+    return (
+      <SignUpLayoutForLarge
+        heading="Post Internship/Job"
+        subheading="Post your internship/job to attract the best candidates."
+        hideMobileIllustration={false}
+        centerMobileContent={false}
+      >
+        <FormContent />
+      </SignUpLayoutForLarge>
+    );
+  } else {
+    return (
+      <SignUpLayoutForSmall
+        title="Post Internship/Job"
+        subtitle="Post your internship/job to attract the best candidates."
+        showIllustration={false}
+      >
+        <FormContent />
+      </SignUpLayoutForSmall>
+    )
+  }
 
-          {/* Submit Buttons */}
-          <div className="flex flex-col sm:flex-row justify-between gap-2 sm:gap-4 mt-6 pt-4 border-t border-gray-200">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => alert("Draft saved (not implemented)")}
-            >
-              Save Draft
-            </Button>
-            <Button
-              type="submit"
-              loading={isSubmitting}
-              variant="primary"
-            >
-              {isSubmitting ? "Posting..." : `Post ${opportunityType}`}
-            </Button>
-          </div>
-        </form>
-      </FormProvider>
-    </RecruiterPostJobInternLayout>
-  );
 }
