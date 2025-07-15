@@ -52,7 +52,7 @@ const formSchema = z.object({
   // Add other step schemas here as needed
 });
 export default function StudentFillAccountDetails() {
-  const {isLargeDevice}=useResponsiveLayout();
+  const { isLargeDevice } = useResponsiveLayout();
 
   const methods = useForm({
     mode: "onTouched",
@@ -217,8 +217,8 @@ export default function StudentFillAccountDetails() {
     return false;
   };
   const FormContent = () => (
-    <div className="flex-1 w-full flex justify-center">
-      <div className="bg-white mt-4 rounded-xl shadow-none sm:shadow-xl w-full max-w-full sm:max-w-2xl p-6 sm:p-8">
+    <div className={`flex-1 w-full ${isLargeDevice ? 'flex justify-center' : ''}`}>
+      <div className={`bg-white rounded-xl shadow-none sm:shadow-xl w-full ${isLargeDevice ? 'mt-4 max-w-full sm:max-w-2xl' : '-mt-4'} ${isLargeDevice ? 'p-6 sm:p-8' : 'px-0 py-6 sm:py-8'}`}>
         <div className="-mt-2 mb-6">
           <ProgressBar currentStep={step} steps={steps} />
         </div>
@@ -283,7 +283,7 @@ export default function StudentFillAccountDetails() {
     // Large devices (laptop/desktop) - use SignUpLayout
     return (
       <SignUpLayoutForLarge
-        heading="Verify Your Email"
+        heading="Let's Get Started!"
         subheading="Create an account to continue!"
         hideMobileIllustration={false}
         centerMobileContent={false}
@@ -295,7 +295,7 @@ export default function StudentFillAccountDetails() {
     // Small devices (mobile/tablet) - use SignUpSendOtpEmailLayout
     return (
       <SignUpLayoutForSmall
-        title="Verify Your Email"
+        title="Let's Get Started!"
         subtitle="Create an account to continue!"
         showIllustration={false}
       >

@@ -104,8 +104,37 @@ export default function SignUp() {
         userRole: data.userRole,
       });
       if (response.status === 201) {
-        alert("Signup successful!");
-        navigate("/signup-send-otp-email");
+        // Store user data in localStorage after successful registration
+        const userData = {
+          firstName: data.firstName,
+          lastName: data.lastName,
+          email: data.email,
+          userRole: data.userRole,
+          phone: data.phone
+        };
+        localStorage.setItem('userData', JSON.stringify(userData));
+
+        // After successful registration, send OTP to email
+        try {
+          const otpResponse = await axios.post(`${BASE_URL}/otp/send-otp`, {
+            email: data.email,
+          });
+          if (otpResponse.status === 200) {
+            alert("Registration successful! OTP sent to your email.");
+            // Navigate to OTP verification page with email
+            navigate("/signup-verify-otp-email", {
+              state: {
+                email: data.email,
+                userRole: data.userRole
+              }
+            });
+          } else {
+            alert("Registration successful but failed to send OTP. Please try again.");
+          }
+        } catch (otpError) {
+          console.error("OTP sending error:", otpError);
+          alert("Registration successful but failed to send OTP. Please try again.");
+        }
       } else {
         alert("Signup failed. Please try again.");
       }

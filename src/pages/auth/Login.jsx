@@ -48,7 +48,24 @@ export default function Login() {
       // console.log("userId from login", response.data.user.id);
       // console.log("from login", response.data.token);
       alert("Login successful!");
-      navigate("/send-otp-email");
+
+      // Role-based redirection
+      const userRole = response.data.user.role;
+      console.log("User role:", userRole);
+      switch (userRole) {
+        case 'STUDENT':
+          navigate("/student-fill-account-details");
+          break;
+        case 'COMPANY':
+          navigate("/recruiter-post-job-intern-details");
+          break;
+        case 'UNIVERSITY':
+          navigate("/university-fill-details");
+          break;
+        default:
+          // Fallback to student page if role is not recognized
+          navigate("/student-fill-account-details");
+      }
     } catch (error) {
       if (
         error.response &&
@@ -160,7 +177,10 @@ export default function Login() {
           disabled={loading}
           className="w-full mt-2 shadow-none hover:shadow-none"
         >
-          <span className="text-xs">Login with OTP</span>
+          <Link to="/login-send-otp-email" className="flex items-center justify-center hover:no-underline">
+            <span className="text-xs">Login with OTP</span>
+          </Link>
+
         </Button>
       </form>
     </AuthLayout>

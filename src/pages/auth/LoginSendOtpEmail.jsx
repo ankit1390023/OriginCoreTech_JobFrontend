@@ -13,7 +13,7 @@ const schema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
 });
 
-export default function SendOtpEmail() {
+export default function LoginSendOtpEmail() {
   const {
     register,
     handleSubmit,
@@ -46,7 +46,7 @@ export default function SendOtpEmail() {
       console.log("OTP sent successfully:", response.data);
       alert("OTP sent successfully, please check your email");
       // You can redirect or show success message here
-      navigate("/verify-otp-email");
+      navigate("/login-verify-otp-email");
     } catch (error) {
       if (
         error.response &&

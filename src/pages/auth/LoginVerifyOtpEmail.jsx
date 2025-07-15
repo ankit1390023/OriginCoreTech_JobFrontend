@@ -17,7 +17,7 @@ const schema = z.object({
     .regex(/^\d{4}$/, { message: "OTP must contain only numbers" }),
 });
 
-export default function VerifyOtpEmail() {
+export default function LoginVerifyOtpEmail() {
   const {
     register,
     handleSubmit,

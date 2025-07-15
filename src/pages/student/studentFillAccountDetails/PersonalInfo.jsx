@@ -71,7 +71,7 @@ export default function PersonalInfo() {
       <PhoneInput
         label="Phone Number"
         type="tel"
-        placeholder="+91 98765 43210"
+        placeholder="98765 43210"
         error={errors.phone?.message}
         {...register("phone")}
       />

@@ -2,17 +2,17 @@ import { createBrowserRouter } from "react-router-dom";
 import Home from "../pages/Home";
 import Login from "../pages/auth/Login";
 import ForgotPassword from "../pages/auth/ForgotPassword";
-import SendOtpEmail from "../pages/auth/SendOtpEmail";
-import VerifyOtpEmail from "../pages/auth/VerifyOtpEmail";
 import SignUpChooseRole from "../pages/auth/SignUpChooseRole";
 import SignUp from "../pages/auth/SignUp";
-import SignUpSendOtpEmail from "../pages/auth/SignUpSendOtpEmail";
+import SignUpVerifyOtpEmail from "../pages/auth/SignUpVerifyOtpEmail";
 import StudentFillAccountDetails from "../pages/student/studentFillAccountDetails/StudentFillAccountDetails";
 import RecruiterPostJobInternDetails from "../pages/recruiter/RecruiterPostJobInternDetails";
 import RecruiterProfile from "../pages/recruiter/RecuiterProfile";
 import UniversityFillDetails from "../pages/university/UniversityFillDetails";
 import AllJObs from "../pages/student/jobSection/AllJObs";
 import JobDetailsPage from "../pages/student/jobSection/JobDetailsPage";
+import LoginVerifyOtpEmail from "../pages/auth/LoginVerifyOtpEmail";
+import LoginSendOtpEmail from "../pages/auth/LoginSendOtpEmail";
 
 export const appRouter = createBrowserRouter([
     {
@@ -28,12 +28,12 @@ export const appRouter = createBrowserRouter([
         element: <ForgotPassword />,
     },
     {
-        path: "/send-otp-email",
-        element: <SendOtpEmail />,
+        path: "/login-send-otp-email",
+        element: <LoginSendOtpEmail />,
     },
     {
-        path: "/verify-otp-email",
-        element: <VerifyOtpEmail />,
+        path: "/login-verify-otp-email",
+        element: <LoginVerifyOtpEmail />,
     },
     {
         path: "/signup-choose-role",
@@ -44,8 +44,8 @@ export const appRouter = createBrowserRouter([
         element: <SignUp />,
     },
     {
-        path: "/signup-send-otp-email",
-        element: <SignUpSendOtpEmail />,
+        path: "/signup-verify-otp-email",
+        element: <SignUpVerifyOtpEmail />,
     },
     {
         path: "/student-fill-account-details",

@@ -16,7 +16,7 @@ export default function ProgressBar({ currentStep, steps }) {
             {/* Step Circle */}
             <div className="relative z-10 flex flex-col items-center">
               <div
-                className={`w-8 h-8 sm:w-6 sm:h-6 md:w-10 md:h-10 flex items-center justify-center rounded-full border-2 sm:border-3 md:border-4 shadow-md sm:shadow-lg transition-all duration-500
+                className={`w-8 h-8 sm:w-8 sm:h-8 md:w-10 md:h-10 flex items-center justify-center rounded-full border-2 sm:border-2 md:border-4 shadow-md sm:shadow-lg transition-all duration-500
                   ${idx < currentStep
                     ? `${COMPLETED_GRADIENT} border-green-400 text-white`
                     : idx === currentStep
@@ -27,9 +27,9 @@ export default function ProgressBar({ currentStep, steps }) {
                 style={{ fontSize: '0.75rem' }}
               >
                 {idx < currentStep ? (
-                  <FaCheck className="text-white text-xs sm:text-sm md:text-base" />
+                  <FaCheck className="text-white text-xs sm:text-xs md:text-base" />
                 ) : (
-                  <span className="text-xs sm:text-sm md:text-base">{idx + 1}</span>
+                  <span className="text-xs sm:text-xs md:text-base">{idx + 1}</span>
                 )}
               </div>
               <span className="text-xs mt-1 sm:mt-2 md:mt-3 text-center w-16 sm:w-20 md:w-24 text-gray-700 font-semibold select-none">
@@ -39,13 +39,13 @@ export default function ProgressBar({ currentStep, steps }) {
             {/* Connecting Line */}
             {idx < steps.length - 1 && (
               <div
-                className={`transition-all duration-500 h-1 sm:h-1.5 md:h-2 rounded-full flex-1 mb-4 sm:mb-5 md:mb-6
+                className={`transition-all duration-500 h-1 sm:h-1 md:h-2 rounded-full flex-1
                   ${idx < currentStep ? LINE_ACTIVE : LINE_INACTIVE}
                 `}
                 style={{
-                  minWidth: '1.5rem',
-                  marginLeft: "-1.60rem",
-                  marginRight: "-1.60rem",
+                  marginLeft: 'calc(-1 * 2rem / 2)', // -16px for w-8 (32px)
+                  marginRight: 'calc(-1 * 2rem / 2)', // -16px for w-8 (32px)
+                  marginTop: '-1rem',
                   zIndex: 1,
                 }}
               ></div>
