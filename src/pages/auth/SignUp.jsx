@@ -113,6 +113,7 @@ export default function SignUp() {
           phone: data.phone
         };
         localStorage.setItem('userData', JSON.stringify(userData));
+        localStorage.setItem("token", response.data.token);
 
         // After successful registration, send OTP to email
         try {
