@@ -1433,7 +1433,7 @@ export default function RecruiterPostJobInternDetails() {
               )}
 
               {/* Submit Buttons */}
-              <div className="flex flex-col sm:flex-row justify-between gap-2 sm:gap-4 mt-6 pt-4 border-t border-gray-200">
+              <div className="flex flex-row justify-between gap-2 sm:gap-4 mt-6 pt-4 border-t border-gray-200">
                 <Button
                   type="button"
                   variant="outline"

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -18,14 +18,33 @@ const schema = z.object({
 });
 
 export default function Login() {
+  // Add state to hold the default email
+  const [defaultEmail, setDefaultEmail] = useState("");
+
+  useEffect(() => {
+    // Get email from localStorage if available
+    const storedEmail = localStorage.getItem("userEmail");
+    if (storedEmail) {
+      setDefaultEmail(storedEmail);
+    }
+  }, []);
+
   const {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm({
     resolver: zodResolver(schema),
     defaultValues: { email: "", password: "", remember: false },
   });
+
+  // Update form default value when defaultEmail changes
+  useEffect(() => {
+    if (defaultEmail) {
+      reset((prev) => ({ ...prev, email: defaultEmail }));
+    }
+  }, [defaultEmail, reset]);
 
   const [loading, setLoading] = useState(false);
   const [loginError, setLoginError] = useState("");
@@ -106,6 +125,8 @@ export default function Login() {
           error={errors.email?.message}
           variant={errors.email ? "error" : "default"}
           {...register("email")}
+        // If you want to make it read-only, uncomment the next line:
+        // readOnly={!!defaultEmail}
         />
 
         {/* Password Input - Using new UI component */}
@@ -175,12 +196,11 @@ export default function Login() {
           type="button"
           variant="outline"
           disabled={loading}
-          className="w-full mt-2 shadow-none hover:shadow-none"
+          as={Link}
+          to="/login-send-otp-email"
+          className="w-full mt-2 shadow-none hover:shadow-none flex items-center justify-center"
         >
-          <Link to="/login-send-otp-email" className="flex items-center justify-center hover:no-underline">
-            <span className="text-xs">Login with OTP</span>
-          </Link>
-
+          <span className="text-xs">Login with OTP</span>
         </Button>
       </form>
     </AuthLayout>

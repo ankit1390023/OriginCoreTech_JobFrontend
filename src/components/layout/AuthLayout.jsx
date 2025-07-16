@@ -1,7 +1,7 @@
 import React from "react";
 import LoginIllustration from "../../assets/Login_Illustration.png";
 import websiteLogo from "../../assets/WebsiteLogo.svg";
-
+import { Link } from "react-router-dom";
 export default function AuthLayout({ children, title, subtitle, showIllustration = true }) {
     return (
         <div className="w-full min-h-screen bg-white overflow-hidden relative">
@@ -11,11 +11,13 @@ export default function AuthLayout({ children, title, subtitle, showIllustration
                 <div className="w-full h-1/2 bg-white absolute bottom-0"></div>
             </div>
 
-            {/* Logo for large devices (top left) */}
-            <div className="hidden lg:block absolute top-8 left-6 z-30">
-                <img src={websiteLogo} alt="Logo" className="w-12 h-12" />
-            </div>
 
+            {/* Logo */}
+            <div className="hidden lg:block absolute top-4 left-4 sm:top-6 sm:left-6 md:top-8 md:left-6 lg:top-8 lg:left-8 z-30">
+                <Link to="/" className="text-xl sm:text-2xl font-bold text-white tracking-wide hover:opacity-80 transition-opacity">
+                    <img src={websiteLogo} alt="Logo" className="w-10 h-10" />
+                </Link>
+            </div>
             {/* Mobile Header (Blue Top) - Only for small devices */}
             <div className="block lg:hidden w-full bg-[#072366] h-48 sm:h-56 md:h-64 px-2 sm:px-4 md:px-6 flex flex-col justify-start pt-8">
                 <div className="flex items-center mb-6">

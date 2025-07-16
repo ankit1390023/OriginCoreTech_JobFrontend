@@ -2,7 +2,7 @@ import React from "react";
 import LoginIllustration from "../../assets/Login_Illustration.png";
 import websiteLogo from "../../assets/WebsiteLogo.svg";
 
-export default function SignUpSendOtpEmailLayout({ children, title, subtitle, showIllustration = true }) {
+export default function SignUpLayoutForSmall({ children, title, subtitle, showIllustration = true }) {
     return (
         <div className="w-full min-h-screen bg-white overflow-hidden relative">
             {/* Large screen background split: top half blue, bottom half white */}

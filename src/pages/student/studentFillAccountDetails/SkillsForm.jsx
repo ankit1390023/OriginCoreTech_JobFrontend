@@ -203,9 +203,10 @@ export default function DomainsForm() {
       // Upload skills using custom hook
       // TODO: Replace with actual user ID from authentication context
       const userId = localStorage.getItem("userId");
+      console.log("userId from upload skills", userId);
       const response = await uploadSkills(userId, skills, certificateFiles);
-
-      // console.log("Skills uploaded successfully:", response);
+     
+      console.log("Skills uploaded successfully:", response);
       alert("Skills uploaded successfully!");
 
       // Clear form after successful upload

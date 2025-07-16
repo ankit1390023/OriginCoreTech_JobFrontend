@@ -157,7 +157,7 @@ export default function SignUp() {
   }, [location.state, navigate]);
 
   return (
-    <div className="w-full min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 lg:bg-white overflow-hidden relative">
+    <div className="w-full min-h-screen  overflow-hidden relative">
       {/* Mobile Background Pattern */}
       <div className="absolute inset-0 lg:hidden bg-gradient-to-br from-blue-100/30 via-blue-50/20 to-indigo-100/30 z-0" />
 

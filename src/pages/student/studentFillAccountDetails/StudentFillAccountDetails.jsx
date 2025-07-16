@@ -57,6 +57,10 @@ export default function StudentFillAccountDetails() {
   const methods = useForm({
     mode: "onTouched",
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      city: "",
+      gender: "",
+    },
   });
   const [step, setStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);

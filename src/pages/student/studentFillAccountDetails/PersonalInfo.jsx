@@ -82,21 +82,19 @@ export default function PersonalInfo() {
         error={errors.dob?.message}
         {...register("dob")}
       />
-      <div className="mb-2 sm:mb-3">
-        <Label>Current City</Label>
-        {loading ? (
-          <Loader message="Loading locations..." />
-        ) : error ? (
-          <CustomErrorMessage message={error} />
-        ) : (
-          <Select
-            options={locations.map(location => ({ value: location, label: location }))}
-            placeholder="Select your current city"
-            error={errors.city?.message}
-            {...register("city")}
-          />
-        )}
-      </div>
+      {loading ? (
+        <Loader message="Loading locations..." />
+      ) : error ? (
+        <CustomErrorMessage message={error} />
+      ) : (
+        <Select
+          label="City"
+          options={locations.map(location => ({ value: location, label: location }))}
+          placeholder="Select your current city"
+          error={errors.city?.message}
+          {...register("city")}
+        />
+      )}
       <Select
         label="Gender"
         options={[
@@ -106,7 +104,7 @@ export default function PersonalInfo() {
         ]}
         placeholder="Select your gender"
         error={errors.gender?.message}
-        {...register("gender")}
+        {...register("gender", { required: "Gender is required" })}
       />
     </div>
   );
