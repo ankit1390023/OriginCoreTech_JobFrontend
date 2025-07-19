@@ -5,7 +5,7 @@ import Header from "../../../components/shared/Header";
 import { useGetJobApi } from "../../../hooks/useGetJobApi";
 import { useGetJobById } from "../../../hooks/useGetJobApi";
 import { Button, Loader, Badge } from '../../../components/ui';
-
+import { getImageUrl } from "../../../../utils";
 export default function JobDetailsPage() {
     const { jobId } = useParams();
     const navigate = useNavigate();
@@ -105,16 +105,12 @@ export default function JobDetailsPage() {
                                         onClick={() => handleSelect(job.jobId)}
                                         className={`flex items-center gap-1.5 sm:gap-2 md:gap-3 rounded-lg px-1.5 sm:px-2 md:px-3 py-1.5 sm:py-2 md:py-3 text-left transition border-2 border-gray-200 hover:border-blue-200 hover:bg-blue-50 focus:outline-none relative ${selectedId === job.jobId.toString() ? 'bg-blue-100 border-blue-400' : ''}`}
                                     >
+
                                         <img
-                                            src={"https://images.squarespace-cdn.com/content/v1/65da3ae088ac635ab34abd13/c6caad75-54ea-4e3f-840b-a7aa78473188/transparent-google-logo-google-logo-green-and-blue-g-in-circle65cf691984e008.0012613817080916735443.png?format=1500w"}
+                                            src={getImageUrl(job.logoUrl) || "https://via.placeholder.com/48x48?text=Logo"}
                                             alt="logo"
                                             className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg object-contain bg-gray-100 flex-shrink-0"
                                         />
-                                        {/* <img
-                                            src={job.logoUrl || "https://via.placeholder.com/48x48?text=Logo"}
-                                            alt="logo"
-                                            className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg object-contain bg-gray-100 flex-shrink-0"
-                                        /> */}
                                         <div className="flex-1 min-w-0">
                                             <div className="font-semibold text-xs sm:text-sm truncate mb-0.5">{job.jobProfile}</div>
                                             <div className="text-gray-500 text-xs truncate mb-1.5">{job.companyName}</div>
@@ -176,17 +172,11 @@ export default function JobDetailsPage() {
                             <>
                                 {/* Header Section */}
                                 <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-3 md:gap-4 mb-3 sm:mb-4 relative">
-
                                     <img
-                                        src={"https://images.squarespace-cdn.com/content/v1/65da3ae088ac635ab34abd13/c6caad75-54ea-4e3f-840b-a7aa78473188/transparent-google-logo-google-logo-green-and-blue-g-in-circle65cf691984e008.0012613817080916735443.png?format=1500w"}
+                                        src={getImageUrl(selectedJobDetails.logoUrl)}
                                         alt="Company Logo"
                                         className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-lg object-contain bg-gray-100 border border-gray-200 flex-shrink-0 self-start"
                                     />
-                                    {/* <img
-                                        src={selectedJobDetails.logoUrl}
-                                        alt="Company Logo"
-                                        className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-lg object-contain bg-gray-100 border border-gray-200 flex-shrink-0 self-start"
-                                    /> */}
                                     <div className="flex-1">
                                         <div className="font-bold text-base sm:text-lg md:text-xl leading-tight mb-1.5">{selectedJobDetails.jobProfile}</div>
                                         <div className="text-gray-600 text-sm sm:text-base mb-2">{selectedJobDetails.companyName}</div>

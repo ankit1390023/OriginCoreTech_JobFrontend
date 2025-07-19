@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { useGetJobApi } from '../../../hooks/useGetJobApi';
 import { useState } from 'react';
 import { Input, Button, Loader, Checkbox, Badge } from '../../../components/ui';
-
+import { getImageUrl } from "../../../../utils";
 export default function AllJObs() {
     const { allJobs, loading, error, refetch } = useGetJobApi();
     const [isFiltersOpen, setIsFiltersOpen] = useState(false);
@@ -188,9 +188,9 @@ export default function AllJObs() {
                                             </div>
                                         )}
 
-                                        {/* <img src={job.logoUrl} alt={`${job.companyName} logo`} className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg object-contain bg-gray-100 border border-gray-200 self-start sm:self-auto" /> */}
+                                        <img src={getImageUrl(job.logoUrl)} alt={`${job.companyName} logo`} className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg object-contain bg-gray-100 border border-gray-200 self-start sm:self-auto" />
 
-                                        <img src={"https://images.squarespace-cdn.com/content/v1/65da3ae088ac635ab34abd13/c6caad75-54ea-4e3f-840b-a7aa78473188/transparent-google-logo-google-logo-green-and-blue-g-in-circle65cf691984e008.0012613817080916735443.png?format=1500w"} alt={`${job.companyName} logo`} className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg object-contain bg-gray-100 border border-gray-200 self-start sm:self-auto" />
+                                    
 
                                         <div className="flex-1 min-w-0">
                                             <div className="font-semibold text-sm sm:text-base leading-tight truncate">{job.jobProfile}</div>
