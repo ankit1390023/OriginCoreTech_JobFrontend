@@ -4,8 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import SignUpLayoutForLarge from "../../components/layout/SignUpLayoutForLarge";
-import SignUpLayoutForSmall from "../../components/layout/SignUpLayoutForSmall";
+import SignUpLayout from "../../components/layout/SignUpLayout";
 import { FcGoogle } from "react-icons/fc";
 import { Input, Textarea, Button, ErrorMessage, Link } from "../../components/ui";
 
@@ -34,7 +33,17 @@ export default function UniversityFillDetails() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const navigate = useNavigate();
-    const {isLargeDevice} = useResponsiveLayout();
+    // Add state to track if device is small
+    const [isSmallDevice, setIsSmallDevice] = useState(false);
+
+    useEffect(() => {
+        const checkDeviceSize = () => {
+            setIsSmallDevice(window.innerWidth < 1024); // lg breakpoint
+        };
+        checkDeviceSize();
+        window.addEventListener("resize", checkDeviceSize);
+        return () => window.removeEventListener("resize", checkDeviceSize);
+    }, []);
 
     const onSubmit = async (data) => {
         setLoading(true);
@@ -166,29 +175,15 @@ export default function UniversityFillDetails() {
         </div>
     );
 
-    // Render different layouts based on device size
-    if (isLargeDevice) {
-        // Large devices (laptop/desktop) - use SignUpLayoutForLarge
-        return (
-            <SignUpLayoutForLarge
-                heading="University Details"
-                subheading="Complete your university profile!"
-                hideMobileIllustration={false}
-                centerMobileContent={false}
-            >
-                <FormContent />
-            </SignUpLayoutForLarge>
-        );
-    } else {
-        // Small devices (mobile/tablet) - use SignUpLayoutForSmall
-        return (
-            <SignUpLayoutForSmall
-                title="University Details"
-                subtitle="Complete your university profile!"
-                showIllustration={false}
-            >
-                <FormContent />
-            </SignUpLayoutForSmall>
-        );
-    }
+    // Replace layout logic with SignUpLayout for all devices
+    return (
+        <SignUpLayout
+            heading="University Details"
+            subheading="Complete your university profile!"
+            hideMobileIllustration={isSmallDevice}
+            centerMobileContent={false}
+        >
+            <FormContent />
+        </SignUpLayout>
+    );
 } 

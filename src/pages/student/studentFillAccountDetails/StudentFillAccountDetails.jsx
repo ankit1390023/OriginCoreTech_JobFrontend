@@ -6,13 +6,12 @@ import { useNavigate } from "react-router-dom";
 import PersonalInfo from "./PersonalInfo";
 import EducationInfo from "./EducationInfo";
 import ProgressBar from "./ProgressBar";
-import SignUpLayoutForLarge from "../../../components/layout/SignUpLayoutForLarge";
-import SignUpLayoutForSmall from "../../../components/layout/SignUpLayoutForSmall";
+
 import SkillsForm from "./SkillsForm";
 import PreferencesForm from "./PreferencesForm";
 import { userDetailsApi } from "../../../api/userDetailsApi";
 import { Button } from "../../../components/ui";
-import useResponsiveLayout from "../../../hooks/useResponsiveLayout";
+import SignUpLayoutForLarge from "../../../components/layout/SignUpLayoutForLarge";
 
 const steps = [
   "Personal Info",
@@ -52,8 +51,6 @@ const formSchema = z.object({
   // Add other step schemas here as needed
 });
 export default function StudentFillAccountDetails() {
-  const { isLargeDevice } = useResponsiveLayout();
-
   const methods = useForm({
     mode: "onTouched",
     resolver: zodResolver(formSchema),
@@ -65,6 +62,19 @@ export default function StudentFillAccountDetails() {
   const [step, setStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
+
+  // Add state to track if device is small
+  const [isSmallDevice, setIsSmallDevice] = useState(false);
+
+  useEffect(() => {
+    // Function to check window width
+    const checkDeviceSize = () => {
+      setIsSmallDevice(window.innerWidth < 1024); // lg breakpoint
+    };
+    checkDeviceSize();
+    window.addEventListener("resize", checkDeviceSize);
+    return () => window.removeEventListener("resize", checkDeviceSize);
+  }, []);
 
   const onNext = async () => {
     console.log("onNext called, current step:", step);
@@ -221,8 +231,8 @@ export default function StudentFillAccountDetails() {
     return false;
   };
   const FormContent = () => (
-    <div className={`flex-1 w-full ${isLargeDevice ? 'flex justify-center' : ''}`}>
-      <div className={`bg-white rounded-xl shadow-none sm:shadow-xl w-full ${isLargeDevice ? 'mt-4 max-w-full sm:max-w-2xl' : '-mt-4'} ${isLargeDevice ? 'p-6 sm:p-8' : 'px-0 py-6 sm:py-8'}`}>
+    <div className="flex-1 w-full flex justify-center">
+      <div className="bg-white rounded-xl shadow-none sm:shadow-xl w-full mt-4 max-w-full sm:max-w-2xl p-6 sm:p-8">
         <div className="-mt-2 mb-6">
           <ProgressBar currentStep={step} steps={steps} />
         </div>
@@ -283,28 +293,18 @@ export default function StudentFillAccountDetails() {
     </div>
   );
   // Render different layouts based on device size
-  if (isLargeDevice) {
-    // Large devices (laptop/desktop) - use SignUpLayout
-    return (
-      <SignUpLayoutForLarge
-        heading="Let's Get Started!"
-        subheading="Create an account to continue!"
-        hideMobileIllustration={false}
-        centerMobileContent={false}
-      >
-        <FormContent />
-      </SignUpLayoutForLarge>
-    );
-  } else {
-    // Small devices (mobile/tablet) - use SignUpSendOtpEmailLayout
-    return (
-      <SignUpLayoutForSmall
-        title="Let's Get Started!"
-        subtitle="Create an account to continue!"
-        showIllustration={false}
-      >
-        <FormContent />
-      </SignUpLayoutForSmall>
-    );
-  }
+  return (
+    <SignUpLayoutForLarge
+      heading="Let's Get Started!"
+      subheading="Create an account to continue!"
+      hideMobileIllustration={isSmallDevice}
+      centerMobileContent={false}
+    >
+      <FormContent />
+    </SignUpLayoutForLarge>
+  );
 }
+
+
+
+

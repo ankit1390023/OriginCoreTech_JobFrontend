@@ -24,7 +24,7 @@ const Checkbox = ({
                     className="w-3 h-3 text-blue-600 border-gray-300 rounded focus:outline-none focus:border-blue-500 focus:border-2"
                     {...props}
                 />
-                <label className="text-sm text-gray-700 cursor-pointer">
+                <label className="text-xs font-semibold text-gray-700 cursor-pointer">
                     {label}
                 </label>
             </div>

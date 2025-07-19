@@ -10,4 +10,4 @@ export { default as Badge } from './Badge';
 export { default as Loader } from './Loader';
 export { default as Checkbox } from './Checkbox';
 export { default as RadioGroup } from './RadioGroup';
-export { default as PhoneInput } from './PhoneInput'; 
+export { default as PhoneInput } from './PhoneInput';

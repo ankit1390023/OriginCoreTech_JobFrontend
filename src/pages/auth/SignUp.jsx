@@ -9,7 +9,7 @@ import SignUpIllustration from "../../assets/SignUp_Illustration.png";
 import WebsiteLogo from "../../assets/WebsiteLogo.svg";
 import { FcGoogle } from "react-icons/fc";
 import { Input, Button, Link, PhoneInput } from "../../components/ui";
-
+import SignUpLayoutForLarge from "../../components/layout/SignUpLayoutForLarge";
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 console.log("BASE_URL:", BASE_URL); // should print: http://localhost:5000
 
@@ -158,178 +158,135 @@ export default function SignUp() {
   }, [location.state, navigate]);
 
   return (
-    <div className="w-full min-h-screen  overflow-hidden relative">
-      {/* Mobile Background Pattern */}
-      <div className="absolute inset-0 lg:hidden bg-gradient-to-br from-blue-100/30 via-blue-50/20 to-indigo-100/30 z-0" />
+    <SignUpLayoutForLarge
+      heading="SignUp"
+      subheading="Create an account to continue!"
+      hideMobileIllustration={true}
 
-      {/* Logo */}
-      <div className="absolute top-4 left-2 sm:top-6 sm:left-4 md:top-8 md:left-6 lg:top-8 lg:left-8 z-30">
-        <Link to="/" className="text-xl sm:text-2xl font-bold text-white tracking-wide hover:opacity-80 transition-opacity">
-          <img src={WebsiteLogo} alt="Logo" className="w-10 h-10" />
-        </Link>
-      </div>
+    >
+      <div className="w-full min-h-screen flex md:items-center md:justify-center overflow-hidden relative">
+        {/* Form */}
+        <div className="flex-1 w-full flex justify-center mt-6 md:mt-0">
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="bg-white mt-4 rounded-lg shadow-none sm:shadow-md p-4 sm:p-6 w-full max-w-full sm:max-w-sm md:max-w-md"
+          >
+            <input
+              type="hidden"
+              {...register("userRole")}
+              value={selectedRole}
+            />
 
-      {/* Fixed Top Decorative Section - Only covers top section for mobile/tablet, half height for desktop */}
-      <div className="absolute top-0 left-0 w-full h-48 sm:h-56 md:h-64 lg:h-[50vh] bg-[#6EB5DD66] z-0 pointer-events-none" />
+            {/* First Name and Last Name in one row */}
+            <div className="flex gap-1 sm:gap-2">
+              <div className="flex-1">
+                <Input
+                  label="First Name"
+                  type="text"
+                  placeholder="First Name"
+                  error={errors.firstName?.message}
+                  variant={errors.firstName ? "error" : "default"}
+                  disabled={loading}
+                  {...register("firstName")}
+                />
+              </div>
+              <div className="flex-1">
+                <Input
+                  label="Last Name"
+                  type="text"
+                  placeholder="Last Name"
+                  error={errors.lastName?.message}
+                  variant={errors.lastName ? "error" : "default"}
+                  disabled={loading}
+                  {...register("lastName")}
+                />
+              </div>
+            </div>
 
-      {/* Fixed SVG Divider - Only for desktop */}
-      <div className="absolute top-[40vh] left-0 w-full z-10 pointer-events-none hidden lg:block">
-        <svg
-          viewBox="0 0 1440 80"
-          className="w-full h-20"
-          preserveAspectRatio="none"
-        >
-          <path d="M0,0 Q720,100 1440,0 L1440,80 L0,80 Z" fill="#fff" />
-        </svg>
-      </div>
+            {/* Phone Number with country code */}
+            <PhoneInput
+              label="Phone Number"
+              error={errors.phone?.message}
+              variant={errors.phone ? "error" : "default"}
+              disabled={loading}
+              {...register("phone")}
+            />
 
-      {/* Main Content */}
-      <div className="relative z-20 flex flex-col lg:flex-row items-start justify-start max-w-5xl lg:max-w-6xl xl:max-w-7xl mx-auto px-2 sm:px-4 lg:px-6 py-8 sm:py-12 md:py-16 gap-y-6 sm:gap-y-8 md:gap-y-10 lg:gap-x-2 mt-12 sm:mt-16 md:mt-20 lg:mt-12 lg:mt-16 lg:mt-20">
-        {/* Left Section - Desktop Only */}
-        <div className="hidden ml-14 lg:flex flex-1 flex-col items-center lg:items-start text-center lg:text-left space-y-2 sm:space-y-3 lg:sticky lg:top-28">
-          <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-black">
-            Sign Up
-          </h1>
-          <p className="text-xs sm:text-sm md:text-base font-medium text-gray-800 max-w-md">
-            Create an account to contunue!.
-          </p>
-          <img
-            src={SignUpIllustration}
-            alt="Sign Up Illustration"
-            className="w-40 sm:w-48 md:w-56 lg:w-64 mt-1 sm:mt-2 hidden lg:block"
-          />
-        </div>
+            {/* Email */}
+            <Input
+              label="Email ID"
+              type="email"
+              placeholder="Email"
+              error={errors.email?.message}
+              variant={errors.email ? "error" : "default"}
+              disabled={loading}
+              {...register("email")}
+            />
 
-        {/* Right Section */}
-        <div className="flex-1  w-full flex flex-col items-center justify-center">
-          {/* Heading and Subheading for mobile/tablet only */}
-          <div className="block lg:hidden flex flex-col mb-12 sm:mb-16 md:mb-20 w-full items-start text-left">
-            <h1 className="text-2xl font-bold text-black mb-1">Sign Up</h1>
-            <p className="text-sm text-gray-700">Create an account to contunue!.</p>
-          </div>
+            {/* Company email hint */}
+            {selectedRole && selectedRole.toUpperCase() === "COMPANY" && (
+              <p className="text-xs text-gray-500 mt-0.5 mb-2 sm:mb-3">
+                Company emails must use professional domains (.com, .org,
+                .net, etc.)
+              </p>
+            )}
 
-          {/* Form */}
-          <div className="flex-1 w-full flex justify-center">
-            <form
-              onSubmit={handleSubmit(onSubmit)}
-              className="bg-white mt-4 rounded-lg shadow-none sm:shadow-md p-4 sm:p-6 w-full max-w-full sm:max-w-sm md:max-w-md"
+            {/* Password */}
+            <Input
+              label="Password"
+              type="password"
+              placeholder="Password"
+              error={errors.password?.message}
+              variant={errors.password ? "error" : "default"}
+              disabled={loading}
+              {...register("password")}
+            />
+
+            {/* Terms */}
+            <p className="text-xs text-gray-500 mb-2 sm:mb-3">
+              By signing up, you agree to our{" "}
+              <span className="font-semibold text-gray-700">
+                Terms and Conditions
+              </span>
+            </p>
+
+            {/* Submit Button - Using new UI component */}
+            <Button
+              type="submit"
+              loading={loading}
+              disabled={loading}
+              className="w-full mb-2 sm:mb-3"
             >
-              <input
-                type="hidden"
-                {...register("userRole")}
-                value={selectedRole}
-              />
+              {loading ? "Creating Account..." : "Register"}
+            </Button>
 
-              {/* First Name and Last Name in one row */}
-              <div className="flex gap-1 sm:gap-2">
-                <div className="flex-1">
-                  <Input
-                    label="First Name"
-                    type="text"
-                    placeholder="First Name"
-                    error={errors.firstName?.message}
-                    variant={errors.firstName ? "error" : "default"}
-                    disabled={loading}
-                    {...register("firstName")}
-                  />
-                </div>
-                <div className="flex-1">
-                  <Input
-                    label="Last Name"
-                    type="text"
-                    placeholder="Last Name"
-                    error={errors.lastName?.message}
-                    variant={errors.lastName ? "error" : "default"}
-                    disabled={loading}
-                    {...register("lastName")}
-                  />
-                </div>
-              </div>
+            <div className="flex items-center my-2 sm:my-3">
+              <div className="flex-grow h-px bg-gray-300"></div>
+              <span className="mx-1.5 sm:mx-2 text-gray-400 text-xs font-medium">Or</span>
+              <div className="flex-grow h-px bg-gray-300"></div>
+            </div>
 
-              {/* Phone Number with country code */}
-              <PhoneInput
-                label="Phone Number"
-                error={errors.phone?.message}
-                variant={errors.phone ? "error" : "default"}
-                disabled={loading}
-                {...register("phone")}
-              />
+            {/* Google Button - Using new UI component */}
+            <Button
+              type="button"
+              variant="outline"
+              disabled={loading}
+              className="w-full flex items-center justify-center shadow-none hover:shadow-none"
+            >
+              <FcGoogle size={14} className="mr-1.5" />
+              <span className="text-xs">Sign up with Google</span>
+            </Button>
 
-              {/* Email */}
-              <Input
-                label="Email ID"
-                type="email"
-                placeholder="Email"
-                error={errors.email?.message}
-                variant={errors.email ? "error" : "default"}
-                disabled={loading}
-                {...register("email")}
-              />
-
-              {/* Company email hint */}
-              {selectedRole && selectedRole.toUpperCase() === "COMPANY" && (
-                <p className="text-xs text-gray-500 mt-0.5 mb-2 sm:mb-3">
-                  Company emails must use professional domains (.com, .org,
-                  .net, etc.)
-                </p>
-              )}
-
-              {/* Password */}
-              <Input
-                label="Password"
-                type="password"
-                placeholder="Password"
-                error={errors.password?.message}
-                variant={errors.password ? "error" : "default"}
-                disabled={loading}
-                {...register("password")}
-              />
-
-              {/* Terms */}
-              <p className="text-xs text-gray-500 mb-2 sm:mb-3">
-                By signing up, you agree to our{" "}
-                <span className="font-semibold text-gray-700">
-                  Terms and Conditions
-                </span>
-              </p>
-
-              {/* Submit Button - Using new UI component */}
-              <Button
-                type="submit"
-                loading={loading}
-                disabled={loading}
-                className="w-full mb-2 sm:mb-3"
-              >
-                {loading ? "Creating Account..." : "Register"}
-              </Button>
-
-              <div className="flex items-center my-2 sm:my-3">
-                <div className="flex-grow h-px bg-gray-300"></div>
-                <span className="mx-1.5 sm:mx-2 text-gray-400 text-xs font-medium">Or</span>
-                <div className="flex-grow h-px bg-gray-300"></div>
-              </div>
-
-              {/* Google Button - Using new UI component */}
-              <Button
-                type="button"
-                variant="outline"
-                disabled={loading}
-                className="w-full flex items-center justify-center shadow-none hover:shadow-none"
-              >
-                <FcGoogle size={14} className="mr-1.5" />
-                <span className="text-xs">Sign up with Google</span>
-              </Button>
-
-              <p className="text-center text-xs text-gray-600 mt-3 sm:mt-4">
-                Already have an account?{" "}
-                <Link to="/login" variant="primary">
-                  Login
-                </Link>
-              </p>
-            </form>
-          </div>
+            <p className="text-center text-xs text-gray-600 mt-3 sm:mt-4">
+              Already have an account?{" "}
+              <Link to="/login" variant="primary">
+                Login
+              </Link>
+            </p>
+          </form>
         </div>
       </div>
-    </div>
+    </SignUpLayoutForLarge>
+
   );
 }

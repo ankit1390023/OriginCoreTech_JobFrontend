@@ -28,7 +28,7 @@ const Textarea = React.forwardRef(({
     return (
         <div className="mb-2 sm:mb-3">
             {label && (
-                <label className="block text-gray-700 text-sm font-semibold mb-2">
+                <label className="block text-gray-700 text-xs font-semibold mb-0.5 sm:mb-1">
                     {label}
                 </label>
             )}

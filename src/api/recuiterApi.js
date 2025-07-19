@@ -31,11 +31,11 @@ export const recruiterApi = {
 
             console.log("profileData from recruiterApi", profileData.logoPic);
             // Add files if they exist
-            if (profileData.logo && profileData.logo instanceof File) {
-                formData.append('logo', profileData.logo);
+            if (profileData.logoUrl && profileData?.logoUrl[0]) {
+                formData.append("logoUrl", profileData?.logoUrl[0]);
             }
-            if (profileData.profilePic && profileData.profilePic instanceof File) {
-                formData.append('profilePic', profileData.profilePic);
+            if (profileData.profilePic && profileData?.profilePic[0]) {
+                formData.append("profilePic", profileData?.profilePic[0]);
             }
             console.log("formData", formData)
             const response = await axios.post(`${BASE_URL}/company-recruiter/profile/upload`, formData, {
@@ -44,6 +44,7 @@ export const recruiterApi = {
                     'Content-Type': 'multipart/form-data'
                 }
             });
+            console.log("response from createProfileWithFileUpload", response.data);
             return response.data;
         } catch (error) {
             console.log("error while cretaProfileWithFileUpload from recruiterApi")
@@ -76,8 +77,8 @@ export const recruiterApi = {
             formData.append('isGstVerified', profileData.isGstVerified);
 
             // Add files if they exist
-            if (profileData.logo && profileData.logo instanceof File) {
-                formData.append('logo', profileData.logo);
+            if (profileData.logoUrl && profileData.logoUrl instanceof File) {
+                formData.append('logoUrl', profileData.logoUrl);
             }
             if (profileData.profilePic && profileData.profilePic instanceof File) {
                 formData.append('profilePic', profileData.profilePic);
@@ -104,6 +105,7 @@ export const recruiterApi = {
                     'Authorization': `Bearer ${token}`
                 }
             });
+            console.log("response.data from getProfile", response.data);
             return response.data;
         } catch (error) {
             throw error;
