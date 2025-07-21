@@ -232,17 +232,12 @@ export default function JobDetailsPage() {
                                                     </Badge>
                                                 )
                                             }
-                                            {
-                                                selectedJobDetails.numberOfApplicants && (
-                                                    <Badge
-                                                        color="bg-teal-100 text-teal-700 hover:bg-teal-200"
-                                                    >
-                                                        <FaUsers className="text-teal-500 text-xs inline mr-1" />
-                                                        <span className="truncate">{selectedJobDetails.numberOfApplicants} applicants</span>
-                                                    </Badge>
-
-                                                )
-                                            }
+                                            <Badge
+                                                color="bg-teal-100 text-teal-700 hover:bg-teal-200"
+                                            >
+                                                <FaUsers className="text-teal-500 text-xs inline mr-1" />
+                                                <span className="truncate">{selectedJobDetails.numberOfApplicants} applicants</span>
+                                            </Badge>
                                             {
                                                 selectedJobDetails.jobType && (
                                                     <Badge
@@ -494,7 +489,7 @@ export default function JobDetailsPage() {
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                             <div className="flex items-center gap-2">
                                                 <img
-                                                    src={selectedJobDetails.recruiterProfilePic || "https://via.placeholder.com/40x40?text=Avatar"}
+                                                    src={getImageUrl(selectedJobDetails.recruiterProfilePic)}
                                                     alt="Recruiter"
                                                     className="w-10 h-10 rounded-full object-cover border border-gray-200"
                                                 />

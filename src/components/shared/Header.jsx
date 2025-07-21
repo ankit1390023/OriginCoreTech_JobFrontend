@@ -27,7 +27,7 @@ export default function Header() {
             {/* Desktop Nav Tabs - absolutely centered */}
             <div className="hidden lg:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-full shadow-sm px-1 py-1 gap-1 z-10">
                 <NavLink
-                    to="/Feed"
+                    to="/feed"
                     className={({ isActive }) =>
                         isActive
                             ? "bg-[#00194A] text-white rounded-full px-2 md:px-3 lg:px-4 py-1.5 font-medium shadow text-xs md:text-sm"
@@ -117,7 +117,7 @@ export default function Header() {
                         {/* Mobile Nav Links */}
                         <div className="flex flex-col space-y-1.5 md:space-y-2">
                             <NavLink
-                                to="/Feed"
+                                to="/feed"
                                 className={({ isActive }) =>
                                     isActive
                                         ? "bg-[#00194A] text-white rounded-lg px-2 md:px-3 py-1.5 md:py-2 font-medium text-xs md:text-sm"

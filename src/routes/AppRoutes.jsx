@@ -13,6 +13,9 @@ import JobDetailsPage from "../pages/student/jobSection/JobDetailsPage";
 import LoginVerifyOtpEmail from "../pages/auth/LoginVerifyOtpEmail";
 import LoginSendOtpEmail from "../pages/auth/LoginSendOtpEmail";
 import CompanyRecruiterProfile from "../pages/recruiter/CompanyRecuiterProfile";
+import FeedPage from "../pages/student/feed/FeedPage";
+
+
 export const appRouter = createBrowserRouter([
     {
         path: "/",
@@ -69,5 +72,9 @@ export const appRouter = createBrowserRouter([
     {
         path: "/university-fill-details",
         element: <UniversityFillDetails />
+    },
+    {
+        path: "/feed",
+        element: <FeedPage />
     }
 ])
