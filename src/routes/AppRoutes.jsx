@@ -14,6 +14,10 @@ import LoginVerifyOtpEmail from "../pages/auth/LoginVerifyOtpEmail";
 import LoginSendOtpEmail from "../pages/auth/LoginSendOtpEmail";
 import CompanyRecruiterProfile from "../pages/recruiter/CompanyRecuiterProfile";
 import FeedPage from "../pages/student/feed/FeedPage";
+import FeedActivity from "../pages/student/feed/FeedActivity";
+import FeedView from "../pages/student/feed/FeedView";
+import FeedApplication from "../pages/student/feed/FeedApplication";
+import FeedTerms from "../pages/student/feed/FeedTerms";
 
 
 export const appRouter = createBrowserRouter([
@@ -76,5 +80,21 @@ export const appRouter = createBrowserRouter([
     {
         path: "/feed",
         element: <FeedPage />
-    }
+    },
+    {
+        path: "/feed-activity",
+        element: <FeedActivity />,
+    },
+    {
+        path: "/feed-view",
+        element: <FeedView />,
+    },
+    {
+        path: "/feed-application",
+        element: <FeedApplication />,
+    },
+    {
+        path: "/feed-terms",
+        element: <FeedTerms />,
+    },
 ])
