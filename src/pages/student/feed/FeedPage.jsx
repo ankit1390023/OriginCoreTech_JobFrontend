@@ -18,6 +18,9 @@ import Input from '../../../components/ui/Input';
 import FeedRightProfile from './FeedRightProfile.jsx';
 import feedApi from '../../../api/feedApi';
 
+
+
+
 export default function FeedPage() {
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
