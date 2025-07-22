@@ -180,7 +180,7 @@ const FeedActivity = () => {
         {/* Left Spacer */}
         <div className="hidden lg:block flex-grow "></div>
         <section
-          className="className=w-full max-w-[600px] p-2 mt-2 mx-auto bg-white"
+          className="w-full max-w-[600px] p-2 mt-2 mx-auto bg-white rounded-md"
         >
           {/* Profile Header */}
           <div className="text-center space-y-4 mb-6">

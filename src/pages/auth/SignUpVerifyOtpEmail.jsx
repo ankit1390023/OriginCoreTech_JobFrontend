@@ -6,8 +6,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import SignUpIllustration from "../../assets/SignUp_Illustration.png";
 import axios from "axios";
 import { Input, Button, Link } from "../../components/ui";
-import SignUpLayout from "../../components/layout/SignUpLayout";
 
+import SignUpLayoutForLarge from "../../components/layout/SignUpLayoutForLarge";
 import { useNavigate } from "react-router-dom";
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 // Zod schema for OTP validation
@@ -147,7 +147,7 @@ export default function SignUpVerifyOtpEmail() {
 
   // Form content component
   const FormContent = () => (
-    <div className="w-full min-h-screen flex md:items-center md:justify-center overflow-hidden relative">
+    <div className="w-full min-h-screen flex md:items-center md:justify-center overflow-hidden relative sm:-mt-16">
 
       {/* Form */}
       <div className="flex-1 w-full flex justify-center mt-6 md:mt-0">
@@ -232,13 +232,13 @@ export default function SignUpVerifyOtpEmail() {
   );
 
   return (
-    <SignUpLayout
+    <SignUpLayoutForLarge
       heading="Verify Your Email"
       subheading="Create an account to continue!"
       hideMobileIllustration={true}
     >
       <FormContent />
-    </SignUpLayout>
+    </SignUpLayoutForLarge>
   );
 
 
