@@ -17,7 +17,7 @@ export default function AllJObs() {
     return (
         <div className="bg-[#f5f6f7] min-h-screen">
             <Header />
-            <div className="max-w-7xl mx-auto pt-1 sm:pt-2 md:pt-4 lg:pt-6 pb-4 sm:pb-6 px-2 sm:px-3 md:px-4 lg:px-6">
+            <div className="max-w-7xl mx-auto pt-1 sm:pt-2 md:pt-4 lg:pt-6 pb-2 sm:pb-3 px-2 sm:px-3 md:px-4 lg:px-6">
                 {/* Mobile Filter Toggle */}
                 <div className="lg:hidden mb-2 sm:mb-3">
                     <Button
@@ -47,8 +47,8 @@ export default function AllJObs() {
                             <h2 className="text-lg sm:text-xl lg:text-2xl font-extrabold mb-1">Job Filters</h2>
                             <p className="text-gray-500 text-xs">Help us match you with the best career opportunities</p>
                         </div>
-                        <div className="flex flex-col gap-3 sm:gap-4 divide-y divide-gray-100">
-                            <div className="flex flex-col gap-1.5 pb-2 sm:pb-3">
+                        <div className="flex flex-col gap-0.5">
+                            <div className="flex flex-col gap-0.5 pb-1">
                                 <Input
                                     label={
                                         <span className="text-xs font-semibold flex items-center gap-1.5">
@@ -61,7 +61,7 @@ export default function AllJObs() {
                                     className="w-full rounded-xl border border-gray-200 bg-gray-50 px-2 sm:px-3 py-2 sm:py-2.5 text-xs outline-none focus:ring-2 focus:ring-blue-100"
                                 />
                             </div>
-                            <div className="flex flex-col gap-1.5 py-2 sm:py-3">
+                            <div className="flex flex-col gap-0.5 py-1">
                                 <Input
                                     label={
                                         <span className="text-xs font-semibold flex items-center gap-1.5">
@@ -73,7 +73,7 @@ export default function AllJObs() {
                                     size="small"
                                     className="w-full rounded-xl border border-gray-200 bg-gray-50 px-2 sm:px-3 py-2 sm:py-2.5 text-xs outline-none focus:ring-2 focus:ring-blue-100"
                                 />
-                                <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-3 mt-1">
+                                <div className="flex flex-col sm:flex-row sm:items-center gap-0.5 sm:gap-1 -mt-2">
                                     <Checkbox
                                         label="Remote"
                                         className="flex items-center gap-1.5 text-xs font-medium p-0 border-0 bg-transparent"
@@ -84,7 +84,7 @@ export default function AllJObs() {
                                     />
                                 </div>
                             </div>
-                            <div className="flex flex-col gap-1.5 py-2 sm:py-3">
+                            <div className="flex flex-col gap-0.5 py-1">
                                 <Input
                                     label={
                                         <span className="text-xs font-semibold flex items-center gap-1.5">
@@ -97,7 +97,7 @@ export default function AllJObs() {
                                     className="w-full rounded-xl border border-gray-200 bg-gray-50 px-2 sm:px-3 py-2 sm:py-2.5 text-xs outline-none focus:ring-2 focus:ring-blue-100"
                                 />
                             </div>
-                            <div className="flex flex-col gap-1.5 py-2 sm:py-3">
+                            <div className="flex flex-col gap-0.5 py-1">
                                 <Input
                                     label={
                                         <span className="text-xs font-semibold flex items-center gap-1.5">
@@ -110,7 +110,7 @@ export default function AllJObs() {
                                     className="w-full rounded-xl border border-gray-200 bg-gray-50 px-2 sm:px-3 py-2 sm:py-2.5 text-xs outline-none focus:ring-2 focus:ring-blue-100"
                                 />
                             </div>
-                            <div className="flex flex-col gap-1.5 pt-2 sm:pt-3">
+                            <div className="flex flex-col gap-0.5 pt-1">
                                 <Input
                                     label={
                                         <span className="text-xs font-semibold flex items-center gap-1.5">
@@ -190,7 +190,7 @@ export default function AllJObs() {
 
                                         <img src={getImageUrl(job.logoUrl)} alt={`${job.companyName} logo`} className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg object-contain bg-gray-100 border border-gray-200 self-start sm:self-auto" />
 
-                                    
+
 
                                         <div className="flex-1 min-w-0">
                                             <div className="font-semibold text-sm sm:text-base leading-tight truncate">{job.jobProfile}</div>
