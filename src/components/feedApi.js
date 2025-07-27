@@ -57,7 +57,7 @@ const feedApi = {
             throw error;
         }
     },
-    postLike: async (postId,data) => {
+    postLike: async () => {
         try {
             const token = getToken();
             const response = await axios.post(`${BASE_URL}/feed/posts/${postId}/like`, data,
@@ -68,7 +68,6 @@ const feedApi = {
                     }
                 }
             )
-            console.log("response.data from post like", response.data);
             return response.data;
         } catch (error) {
             console.log("error while posting like", error);

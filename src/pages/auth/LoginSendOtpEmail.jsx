@@ -30,9 +30,9 @@ export default function LoginSendOtpEmail() {
 
   // Get logged-in user's email from localStorage
   useEffect(() => {
-    const userEmail = localStorage.getItem("userEmail");
-    if (userEmail) {
-      setValue("email", userEmail);
+    const rememberedEmail = localStorage.getItem("userEmail");
+    if (rememberedEmail) {
+      setValue("email", rememberedEmail);
     }
   }, [setValue]);
 

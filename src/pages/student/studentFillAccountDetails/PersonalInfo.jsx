@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useFormContext } from "react-hook-form";
 import { useEducationData } from "../../../hooks/useEducationData";
 import { Loader, Input, Select, Label, ErrorMessage, PhoneInput } from "../../../components/ui";
+import { useSelector } from "react-redux";
 
 export default function PersonalInfo() {
   const {
@@ -9,21 +10,23 @@ export default function PersonalInfo() {
     formState: { errors },
     setValue,
   } = useFormContext();
+  const { user } = useSelector((state) => state.auth);
 
+  useEffect(() => {
+    if (user) {
+      if (user.firstName) setValue("firstName", user.firstName);
+      if (user.lastName) setValue("lastName", user.lastName);
+      if (user.email) setValue("email", user.email);
+      if (user.phone) setValue("phone", user.phone);
+    }
+  }, [user, setValue]);
   const {
-    data: { locations } = { locations: [] },
+    data,
     loading,
     error,
     refetch,
   } = useEducationData();
-
-  // Pre-fill email with logged-in user's email
-  useEffect(() => {
-    const userEmail = localStorage.getItem("userEmail");
-    if (userEmail) {
-      setValue("email", userEmail);
-    }
-  }, [setValue]);
+  const locations = Array.isArray(data?.locations) ? data.locations : [];
 
   const CustomErrorMessage = ({ message }) => (
     <div className="w-full p-3 border rounded bg-red-50 text-red-500 text-xs">

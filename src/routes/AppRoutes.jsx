@@ -19,7 +19,6 @@ import FeedView from "../pages/student/feed/FeedView";
 import FeedApplication from "../pages/student/feed/FeedApplication";
 import FeedTerms from "../pages/student/feed/FeedTerms";
 
-
 export const appRouter = createBrowserRouter([
     {
         path: "/",
@@ -97,4 +96,5 @@ export const appRouter = createBrowserRouter([
         path: "/feed-terms",
         element: <FeedTerms />,
     },
+   
 ])

@@ -16,41 +16,55 @@ import { FaCamera } from 'react-icons/fa6';
 import { LiaShareSolid } from "react-icons/lia";
 import Input from '../../../components/ui/Input';
 import FeedRightProfile from './FeedRightProfile.jsx';
+import useFeedApi from '../../../hooks/useFeedApi';
+import useUploadImageApi from '../../../hooks/useUploadImageApi';
 import feedApi from '../../../api/feedApi';
 
 export default function FeedPage() {
-    const [posts, setPosts] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [seeMoreUber, setSeeMoreUber] = useState(false);
-    const [seeMoreRohan, setSeeMoreRohan] = useState(false);
-    const visitors = [
-        { name: 'Olivia Rhye', img: dummyProfile1 },
-        { name: 'Phoenix Baker', img: dummyProfile2 },
-        { name: 'Lana Steiner', img: dummyProfile3 },
-        { name: 'Milo Thorne', img: dummyProfile1 },
-        { name: 'Olivia Rhye', img: dummyProfile1 },
-        { name: 'Lana Steiner', img: dummyProfile3 },
-        { name: 'Milo Thorne', img: dummyProfile1 },
-        { name: 'Phoenix Baker', img: dummyProfile2 },
-    ];
-
+    const [caption, setCaption] = useState('');
+    const [imageFile, setImageFile] = useState(null);
+    const [imagePreview, setImagePreview] = useState(null);
+    const { uploadImage, loading: uploadingImage } = useUploadImageApi();
+    const { posts, loading, error, fetchFeed, postFeed, handleLike } = useFeedApi();
     useEffect(() => {
-        const fetchFeed = async () => {
-            setLoading(true);
-            setError(null);
-            try {
-                const data = await feedApi.getFeed(1, 10); // page 1, limit 10
-                console.log('Feed API data:', data);
-                setPosts(data.posts);
-            } catch (err) {
-                setError('Failed to load feed');
-            } finally {
-                setLoading(false);
-            }
-        };
         fetchFeed();
-    }, []);
+    }, [fetchFeed]);
+
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        setImageFile(file);
+        if (file) {
+            setImagePreview(URL.createObjectURL(file));
+        } else {
+            setImagePreview(null);
+        }
+    };
+    const handleFeedPost = async () => {
+        const userId = Number(localStorage.getItem('userId'));
+        let imageUrl = '';
+        if (imageFile) {
+            const imageUrlResult = await uploadImage(imageFile, 'feedImage');
+            if (typeof imageUrlResult === 'string' && imageUrlResult.length > 0) {
+                imageUrl = imageUrlResult;
+            } else if (imageUrlResult && imageUrlResult.url && imageUrlResult.url.length > 0) {
+                imageUrl = imageUrlResult.url[0];
+            }
+        }
+        const payload = {
+            userId,
+            image: imageUrl,
+            caption,
+        };
+        try {
+            await postFeed(payload);
+            setCaption('');
+            setImageFile(null);
+            setImagePreview(null);
+        } catch (err) {
+            console.log("Error while posting feed", err);
+            // handle error
+        }
+    };
 
     return (
         <MainLayout>
@@ -64,17 +78,38 @@ export default function FeedPage() {
                         <div className="flex items-center gap-2 w-full">
                             <img src={profile} alt="Profile" className="w-12 h-12 rounded-full " />
                             <Input
-                                type="search"
+                                type="text"
                                 size="large"
                                 placeholder="Share something..."
                                 className="flex-1 h-12 border border-gray-400 rounded px-4 min-w-[500px]"
+                                value={caption}
+                                onChange={e => setCaption(e.target.value)}
                             />
                         </div>
                         <div className="flex items-center pl-14 gap-2">
-                            <img src={addMediaIcon} alt="Add media" className="w-4 h-4" />
-                            <span className="text-gray-500 text-sm">Add media</span>
+                            <label className="flex items-center gap-2 cursor-pointer">
+                                <img src={addMediaIcon} alt="Add media" className="w-4 h-4" />
+                                <span className="text-gray-500 text-sm">Add media</span>
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    className="hidden"
+                                    onChange={handleImageChange}
+                                />
+                            </label>
+                            {imagePreview && (
+                                <img src={imagePreview} alt="Preview" className="w-16 h-16 object-cover rounded ml-2" />
+                            )}
                         </div>
+                        <button
+                            className="ml-auto mt-2 px-4 py-2 bg-blue-600 text-white rounded"
+                            onClick={handleFeedPost}
+                            disabled={uploadingImage}
+                        >
+                            {uploadingImage ? 'Posting...' : 'Post'}
+                        </button>
                     </div>
+
                     {/* Feed Posts */}
                     {loading && <div className="text-center py-8">Loading...</div>}
                     {error && <div className="text-center text-red-500 py-8">{error}</div>}
@@ -101,7 +136,10 @@ export default function FeedPage() {
                             {post.image && <img src={post.image} alt="Post" className="rounded-lg object-cover w-3/4 h-64 mb-2" />}
                             <p className="text-sm text-gray-700 mb-2">{post.caption}</p>
                             <footer className="flex flex-row justify-between text-sm text-gray-500 items-center py-2">
-                                <div className="flex flex-col items-center cursor-pointer"><BiLike className='text-xl' /><span className='text-sm'>Like ({post.likeCount})</span></div>
+                                <div className="flex flex-col items-center cursor-pointer">
+                                    <BiLike className='text-xl' onClick={() => handleLike(post.id, post.isLiked, Number(localStorage.getItem('userId')))} />
+                                    <span className='text-sm'>Like ({post.likeCount})</span>
+                                </div>
                                 <div className="flex flex-col items-center cursor-pointer"><BiCommentDetail className='text-xl' /><span className='text-sm'>Comment ({post.commentCount})</span></div>
                                 <div className="flex flex-col items-center cursor-pointer"><LiaShareSolid className='text-xl' /><span className='text-sm'>Share</span></div>
                                 <div className="flex flex-col items-center cursor-pointer"><TbSend className='text-xl' /><span className='text-sm'>Send</span></div>

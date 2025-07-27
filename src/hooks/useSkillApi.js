@@ -11,11 +11,6 @@ export const useSkillApi = () => {
             setLoading(true);
             setError(null);
 
-            console.log('Uploading skills with data:', {
-                user_id,
-                skills,
-                certificateFiles: certificateFiles.map(f => ({ name: f.name, size: f.size, type: f.type }))
-            });
 
             const response = await skillApi.uploadSkills(user_id, skills, certificateFiles);
             console.log('Upload response:', response);

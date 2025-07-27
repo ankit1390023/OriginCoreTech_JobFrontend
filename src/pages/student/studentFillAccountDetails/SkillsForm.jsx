@@ -4,6 +4,7 @@ import { useDomainsApi } from "../../../hooks/useDomainsApi";
 import { useSkillApi } from "../../../hooks/useSkillApi";
 import { domainApi } from "../../../api/domainApi";
 import { Input, Label, Button, ErrorMessage, Loader } from "../../../components/ui";
+import useUploadImageApi from '../../../hooks/useUploadImageApi';
 
 const initialDomains = [];
 
@@ -34,6 +35,9 @@ export default function DomainsForm() {
     uploadSkills,
     setError: setSkillUploadError,
   } = useSkillApi();
+
+  // Add the image upload hook
+  const { uploadImage, batchUploadImages } = useUploadImageApi();
 
   // Filter domains based on search input
   const filteredDomains = allDomains.filter((domain) => {
@@ -177,6 +181,7 @@ export default function DomainsForm() {
               skill: skill,
               domain: domain.name,
               authority: domain.company || "Self",
+              // certificate_image will be added after upload
             });
           });
         } else {
@@ -186,6 +191,7 @@ export default function DomainsForm() {
             skill: domain.name,
             domain: domain.name,
             authority: domain.company || "Self",
+            // certificate_image will be added after upload
           });
         }
       });
@@ -195,17 +201,44 @@ export default function DomainsForm() {
         return;
       }
 
-      // Get certificate files
+      // Get certificate files (in the same order as domainsWithCertificates)
       const certificateFiles = domainsWithCertificates.map(
         (domain) => domain.certificate
       );
+      console.log('Step 1: Certificate files to upload:', certificateFiles);
 
-      // Upload skills using custom hook
-      // TODO: Replace with actual user ID from authentication context
+      // 1. Upload all certificate files and get URLs (Promise.all)
+      const certificateUrls = await Promise.all(
+        certificateFiles.map((file) =>
+          uploadImage(file, 'certificateImage')
+        )
+      );
+      console.log('Step 2: Certificate URLs after upload:', certificateUrls);
+
+      // Check for failed uploads
+      if (certificateUrls.some(url => !url)) {
+        alert('One or more certificate uploads failed. Please try again.');
+        return;
+      }
+
+      // 2. Map certificate URLs to skills (assuming one certificate per domain, assign to all skills for that domain)
+      domainsWithCertificates.forEach((domain, domainIdx) => {
+        const certUrl = certificateUrls[domainIdx];
+        // Find all skills for this domain and assign the certificate URL
+        skills.forEach((skill) => {
+          if (skill.domain === domain.name) {
+            skill.certificate_image = certUrl;
+          }
+        });
+      });
+      console.log('Step 3: Final skills array with certificate_image URLs:', skills);
+
+      // 3. Upload skills using custom hook
       const userId = localStorage.getItem("userId");
-      console.log("userId from upload skills", userId);
-      const response = await uploadSkills(userId, skills, certificateFiles);
-     
+      const payload = { user_id: userId, skills };
+      console.log('Step 4: Payload sent to uploadSkills API:', payload);
+      const response = await uploadSkills(userId, skills);
+
       console.log("Skills uploaded successfully:", response);
       alert("Skills uploaded successfully!");
 
@@ -216,7 +249,6 @@ export default function DomainsForm() {
       setShowMoreSkills({});
     } catch (error) {
       console.error("Error uploading skills:", error);
-
       // Error message is already set in the hook, so we don't need to show alert here
       // The error will be displayed in the UI below the form
     }

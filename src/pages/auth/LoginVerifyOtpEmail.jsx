@@ -6,6 +6,9 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import AuthLayout from "../../components/layout/AuthLayout";
 import { Input, Button, Link, ErrorMessage } from "../../components/ui";
+import { userDetailsApi } from "../../api/userDetailsApi";
+import { useDispatch } from 'react-redux';
+import { login } from '../../redux/feature/authSlice';
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
@@ -34,12 +37,13 @@ export default function LoginVerifyOtpEmail() {
   const otpRefs = [useRef(), useRef(), useRef(), useRef()];
   const otpValue = watch("otp") || "";
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   // Get logged-in user's email from localStorage
   useEffect(() => {
-    const userEmail = localStorage.getItem("userEmail");
-    if (userEmail) {
-      setValue("email", userEmail);
+    const rememberedEmail = localStorage.getItem("userEmail");
+    if (rememberedEmail) {
+      setValue("email", rememberedEmail);
     }
   }, [setValue]);
 
@@ -77,6 +81,11 @@ export default function LoginVerifyOtpEmail() {
       });
       console.log("OTP verification success:", response);
       console.log("OTP verification success:", response.data);
+
+      // Store user and token in Redux if present
+      if (response.data.user && response.data.token) {
+        dispatch(login.fulfilled({ user: response.data.user, token: response.data.token }));
+      }
 
       // Role-based redirection
       const userRole = response.data.userRole;
@@ -156,7 +165,7 @@ export default function LoginVerifyOtpEmail() {
                   onKeyDown={(e) => handleKeyDown(index, e)}
                   placeholder=""
                   className={`w-full h-7 sm:h-8 text-center text-xs font-semibold border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-transparent transition-all duration-200 ${errors.otp ? "border-red-500 bg-red-50" : "border-gray-300 hover:border-gray-400"}`}
-               
+
                 />
               ))}
             </div>

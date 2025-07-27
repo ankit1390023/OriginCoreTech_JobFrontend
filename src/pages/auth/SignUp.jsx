@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { FaCheckCircle } from "react-icons/fa";
 import { useForm } from "react-hook-form";
-import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -10,8 +9,11 @@ import WebsiteLogo from "../../assets/WebsiteLogo.svg";
 import { FcGoogle } from "react-icons/fc";
 import { Input, Button, Link, PhoneInput } from "../../components/ui";
 import SignUpLayoutForLarge from "../../components/layout/SignUpLayoutForLarge";
+import { useDispatch, useSelector } from 'react-redux';
+import { signup } from '../../redux/feature/authSlice';
+import axios from "axios";
+
 const BASE_URL = import.meta.env.VITE_BASE_URL;
-console.log("BASE_URL:", BASE_URL); // should print: http://localhost:5000
 
 const companyDomains = [".com", ".org", ".net", ".co", ".io", ".tech", ".in"];
 
@@ -68,9 +70,10 @@ const schema = z
   );
 
 export default function SignUp() {
-  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
+  const { loading, error, isAuthenticated, user } = useSelector((state) => state.auth);
 
   const selectedRole = location.state?.selectedRole || "STUDENT";
   const roleLabel =
@@ -93,61 +96,33 @@ export default function SignUp() {
   });
 
   const onSubmit = async (data) => {
-    setLoading(true);
+    // Dispatch signup thunk
+    await dispatch(signup({
+      firstName: data.firstName,
+      lastName: data.lastName,
+      phone: data.phone,
+      email: data.email,
+      password: data.password,
+      userRole: data.userRole,
+    }));
+    // After successful signup, send OTP and redirect
     try {
-      const response = await axios.post(`${BASE_URL}/users/register`, {
-        firstName: data.firstName,
-        lastName: data.lastName,
-        phone: data.phone,
+      const otpResponse = await axios.post(`${BASE_URL}/otp/send-otp`, {
         email: data.email,
-        password: data.password,
-        userRole: data.userRole,
       });
-      if (response.status === 201) {
-        // Store user data in localStorage after successful registration
-        const userData = {
-          firstName: data.firstName,
-          lastName: data.lastName,
-          email: data.email,
-          userRole: data.userRole,
-          phone: data.phone
-        };
-        localStorage.setItem('userData', JSON.stringify(userData));
-        localStorage.setItem("token", response.data.token);
-
-        // After successful registration, send OTP to email
-        try {
-          const otpResponse = await axios.post(`${BASE_URL}/otp/send-otp`, {
+      if (otpResponse.status === 200) {
+        alert("Registration successful! OTP sent to your email.");
+        navigate("/signup-verify-otp-email", {
+          state: {
             email: data.email,
-          });
-          if (otpResponse.status === 200) {
-            alert("Registration successful! OTP sent to your email.");
-            // Navigate to OTP verification page with email
-            navigate("/signup-verify-otp-email", {
-              state: {
-                email: data.email,
-                userRole: data.userRole
-              }
-            });
-          } else {
-            alert("Registration successful but failed to send OTP. Please try again.");
+            userRole: data.userRole
           }
-        } catch (otpError) {
-          console.error("OTP sending error:", otpError);
-          alert("Registration successful but failed to send OTP. Please try again.");
-        }
+        });
       } else {
-        alert("Signup failed. Please try again.");
+        alert("Registration successful but failed to send OTP. Please try again.");
       }
-    } catch (error) {
-      console.error("Signup error:", error);
-      if (error?.response?.data?.message) {
-        alert(error.response.data.message);
-      } else {
-        alert("Signup failed. Please try again.");
-      }
-    } finally {
-      setLoading(false);
+    } catch (otpError) {
+      alert("Registration successful but failed to send OTP. Please try again.");
     }
   };
 
@@ -162,7 +137,6 @@ export default function SignUp() {
       heading="SignUp"
       subheading="Create an account to continue!"
       hideMobileIllustration={true}
-
     >
       <div className="w-full min-h-screen flex md:items-center md:justify-center overflow-hidden relative">
         {/* Form */}
@@ -176,7 +150,6 @@ export default function SignUp() {
               {...register("userRole")}
               value={selectedRole}
             />
-
             {/* First Name and Last Name in one row */}
             <div className="flex gap-1 sm:gap-2">
               <div className="flex-1">
@@ -202,7 +175,6 @@ export default function SignUp() {
                 />
               </div>
             </div>
-
             {/* Phone Number with country code */}
             <PhoneInput
               label="Phone Number"
@@ -211,7 +183,6 @@ export default function SignUp() {
               disabled={loading}
               {...register("phone")}
             />
-
             {/* Email */}
             <Input
               label="Email ID"
@@ -222,7 +193,6 @@ export default function SignUp() {
               disabled={loading}
               {...register("email")}
             />
-
             {/* Company email hint */}
             {selectedRole && selectedRole.toUpperCase() === "COMPANY" && (
               <p className="text-xs text-gray-500 mt-0.5 mb-2 sm:mb-3">
@@ -230,7 +200,6 @@ export default function SignUp() {
                 .net, etc.)
               </p>
             )}
-
             {/* Password */}
             <Input
               label="Password"
@@ -241,7 +210,6 @@ export default function SignUp() {
               disabled={loading}
               {...register("password")}
             />
-
             {/* Terms */}
             <p className="text-xs text-gray-500 mb-2 sm:mb-3">
               By signing up, you agree to our{" "}
@@ -249,7 +217,6 @@ export default function SignUp() {
                 Terms and Conditions
               </span>
             </p>
-
             {/* Submit Button - Using new UI component */}
             <Button
               type="submit"
@@ -259,13 +226,16 @@ export default function SignUp() {
             >
               {loading ? "Creating Account..." : "Register"}
             </Button>
-
+            {error && (
+              <div className="text-xs text-red-500 mb-2 sm:mb-3 text-center bg-red-50 p-2 sm:p-3 rounded-md">
+                {error}
+              </div>
+            )}
             <div className="flex items-center my-2 sm:my-3">
               <div className="flex-grow h-px bg-gray-300"></div>
               <span className="mx-1.5 sm:mx-2 text-gray-400 text-xs font-medium">Or</span>
               <div className="flex-grow h-px bg-gray-300"></div>
             </div>
-
             {/* Google Button - Using new UI component */}
             <Button
               type="button"
@@ -276,7 +246,6 @@ export default function SignUp() {
               <FcGoogle size={14} className="mr-1.5" />
               <span className="text-xs">Sign up with Google</span>
             </Button>
-
             <p className="text-center text-xs text-gray-600 mt-3 sm:mt-4">
               Already have an account?{" "}
               <Link to="/login" variant="primary">
@@ -287,6 +256,5 @@ export default function SignUp() {
         </div>
       </div>
     </SignUpLayoutForLarge>
-
   );
 }
