@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Link } from '../../../components/ui';
+import { Link, useNavigate } from 'react-router-dom';
 import { FaCamera } from 'react-icons/fa';
 import MainLayout from '../../../components/layout/MainLayout';
 import FeedRightProfile from './FeedRightProfile';
 
 const FeedView = () => {
+  const navigate = useNavigate();
   const [profileImage, setProfileImage] = useState('/src/assets/dummyProfile1.jpg');
   const [activeSection, setActiveSection] = useState(null);
   const [showContent, setShowContent] = useState(false);
@@ -21,8 +22,16 @@ const FeedView = () => {
   };
 
   const handleViewEdit = (section) => {
-    setActiveSection(section);
-    setShowContent(true);
+    if (section === 'Skills') {
+      navigate('/feed-your-skills');
+    } else if (section === 'Work Experience') {
+      navigate('/feed-your-exprience');
+    } else if (section === 'Education') {
+      navigate('/feed-your-education');
+    } else {
+      setActiveSection(section);
+      setShowContent(true);
+    }
   };
 
   const handleCloseContent = () => {
@@ -89,22 +98,22 @@ const FeedView = () => {
             </div>
             <div className="flex items-center gap-2">
               {section === 'Resume' ? (
-                <Link to="#" variant="secondary" className="text-sm" onClick={handleUploadResume}>
+                <button className="text-sm text-blue-600 hover:text-blue-800 transition-colors" onClick={handleUploadResume}>
                   Upload Resume
-                </Link>
+                </button>
               ) : section === 'Authentication' ? (
                 <>
-                  <Link to="#" variant="secondary" className="text-sm" onClick={handleGetVerified}>
+                  <button className="text-sm text-blue-600 hover:text-blue-800 transition-colors" onClick={handleGetVerified}>
                     Get Verified
-                  </Link>
+                  </button>
                   <div className="w-4 h-4 bg-gray-300 rounded-full flex items-center justify-center">
                     <span className="text-xs text-gray-600 font-bold">i</span>
                   </div>
                 </>
               ) : (
-                <Link to="#" variant="secondary" className="text-sm" onClick={() => handleViewEdit(section)}>
+                <button className="text-sm text-blue-600 hover:text-blue-800 transition-colors" onClick={() => handleViewEdit(section)}>
                   View/Edit
-                </Link>
+                </button>
               )}
             </div>
           </div>
@@ -136,55 +145,9 @@ const FeedView = () => {
               </p>
             )}
 
-            {activeSection === 'Skills' && (
-              <div className="space-y-3">
-                <h3 className="font-semibold text-gray-900">Technical Skills:</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {[
-                    { title: 'Digital Marketing', desc: 'SEO, SEM, Social Media Marketing' },
-                    { title: 'Sales', desc: 'B2B Sales, Customer Relationship' },
-                    { title: 'UI Design', desc: 'Figma, Adobe XD, Sketch' },
-                    { title: 'SEO', desc: 'On-page, Off-page, Technical SEO' }
-                  ].map((skill, idx) => (
-                    <div key={idx} className="bg-gray-50 p-3 rounded-lg">
-                      <span className="font-medium text-gray-800">{skill.title}</span>
-                      <p className="text-sm text-gray-600 mt-1">{skill.desc}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
 
-            {activeSection === 'Work Experience' && (
-              <div className="space-y-4">
-                {[
-                  { org: 'Microsoft', role: 'Senior Designer • 2021 - Present', desc: 'Led design initiatives...' },
-                  { org: 'Startup', role: 'Product Designer • 2019 - 2021', desc: 'Designed and launched...' },
-                  { org: 'Google', role: 'UX Designer • 2017 - 2019', desc: 'Contributed to Google\'s design system...' }
-                ].map((job, idx) => (
-                  <div key={idx} className="border-l-4 pl-4 border-blue-500">
-                    <h3 className="font-semibold text-gray-900">{job.org}</h3>
-                    <p className="text-sm text-gray-600">{job.role}</p>
-                    <p className="text-gray-700 mt-2">{job.desc}</p>
-                  </div>
-                ))}
-              </div>
-            )}
 
-            {activeSection === 'Education' && (
-              <div className="space-y-4">
-                {[
-                  { title: 'Bachelor of Design', place: 'NID • 2013 - 2017' },
-                  { title: 'Master of Fine Arts', place: 'Parsons • 2017 - 2019' },
-                  { title: 'UX Certification', place: 'Google • 2020' }
-                ].map((edu, idx) => (
-                  <div key={idx} className="border-l-4 border-green-500 pl-4">
-                    <h3 className="font-semibold text-gray-900">{edu.title}</h3>
-                    <p className="text-sm text-gray-600">{edu.place}</p>
-                  </div>
-                ))}
-              </div>
-            )}
+
 
             {activeSection === 'Languages' && (
               <div className="space-y-3">

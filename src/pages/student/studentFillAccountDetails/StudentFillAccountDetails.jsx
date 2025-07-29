@@ -66,15 +66,7 @@ export default function StudentFillAccountDetails() {
   // Add state to track if device is small
   const [isSmallDevice, setIsSmallDevice] = useState(false);
 
-  useEffect(() => {
-    // Function to check window width
-    const checkDeviceSize = () => {
-      setIsSmallDevice(window.innerWidth < 1024); // lg breakpoint
-    };
-    checkDeviceSize();
-    window.addEventListener("resize", checkDeviceSize);
-    return () => window.removeEventListener("resize", checkDeviceSize);
-  }, []);
+
 
   const onNext = async () => {
     console.log("onNext called, current step:", step);

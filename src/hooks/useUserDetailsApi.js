@@ -37,11 +37,28 @@ export const useUserDetailsApi = () => {
         }
     }, []);
 
+    // Get public user profile by ID
+    const getUserPublicProfileById = useCallback(async (userId) => {
+        try {
+            setLoading(true);
+            setError(null);
+            const response = await userDetailsApi.getUserPublicProfileById(userId);
+            return response;
+        } catch (err) {
+            console.error('Error fetching public user profile:', err);
+            setError('Failed to fetch public user profile. Please try again.');
+            throw err;
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
     return {
         loading,
         error,
         createUserDetails,
         getUserDetails,
+        getUserPublicProfileById,
         setError
     };
 }; 

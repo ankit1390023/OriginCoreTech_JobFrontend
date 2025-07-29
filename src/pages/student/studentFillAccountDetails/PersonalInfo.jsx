@@ -19,9 +19,27 @@ export default function PersonalInfo() {
 
   // Pre-fill email with logged-in user's email
   useEffect(() => {
-    const userEmail = localStorage.getItem("userEmail");
-    if (userEmail) {
-      setValue("email", userEmail);
+    const userDataString = localStorage.getItem("userData");
+    let userEmail = null;
+    let firstName = null;
+    let lastName = null;
+    if (userDataString) {
+      try {
+        const userData = JSON.parse(userDataString);
+        firstName = userData.firstName;
+        lastName = userData.lastName;
+      } catch (e) {
+        console.error("Failed to parse userData from localStorage", e);
+      }
+    }
+   
+      setValue("email",localStorage.getItem('userEmail'));
+
+    if (firstName) {
+      setValue("firstName", firstName);
+    }
+    if (lastName) {
+      setValue("lastName", lastName);
     }
   }, [setValue]);
 

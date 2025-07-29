@@ -23,7 +23,16 @@ export default function Login() {
 
   useEffect(() => {
     // Get email from localStorage if available
-    const storedEmail = localStorage.getItem("userEmail");
+    const userDataString = localStorage.getItem("userData");
+    let storedEmail = "";
+    if (userDataString) {
+      try {
+        const userData = JSON.parse(userDataString);
+        storedEmail = userData.email || "";
+      } catch (e) {
+        console.error("Failed to parse userData from localStorage", e);
+      }
+    }
     if (storedEmail) {
       setDefaultEmail(storedEmail);
     }

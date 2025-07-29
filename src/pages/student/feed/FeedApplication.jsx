@@ -60,7 +60,7 @@ const FeedApplication = () => {
                 <div className="hidden lg:block flex-grow"></div>
                 {/* Left: Applications List (scrollable on lg+) */}
                 <section 
-                    className="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8 w-full lg:w-[60%] lg:h-screen lg:overflow-y-auto"
+                    className="max-w-4xl bg-white mt-2 mx-auto p-4 sm:p-6 lg:p-8 w-full lg:w-[60%] lg:h-screen lg:overflow-y-auto"
                 >
                     {/* Header */}
                     <h1 className="text-2xl sm:text-3xl font-bold text-black mb-4 sm:mb-6">
@@ -98,14 +98,15 @@ const FeedApplication = () => {
                                         <h3 className="text-base sm:text-lg font-bold text-black mb-1 sm:mb-2">
                                             {application.company}
                                         </h3>
+                                        <Badge
+                                        className={`${application.statusColor} rounded-full px-2 py-1 sm:px-3 text-[10px] sm:text-xs font-medium mt-2 sm:mt-0`}
+                                        text={application.status}
+                                    />
                                         <p className="text-xs sm:text-sm text-gray-600">
                                             {application.applicants} Applicants, Applied on {application.appliedDate}
                                         </p>
                                     </div>
-                                    <Badge
-                                        className={`${application.statusColor} rounded-full px-2 py-1 sm:px-3 text-[10px] sm:text-xs font-medium mt-2 sm:mt-0`}
-                                        text={application.status}
-                                    />
+                                   
                                 </div>
                             </div>
                         ))}
@@ -120,6 +121,7 @@ const FeedApplication = () => {
                         </div>
                     )}
                 </section>
+
                 {/* Profile Card */}
                 <aside className="hidden lg:block w-full max-w-[350px] p-2 sticky top-4 h-fit">
                     <FeedRightProfile />

@@ -2,6 +2,10 @@ import React from 'react';
 import FeedRightProfile from './FeedRightProfile';
 import MainLayout from '../../../components/layout/MainLayout';
 
+
+
+
+
 const FeedTerms = () => {
   return (
     <MainLayout>

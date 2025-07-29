@@ -1,9 +1,9 @@
-const BASE_URL = import.meta.env.VITE_API_URL;
+const BASE_URL = import.meta.env.VITE_BASE_URL || 'http://212.95.51.83:5000/api';
 import axios from 'axios';
 
 const getToken = () => localStorage.getItem('token');
 
-const userProfileApi = {
+export const userProfileApi = {  
     getUserDetailById: async (userId) => {
         try {
             const token = getToken();
@@ -99,6 +99,22 @@ const userProfileApi = {
             throw error;
         }
     },
+    changePassword: async (data) => {
+        try {
+            const token = getToken();
+            const response = await axios.post(`${BASE_URL}/users/changePassword`, data, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            return response.data;
+        } catch (error) {
+            console.log("Error while fetching changePassword", error);
+            throw error;
+        }
+    },
+
     SoftDeleteAccount: async (data) => {
         try {
             const token = getToken();
@@ -114,6 +130,7 @@ const userProfileApi = {
             throw error;
         }
     },
+    
     IncrementViewCountOfJobPost: async (data) => {
         try {
             const token = getToken();
@@ -126,6 +143,16 @@ const userProfileApi = {
             return response.data;
         } catch (error) {
             console.log("Error while fetching IncrementViewCountOfJobPost", error);
+            throw error;
+        }
+    },
+    // New method to fetch public user profile by ID
+    getUserPublicProfileById: async (userId) => {
+        try {
+            const response = await axios.get(`${BASE_URL}/user-details/public-profile/${userId}`);
+            return response.data;
+        } catch (error) {
+            console.log("Error while fetching getUserPublicProfileById", error);
             throw error;
         }
     }

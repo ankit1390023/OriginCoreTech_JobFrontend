@@ -1,15 +1,110 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '../../../components/ui';
-import { FaCamera, FaEllipsisH } from 'react-icons/fa';
+import {  FaEllipsisH } from 'react-icons/fa';
 import { FiHeart, FiMessageSquare, FiSend } from 'react-icons/fi';
 import { BsBookmarkFill } from 'react-icons/bs';
 import MainLayout from '../../../components/layout/MainLayout';
 import FeedRightProfile from './FeedRightProfile';
-const FeedActivity = () => {
+import feedApi from '../../../api/feedApi'; 
+import { userDetailsApi } from '../../../api/userDetailsApi';
+
+const FeedMyProfile = () => {
   const [showAllWorkExperience, setShowAllWorkExperience] = useState(false);
   const [showAllEducation, setShowAllEducation] = useState(false);
   const [showAllSkills, setShowAllSkills] = useState(false);
   const [showAllActivity, setShowAllActivity] = useState(false);
+  const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [followers, setFollowers] = useState([]);
+  const [followersCount, setFollowersCount] = useState(0);
+  const [following, setFollowing] = useState([]);
+  const [followingCount, setFollowingCount] = useState(0);  
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [followLoading, setFollowLoading] = useState(false);
+
+
+// Fetch user public profile using userId from localStorage
+useEffect(() => {
+  async function fetchUserProfile() {
+      setLoading(true);
+      setError(null);
+      try {
+          const userId = localStorage.getItem('userId');
+          const result = await userDetailsApi.getUserDetails(userId);
+          console.log("result from fetchUserProfile",result);
+          if (result.success) {
+              setProfile(result.data.publicProfile); // Only set the publicProfile part
+          } else {
+              setError(result.error || 'Failed to fetch user details.');
+              setProfile(null);
+          }
+      } catch (err) {
+          setError('Failed to fetch user details.');
+          setProfile(null);
+      }
+  }
+  fetchUserProfile();
+}, []);
+
+useEffect(() => {
+  async function checkStatus() {
+    try {
+      const userId = localStorage.getItem('userId');
+      if (userId && profile && profile._id && userId !== profile._id) {
+        const res = await feedApi.checkFollowStatus(profile._id);
+        setIsFollowing(res.isFollowing); // Adjust if API response shape differs
+      }
+    } catch (err) {
+      setIsFollowing(false);
+    }
+  }
+  if (profile) checkStatus();
+}, [profile]);
+
+
+  useEffect(() => {
+      async function fetchFollowersAndFollowing() {
+          setLoading(true);
+          setError(null);
+          try {
+              const { count: followersCount, followers } = await feedApi.getFollowers();
+              setFollowers(followers);
+              setFollowersCount(followersCount);
+
+              const { count: followingCount, following } = await feedApi.getFollowing();
+              setFollowing(following);
+              setFollowingCount(followingCount);
+          } catch (err) {
+              setError('Failed to load followers/following');
+          } finally {
+              setLoading(false);
+          }
+      }
+      fetchFollowersAndFollowing();
+  }, []);
+
+  const handleFollowToggle = async (profile,profile_id) => {
+    if (!profile || !profile_id) {
+      console.log("profile",profile);
+      console.log("profile_id",profile_id);
+      console.error('Profile or profile ID not available');
+      return;
+    }
+    
+    setFollowLoading(true);
+    try {
+      await feedApi.followUnfollowUser(profile._id);
+      setIsFollowing((prev) => !prev);
+      setFollowersCount((prev) => isFollowing ? prev - 1 : prev + 1);
+    } catch (err) {
+      console.error('Error toggling follow status:', err);
+      // Optionally show error
+    } finally {
+      setFollowLoading(false);
+    }
+  };
+
 
   const workExperiences = [
     {
@@ -59,7 +154,7 @@ const FeedActivity = () => {
       institution: "Delhi Technological University",
       degree: "Bachelor's degree, Design",
       duration: "2018 - 2022",
-      // description: "Studied design principles, user experience, and visual communication. Graduated with honors."
+       description: "Studied design principles, user experience, and visual communication. Graduated with honors."
     },
     {
       id: 2,
@@ -174,13 +269,15 @@ const FeedActivity = () => {
 
   const displayedActivity = showAllActivity ? activityData : activityData.slice(0, 1);
 
+
+
   return (
     <MainLayout>
       <div className="flex justify-center bg-gray-100 min-h-screen px-2 lg:px-8">
         {/* Left Spacer */}
         <div className="hidden lg:block flex-grow "></div>
         <section
-          className="className=w-full max-w-[600px] p-2 mt-2 mx-auto bg-white"
+          className="className=w-full max-w-[800px] p-2 mt-2 mx-auto bg-white"
         >
           {/* Profile Header */}
           <div className="text-center space-y-4 mb-6">
@@ -190,35 +287,50 @@ const FeedActivity = () => {
                 alt="Aman Gupta"
                 className="w-24 h-24 rounded-full object-cover border-4 border-blue-50"
               />
-              {/* Camera Icon */}
-              <div
-                className="absolute bg-[#3D5CFF] border border-[#3D5CFF] rounded-full shadow-md flex items-center justify-center"
-                style={{
-                  width: '20px',
-                  height: '20px',
-                  top: '5px',
-                  left: '70px',
-                }}
-              >
-                <FaCamera className="w-3 h-3 text-white" />
-              </div>
             </div>
+
             <div>
-              <h1 className="text-2xl font-bold text-gray-900  rounded-[10px]">Aman Gupta</h1>
-              <p className="text-gray-500 text-sm">@amangupta09</p>
+            {loading ? (
+                        <div>Loading profile...</div>
+                    ) : error ? (
+                        <div className="text-red-500 text-xs mt-1">{error}</div>
+                    ) : profile ? (
+                        <>
+                            <h2 className="text-lg font-bold text-gray-800">{profile.firstName} {profile.lastName}</h2>
+                            <p className="text-sm text-gray-500">{profile.email}</p>
+                            <p className="text-sm text-gray-700 font-semibold mt-1">{profile.userType}</p>
+                            <p className="text-sm text-gray-600 mt-2">{profile.aboutus}</p>
+                        </>
+                    ) : null}
             </div>
-            <Button variant="secondary" size="default" className="px-8 bg-blue-500 text-white border-radius-md">
-              Follow
-            </Button>
+            
+            {/* Follow/Unfollow Button - hidden if viewing own profile */}
+            {profile && localStorage.getItem('userId') !== profile._id && (
+              <Button
+                variant={isFollowing ? "secondary" : "primary"}
+                size="default"
+                className={`px-8 ${isFollowing ? "bg-gray-500 text-black" : "bg-blue-500 text-white"} border-radius-md`}
+                onClick={() => handleFollowToggle(profile,profile._id)}
+                disabled={followLoading}
+              >
+                {followLoading ? "Processing..." : isFollowing ? "Unfollow" : "Follow"}
+              </Button>
+            )}
             <p className="text-gray-400 font-medium text-sm leading-[140%] tracking-[-0.02em] max-w-md mx-auto">
               Hi, I am Aman working as a designer from 3 years. My skills include Adobe Photoshop,
               Illustrator, Premiere pro, After effects. I have worked..
             </p>
             <div className="flex flex-wrap items-center gap-2 mt-4 justify-center">
-              <button className="bg-gray-100 text-sm px-3 py-1 rounded-xl">2,900 followers</button>
-              <button className="bg-gray-100  text-sm px-3 py-1 rounded-xl">1,021 following</button>
+            <button className="bg-gray-100 text-blue-600 text-sm px-3 py-1 rounded">
+                            {loading ? 'Loading...' : `${followersCount} followers`}
+                        </button>
+                        <button className="bg-gray-100 text-blue-600 text-sm px-3 py-1 rounded">
+                            {loading ? 'Loading...' : `${followingCount} following`}
+                        </button>
             </div>
           </div>
+
+          
 
           {/* Activity Section */}
           <h2 className="text-xl font-bold text-gray-900 mb-2">Your Activity</h2>
@@ -393,4 +505,4 @@ const FeedActivity = () => {
 
 };
 
-export default FeedActivity;
+export default FeedMyProfile;

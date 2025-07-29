@@ -14,10 +14,20 @@ import LoginVerifyOtpEmail from "../pages/auth/LoginVerifyOtpEmail";
 import LoginSendOtpEmail from "../pages/auth/LoginSendOtpEmail";
 import CompanyRecruiterProfile from "../pages/recruiter/CompanyRecuiterProfile";
 import FeedPage from "../pages/student/feed/FeedPage";
-import FeedActivity from "../pages/student/feed/FeedActivity";
+import FeedMyProfile from "../pages/student/feed/FeedMyProfile";
 import FeedView from "../pages/student/feed/FeedView";
 import FeedApplication from "../pages/student/feed/FeedApplication";
 import FeedTerms from "../pages/student/feed/FeedTerms";
+import FeedResume from "../pages/student/feed/FeedResume";
+import FeedTicket from "../pages/student/feed/FeedTicket";
+import FeedHelp from "../pages/student/feed/FeedHelp";
+import Feedprofile from "../pages/student/feed/Feedprofile";
+import FeedChangeEmail from "../pages/student/feed/FeedchangeEmail";
+import FeedChangePassword from "../pages/student/feed/FeedChangePassword";
+import FeedYourSkills from "../pages/student/feed/FeedYourSkills";
+import FeedYourEducation from "../pages/student/feed/FeedYourEducation";
+import FeedYourExprience from "../pages/student/feed/FeedYourExprience";
+
 
 
 export const appRouter = createBrowserRouter([
@@ -82,8 +92,8 @@ export const appRouter = createBrowserRouter([
         element: <FeedPage />
     },
     {
-        path: "/feed-activity",
-        element: <FeedActivity />,
+        path: "/feed-my-profile",
+        element: <FeedMyProfile />,
     },
     {
         path: "/feed-view",
@@ -97,4 +107,46 @@ export const appRouter = createBrowserRouter([
         path: "/feed-terms",
         element: <FeedTerms />,
     },
+    {
+        path: "/feed-resume",
+        element: <FeedResume />,
+    }, 
+    {
+        path: "/feed-ticket",
+        element: <FeedTicket />,
+    }, 
+    {
+        path: "/feed-help",
+        element: <FeedHelp />,
+    }, 
+    {
+        path: "/feed-profile",
+        element: <Feedprofile />,
+    }, 
+    {
+        path:"/feed-change-email",
+        element:<FeedChangeEmail/>
+    },
+    {
+        path:"/feed-change-password",
+        element:<FeedChangePassword/>
+    },
+    {
+        path:"/feed-your-skills",
+        element:<FeedYourSkills/>
+    },
+        
+{
+    path:"/feed-your-education",
+    element:< FeedYourEducation/>
+},
+        
+{
+    path:"/feed-your-exprience",
+    element:< FeedYourExprience/>
+}
+   
+    
+    
+    
 ])

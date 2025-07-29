@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Button } from '../../../components/ui';
+import MainLayout from '../../../components/layout/MainLayout';
+import FeedRightProfile from './FeedRightProfile';
 
 const FeedResume = () => {
   const [selectedTemplate, setSelectedTemplate] = useState(1);
@@ -222,14 +224,19 @@ const FeedResume = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-4 sm:py-6 lg:py-8 px-2 sm:px-4 lg:px-6">
+    <MainLayout>
+  <div className="flex justify-center bg-gray-100 min-h-screen px-2 lg:px-8 items-start">
+  {/* Left Spacer */}
+  <div className="hidden lg:block w-4"></div>
+    {/* Left Spacer */}
+    <section className="min-h-screen  py-4 sm:py-6 lg:py-8 px-2 sm:px-4 lg:px-6 ">
       <div 
         className="mx-auto bg-white rounded-lg shadow-lg"
         style={{
           width: '100%',
           maxWidth: '729px',
           minHeight: 'auto',
-          marginTop: '20px',
+          marginTop: '1px',
           marginLeft: 'auto',
           marginRight: 'auto',
           borderRadius: '10px',
@@ -370,7 +377,15 @@ const FeedResume = () => {
           </Button>
         </div>
       </div>
-    </div>
+    </section>
+    {/* Profile Card */}
+    <aside className="hidden lg:block w-full max-w-[350px] p-2 sticky top-4 h-fit ml-4">
+                    <FeedRightProfile />
+                </aside>
+                {/* Right Spacer */}
+                <div className="hidden lg:block w-4"></div>
+                </div>
+    </MainLayout>
   );
 };
 

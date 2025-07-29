@@ -1,75 +1,92 @@
 import React, { useState } from 'react';
-import { Input, Label, Button, RadioGroup, Textarea } from '../../components/ui';
-import { FaTicketAlt, FaEnvelope, FaFlag, FaRegCommentDots, FaPaperPlane } from 'react-icons/fa';
+import { Input, RadioGroup, Textarea, Button } from '../../../components/ui';
+import MainLayout from '../../../components/layout/MainLayout';
+import FeedRightProfile from './FeedRightProfile';
+
+const EMAIL = 'amangupta@gmail.com'; // This can be replaced with a prop or context if needed
+
+const PRIORITY_OPTIONS = [
+  { label: 'High', value: 'high' },
+  { label: 'Medium', value: 'medium' },
+  { label: 'Low', value: 'low' },
+];
 
 const FeedTicket = () => {
-  const [priority, setPriority] = useState('Medium');
+  const [priority, setPriority] = useState('medium');
   const [body, setBody] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
 
-  // For demo, email is hardcoded as in the image
-  const email = 'amangupta@gmail.com';
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission logic here
+    setError('');
+    setSuccess(false);
+    if (!body.trim()) {
+      setError('Please enter the issue details.');
+      return;
+    }
+    setLoading(true);
+    // Simulate API call
+    setTimeout(() => {
+      setLoading(false);
+      setSuccess(true);
+      setBody('');
+      setPriority('medium');
+    }, 1200);
   };
 
   return (
-    <div className="max-w-2xl mx-auto bg-white rounded-xl border border-blue-200 p-8 shadow-sm">
-      <div className="flex items-center gap-3 mb-2">
-        <FaTicketAlt className="text-3xl text-red-500" />
-        <h1 className="text-4xl font-bold">Create Quick Ticket</h1>
-      </div>
-      <p className="text-gray-600 mb-6 text-base">Write and address new queries and issues</p>
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div>
-          <Label htmlFor="email" size="default" className="flex items-center gap-2">
-            <FaEnvelope className="inline text-gray-400 mr-1" /> Customer Email
-          </Label>
-          <div className="relative">
-            <Input
-              id="email"
-              value={email}
-              disabled
-              className="bg-gray-50 text-gray-400 mt-1 pl-9"
-            />
-            <FaEnvelope className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-300 text-lg pointer-events-none" />
-          </div>
-        </div>
-        <div>
-          <Label size="default" className="flex items-center gap-2">
-            <FaFlag className="inline text-gray-400 mr-1" /> Ticket Priority
-          </Label>
-          <RadioGroup
-            name="priority"
-            value={priority}
-            onChange={e => setPriority(e.target.value)}
-            options={[
-              { label: 'High', value: 'High' },
-              { label: 'Medium', value: 'Medium' },
-              { label: 'Low', value: 'Low' },
-            ]}
-            className="mt-1"
-          />
-        </div>
-        <div>
-          <Label htmlFor="body" size="default" className="flex items-center gap-2">
-            <FaRegCommentDots className="inline text-gray-400 mr-1" /> Ticket Body
-          </Label>
-          <Textarea
-            id="body"
-            placeholder="Type issue here"
-            value={body}
-            onChange={e => setBody(e.target.value)}
-            rows={3}
-            className="mt-1"
-          />
-        </div>
-        <Button type="submit" size="large" className="w-full mt-2 rounded-xl text-lg flex items-center justify-center gap-2">
-          <FaPaperPlane className="text-lg" /> Submit
+    <MainLayout>
+      <div className="flex justify-center bg-gray-100 min-h-screen px-2 lg:px-8">
+        {/* Left Spacer */}
+        <div className="hidden lg:block flex-grow "></div>
+
+    <section
+      className="w-full max-w-[729px] h-auto min-h-[466px] rounded-[10px] p-4 sm:p-5 bg-white flex flex-col gap-2 shadow-md mx-auto mt-6 sm:mt-10"
+    >
+      <h2 className="text-2xl sm:text-3xl font-bold mb-1">Create Quick Ticket</h2>
+      <p className="text-gray-500 text-sm sm:text-base mb-4">Write and address new queries and issues</p>
+      <form className="flex flex-col gap-4 flex-1" onSubmit={handleSubmit}>
+        <Input
+          label="Customer Email"
+          value={EMAIL}
+          disabled
+          className="text-gray-500"
+        />
+        <RadioGroup
+          label="Ticket Priority"
+          name="priority"
+          value={priority}
+          onChange={e => setPriority(e.target.value)}
+          options={PRIORITY_OPTIONS}
+        />
+        <Textarea
+          label="Ticket Body"
+          placeholder="Type issue here"
+          value={body}
+          onChange={e => setBody(e.target.value)}
+          rows={3}
+        />
+        {error && <div className="text-red-500 text-sm">{error}</div>}
+        {success && <div className="text-green-600 text-sm">Ticket submitted successfully!</div>}
+        <Button
+          type="submit"
+          className="w-full mt-10 text-base sm:text-lg py-2 sm:py-3 rounded-xl b"
+          loading={loading}
+        >
+          Submit
         </Button>
       </form>
-    </div>
+    </section>
+     {/* Profile Card */}
+     <aside className="hidden lg:block w-full max-w-[350px] p-2 sticky top-4 h-fit mt-5 sm:mt-10">
+  <FeedRightProfile />
+</aside>
+        {/* Right Spacer */}
+        <div className="hidden lg:block flex-grow"></div>
+      </div>
+    </MainLayout>
   );
 };
 
