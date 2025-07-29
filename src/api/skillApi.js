@@ -4,7 +4,7 @@ const BASE_URL = import.meta.env.VITE_BASE_URL;
 // API service functions for skill uploads
 export const skillApi = {
     // Upload skill certificates
-    uploadSkills: async (user_id, skills, certificateFiles) => {
+    uploadSkills: async (user_id, skills, certificateFiles, token) => {
         try {
             const formData = new FormData();
 
@@ -24,6 +24,7 @@ export const skillApi = {
             const response = await axios.post(`${BASE_URL}/upload-skill`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
+                    'Authorization': `Bearer ${token}`
                 },
             });
             console.log("response.data from uploadSkills", response.data);
@@ -35,9 +36,13 @@ export const skillApi = {
     },
 
     // Get skills for a user
-    getUserSkills: async (userId) => {
+    getUserSkills: async (userId, token) => {
         try {
-            const response = await axios.get(`${API_BASE_URL}/api/user-skills/${userId}`);
+            const response = await axios.get(`${BASE_URL}/api/user-skills/${userId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
             return response.data;
         } catch (error) {
             console.error('Error fetching user skills:', error);
@@ -48,6 +53,6 @@ export const skillApi = {
     // Get certificate file URL
     getCertificateUrl: (certificatePath) => {
         if (!certificatePath) return null;
-        return `${API_BASE_URL}${certificatePath}`;
+        return `${BASE_URL}${certificatePath}`;
     }
 }; 

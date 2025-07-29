@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { educationApi } from '../api/educationApi';
 
 export const useEducationData = () => {
@@ -11,14 +12,16 @@ export const useEducationData = () => {
     });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const { token } = useSelector((state) => state.auth);
 
     useEffect(() => {
         const fetchData = async () => {
+            if (!token) return;
             try {
                 setLoading(true);
                 setError(null);
 
-                const educationData = await educationApi.getAllEducationData();
+                const educationData = await educationApi.getAllEducationData(token);
                 setData(educationData);
             } catch (err) {
                 console.error('Error fetching education data:', err);
@@ -28,15 +31,18 @@ export const useEducationData = () => {
             }
         };
 
-        fetchData();
-    }, []);
+        if (token) {
+            fetchData();
+        }
+    }, [token]);
 
     const refetch = async () => {
+        if (!token) return;
         try {
             setLoading(true);
             setError(null);
 
-            const educationData = await educationApi.getAllEducationData();
+            const educationData = await educationApi.getAllEducationData(token);
             setData(educationData);
         } catch (err) {
             console.error('Error refetching education data:', err);

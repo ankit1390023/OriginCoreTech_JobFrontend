@@ -1,4 +1,5 @@
     
+import { useSelector } from 'react-redux';
 import cover from '../../../assets/cover.png';
 import dummyProfile3 from '../../../assets/dummyProfile3.jpg';
 import dummyProfile1 from '../../../assets/dummyProfile1.jpg';
@@ -28,15 +29,17 @@ export default function FeedRightProfile() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [profile, setProfile] = useState(null); // <-- Add profile state
+    const { token, user } = useSelector((state) => state.auth);
 
-// Fetch user public profile using userId from localStorage
+// Fetch user public profile using userId from Redux
 useEffect(() => {
     async function fetchUserProfile() {
+        if (!token || !user) return;
+        
         setLoading(true);
         setError(null);
         try {
-            const userId = localStorage.getItem('userId');
-            const result = await userDetailsApi.getUserDetails(userId);
+            const result = await userDetailsApi.getUserDetails(user.id);
             console.log("result from fetchUserProfile",result);
             if (result.success) {
                 setProfile(result.data.publicProfile); // Only set the publicProfile part
@@ -47,22 +50,25 @@ useEffect(() => {
         } catch (err) {
             setError('Failed to fetch user details.');
             setProfile(null);
+        } finally {
+            setLoading(false);
         }
     }
     fetchUserProfile();
-}, []);
+}, [token, user]);
 
 
     useEffect(() => {
         async function fetchFollowersAndFollowing() {
+            if (!token) return;
             setLoading(true);
             setError(null);
             try {
-                const { count: followersCount, followers } = await feedApi.getFollowers();
+                const { count: followersCount, followers } = await feedApi.getFollowers(token);
                 setFollowers(followers);
                 setFollowersCount(followersCount);
 
-                const { count: followingCount, following } = await feedApi.getFollowing();
+                const { count: followingCount, following } = await feedApi.getFollowing(token);
                 setFollowing(following);
                 setFollowingCount(followingCount);
             } catch (err) {
@@ -71,8 +77,10 @@ useEffect(() => {
                 setLoading(false);
             }
         }
-        fetchFollowersAndFollowing();
-    }, []);
+        if (token) {
+            fetchFollowersAndFollowing();
+        }
+    }, [token]);
 
     
     

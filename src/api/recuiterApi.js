@@ -2,18 +2,11 @@ import axios from 'axios';
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
-// Helper function to get token from localStorage
-const getToken = () => {
-    return localStorage.getItem('token');
-};
-
 // API service functions for company recruiter profile
 export const recruiterApi = {
     // Create recruiter profile with file upload support(new )
-    createProfileWithFileUpload: async (profileData) => {
+    createProfileWithFileUpload: async (profileData, token) => {
         try {
-            const token = getToken();
-
             //create formData with multipart upload
             const formData = new FormData();
 
@@ -52,15 +45,9 @@ export const recruiterApi = {
         }
     },
 
-
-
-
-
     // Create a new company recruiter profile
-    createProfile: async (profileData) => {
+    createProfile: async (profileData, token) => {
         try {
-            const token = getToken();
-
             // Create FormData for multipart upload
             const formData = new FormData();
 
@@ -97,9 +84,8 @@ export const recruiterApi = {
     },
 
     // Get company recruiter profile
-    getProfile: async () => {
+    getProfile: async (token) => {
         try {
-            const token = getToken();
             const response = await axios.get(`${BASE_URL}/company-recruiter/profile`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -113,10 +99,8 @@ export const recruiterApi = {
     },
 
     // Update company recruiter profile
-    updateProfile: async (profileData) => {
+    updateProfile: async (profileData, token) => {
         try {
-            const token = getToken();
-
             // Create FormData for multipart upload
             const formData = new FormData();
 
@@ -153,9 +137,8 @@ export const recruiterApi = {
     },
 
     // Get job posts by recruiter
-    getJobPostsByRecruiter: async () => {
+    getJobPostsByRecruiter: async (token) => {
         try {
-            const token = getToken();
             const response = await axios.get(`${BASE_URL}/company-recruiter/jobpost/list`, {
                 headers: {
                     'Authorization': `Bearer ${token}`

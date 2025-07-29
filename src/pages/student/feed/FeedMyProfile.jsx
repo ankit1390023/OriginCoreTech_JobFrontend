@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { Button } from '../../../components/ui';
 import {  FaEllipsisH } from 'react-icons/fa';
 import { FiHeart, FiMessageSquare, FiSend } from 'react-icons/fi';
@@ -22,6 +23,7 @@ const FeedMyProfile = () => {
   const [followingCount, setFollowingCount] = useState(0);  
   const [isFollowing, setIsFollowing] = useState(false);
   const [followLoading, setFollowLoading] = useState(false);
+  const { token } = useSelector((state) => state.auth);
 
 
 // Fetch user public profile using userId from localStorage
@@ -49,30 +51,32 @@ useEffect(() => {
 
 useEffect(() => {
   async function checkStatus() {
+    if (!token) return;
     try {
       const userId = localStorage.getItem('userId');
       if (userId && profile && profile._id && userId !== profile._id) {
-        const res = await feedApi.checkFollowStatus(profile._id);
+        const res = await feedApi.checkFollowStatus(profile._id, token);
         setIsFollowing(res.isFollowing); // Adjust if API response shape differs
       }
     } catch (err) {
       setIsFollowing(false);
     }
   }
-  if (profile) checkStatus();
-}, [profile]);
+  if (profile && token) checkStatus();
+}, [profile, token]);
 
 
   useEffect(() => {
       async function fetchFollowersAndFollowing() {
+          if (!token) return;
           setLoading(true);
           setError(null);
           try {
-              const { count: followersCount, followers } = await feedApi.getFollowers();
+              const { count: followersCount, followers } = await feedApi.getFollowers(token);
               setFollowers(followers);
               setFollowersCount(followersCount);
 
-              const { count: followingCount, following } = await feedApi.getFollowing();
+              const { count: followingCount, following } = await feedApi.getFollowing(token);
               setFollowing(following);
               setFollowingCount(followingCount);
           } catch (err) {
@@ -81,20 +85,22 @@ useEffect(() => {
               setLoading(false);
           }
       }
-      fetchFollowersAndFollowing();
-  }, []);
+      if (token) {
+          fetchFollowersAndFollowing();
+      }
+  }, [token]);
 
   const handleFollowToggle = async (profile,profile_id) => {
-    if (!profile || !profile_id) {
+    if (!token || !profile || !profile_id) {
       console.log("profile",profile);
       console.log("profile_id",profile_id);
-      console.error('Profile or profile ID not available');
+      console.error('Token, profile or profile ID not available');
       return;
     }
     
     setFollowLoading(true);
     try {
-      await feedApi.followUnfollowUser(profile._id);
+      await feedApi.followUnfollowUser(profile._id, token);
       setIsFollowing((prev) => !prev);
       setFollowersCount((prev) => isFollowing ? prev - 1 : prev + 1);
     } catch (err) {

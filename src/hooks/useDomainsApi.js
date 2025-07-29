@@ -1,18 +1,20 @@
 import { useState, useEffect, useCallback } from 'react';
 import { domainApi } from '../api/domainApi';
+import { useSelector } from 'react-redux';
 
 export const useDomainsApi = (defaultDomain) => {
     const [allDomains, setAllDomains] = useState([]);
     const [skillsByDomain, setSkillsByDomain] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const { token } = useSelector((state) => state.auth);
 
     // Fetch all domains
     const fetchAllDomains = useCallback(async () => {
         try {
             setLoading(true);
             setError("");
-            const domainsData = await domainApi.getAllDomains();
+            const domainsData = await domainApi.getAllDomains(token);
             setAllDomains(domainsData);
             return domainsData;
         } catch (err) {
@@ -22,14 +24,14 @@ export const useDomainsApi = (defaultDomain) => {
         } finally {
             setLoading(false);
         }
-    }, []);
+    }, [token]);
 
     // Fetch skills by domain
     const fetchSkillsByDomain = useCallback(async (domainName) => {
         try {
             setLoading(true);
             setError("");
-            const domainsData = await domainApi.getSkillsByDomain(domainName);
+            const domainsData = await domainApi.getSkillsByDomain(domainName, token);
             setSkillsByDomain(domainsData);
             return domainsData;
         } catch (err) {
@@ -39,7 +41,7 @@ export const useDomainsApi = (defaultDomain) => {
         } finally {
             setLoading(false);
         }
-    }, []);
+    }, [token]);
 
     // Refresh all data
     const refreshDomains = useCallback(async () => {

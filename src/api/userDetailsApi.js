@@ -1,15 +1,11 @@
 import axios from 'axios';
 const BASE_URL = import.meta.env.VITE_BASE_URL || 'http://212.95.51.83:5000/api';
 
-// Helper function to get auth token
-const getToken = () => localStorage.getItem('token');
-
 // API service functions for user details
 export const userDetailsApi = {
     // Create user details
-    createUserDetails: async (userData) => {
+    createUserDetails: async (userData, token) => {
         try {
-            const token = getToken();
             const response = await axios.post(`${BASE_URL}/user-details/detail`, userData, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -46,9 +42,8 @@ export const userDetailsApi = {
     },
 
     // Update user details by userId
-    updateUserDetails: async (userId, userData) => {
+    updateUserDetails: async (userId, userData, token) => {
         try {
-            const token = getToken();
             const response = await axios.put(`${BASE_URL}/user-details/detail/${userId}`, userData, {
                 headers: {
                     'Authorization': `Bearer ${token}`,

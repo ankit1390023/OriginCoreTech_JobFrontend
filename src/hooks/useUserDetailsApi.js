@@ -1,16 +1,19 @@
 import { useState, useCallback } from 'react';
+import { useSelector } from 'react-redux';
 import { userDetailsApi } from '../api/userDetailsApi';
 
 export const useUserDetailsApi = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const { token } = useSelector((state) => state.auth);
 
     // Create user details
     const createUserDetails = useCallback(async (userData) => {
+        if (!token) return;
         try {
             setLoading(true);
             setError(null);
-            const response = await userDetailsApi.createUserDetails(userData);
+            const response = await userDetailsApi.createUserDetails(userData, token);
             return response;
         } catch (err) {
             console.error('Error creating user details:', err);
@@ -19,7 +22,7 @@ export const useUserDetailsApi = () => {
         } finally {
             setLoading(false);
         }
-    }, []);
+    }, [token]);
 
     // Get user details by userId
     const getUserDetails = useCallback(async (userId) => {

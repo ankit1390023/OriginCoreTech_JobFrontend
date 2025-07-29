@@ -4,13 +4,14 @@ const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const uploadImageApi = {
     
-    uploadImage: async (file, fieldName = 'certificateImage') => {
+    uploadImage: async (file, fieldName = 'certificateImage', token) => {
         try {
             const formData = new FormData();
             formData.append(fieldName, file);
             const response = await axios.post(`${BASE_URL}/upload-image`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
+                    'Authorization': `Bearer ${token}`
                 }
             });
             // The backend returns { url: [ ... ] }

@@ -1,14 +1,11 @@
 
 import axios from 'axios';
-
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
-const getToken = () => localStorage.getItem('token');
-
 const feedApi = {
-    postFeed: async (data) => {
+
+    postFeed: async (data, token) => {
         try {
-            const token = getToken();
             const response = await axios.post(`${BASE_URL}/feed/feed`, data, {
                 headers: {
                     'Content-Type': 'application/json',
@@ -21,9 +18,8 @@ const feedApi = {
             throw error;
         }
     },
-    getFeed: async (page, limit) => {
+    getFeed: async (page, limit, token) => {
         try {
-            const token = getToken();
             const response = await axios.get(`${BASE_URL}/feed/posts?page=${page}&limit=${limit}`,
                 {
                     headers: {
@@ -41,9 +37,8 @@ const feedApi = {
             throw error;
         }
     },
-    postComment: async (postId, data) => {
+    postComment: async (postId, data, token) => {
         try {
-            const token = getToken();
             const response = await axios.post(`${BASE_URL}/feed/posts/${postId}/comment`, data,
                 {
                     headers: {
@@ -58,9 +53,8 @@ const feedApi = {
             throw error;
         }
     },
-    postLike: async (postId,data) => {
+    postLike: async (postId, data, token) => {
         try {
-            const token = getToken();
             console.log("data", data);
             const response = await axios.post(`${BASE_URL}/feed/posts/${postId}/like`, data, {
                 headers: {
@@ -75,9 +69,8 @@ const feedApi = {
             throw error;
         }
     },
-    postFollowUnFollow: async (data) => {
+    postFollowUnFollow: async (data, token) => {
         try {
-            const token = getToken();
             const response = await axios.post(`${BASE_URL}/feed/follow`, data, {
                 headers: {
                     'Content-Type': 'application/json',
@@ -90,9 +83,8 @@ const feedApi = {
             throw error;
         }
     },
-    getFollowers: async () => {
+    getFollowers: async (token) => {
         try {
-            const token = getToken();
             const response = await axios.get(`${BASE_URL}/feed/6/followers`, {
                 headers: {
                     'Content-Type': 'application/json',
@@ -107,9 +99,8 @@ const feedApi = {
             throw error;
         }
     },
-    getFollowing: async () => {
+    getFollowing: async (token) => {
         try {
-            const token = getToken();
             const response = await axios.get(`${BASE_URL}/feed/6/following`, {
                 headers: {
                     'Content-Type': 'application/json',
@@ -125,9 +116,8 @@ const feedApi = {
         }
     },
     // Follow a specific user
-    followUnfollowUser: async (targetUserId) => {
+    followUnfollowUser: async (targetUserId, token) => {
         try {
-            const token = getToken();
             const currentUserId = localStorage.getItem('userId');
             
             if (!currentUserId || !targetUserId) {
@@ -151,9 +141,8 @@ const feedApi = {
         }
     },
     // Check if current user is following a specific user
-    checkFollowStatus: async (targetUserId) => {
+    checkFollowStatus: async (targetUserId, token) => {
         try {
-            const token = getToken();
             const currentUserId = localStorage.getItem('userId');
             
             if (!currentUserId || !targetUserId) {
@@ -174,9 +163,8 @@ const feedApi = {
         }
     },
     // Get user activity/feed posts
-    getUserActivity: async (userId = null, page = 1, limit = 10) => {
+    getUserActivity: async (userId = null, page = 1, limit = 10, token) => {
         try {
-            const token = getToken();
             const targetUserId = userId || localStorage.getItem('userId');
             
             if (!targetUserId) {

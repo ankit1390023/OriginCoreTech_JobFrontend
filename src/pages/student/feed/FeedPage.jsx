@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import MainLayout from '../../../components/layout/MainLayout.jsx';
 import profile from '../../../assets/profile.png';
 import addMediaIcon from '../../../assets/add-media.png';
@@ -33,7 +34,7 @@ export default function FeedPage() {
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [loadingMore, setLoadingMore] = useState(false);
-
+    const { token, user } = useSelector((state) => state.auth);
         
     const visitors = [
         { name: 'Olivia Rhye', img: dummyProfile1 },
@@ -54,20 +55,19 @@ export default function FeedPage() {
 
 
     useEffect(() => {
-        const userId = localStorage.getItem('userId');
-    }, [])
-
-    useEffect(() => {
-        fetchFeed(1, true); // Initial load, replace posts
-    }, []);
+        if (token) {
+            fetchFeed(1, true); // Initial load, replace posts
+        }
+    }, [token]);
 
     const fetchFeed = async (pageToFetch = 1, replace = false) => {
+        if (!token) return;
         if (pageToFetch > totalPages && !replace) return;
         if (pageToFetch === 1) setLoading(true);
         else setLoadingMore(true);
         setError(null);
         try {
-            const data = await feedApi.getFeed(pageToFetch, 10); // page, limit
+            const data = await feedApi.getFeed(pageToFetch, 10, token); // page, limit, token
             setTotalPages(data.totalPages || 1);
             setPage(data.currentPage || pageToFetch);
             if (replace) {
@@ -84,8 +84,9 @@ export default function FeedPage() {
     };
 
     const feedpost = async () => {
+        if (!token) return;
         try {
-            const response = await feedApi.postFeed(posts[0]);
+            const response = await feedApi.postFeed(posts[0], token);
 
         } catch (error) {
             console.log("Error while posting feed", error);
@@ -100,28 +101,28 @@ export default function FeedPage() {
             setImagePreview(URL.createObjectURL(file));
         }
     };
+    
     // Handle feed post creation
     const handleFeedPost = async () => {
+        if (!token || !user) {
+            alert('User not logged in');
+            return;
+        }
+        
         setPostingFeed(true);
         try {
-            const userId = localStorage.getItem('userId');
-            if (!userId) {
-                alert('User not logged in');
-                setPostingFeed(false);
-                return;
-            }
             let imageUrl = '';
             if (selectedImage) {
                 setUploadingImage(true);
-                imageUrl = await uploadImageApi.uploadImage(selectedImage, 'image');
+                imageUrl = await uploadImageApi.uploadImage(selectedImage, 'image', token);
                 setUploadingImage(false);
             }
             const postBody = {
-                userId: Number(userId),
+                userId: Number(user.id),
                 image: imageUrl,
                 caption: caption.trim(),
             };
-            await feedApi.postFeed(postBody);
+            await feedApi.postFeed(postBody, token);
             setCaption("");
             setSelectedImage(null);
             setImagePreview(null);
@@ -135,25 +136,22 @@ export default function FeedPage() {
         }
     };
 
-
-
     // Handle like/dislike toggle
-    // const handleLike = async (postId) => {
-    //     const userId = localStorage.getItem('userId');
-    //     if (!userId) {
-    //         alert('User not logged in');
-    //         return;
-    //     }
-    //     try {
-    //         await feedApi.postLike(postId, { userId: Number(userId) });
-    //         // Option 1: Refetch the feed to update like state
-    //         fetchFeed(page, true);
-    //         // Option 2: Optimistically update UI (not implemented here for simplicity)
-    //     } catch (error) {
-    //         alert('Failed to update like');
-    //         console.error('Error updating like:', error);
-    //     }
-    // };
+    const handleLike = async (postId) => {
+        if (!token || !user) {
+            alert('User not logged in');
+            return;
+        }
+        try {
+            await feedApi.postLike(postId, { userId: Number(user.id) }, token);
+            // Option 1: Refetch the feed to update like state
+            fetchFeed(page, true);
+            // Option 2: Optimistically update UI (not implemented here for simplicity)
+        } catch (error) {
+            alert('Failed to update like');
+            console.error('Error updating like:', error);
+        }
+    };
 
     // Remove handleLoadMore, add handlePageChange
     const handlePageChange = (pageNum) => {
@@ -162,12 +160,9 @@ export default function FeedPage() {
         }
     };
 
-
-
     // Handle posting a comment
     const handleComment = async (postId) => {
-        const userId = localStorage.getItem('userId');
-        if (!userId) {
+        if (!token || !user) {
             alert('User not logged in');
             return;
         }
@@ -176,9 +171,9 @@ export default function FeedPage() {
         try {
             // Call the API
             const response = await feedApi.postComment(postId, {
-                userId: Number(userId),
+                userId: Number(user.id),
                 comment: commentText,
-            });
+            }, token);
             // Update the post's comments and commentCount in state
             setPosts(prevPosts => prevPosts.map(post =>
                 post.id === postId
@@ -274,7 +269,7 @@ export default function FeedPage() {
                             <p className="text-sm text-gray-700 mb-2">{post.caption}</p>
                             <footer className="flex flex-row justify-between text-sm text-gray-500 items-center py-2">
                                 <div
-                                    className={`flex flex-col items-center cursor-pointer ${(post.likedBy && post.likedBy.includes(localStorage.getItem('userId'))) ? 'text-blue-600' : ''}`}
+                                    className={`flex flex-col items-center cursor-pointer ${(post.likedBy && post.likedBy.includes(user?.id)) ? 'text-blue-600' : ''}`}
                                     onClick={() => handleLike(post.id)}
                                 >
                                     <BiLike className='text-xl' />

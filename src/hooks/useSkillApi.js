@@ -1,18 +1,20 @@
 import { useState, useCallback } from 'react';
+import { useSelector } from 'react-redux';
 import { skillApi } from '../api/skillApi';
 
 export const useSkillApi = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const { token } = useSelector((state) => state.auth);
 
     // Upload skills
     const uploadSkills = useCallback(async (user_id, skills, certificateFiles) => {
+        if (!token) return;
         try {
             setLoading(true);
             setError(null);
 
-
-            const response = await skillApi.uploadSkills(user_id, skills, certificateFiles);
+            const response = await skillApi.uploadSkills(user_id, skills, certificateFiles, token);
             console.log('Upload response:', response);
             return response;
         } catch (err) {
@@ -39,14 +41,15 @@ export const useSkillApi = () => {
         } finally {
             setLoading(false);
         }
-    }, []);
+    }, [token]);
 
     // Get user skills
     const getUserSkills = useCallback(async (userId) => {
+        if (!token) return;
         try {
             setLoading(true);
             setError(null);
-            const response = await skillApi.getUserSkills(userId);
+            const response = await skillApi.getUserSkills(userId, token);
             return response;
         } catch (err) {
             console.error('Error fetching user skills:', err);
@@ -55,7 +58,7 @@ export const useSkillApi = () => {
         } finally {
             setLoading(false);
         }
-    }, []);
+    }, [token]);
 
     return {
         loading,

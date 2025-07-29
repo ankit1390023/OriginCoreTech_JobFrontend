@@ -1,22 +1,22 @@
 const BASE_URL = import.meta.env.VITE_BASE_URL || 'http://212.95.51.83:5000/api';
 import axios from 'axios';
 
-const getToken = () => localStorage.getItem('token');
-
 export const userProfileApi = {  
-    getUserDetailById: async (userId) => {
+    getUserDetailById: async (userId, token) => {
         try {
-            const token = getToken();
-            const response = await axios.get(`${BASE_URL}/user-details/detail/${userId}`)
+            const response = await axios.get(`${BASE_URL}/user-details/detail/${userId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
             return response.data;
         } catch (error) {
             console.log("Error while fetching getUserDetailById", error);
             throw error;
         }
     },
-    getUserDetailByEmail: async (data) => {
+    getUserDetailByEmail: async (data, token) => {
         try {
-            const token = getToken();
             const response = await axios.post(`${BASE_URL}/users/getUserData`, data,{
                 headers: {
                     'Content-Type': 'application/json',
@@ -29,9 +29,8 @@ export const userProfileApi = {
             throw error;
         }
     },
-    updateUserDetailById: async (userId, userData) => {
+    updateUserDetailById: async (userId, userData, token) => {
         try {
-            const token = getToken();
             const response = await axios.put(`${BASE_URL}/user-details/detail/${userId}`, userData, {
                 headers: {
                     'Content-Type': 'application/json',
@@ -44,19 +43,21 @@ export const userProfileApi = {
             throw error;
         }
     },
-    getTermsAndConditions: async () => {
+    getTermsAndConditions: async (token) => {
         try {
-            const token = getToken();
-            const response = await axios.get(`${BASE_URL}/user-details/getTermsAndCondition`)
+            const response = await axios.get(`${BASE_URL}/user-details/getTermsAndCondition`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
             return response.data;
         } catch (error) {
             console.log("Error while fetching getTermsAndConditions", error);
             throw error;
         }
     },
-    updateTermsAndConditions: async (data) => {
+    updateTermsAndConditions: async (data, token) => {
         try {
-            const token = getToken();
             const response = await axios.post(`${BASE_URL}/user-details/updateTermsAndCondition`, data, {
                 headers: {
                     'Content-Type': 'application/json',
@@ -69,9 +70,8 @@ export const userProfileApi = {
             throw error;
         }
     },
-    updateAadharDetails: async (data) => {
+    updateAadharDetails: async (data, token) => {
         try {
-            const token = getToken();
             const response = await axios.put(`${BASE_URL}/user-details/updateAadhaarDetails`, data, {
                 headers: {
                     'Content-Type': 'application/json',
@@ -84,9 +84,8 @@ export const userProfileApi = {
             throw error;
         }
     },
-    getAadharVerificationStatus: async () => {
+    getAadharVerificationStatus: async (token) => {
         try {
-            const token = getToken();
             const response = await axios.get(`${BASE_URL}/user-details/aadhaarVerificationStatus`, {
                 headers: {
                     'Content-Type': 'application/json',
@@ -99,9 +98,8 @@ export const userProfileApi = {
             throw error;
         }
     },
-    changeEmail: async (data) => {
+    changeEmail: async (data, token) => {
         try {
-            const token = getToken();
             const response = await axios.post(`${BASE_URL}/users/changeEmail`, data, {
                 headers: {
                     'Content-Type': 'application/json',
@@ -114,9 +112,8 @@ export const userProfileApi = {
             throw error;
         }
     },
-    changePassword: async (data) => {
+    changePassword: async (data, token) => {
         try {
-            const token = getToken();
             const response = await axios.post(`${BASE_URL}/users/changePassword`, data, {
                 headers: {
                     'Content-Type': 'application/json',
@@ -130,9 +127,8 @@ export const userProfileApi = {
         }
     },
 
-    SoftDeleteAccount: async (data) => {
+    SoftDeleteAccount: async (data, token) => {
         try {
-            const token = getToken();
             const response = await axios.post(`${BASE_URL}/users/softDeleteAccount`, data, {
                 headers: {
                     'Content-Type': 'application/json',
@@ -146,9 +142,8 @@ export const userProfileApi = {
         }
     },
     
-    IncrementViewCountOfJobPost: async (data) => {
+    IncrementViewCountOfJobPost: async (data, token) => {
         try {
-            const token = getToken();
             const response = await axios.post(`${BASE_URL}/company-recruiter/jobpost/1/increment-view`, data, {
                 headers: {
                     'Content-Type': 'application/json',
@@ -162,9 +157,13 @@ export const userProfileApi = {
         }
     },
     // New method to fetch public user profile by ID
-    getUserPublicProfileById: async (userId) => {
+    getUserPublicProfileById: async (userId, token) => {
         try {
-            const response = await axios.get(`${BASE_URL}/user-details/public-profile/${userId}`);
+            const response = await axios.get(`${BASE_URL}/user-details/public-profile/${userId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
             return response.data;
         } catch (error) {
             console.log("Error while fetching getUserPublicProfileById", error);

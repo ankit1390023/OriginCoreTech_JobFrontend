@@ -1,17 +1,21 @@
 import { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { jobGetApi } from '../api/jobGetApi';
 
 export const useGetJobApi = () => {
     const [allJobs, setAllJobs] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const { token } = useSelector((state) => state.auth);
 
     useEffect(() => {
         const fetchAllJobs = async () => {
+            if (!token) return;
+            
             try {
                 setLoading(true);
                 setError(null);
-                const response = await jobGetApi.getAllJobs();
+                const response = await jobGetApi.getAllJobs(token);
                 setAllJobs(response.data || response);
             } catch (error) {
                 console.log("error in fetchAllJobs", error);
@@ -21,13 +25,15 @@ export const useGetJobApi = () => {
             }
         }
         fetchAllJobs();
-    }, []);
+    }, [token]);
 
     const refetch = async () => {
+        if (!token) return;
+        
         try {
             setLoading(true);
             setError(null);
-            const response = await jobGetApi.getAllJobs();
+            const response = await jobGetApi.getAllJobs(token);
             setAllJobs(response.data || response);
         } catch (error) {
             setError("Failed to reload jobs. Please try again later.");
@@ -41,7 +47,7 @@ export const useGetJobApi = () => {
         allJobs,
         loading,
         error,
-        refetch
+        refetch,
     };
 };
 
@@ -49,15 +55,16 @@ export const useGetJobById = (jobId) => {
     const [job, setJob] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const { token } = useSelector((state) => state.auth);
 
     useEffect(() => {
         const fetchJobById = async () => {
-            if (!jobId) retur-n;
+            if (!jobId || !token) return;
 
             try {
                 setLoading(true);
-                setError(null)
-                const response = await jobGetApi.getJobById(jobId);
+                setError(null);
+                const response = await jobGetApi.getJobById(jobId, token);
                 setJob(response);
             } catch (error) {
                 setError(`Failed to load job details: ${error.response?.data?.message || error.message}`);
@@ -66,15 +73,15 @@ export const useGetJobById = (jobId) => {
             }
         }
         fetchJobById();
-    }, [jobId]);
+    }, [jobId, token]);
 
     const refetch = async () => {
-        if (!jobId) return;
+        if (!jobId || !token) return;
 
         try {
             setLoading(true);
             setError(null);
-            const response = await jobGetApi.getJobById(jobId);
+            const response = await jobGetApi.getJobById(jobId, token);
             setJob(response.data || response);
         } catch (error) {
             setError("Failed to reload job details. Please try again later.");
@@ -87,6 +94,6 @@ export const useGetJobById = (jobId) => {
         job,
         loading,
         error,
-        refetch
+        refetch,
     };
 };
