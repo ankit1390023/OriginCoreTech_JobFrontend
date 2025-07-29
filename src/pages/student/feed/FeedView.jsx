@@ -53,9 +53,9 @@ const FeedView = () => {
         {/* Left Spacer */}
         <div className="hidden lg:block flex-grow"></div>
                 {/* Feed Content */}
-                
+    
     <section
-      className="bg-white rounded-[10px] p-4 sm:p-6 shadow-lg relative overflow-hidden mx-auto mt-2 sm:mt-10 w-full max-w-[729px] min-h-[1000px]"
+      className="bg-white rounded-[10px] p-4 sm:p-6 shadow-lg relative overflow-hidden mx-auto mt-2  w-full max-w-[729px] min-h-[1000px]"
     >
       {/* Profile Section */}
       <div className="flex flex-col items-center mb-8">

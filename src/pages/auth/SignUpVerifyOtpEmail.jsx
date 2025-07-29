@@ -6,9 +6,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import SignUpIllustration from "../../assets/SignUp_Illustration.png";
 import axios from "axios";
 import { Input, Button, Link } from "../../components/ui";
-import SignUpLayout from "../../components/layout/SignUpLayout";
 
-import { useNavigate } from "react-router-dom";
+import SignUpLayoutForLarge from "../../components/layout/SignUpLayoutForLarge";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useDispatch } from 'react-redux';
+import { login } from '../../redux/feature/authSlice';
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 // Zod schema for OTP validation
 const otpSchema = z.object({
@@ -20,28 +22,14 @@ const otpSchema = z.object({
 
 export default function SignUpVerifyOtpEmail() {
   const [loading, setLoading] = useState(false);
-  const [email, setEmail] = useState(null);
+  const location = useLocation();
+  const email = location.state?.email || null;
   const [otpError, setOtpError] = useState(false);
   const inputRefs = [useRef(), useRef(), useRef(), useRef()];
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
 
-  useEffect(() => {
-    // Try to get email from userData object first (from SignUp)
-    const userData = localStorage.getItem("userData");
-    if (userData) {
-      try {
-        const parsedUserData = JSON.parse(userData);
-        if (parsedUserData.email) {
-          setEmail(parsedUserData.email);
-          return;
-        }
-      } catch (error) {
-        console.error("Error parsing userData from localStorage:", error);
-      }
-    }
-
-  }, []);
   const {
     register,
     handleSubmit,
@@ -79,6 +67,11 @@ export default function SignUpVerifyOtpEmail() {
       console.log("OTP verification success:", response);
       console.log("OTP verification success:", response.data);
 
+      // Store user and token in Redux if present
+      if (response.data.user && response.data.token) {
+        dispatch(login.fulfilled({ user: response.data.user, token: response.data.token }));
+      }
+
       // Role-based redirection
       const userRole = response.data.userRole;
       console.log("User role:", userRole);
@@ -113,24 +106,6 @@ export default function SignUpVerifyOtpEmail() {
   };
 
 
-  const handleOtpInputChange = (index, value) => {
-    // Only allow digits
-    const digit = value.replace(/\D/g, "").slice(0, 1);
-    setValue(`otp${index + 1}`, digit);
-
-    // Auto-focus to next input if digit is entered
-    if (digit && index < 3) {
-      inputRefs[index + 1].current?.focus();
-    }
-  };
-
-  const handleKeyDown = (index, e) => {
-    // Handle backspace to go to previous input
-    if (e.key === "Backspace" && !watchedOtp1 && index > 0) {
-      inputRefs[index - 1].current?.focus();
-    }
-  };
-
   const handlePaste = (e) => {
     e.preventDefault();
     const pastedData = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 4);
@@ -140,14 +115,14 @@ export default function SignUpVerifyOtpEmail() {
       setValue("otp2", pastedData[1]);
       setValue("otp3", pastedData[2]);
       setValue("otp4", pastedData[3]);
-      inputRefs[3].current?.focus();
+      // Removed auto-focus logic here
     }
   };
 
 
   // Form content component
   const FormContent = () => (
-    <div className="w-full min-h-screen flex md:items-center md:justify-center overflow-hidden relative">
+    <div className="w-full min-h-screen flex md:items-center md:justify-center overflow-hidden relative sm:-mt-16">
 
       {/* Form */}
       <div className="flex-1 w-full flex justify-center mt-6 md:mt-0">
@@ -179,8 +154,7 @@ export default function SignUpVerifyOtpEmail() {
                         }`}
                       placeholder="0"
                       {...register(`otp${index + 1}`)}
-                      onChange={(e) => handleOtpInputChange(index, e.target.value)}
-                      onKeyDown={(e) => handleKeyDown(index, e)}
+                      onChange={(e) => setValue(`otp${index + 1}`, e.target.value)}
                       onPaste={handlePaste}
                     />
                   </div>
@@ -232,13 +206,13 @@ export default function SignUpVerifyOtpEmail() {
   );
 
   return (
-    <SignUpLayout
+    <SignUpLayoutForLarge
       heading="Verify Your Email"
       subheading="Create an account to continue!"
       hideMobileIllustration={true}
     >
       <FormContent />
-    </SignUpLayout>
+    </SignUpLayoutForLarge>
   );
 
 

@@ -29,7 +29,6 @@ import FeedYourEducation from "../pages/student/feed/FeedYourEducation";
 import FeedYourExprience from "../pages/student/feed/FeedYourExprience";
 
 
-
 export const appRouter = createBrowserRouter([
     {
         path: "/",
@@ -107,46 +106,5 @@ export const appRouter = createBrowserRouter([
         path: "/feed-terms",
         element: <FeedTerms />,
     },
-    {
-        path: "/feed-resume",
-        element: <FeedResume />,
-    }, 
-    {
-        path: "/feed-ticket",
-        element: <FeedTicket />,
-    }, 
-    {
-        path: "/feed-help",
-        element: <FeedHelp />,
-    }, 
-    {
-        path: "/feed-profile",
-        element: <Feedprofile />,
-    }, 
-    {
-        path:"/feed-change-email",
-        element:<FeedChangeEmail/>
-    },
-    {
-        path:"/feed-change-password",
-        element:<FeedChangePassword/>
-    },
-    {
-        path:"/feed-your-skills",
-        element:<FeedYourSkills/>
-    },
-        
-{
-    path:"/feed-your-education",
-    element:< FeedYourEducation/>
-},
-        
-{
-    path:"/feed-your-exprience",
-    element:< FeedYourExprience/>
-}
    
-    
-    
-    
 ])

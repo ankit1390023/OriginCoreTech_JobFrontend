@@ -41,7 +41,6 @@ const feedApi = {
             throw error;
         }
     },
-
     postComment: async (postId, data) => {
         try {
             const token = getToken();
@@ -59,8 +58,7 @@ const feedApi = {
             throw error;
         }
     },
-    
-    postLike: async (postId, data = {}) => {
+    postLike: async (postId,data) => {
         try {
             const token = getToken();
             console.log("data", data);
@@ -70,15 +68,13 @@ const feedApi = {
                     'Authorization': `Bearer ${token}`
                 }
             });
-            console.log("response.data", response.data);
+            console.log("response.data from post like", response.data);
             return response.data;
         } catch (error) {
             console.log("error while posting like", error);
             throw error;
         }
     },
-
-
     postFollowUnFollow: async (data) => {
         try {
             const token = getToken();
@@ -94,7 +90,6 @@ const feedApi = {
             throw error;
         }
     },
-
     getFollowers: async () => {
         try {
             const token = getToken();
@@ -111,8 +106,7 @@ const feedApi = {
             console.log("error while getting followers", error);
             throw error;
         }
-    }  
-    , 
+    },
     getFollowing: async () => {
         try {
             const token = getToken();
@@ -130,7 +124,6 @@ const feedApi = {
             throw error;
         }
     },
-
     // Follow a specific user
     followUnfollowUser: async (targetUserId) => {
         try {
@@ -157,8 +150,6 @@ const feedApi = {
             throw error;
         }
     },
-
- 
     // Check if current user is following a specific user
     checkFollowStatus: async (targetUserId) => {
         try {
@@ -182,7 +173,6 @@ const feedApi = {
             throw error;
         }
     },
-
     // Get user activity/feed posts
     getUserActivity: async (userId = null, page = 1, limit = 10) => {
         try {

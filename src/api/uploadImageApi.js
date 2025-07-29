@@ -1,9 +1,9 @@
 import axios from 'axios';
- 
+
 const BASE_URL = import.meta.env.VITE_BASE_URL;
- 
+
 const uploadImageApi = {
-   
+    
     uploadImage: async (file, fieldName = 'certificateImage') => {
         try {
             const formData = new FormData();
@@ -13,7 +13,6 @@ const uploadImageApi = {
                     'Content-Type': 'multipart/form-data',
                 }
             });
-            console.log("response",response);
             // The backend returns { url: [ ... ] }
             if (response.data && response.data.url && response.data.url.length > 0) {
                 return response.data.url[0];
@@ -25,5 +24,5 @@ const uploadImageApi = {
         }
     }
 };
- 
+
 export default uploadImageApi;

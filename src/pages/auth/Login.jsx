@@ -1,113 +1,78 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { FcGoogle } from "react-icons/fc";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import AuthLayout from "../../components/layout/AuthLayout";
 import { Input, Button, Link } from "../../components/ui";
+import { useDispatch, useSelector } from 'react-redux';
+import { login } from "../../redux/feature/authSlice";
 
-const BASE_URL = import.meta.env.VITE_BASE_URL;
+
 const schema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
-  password: z
-    .string()
-    .min(6, { message: "Password must be at least 6 characters" }),
-  remember: z.boolean().optional(),
+  password: z.string().min(6, { message: "Password must be at least 6 characters" }),
+  remember: z.coerce.boolean().optional(),
 });
 
 export default function Login() {
-  // Add state to hold the default email
-  const [defaultEmail, setDefaultEmail] = useState("");
-
-  useEffect(() => {
-    // Get email from localStorage if available
-    const userDataString = localStorage.getItem("userData");
-    let storedEmail = "";
-    if (userDataString) {
-      try {
-        const userData = JSON.parse(userDataString);
-        storedEmail = userData.email || "";
-      } catch (e) {
-        console.error("Failed to parse userData from localStorage", e);
-      }
-    }
-    if (storedEmail) {
-      setDefaultEmail(storedEmail);
-    }
-  }, []);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { loading, error, isAuthenticated, user } = useSelector((state) => state.auth);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-    reset,
+    setValue,
   } = useForm({
     resolver: zodResolver(schema),
     defaultValues: { email: "", password: "", remember: false },
   });
 
-  // Update form default value when defaultEmail changes
+  // Prefill email from localStorage if remembered
   useEffect(() => {
-    if (defaultEmail) {
-      reset((prev) => ({ ...prev, email: defaultEmail }));
+    const rememberedEmail = localStorage.getItem("userEmail");
+    if (rememberedEmail) {
+      setValue("email", rememberedEmail);
     }
-  }, [defaultEmail, reset]);
+  }, [setValue]);
 
-  const [loading, setLoading] = useState(false);
-  const [loginError, setLoginError] = useState("");
-  const navigate = useNavigate();
-
-  const onSubmit = async (data) => {
-    setLoading(true);
-    setLoginError("");
-    try {
-      const response = await axios.post(`${BASE_URL}/users/login`, {
-        email: data.email,
-        password: data.password,
-      });
-      console.log("Login success:", response.data);
-
-      localStorage.setItem("token", response.data.token);
-      localStorage.setItem("userId", response.data.user.id);
-      localStorage.setItem("userRole", response.data.user.role);
-      localStorage.setItem("userEmail", response.data.user.email);
-      // console.log("userId from login", response.data.user.id);
-      // console.log("from login", response.data.token);
-      alert("Login successful!");
-
-      // Role-based redirection
-      const userRole = response.data.user.role;
-      console.log("User role:", userRole);
-      switch (userRole) {
+  // Redirect after login
+  useEffect(() => {
+    console.log('Auth state changed:', { isAuthenticated, user });
+    if (isAuthenticated && user) {
+      switch (user.role) {
         case 'STUDENT':
+          console.log('Navigating to /student-fill-account-details');
           navigate("/student-fill-account-details");
           break;
         case 'COMPANY':
+          console.log('Navigating to /recruiter-post-job-intern-details');
           navigate("/recruiter-post-job-intern-details");
           break;
         case 'UNIVERSITY':
+          console.log('Navigating to /university-fill-details');
           navigate("/university-fill-details");
           break;
         default:
-          // Fallback to student page if role is not recognized
+          console.log('Navigating to /student-fill-account-details (default)');
           navigate("/student-fill-account-details");
       }
-    } catch (error) {
-      if (
-        error.response &&
-        error.response.data &&
-        error.response.data.message
-      ) {
-        setLoginError(error.response.data.message);
-      } else {
-        setLoginError("Network error");
-      }
-      console.log(error);
-    } finally {
-      setLoading(false);
     }
+  }, [isAuthenticated, user, navigate]);
+
+
+
+  const onSubmit = (data) => {
+    console.log('Login form submitted with:', data);
+    if (data.remember) {
+      localStorage.setItem("userEmail", data.email);
+    } else {
+      localStorage.removeItem("userEmail");
+    }
+    dispatch(login({ email: data.email, password: data.password }));
   };
 
   return (
@@ -126,7 +91,6 @@ export default function Login() {
         onSubmit={handleSubmit(onSubmit)}
         className="w-full bg-white p-0 rounded-none shadow-none max-w-full md:p-4 md:rounded-lg md:shadow-md md:max-w-md md:mx-auto"
       >
-        {/* Email Input - Using new UI component */}
         <Input
           label="Email"
           type="email"
@@ -134,20 +98,16 @@ export default function Login() {
           error={errors.email?.message}
           variant={errors.email ? "error" : "default"}
           {...register("email")}
-        // If you want to make it read-only, uncomment the next line:
-        // readOnly={!!defaultEmail}
         />
-
-        {/* Password Input - Using new UI component */}
         <Input
           label="Password"
           type="password"
           placeholder="Enter your password"
+          autoComplete="current-password"
           error={errors.password?.message}
           variant={errors.password ? "error" : "default"}
           {...register("password")}
         />
-
         <div className="flex flex-row items-center justify-between mb-2 sm:mb-3 gap-1 sm:gap-0">
           <label className="flex items-center text-[10px] cursor-pointer space-x-1">
             <input
@@ -157,17 +117,10 @@ export default function Login() {
             />
             <span className="text-gray-700">Remember me</span>
           </label>
-
-          <Link
-            to="/forgot-password"
-            variant="primary"
-            className="text-xs"
-          >
+          <Link to="/forgot-password" variant="primary" className="text-xs">
             Forgot Password?
           </Link>
         </div>
-
-        {/* Submit Button - Using new UI component */}
         <Button
           type="submit"
           loading={loading}
@@ -176,10 +129,9 @@ export default function Login() {
         >
           {loading ? "Logging in..." : "Log In"}
         </Button>
-
-        {loginError && (
+        {error && (
           <div className="text-xs text-red-500 mb-2 sm:mb-3 text-center bg-red-50 p-2 sm:p-3 rounded-md">
-            {loginError}
+            {error}
           </div>
         )}
 

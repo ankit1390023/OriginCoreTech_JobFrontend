@@ -63,50 +63,31 @@ export default function StudentFillAccountDetails() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
-  // Add state to track if device is small
-  const [isSmallDevice, setIsSmallDevice] = useState(false);
-
-
-
   const onNext = async () => {
-    console.log("onNext called, current step:", step);
     // Skip validation on Skills step (step 3) since it doesn't have registered fields
     if (step === 3) {
-      console.log("Skipping validation for Skills step");
       setStep((s) => s + 1);
       return;
     }
 
-    // Define which fields to validate for each step
+    // Only validate PersonalInfo step for now
     const stepFields = {
-      0: ["firstName", "lastName", "email", "phone", "dob", "city", "gender"], // PersonalInfo
-      1: [], // EducationInfo - add fields when implemented
-      2: [], // PreferencesForm - add fields when implemented
+      0: ["firstName", "lastName", "email", "phone", "dob", "city", "gender"],
     };
 
     const fieldsToValidate = stepFields[step] || [];
     const valid = await methods.trigger(fieldsToValidate);
-    console.log("Validation result:", valid);
     if (valid && step < steps.length - 1) setStep((s) => s + 1);
   };
   const onBack = () => setStep((s) => s - 1);
 
   const handleSubmitClick = async () => {
-    console.log("Submit button clicked");
     setIsSubmitting(true);
 
     try {
       const formData = methods.getValues();
-      console.log("Form data:", formData);
 
-      // Get the current user ID from localStorage
-      const userId = localStorage.getItem('userId');
-      if (!userId) {
-        alert("User not authenticated. Please log in again.");
-        navigate("/login");
-        return;
-      }
-
+  
       // Prepare the data structure for the API based on original backend structure
       const userData = {
         firstName: formData.firstName,
@@ -176,30 +157,22 @@ export default function StudentFillAccountDetails() {
           .join(", ");
       }
 
-      console.log("Sending data to API:", userData);
-
       // Check if user details already exist
       const { exists } = await userDetailsApi.checkUserDetailsExist(userId);
 
       let response;
       if (exists) {
         // Update existing user details
-        console.log("User details exist, updating...");
         response = await userDetailsApi.updateUserDetails(userId, userData);
-        console.log("Update response:", response);
       } else {
         // Create new user details
-        console.log("User details don't exist, creating...");
         response = await userDetailsApi.createUserDetails(userData);
-        console.log("Create response:", response);
       }
 
       alert("Form submitted successfully!");
       // Redirect to all-jobs page after successful submission
       navigate("/all-jobs");
     } catch (error) {
-      console.error("Error submitting form:", error);
-
       // Show specific error message from backend
       let errorMessage = "Error submitting form. Please try again.";
       if (
@@ -216,12 +189,6 @@ export default function StudentFillAccountDetails() {
     }
   };
 
-  const onSubmit = (data) => {
-    console.log("onSubmit called, current step:", step);
-    // This function should not show the alert anymore
-    // It will be called by react-hook-form validation
-    return false;
-  };
   const FormContent = () => (
     <div className="flex-1 w-full flex justify-center">
       <div className="bg-white rounded-xl shadow-none sm:shadow-xl w-full mt-4 max-w-full sm:max-w-2xl p-6 sm:p-8">
@@ -232,7 +199,6 @@ export default function StudentFillAccountDetails() {
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              console.log("Form submit event prevented");
             }}
           >
             {step === 0 && (
@@ -289,8 +255,6 @@ export default function StudentFillAccountDetails() {
     <SignUpLayoutForLarge
       heading="Let's Get Started!"
       subheading="Create an account to continue!"
-      hideMobileIllustration={isSmallDevice}
-      centerMobileContent={false}
     >
       <FormContent />
     </SignUpLayoutForLarge>

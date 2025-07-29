@@ -14,6 +14,21 @@ export const userProfileApi = {
             throw error;
         }
     },
+    getUserDetailByEmail: async (data) => {
+        try {
+            const token = getToken();
+            const response = await axios.post(`${BASE_URL}/users/getUserData`, data,{
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            return response.data;
+        } catch (error) {
+            console.log("Error while fetching getUserDetailByEmail", error);
+            throw error;
+        }
+    },
     updateUserDetailById: async (userId, userData) => {
         try {
             const token = getToken();
