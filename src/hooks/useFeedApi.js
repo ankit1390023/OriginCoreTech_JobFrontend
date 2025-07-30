@@ -6,22 +6,30 @@ const useFeedApi = () => {
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
     const { token } = useSelector((state) => state.auth);
-
-    const fetchFeed = useCallback(async (page = 1, limit = 10) => {
+    
+    const fetchFeed = useCallback(async (pageNum = 1, replace = false) => {
         if (!token) return;
-        
+        if (pageNum > totalPages && !replace) return;
         setLoading(true);
         setError(null);
         try {
-            const data = await feedApi.getFeed(page, limit, token);
-            setPosts(data.posts);
+            const data = await feedApi.getFeed(pageNum, 10, token);
+            if (replace || pageNum === 1) {
+                setPosts(data.posts);
+            } else {
+                setPosts(prevPosts => [...prevPosts, ...data.posts]);
+            }
+            setTotalPages(data.totalPages || 1);
+            setPage(data.currentPage || pageNum);
         } catch (err) {
             setError('Failed to load feed');
         } finally {
             setLoading(false);
         }
-    }, [token]);
+    }, [token, totalPages]);
 
     const postFeed = useCallback(async (payload) => {
         if (!token) return;
@@ -30,7 +38,7 @@ const useFeedApi = () => {
         setError(null);
         try {
             const res = await feedApi.postFeed(payload, token);
-            await fetchFeed(); // Optionally refresh feed after posting
+            await fetchFeed(1, true); // Refresh feed after posting
             return res;
         } catch (err) {
             setError('Failed to post feed');
@@ -40,7 +48,7 @@ const useFeedApi = () => {
         }
     }, [fetchFeed, token]);
 
-    const handleLike = useCallback(async (postId, isCurrentlyLiked, userId) => {
+    const handleLike = useCallback(async (postId, userId) => {
         if (!token) return;
         
         setPosts(prevPosts =>
@@ -48,40 +56,52 @@ const useFeedApi = () => {
                 post.id === postId
                     ? {
                         ...post,
-                        isLiked: !isCurrentlyLiked,
-                        likeCount: post.likeCount + (isCurrentlyLiked ? -1 : 1),
+                        likedBy: post.likedBy?.includes(userId) 
+                            ? post.likedBy.filter(id => id !== userId)
+                            : [...(post.likedBy || []), userId],
+                        likeCount: post.likedBy?.includes(userId) 
+                            ? post.likeCount - 1 
+                            : post.likeCount + 1,
                     }
                     : post
             )
         );
+        
         try {
+            const currentPost = posts.find(p => p.id === postId);
+            const isCurrentlyLiked = currentPost?.likedBy?.includes(userId);
             const action = isCurrentlyLiked ? 'unlike' : 'like';
             await feedApi.postLike(postId, { userId, action }, token);
         } catch (error) {
             // Rollback on error
+            const originalPost = posts.find(p => p.id === postId);
             setPosts(prevPosts =>
                 prevPosts.map(post =>
                     post.id === postId
                         ? {
                             ...post,
-                            isLiked: isCurrentlyLiked,
-                            likeCount: post.likeCount + (isCurrentlyLiked ? 1 : -1),
+                            likedBy: originalPost?.likedBy || [],
+                            likeCount: originalPost?.likeCount || 0,
                         }
                         : post
                 )
             );
             setError('Failed to update like');
         }
-    }, [token]);
+    }, [token, posts]);
 
     return {
         posts,
         loading,
         error,
+        page,
+        totalPages,
         fetchFeed,
         postFeed,
-        setPosts, // if you want to update posts manually
-        handleLike, // expose like handler
+        setPosts,
+        handleLike,
+        setLoading,
+        setError,
     };
 };
 

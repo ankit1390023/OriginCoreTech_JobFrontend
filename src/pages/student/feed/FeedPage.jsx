@@ -3,106 +3,49 @@ import { useSelector } from 'react-redux';
 import MainLayout from '../../../components/layout/MainLayout.jsx';
 import profile from '../../../assets/profile.png';
 import addMediaIcon from '../../../assets/add-media.png';
-import profile1 from '../../../assets/profile1.png';
-import uberLogo from '../../../assets/uber-logo.png';
-import carDashboard from '../../../assets/car-dashboard.png';
 import { BiCommentDetail, BiLike } from "react-icons/bi";
 import { FaEllipsisH } from "react-icons/fa";
 import { TbSend } from "react-icons/tb";
-import cover from '../../../assets/cover.png';
-import dummyProfile3 from '../../../assets/dummyProfile3.jpg';
-import dummyProfile1 from '../../../assets/dummyProfile1.jpg';
-import dummyProfile2 from '../../../assets/dummyProfile2.jpg';
-import { FaCamera } from 'react-icons/fa6';
 import { LiaShareSolid } from "react-icons/lia";
+import  Button  from '../../../components/ui/Button';
 import Input from '../../../components/ui/Input';
 import FeedRightProfile from './FeedRightProfile.jsx';
 import feedApi from '../../../api/feedApi';
 import uploadImageApi from '../../../api/uploadImageApi';
-
+import useFeedApi from '../../../hooks/useFeedApi';
 
 export default function FeedPage() {
-    const [posts, setPosts] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    // New state for feed post creation
-    const [caption, setCaption] = useState("");
-    const [selectedImage, setSelectedImage] = useState(null);
-    const [imagePreview, setImagePreview] = useState(null);
-    const [uploadingImage, setUploadingImage] = useState(false);
-    const [postingFeed, setPostingFeed] = useState(false);
-    const [page, setPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
-    const [loadingMore, setLoadingMore] = useState(false);
     const { token, user } = useSelector((state) => state.auth);
-        
-    const visitors = [
-        { name: 'Olivia Rhye', img: dummyProfile1 },
-        { name: 'Phoenix Baker', img: dummyProfile2 },
-        { name: 'Lana Steiner', img: dummyProfile3 },
-        { name: 'Milo Thorne', img: dummyProfile1 },
-        { name: 'Olivia Rhye', img: dummyProfile1 },
-        { name: 'Lana Steiner', img: dummyProfile3 },
-        { name: 'Milo Thorne', img: dummyProfile1 },
-        { name: 'Phoenix Baker', img: dummyProfile2 },
-    ];
+
+    const [caption, setCaption] = useState("");
+    const [imageFile, setImageFile] = useState(null);
+    const [imagePreview, setImagePreview] = useState(null);
+    const [postingFeed, setPostingFeed] = useState(false);
+    const [uploadingImage, setUploadingImage] = useState(false);
+
+    // comments states 
     const [commentInputs, setCommentInputs] = useState({});
     const [openComments, setOpenComments] = useState({});
     const [openReplies, setOpenReplies] = useState({});
     const [replyInputs, setReplyInputs] = useState({});
 
-
-
+    const { posts, loading, error, page, totalPages, fetchFeed, postFeed, setPosts, handleLike, setLoading, setError } = useFeedApi();
 
     useEffect(() => {
         if (token) {
-            fetchFeed(1, true); // Initial load, replace posts
+            fetchFeed(1, true);
         }
     }, [token]);
 
-    const fetchFeed = async (pageToFetch = 1, replace = false) => {
-        if (!token) return;
-        if (pageToFetch > totalPages && !replace) return;
-        if (pageToFetch === 1) setLoading(true);
-        else setLoadingMore(true);
-        setError(null);
-        try {
-            const data = await feedApi.getFeed(pageToFetch, 10, token); // page, limit, token
-            setTotalPages(data.totalPages || 1);
-            setPage(data.currentPage || pageToFetch);
-            if (replace) {
-                setPosts(data.posts);
-            } else {
-                setPosts(prev => [...prev, ...data.posts]);
-            }
-        } catch (err) {
-            setError('Failed to load feed');
-        } finally {
-            setLoading(false);
-            setLoadingMore(false);
-        }
-    };
-
-    const feedpost = async () => {
-        if (!token) return;
-        try {
-            const response = await feedApi.postFeed(posts[0], token);
-
-        } catch (error) {
-            console.log("Error while posting feed", error);
-        }
-    }
-
-    // Handle image selection and preview
     const handleImageChange = async (e) => {
         const file = e.target.files[0];
+        setImageFile(file);
         if (file) {
-            setSelectedImage(file);
             setImagePreview(URL.createObjectURL(file));
+        }else{
+            setImagePreview(null);
         }
     };
-    
-    // Handle feed post creation
     const handleFeedPost = async () => {
         if (!token || !user) {
             alert('User not logged in');
@@ -110,57 +53,46 @@ export default function FeedPage() {
         }
         
         setPostingFeed(true);
+        let imageUrl = '';
+        
         try {
-            let imageUrl = '';
-            if (selectedImage) {
+            if (imageFile) {
                 setUploadingImage(true);
-                imageUrl = await uploadImageApi.uploadImage(selectedImage, 'image', token);
+                const imageUrlResult = await uploadImageApi.uploadImage(imageFile, 'feedImage', token);
+                if (typeof imageUrlResult === 'string' && imageUrlResult.length > 0) {
+                    imageUrl = imageUrlResult;
+                } else if (imageUrlResult && imageUrlResult.url && imageUrlResult.url.length > 0) {
+                    imageUrl = imageUrlResult.url[0];
+                }
                 setUploadingImage(false);
             }
-            const postBody = {
-                userId: Number(user.id),
+            
+            const payload = {
+                userId: user.id,
                 image: imageUrl,
-                caption: caption.trim(),
+                caption,
             };
-            await feedApi.postFeed(postBody, token);
-            setCaption("");
-            setSelectedImage(null);
+            
+            await postFeed(payload);
+            setCaption('');
+            setImageFile(null);
             setImagePreview(null);
-            fetchFeed(); // Refresh feed
-        } catch (error) {
-            alert('Failed to post feed');
-            console.log("Error while posting feed", error);
+        } catch (err) {
+            console.log("Error while posting feed", err);
+            alert('Failed to post feed. Please try again.');
         } finally {
             setPostingFeed(false);
             setUploadingImage(false);
         }
     };
-
-    // Handle like/dislike toggle
-    const handleLike = async (postId) => {
-        if (!token || !user) {
-            alert('User not logged in');
-            return;
-        }
-        try {
-            await feedApi.postLike(postId, { userId: Number(user.id) }, token);
-            // Option 1: Refetch the feed to update like state
-            fetchFeed(page, true);
-            // Option 2: Optimistically update UI (not implemented here for simplicity)
-        } catch (error) {
-            alert('Failed to update like');
-            console.error('Error updating like:', error);
-        }
-    };
-
-    // Remove handleLoadMore, add handlePageChange
+ 
+  
     const handlePageChange = (pageNum) => {
         if (pageNum !== page && pageNum >= 1 && pageNum <= totalPages) {
             fetchFeed(pageNum, true);
         }
     };
 
-    // Handle posting a comment
     const handleComment = async (postId) => {
         if (!token || !user) {
             alert('User not logged in');
@@ -169,18 +101,15 @@ export default function FeedPage() {
         const commentText = commentInputs[postId]?.trim();
         if (!commentText) return;
         try {
-            // Call the API
             const response = await feedApi.postComment(postId, {
                 userId: Number(user.id),
                 comment: commentText,
             }, token);
-            // Update the post's comments and commentCount in state
             setPosts(prevPosts => prevPosts.map(post =>
                 post.id === postId
                     ? { ...post, comments: response.comments, commentCount: response.commentCount }
                     : post
             ));
-            // Clear the input
             setCommentInputs(prev => ({ ...prev, [postId]: '' }));
         } catch (error) {
             alert('Failed to post comment');
@@ -191,33 +120,30 @@ export default function FeedPage() {
     const toggleComments = (postId) => {
         setOpenComments(prev => ({ ...prev, [postId]: !prev[postId] }));
     };
+
     const toggleReplies = (commentId) => {
         setOpenReplies(prev => ({ ...prev, [commentId]: !prev[commentId] }));
     };
-    
+
     return (
         <MainLayout>
             <div className="flex justify-center bg-gray-100 min-h-screen px-2 lg:px-8">
-                {/* Left Spacer */}
                 <div className="hidden lg:block flex-grow"></div>
-                {/* Feed Content */}
                 <section className="w-full max-w-[600px] p-2 mx-auto">
-                    {/* Share Box */}
-                    <div className="bg-white rounded flex flex-col gap-2 shadow-sm p-4 mb-4">
+                <div className="bg-white rounded flex flex-col gap-2 shadow-sm p-4 mb-4">
                         <div className="flex items-center gap-2 w-full">
                             <img src={profile} alt="Profile" className="w-12 h-12 rounded-full " />
                             <Input
                                 type="text"
                                 size="large"
                                 placeholder="Share something..."
-                                className="flex-1 h-12 border border-gray-400 rounded px-4 min-w-[200px]"
+                                className="flex-1 h-12 border border-gray-400 rounded px-4 min-w-[500px]"
                                 value={caption}
                                 onChange={e => setCaption(e.target.value)}
-                                disabled={postingFeed}
                             />
                         </div>
                         <div className="flex items-center pl-14 gap-2">
-                            <label className="flex items-center gap-1 cursor-pointer">
+                            <label className="flex items-center gap-2 cursor-pointer">
                                 <img src={addMediaIcon} alt="Add media" className="w-4 h-4" />
                                 <span className="text-gray-500 text-sm">Add media</span>
                                 <input
@@ -225,24 +151,22 @@ export default function FeedPage() {
                                     accept="image/*"
                                     className="hidden"
                                     onChange={handleImageChange}
-                                    disabled={postingFeed}
                                 />
                             </label>
                             {imagePreview && (
-                                <img src={imagePreview} alt="Preview" className="w-12 h-12 rounded object-cover ml-2" />
+                                <img src={imagePreview} alt="Preview" className="w-16 h-16 object-cover rounded ml-2" />
                             )}
                         </div>
-                        <div className="flex justify-end mt-2">
-                            <button
-                                className="bg-blue-500 text-white px-4 py-1 rounded text-sm disabled:opacity-60"
-                                onClick={handleFeedPost}
-                                disabled={postingFeed || uploadingImage || (!caption.trim() && !selectedImage)}
-                            >
-                                {postingFeed ? 'Posting...' : uploadingImage ? 'Uploading Image...' : 'Post'}
-                            </button>
-                        </div>
+                        <Button
+                            className="ml-auto px-4  bg-blue-600 text-white rounded"
+                            size="small"
+                            onClick={handleFeedPost}
+                            disabled={uploadingImage}
+                        >
+                            {uploadingImage ? 'Posting...' : 'Post'}
+                        </Button>
                     </div>
-                    {/* Feed Posts */}
+ 
                     {loading && <div className="text-center py-8">Loading...</div>}
                     {error && <div className="text-center text-red-500 py-8">{error}</div>}
                     {!loading && !error && posts.length === 0 && (
@@ -270,19 +194,26 @@ export default function FeedPage() {
                             <footer className="flex flex-row justify-between text-sm text-gray-500 items-center py-2">
                                 <div
                                     className={`flex flex-col items-center cursor-pointer ${(post.likedBy && post.likedBy.includes(user?.id)) ? 'text-blue-600' : ''}`}
-                                    onClick={() => handleLike(post.id)}
+                                    onClick={() => handleLike(post.id, user?.id)}
                                 >
                                     <BiLike className='text-xl' />
                                     <span className='text-sm'>Like ({post.likeCount})</span>
                                 </div>
-                                <div className="flex flex-col items-center cursor-pointer" onClick={() => toggleComments(post.id)}><BiCommentDetail className='text-xl' /><span className='text-sm'>Comment ({post.commentCount})</span></div>
-                                <div className="flex flex-col items-center cursor-pointer"><LiaShareSolid className='text-xl' /><span className='text-sm'>Share</span></div>
-                                <div className="flex flex-col items-center cursor-pointer"><TbSend className='text-xl' /><span className='text-sm'>Send</span></div>
+                                <div className="flex flex-col items-center cursor-pointer" onClick={() => toggleComments(post.id)}>
+                                    <BiCommentDetail className='text-xl' />
+                                    <span className='text-sm'>Comment ({post.commentCount})</span>
+                                </div>
+                                <div className="flex flex-col items-center cursor-pointer">
+                                    <LiaShareSolid className='text-xl' />
+                                    <span className='text-sm'>Share</span>
+                                </div>
+                                <div className="flex flex-col items-center cursor-pointer">
+                                    <TbSend className='text-xl' />
+                                    <span className='text-sm'>Send</span>
+                                </div>
                             </footer>
-                            {/* Comments Section */}
                             {openComments[post.id] && (
                                 <div className="mt-2 border-t pt-2">
-                                    {/* Comment input */}
                                     <div className="flex gap-2 mb-2">
                                         <Input
                                             type="text"
@@ -293,13 +224,12 @@ export default function FeedPage() {
                                             onChange={e => setCommentInputs(prev => ({ ...prev, [post.id]: e.target.value }))}
                                         />
                                         <button
-                                            className="bg-blue-500 text-white px-2  py-1 rounded text-xs"
+                                            className="bg-blue-500 text-white px-2 py-1 rounded text-xs"
                                             onClick={() => handleComment(post.id)}
                                         >
                                             Comment
                                         </button>
                                     </div>
-                                    {/* Render comments */}
                                     {post.comments && post.comments.length > 0 ? (
                                         post.comments.map(comment => (
                                             <div key={comment.id} className="mb-2 ml-2">
@@ -311,7 +241,6 @@ export default function FeedPage() {
                                                 <div className="ml-9">
                                                     <span className="text-sm">{comment.comment}</span>
                                                     <button className="ml-4 text-blue-500 text-xs" onClick={() => toggleReplies(comment.id)}>Reply</button>
-                                                    {/* Reply input */}
                                                     {openReplies[comment.id] && (
                                                         <div className="flex gap-2 mt-1">
                                                             <Input
@@ -326,7 +255,6 @@ export default function FeedPage() {
                                                                 className="bg-blue-400 text-white px-2 py-1 rounded text-xs"
                                                                 onClick={e => {
                                                                     e.preventDefault();
-                                                                    // For now, just update local state (no backend)
                                                                     const replyText = replyInputs[comment.id]?.trim();
                                                                     if (!replyText) return;
                                                                     setPosts(prevPosts => prevPosts.map(p =>
@@ -345,7 +273,6 @@ export default function FeedPage() {
                                                             >Reply</button>
                                                         </div>
                                                     )}
-                                                    {/* Render replies */}
                                                     {comment.replies && comment.replies.length > 0 && (
                                                         <div className="ml-6 mt-1">
                                                             {comment.replies.map(reply => (
@@ -367,7 +294,6 @@ export default function FeedPage() {
                             )}
                         </article>
                     ))}
-                    {/* Pagination: Page Numbers */}
                     {!loading && !error && posts.length > 0 && totalPages > 1 && (
                         <div className="flex justify-center my-4 gap-1">
                             {Array.from({ length: totalPages }, (_, idx) => idx + 1).map((num) => (
@@ -383,12 +309,10 @@ export default function FeedPage() {
                         </div>
                     )}
                 </section>
-                {/* Profile Card */}
                 <aside className="hidden lg:block w-full max-w-[350px] p-2 sticky top-4 h-fit">
                     <FeedRightProfile />
                 </aside>
-                {/* Right Spacer */}
-                <div className="hidden lg:block flex-grow "></div>
+                <div className="hidden lg:block flex-grow"></div>
             </div>
         </MainLayout>
     );
