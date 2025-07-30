@@ -8,6 +8,7 @@ import { IoIosSearch } from 'react-icons/io';
 import { IoIosArrowBack } from 'react-icons/io';
 import { HiOutlineEye } from 'react-icons/hi';
 import { FaEdit } from 'react-icons/fa';
+import { RxCross2 } from 'react-icons/rx';
 
 
 const FeedYourSkills = () => {
@@ -25,6 +26,9 @@ const FeedYourSkills = () => {
   const [firstCardLearningSource, setFirstCardLearningSource] = useState('');
   const [currentMainSkill, setCurrentMainSkill] = useState('Web Development');
   const [showFirstCard, setShowFirstCard] = useState(true);
+  
+  // State for other cards' selected skills
+  const [otherCardsSelectedSkills, setOtherCardsSelectedSkills] = useState({});
   
   const [skills, setSkills] = useState([
     {
@@ -94,13 +98,6 @@ const FeedYourSkills = () => {
 
   // Default related skills (fallback)
   const defaultRelatedSkills = ['HTML', 'CSS', 'JavaScript', 'React', 'Node.js', 'Bootstrap'];
-
-  // Related skills by category (fallback)
-  const relatedSkillsByCategory = {
-    'Web Development': ['HTML', 'CSS', 'JavaScript', 'React', 'Node.js', 'Vue.js', 'Angular', 'Bootstrap', 'Tailwind CSS'],
-    'Design': ['UI/UX Design', 'Graphic Design', 'Figma', 'Adobe Photoshop', 'Adobe Illustrator', 'Typography'],
-    'Programming': ['JavaScript', 'Python', 'Java', 'C++', 'PHP', 'Ruby', 'Go', 'Swift']
-  };
 
   // Main domain skills that can replace the first card
   const mainDomainSkills = [
@@ -191,6 +188,23 @@ const FeedYourSkills = () => {
     });
   };
 
+  const handleOtherCardSkillToggle = (skillId, skill) => {
+    setOtherCardsSelectedSkills(prev => {
+      const currentSkills = prev[skillId] || [];
+      if (currentSkills.includes(skill)) {
+        return {
+          ...prev,
+          [skillId]: currentSkills.filter(s => s !== skill)
+        };
+      } else {
+        return {
+          ...prev,
+          [skillId]: [...currentSkills, skill]
+        };
+      }
+    });
+  };
+
   const handleRemoveSkill = (skillId) => {
     setSkills(skills.filter(skill => skill.id !== skillId));
   };
@@ -233,6 +247,7 @@ const FeedYourSkills = () => {
       bgColor: 'bg-white'
     };
     setSkills([newSkill, ...skills]);
+    
   };
 
   const handleShowMoreSkills = (cardId) => {
@@ -285,31 +300,31 @@ const FeedYourSkills = () => {
 
   // Handle skill selection from search
   const handleSkillSelect = (skillName) => {
-    // Check if it's a main domain skill
-    if (mainDomainSkills.includes(skillName)) {
-      // Replace the first card
-      setCurrentMainSkill(skillName);
-      setFirstCardSelectedSkills([]); // Reset selected related skills
-      setFirstCardLearningSource(''); // Reset learning source
-      setFirstCardCertificate(null); // Reset certificate
-    } else {
-      // Add as a new card
-      const newSkill = {
-        id: Date.now(),
-        name: skillName,
-        learningSource: '',
-        hasCertificate: false,
-        borderColor: 'border-gray-200',
-        bgColor: 'bg-white'
-      };
-      setSkills([newSkill, ...skills]);
-    }
-    setSkillsSearchQuery('');
-    setShowSkillsDropdown(false);
+    // Always add as a new card, don't replace the first card
+    const newSkill = {
+      id: Date.now(),
+      name: skillName,
+      learningSource: '',
+      hasCertificate: false,
+      borderColor: 'border-gray-200',
+      bgColor: 'bg-white'
+    };
+   
+     // Insert new skill at index 1 (after the first card)
+     const updatedSkills = [...skills];
+     updatedSkills.splice(1, 0, newSkill);
+     setSkills(updatedSkills);
+     setSkillsSearchQuery('');
+     setShowSkillsDropdown(false);
+  
+   
   };
+  
 
   useEffect(() => {
-    setShowFirstCard(true);
+    if (currentMainSkill) {
+      setShowFirstCard(true);
+    }
   }, [currentMainSkill]);
 
   return (
@@ -381,7 +396,7 @@ const FeedYourSkills = () => {
       {/* Skills Sections */}
       <div className="space-y-4 sm:space-y-6">
         {showFirstCard && (
-  <div>
+  <div key={currentMainSkill}>
     <div className="bg-white border-2 border-gray-200 rounded-lg p-4 sm:p-6">
       {/* Skill Tag and Certificate Section */}
       <div className="flex items-center justify-between mb-4">
@@ -399,6 +414,7 @@ const FeedYourSkills = () => {
             </svg>
           </button>
         </Badge>
+         
         <div className="flex items-right space-x-1 justyfy-between">
           <label className="text-sm text-gray-600 hover:text-blue-600 transition-colors cursor-pointer">
             Upload Certificate
@@ -410,15 +426,19 @@ const FeedYourSkills = () => {
             />
             
           </label>
-          {/* Remove Button */}
-          <button
-          onClick={() => setShowFirstCard(false)}
-          className="ml-2 px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm"
-        >
-          Remove
-        </button>
           <IoIosInformationCircleOutline className="w-4 h-4 text-gray-400" />
-        </div>     
+
+           {/* Remove Button */}
+           <button
+          onClick={() => setShowFirstCard(false)}
+          className="ml-2 px-3 py-1 text-white rounded hover:bg-red-600 text-sm"
+        >
+          <RxCross2  className='text-gray-400'/>
+
+        </button>
+        </div>    
+
+
       </div>
       {/* Certificate Display */}
       {firstCardCertificate && (
@@ -433,12 +453,14 @@ const FeedYourSkills = () => {
             >
               {firstCardCertificate.name}
             </a>
+           
             <button
-              onClick={handleRemoveCertificate}
-              className="bg-transparent text-red-500 px-3 py-1 rounded text-sm bg-red-600 text-white transition-colors"
-            >
-              Remove
-            </button>
+          onClick={handleRemoveCertificate}
+          className="ml-2 px-3 py-1 text-white rounded hover:bg-red-600 text-sm"
+        >
+          <RxCross2  className='text-gray-400'/>
+
+        </button>
           </div>
         </div>
       )}
@@ -446,7 +468,7 @@ const FeedYourSkills = () => {
       <div className="mb-4">
         <p className="text-sm text-gray-700 mb-2">Select related skills for {currentMainSkill}:</p>
         <div className="flex flex-wrap gap-2 mb-2">
-          {getRelatedSkillsForMainDomain(currentMainSkill).slice(0, showMoreSkills['firstCard'] ? getRelatedSkillsForMainDomain(currentMainSkill).length : 6).map((skill) => (
+          {getRelatedSkillsForMainDomain(currentMainSkill).slice(1, showMoreSkills['firstCard'] ? getRelatedSkillsForMainDomain(currentMainSkill).length : 6).map((skill) => (
             <button
               key={skill}
               onClick={() => handleSkillToggle(skill)}
@@ -543,14 +565,6 @@ const FeedYourSkills = () => {
                   className="bg-blue-500 text-white px-3 py-1 rounded-full flex items-center gap-2 text-sm"
                 >
                   {skill.name}
-                  <button
-                    onClick={() => handleRemoveSkill(skill.id)}
-                    className="hover:bg-blue-600 rounded-full p-0.5"
-                  >
-                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                    </svg>
-                  </button>
                 </Badge>
                 
                 <div className="flex items-center space-x-2">
@@ -567,8 +581,51 @@ const FeedYourSkills = () => {
                   >
                     Edit Certificate
                   </button>
+                  
+                  {/* Remove Button - Only show for newly added skills (not the existing Design cards) */}
+                  {![3, 4, 5].includes(skill.id) && (
+                    <button
+                      onClick={() => handleRemoveSkill(skill.id)}
+                      className="ml-2 px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm"
+                    >
+                      <RxCross2 />
+                    </button>
+                  )}
                 </div>
                 
+              </div>
+
+              {/* Skills Selection */}
+              <div className="mb-4">
+                {![3, 4, 5].includes(skill.id) && (
+                  <p className="text-sm text-gray-700 mb-2">Select related skills for {skill.name}:</p>
+                )}
+                <div className="flex flex-wrap gap-2 mb-2">
+                  {getRelatedSkillsForMainDomain(skill.name).slice(2, showMoreSkills[skill.id] ? getRelatedSkillsForMainDomain(skill.name).length : 6).map((relatedSkill) => (
+                    <button
+                      key={relatedSkill}
+                      onClick={() => handleOtherCardSkillToggle(skill.id, relatedSkill)}
+                      className={`px-3 py-1 rounded-full text-sm border transition-colors ${
+                        (otherCardsSelectedSkills[skill.id] || []).includes(relatedSkill)
+                          ? 'bg-blue-500 text-white border-blue-500'
+                          : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200'
+                      }`}
+                    >
+                      {relatedSkill}
+                    </button>
+                  ))}
+                </div>
+                {getRelatedSkillsForMainDomain(skill.name).length > 6 && (
+                  <button
+                    onClick={() => handleShowMoreSkills(skill.id)}
+                    className="text-blue-600 text-sm hover:underline"
+                  >
+                    {showMoreSkills[skill.id] ? 'Show less' : `See more +${getRelatedSkillsForMainDomain(skill.name).length - 6}`}
+                  </button>
+                )}
+                {(otherCardsSelectedSkills[skill.id] || []).length > 0 && (
+                  <p className="text-green-600 text-sm">Selected: {(otherCardsSelectedSkills[skill.id] || []).length} skill(s)</p>
+                )}
               </div>
 
               {/* Learning Source */}
