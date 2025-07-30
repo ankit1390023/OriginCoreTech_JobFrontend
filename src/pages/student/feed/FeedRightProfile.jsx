@@ -122,6 +122,7 @@ useEffect(() => {
                     </div>
                     {/* error already shown above */}
                 </div>
+                
                  {/* Dashboard */}
                 <div className="mt-4">
                     <h3 className="font-semibold text-gray-800 border-t pt-4">Your Dashboard</h3>

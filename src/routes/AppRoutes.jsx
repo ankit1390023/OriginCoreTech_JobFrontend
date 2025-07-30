@@ -27,6 +27,8 @@ import FeedChangePassword from "../pages/student/feed/FeedChangePassword";
 import FeedYourSkills from "../pages/student/feed/FeedYourSkills";
 import FeedYourEducation from "../pages/student/feed/FeedYourEducation";
 import FeedYourExprience from "../pages/student/feed/FeedYourExprience";
+import FeedDashBoard from "../pages/student/feed/FeedDashBoard";
+import FeedAuthentication from "../pages/student/feed/FeedAuthentication";
 
 export const appRouter = createBrowserRouter([
     {
@@ -142,7 +144,14 @@ export const appRouter = createBrowserRouter([
         element: <FeedYourExprience />,
     },
     
-    
+    {
+        path:"feed-dashboard",
+        element:<FeedDashBoard />
+    },
+    {
+        path:"/feed-authentication",
+        element:<FeedAuthentication/>
+    }
     
     
    

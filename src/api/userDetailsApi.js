@@ -57,16 +57,65 @@ export const userDetailsApi = {
         }
     },
 
-    // Check if user details exist
-    checkUserDetailsExist: async (userId) => {
+  
+
+    // Get user experiences
+    getUserExperiences: async (userId) => {
+        if (!userId) {
+            return { success: false, error: 'User ID is required.' };
+        }
         try {
-            const response = await axios.get(`${BASE_URL}/user-details/detail/${userId}`);
-            return { exists: true, data: response.data };
-        } catch (error) {
-            if (error.response && error.response.status === 404) {
-                return { exists: false, data: null };
+            const response = await axios.get(`${BASE_URL}/user-details/public-profile/${userId}`);
+            if (response.data && response.data.experiences) {
+                return { success: true, data: response.data.experiences };
             }
-            throw error;
+            return { success: true, data: [] };
+        } catch (error) {
+            console.error('Error fetching user experiences:', error);
+            return {
+                success: false,
+                error: error?.response?.data?.message || error.message || 'Unknown error occurred'
+            };
+        }
+    },
+
+    // Get user education
+    getUserEducation: async (userId) => {
+        if (!userId) {
+            return { success: false, error: 'User ID is required.' };
+        }
+        try {
+            const response = await axios.get(`${BASE_URL}/user-details/public-profile/${userId}`);
+            if (response.data && response.data.educations) {
+                return { success: true, data: response.data.educations };
+            }
+            return { success: true, data: [] };
+        } catch (error) {
+            console.error('Error fetching user education:', error);
+            return {
+                success: false,
+                error: error?.response?.data?.message || error.message || 'Unknown error occurred'
+            };
+        }
+    },
+
+    // Get user skills
+    getUserSkills: async (userId) => {
+        if (!userId) {
+            return { success: false, error: 'User ID is required.' };
+        }
+        try {
+            const response = await axios.get(`${BASE_URL}/user-details/public-profile/${userId}`);
+            if (response.data && response.data.skills) {
+                return { success: true, data: response.data.skills };
+            }
+            return { success: true, data: [] };
+        } catch (error) {
+            console.error('Error fetching user skills:', error);
+            return {
+                success: false,
+                error: error?.response?.data?.message || error.message || 'Unknown error occurred'
+            };
         }
     },
 

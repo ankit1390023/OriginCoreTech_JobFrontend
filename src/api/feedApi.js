@@ -162,28 +162,7 @@ const feedApi = {
             throw error;
         }
     },
-    // Get user activity/feed posts
-    getUserActivity: async (userId = null, page = 1, limit = 10, token) => {
-        try {
-            const targetUserId = userId || localStorage.getItem('userId');
-            
-            if (!targetUserId) {
-                throw new Error('User ID is required');
-            }
 
-            const response = await axios.get(`${BASE_URL}/feed/user/${targetUserId}/activity?page=${page}&limit=${limit}`, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            
-            return response.data;
-        } catch (error) {
-            console.log("error while getting user activity", error);
-            throw error;
-        }
-    }
 }
 
 export default feedApi;
