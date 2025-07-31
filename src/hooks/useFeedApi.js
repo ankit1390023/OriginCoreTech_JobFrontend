@@ -8,6 +8,10 @@ const useFeedApi = () => {
     const [error, setError] = useState(null);
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const [followersCount, setFollowersCount] = useState(0);
+    const [followingCount, setFollowingCount] = useState(0);
+    const [isFollowing, setIsFollowing] = useState(false);
+    const [followLoading, setFollowLoading] = useState(false);
     const { token } = useSelector((state) => state.auth);
     
     const fetchFeed = useCallback(async (pageNum = 1, replace = false) => {
@@ -90,6 +94,58 @@ const useFeedApi = () => {
         }
     }, [token, posts]);
 
+    // Fetch followers and following counts
+    const fetchFollowersAndFollowing = useCallback(async () => {
+        if (!token) return;
+        
+        try {
+            const { count: followersCount } = await feedApi.getFollowers(token);
+            setFollowersCount(followersCount);
+
+            const { count: followingCount } = await feedApi.getFollowing(token);
+            setFollowingCount(followingCount);
+        } catch (err) {
+            console.error('Failed to load followers/following:', err);
+            setError('Failed to load followers/following');
+        }
+    }, [token]);
+
+    // Check follow status for a specific user
+    const checkFollowStatus = useCallback(async (profileId) => {
+        if (!token || !profileId) return;
+        
+        try {
+            const res = await feedApi.checkFollowStatus(profileId, token);
+            setIsFollowing(res.isFollowing);
+            return res.isFollowing;
+        } catch (err) {
+            console.error('Failed to check follow status:', err);
+            setIsFollowing(false);
+            return false;
+        }
+    }, [token]);
+
+    // Handle follow/unfollow toggle
+    const handleFollowToggle = useCallback(async (profileId) => {
+        if (!token || !profileId) {
+            console.error('Token or profile ID not available');
+            return;
+        }
+        
+        setFollowLoading(true);
+        try {
+            await feedApi.followUnfollowUser(profileId, token);
+            setIsFollowing((prev) => !prev);
+            setFollowersCount((prev) => isFollowing ? prev - 1 : prev + 1);
+            return !isFollowing; // Return new follow status
+        } catch (err) {
+            console.error('Error toggling follow status:', err);
+            setError('Failed to update follow status');
+            throw err;
+        } finally {
+            setFollowLoading(false);
+        }
+    }, [token, isFollowing]);
     
     return {
         posts,
@@ -97,10 +153,17 @@ const useFeedApi = () => {
         error,
         page,
         totalPages,
+        followersCount,
+        followingCount,
+        isFollowing,
+        followLoading,
         fetchFeed,
         postFeed,
         setPosts,
         handleLike,
+        fetchFollowersAndFollowing,
+        checkFollowStatus,
+        handleFollowToggle,
         setLoading,
         setError,
     };

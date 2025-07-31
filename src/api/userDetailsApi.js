@@ -18,12 +18,6 @@ export const userDetailsApi = {
             throw error;
         }
     },
-   
-    /**
-     * Fetches public user details by userId.
-     * @param {string} userId - The ID of the user whose details are to be fetched.
-     * @returns {Promise<{ success: boolean, data?: any, error?: string }>}
-     */
     
     getUserDetails: async (userId) => {
         if (!userId) {
@@ -57,61 +51,46 @@ export const userDetailsApi = {
         }
     },
 
-  
-
-    // Get user experiences
-    getUserExperiences: async (userId) => {
+    // Unified method to fetch public user profile data
+    getUserPublicProfile: async (userId, token = null, dataType = 'all') => {
         if (!userId) {
             return { success: false, error: 'User ID is required.' };
         }
+        
         try {
-            const response = await axios.get(`${BASE_URL}/user-details/public-profile/${userId}`);
-            if (response.data && response.data.experiences) {
-                return { success: true, data: response.data.experiences };
+            const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+            const response = await axios.get(`${BASE_URL}/user-details/public-profile/${userId}`, { headers });
+            
+            if (!response.data) {
+                return { success: true, data: null };
             }
-            return { success: true, data: [] };
-        } catch (error) {
-            console.error('Error fetching user experiences:', error);
-            return {
-                success: false,
-                error: error?.response?.data?.message || error.message || 'Unknown error occurred'
-            };
-        }
-    },
-
-    // Get user education
-    getUserEducation: async (userId) => {
-        if (!userId) {
-            return { success: false, error: 'User ID is required.' };
-        }
-        try {
-            const response = await axios.get(`${BASE_URL}/user-details/public-profile/${userId}`);
-            if (response.data && response.data.educations) {
-                return { success: true, data: response.data.educations };
+            
+            // Return specific data type if requested
+            switch (dataType) {
+                case 'experiences':
+                    return { 
+                        success: true, 
+                        data: response.data.experiences || [] 
+                    };
+                case 'education':
+                    return { 
+                        success: true, 
+                        data: response.data.educations || [] 
+                    };
+                case 'skills':
+                    return { 
+                        success: true, 
+                        data: response.data.skills || [] 
+                    };
+                case 'all':
+                default:
+                    return { 
+                        success: true, 
+                        data: response.data 
+                    };
             }
-            return { success: true, data: [] };
         } catch (error) {
-            console.error('Error fetching user education:', error);
-            return {
-                success: false,
-                error: error?.response?.data?.message || error.message || 'Unknown error occurred'
-            };
-        }
-    },
-
-    // Get user skills
-    getUserSkills: async (userId) => {
-        if (!userId) {
-            return { success: false, error: 'User ID is required.' };
-        }
-        try {
-            const response = await axios.get(`${BASE_URL}/user-details/public-profile/${userId}`);
-            if (response.data && response.data.skills) {
-                return { success: true, data: response.data.skills };
-            }
-            return { success: true, data: [] };
-        } catch (error) {
-            console.error('Error fetching user skills:', error);
+            console.error('Error fetching user public profile:', error);
             return {
                 success: false,
                 error: error?.response?.data?.message || error.message || 'Unknown error occurred'

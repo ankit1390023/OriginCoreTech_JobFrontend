@@ -140,28 +140,7 @@ const feedApi = {
             throw error;
         }
     },
-    // Check if current user is following a specific user
-    checkFollowStatus: async (targetUserId, token) => {
-        try {
-            const currentUserId = localStorage.getItem('userId');
-            
-            if (!currentUserId || !targetUserId) {
-                throw new Error('Both current user ID and target user ID are required');
-            }
-
-            const response = await axios.get(`${BASE_URL}/feed/follow-status/${currentUserId}/${targetUserId}`, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            
-            return response.data;
-        } catch (error) {
-            console.log("error while checking follow status", error);
-            throw error;
-        }
-    },
+   
 
 }
 

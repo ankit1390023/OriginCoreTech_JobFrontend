@@ -73,7 +73,7 @@ export default function SignUpVerifyOtpEmail() {
       }
 
       // Role-based redirection
-      const userRole = response.data.userRole;
+      const userRole = response.data.user.userRole;
       console.log("User role:", userRole);
       switch (userRole) {
         case 'STUDENT':

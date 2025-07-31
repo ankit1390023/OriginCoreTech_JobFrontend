@@ -43,7 +43,7 @@ export default function Login() {
   useEffect(() => {
     console.log('Auth state changed:', { isAuthenticated, user });
     if (isAuthenticated && user) {
-      switch (user.role) {
+      switch (user.userRole) {
         case 'STUDENT':
           console.log('Navigating to /student-fill-account-details');
           navigate("/student-fill-account-details");

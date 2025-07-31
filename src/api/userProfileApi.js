@@ -156,18 +156,5 @@ export const userProfileApi = {
             throw error;
         }
     },
-    // New method to fetch public user profile by ID
-    getUserPublicProfileById: async (userId, token) => {
-        try {
-            const response = await axios.get(`${BASE_URL}/user-details/public-profile/${userId}`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            return response.data;
-        } catch (error) {
-            console.log("Error while fetching getUserPublicProfileById", error);
-            throw error;
-        }
-    }
+   
 }

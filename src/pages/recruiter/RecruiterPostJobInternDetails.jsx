@@ -17,6 +17,7 @@ import {
 } from "../../components/ui";
 import SignUpLayout from "../../components/layout/SignUpLayout";
 import SignUpIllustration from "../../assets/SignUp_Illustration.png";
+import { useSelector } from "react-redux";
 
 const formSchema = z.object({
   opportunityType: z.enum(["Internship", "Job", "Project"]),
@@ -297,7 +298,7 @@ export default function RecruiterPostJobInternDetails() {
   const [showAllDomains, setShowAllDomains] = useState(false);
   // Add state to track if device is small
   const [isSmallDevice, setIsSmallDevice] = useState(false);
-
+  const { user, token } = useSelector((state) => state.auth);
   useEffect(() => {
     const checkDeviceSize = () => {
       setIsSmallDevice(window.innerWidth < 1024); // lg breakpoint
@@ -437,7 +438,7 @@ export default function RecruiterPostJobInternDetails() {
       };
 
       // Get authentication token
-      const token = localStorage.getItem('token');
+
 
       if (!token) {
         setErrorMessage("Authentication token not found. Please log in again.");
