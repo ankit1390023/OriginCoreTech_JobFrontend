@@ -49,10 +49,10 @@ const FeedDashBoard = () => {
         <MainLayout>
         <div className="flex justify-center bg-gray-100 min-h-screen px-2 lg:px-8 items-start">
         {/* Left Spacer */}
-        <div className="hidden lg:block w-4"></div>
+        <div className="hidden lg:block flex-grow "></div>
 
-        <section className="min-h-screen bg-white p-4 mt-2 sm:p-6">
-            <div className="max-w-4xl mx-auto">
+        
+            <section className="bg-white rounded-[10px] p-5 shadow-lg mt-2 w-[780px] h-auto opacity-100 gap-[10px]">
                 {/* Header */}
                 <div className="mb-6 sm:mb-8">
                     <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-4 sm:mb-6">
@@ -126,14 +126,14 @@ const FeedDashBoard = () => {
                         </div>
                     ))}
                 </div>
-            </div>
-        </section>
+            </section>
+        
          {/* Profile Card */}
     <aside className="hidden lg:block w-full max-w-[350px] p-2 sticky top-4 h-fit ml-4">
                     <FeedRightProfile />
                 </aside>
                 {/* Right Spacer */}
-                <div className="hidden lg:block w-4"></div>
+                <div className="hidden lg:block flex-grow "></div>
                 </div>
     </MainLayout>
     );

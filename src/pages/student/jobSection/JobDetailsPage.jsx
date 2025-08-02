@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaMapMarkerAlt, FaUserTie, FaMoneyBillWave, FaBuilding, FaCalendarAlt, FaUsers, FaClock, FaGraduationCap, FaPhone, FaEnvelope, FaStar, FaBars, FaTimes, FaBriefcase, FaLaptop, FaCertificate, FaGift, FaCheckCircle, FaQuestionCircle, FaIndustry, FaGlobe, FaUserGraduate, FaLanguage, FaVenus } from "react-icons/fa";
 import Header from "../../../components/shared/Header";
 import { useGetJobApi } from "../../../hooks/useGetJobApi";
@@ -15,6 +15,18 @@ export default function JobDetailsPage() {
     const [selectedId, setSelectedId] = useState(jobId);
     const [isJobListOpen, setIsJobListOpen] = useState(false);
     const [showFullDetails, setShowFullDetails] = useState(false);
+    const [isLargeScreen, setIsLargeScreen] = useState(false);
+
+    useEffect(() => {
+        const checkScreenSize = () => {
+            setIsLargeScreen(window.innerWidth >= 1024);
+        };
+
+        checkScreenSize();
+        window.addEventListener('resize', checkScreenSize);
+
+        return () => window.removeEventListener('resize', checkScreenSize);
+    }, []);
 
     const handleSelect = (id) => {
         setSelectedId(id);
@@ -32,7 +44,7 @@ export default function JobDetailsPage() {
         return (
             <div className="bg-[#f5f6f7] min-h-screen">
                 <Header />
-                <div className="max-w-8xl mx-auto pt-10 sm:pt-12 md:pt-14 pb-8 sm:pb-10 px-2 sm:px-4 md:px-6 lg:px-8">
+                <div className="max-w-7xl mx-auto pt-10 sm:pt-12 md:pt-14 pb-8 sm:pb-10 px-2 sm:px-4 md:px-6 lg:px-8">
                     <div className="bg-white rounded-2xl shadow border border-gray-100 p-6 sm:p-8">
                         <Loader message="Loading jobs..." />
                     </div>
@@ -46,7 +58,7 @@ export default function JobDetailsPage() {
         return (
             <div className="bg-[#f5f6f7] min-h-screen">
                 <Header />
-                <div className="max-w-8xl mx-auto pt-10 sm:pt-12 md:pt-14 pb-8 sm:pb-10 px-2 sm:px-4 md:px-6 lg:px-8">
+                <div className="max-w-7xl mx-auto pt-10 sm:pt-12 md:pt-14 pb-8 sm:pb-10 px-2 sm:px-4 md:px-6 lg:px-8">
                     <div className="bg-white rounded-2xl shadow border border-gray-100 p-6 sm:p-8">
                         <div className="text-center text-red-600">
                             <p className="text-lg font-semibold">Error loading jobs</p>
@@ -67,37 +79,41 @@ export default function JobDetailsPage() {
     }
 
     return (
-        <div className="bg-[#f5f6f7] min-h-[180vh]">
+        <div className="bg-[#f5f6f7] min-h-screen">
             <Header />
 
             {/* Mobile Job List Toggle */}
-            <div className="lg:hidden px-2 sm:px-4 pt-2 sm:pt-4">
+            <div className="lg:hidden mb-2 sm:mb-3 px-2 sm:px-3 md:px-4 lg:px-6">
                 <Button
                     onClick={toggleJobList}
                     variant="outline"
                     size="default"
-                    className="flex items-center gap-2 bg-white rounded-xl px-3 sm:px-4 py-2.5 sm:py-3 shadow border border-gray-200 w-full justify-center"
+                    className="flex items-center gap-1.5 bg-white rounded-xl px-2 sm:px-3 py-2 sm:py-2.5 shadow border border-gray-200 w-full justify-center"
                 >
                     {isJobListOpen ? (
                         <>
-                            <FaTimes className="text-gray-600" />
-                            <span className="font-medium">Close Job List</span>
+                            <FaTimes className="text-gray-600 text-sm" />
+                            <span className="font-medium text-sm">Close Job List</span>
                         </>
                     ) : (
                         <>
-                            <FaBars className="text-gray-600" />
-                            <span className="font-medium">Show Job List ({allJobs?.length || 0} jobs)</span>
+                            <FaBars className="text-gray-600 text-sm" />
+                            <span className="font-medium text-sm">Show Job List ({allJobs?.length || 0} jobs)</span>
                         </>
                     )}
                 </Button>
             </div>
 
-            <div className="max-w-8xl mx-auto pt-1 sm:pt-2 md:pt-4 lg:pt-8 pb-4 sm:pb-6 px-2 sm:px-3 md:px-4 lg:px-6">
-                <div className="grid grid-cols-1 lg:grid-cols-[400px_1fr] gap-3 sm:gap-4">
+            <div className="max-w-7xl mx-auto pt-1 sm:pt-2 md:pt-4 lg:pt-6 pb-2 sm:pb-3 px-2 sm:px-3 md:px-4 lg:px-6">
+                <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] sm:gap-4 lg:gap-6" style={{ marginLeft: isLargeScreen ? '35px' : '0px' }}>
                     {/* Left: Job List */}
-                    <aside className={`bg-white rounded-xl shadow border border-gray-100 flex flex-col self-start min-h-[120vh] p-2 sm:p-3 md:p-4 ${isJobListOpen ? 'block' : 'hidden lg:flex'}`}>
-                        <p className="text-gray-500 text-xs mb-2 sm:mb-3">Top Jobs Picks for you</p>
-                        <div className="flex flex-col gap-1.5 sm:gap-2 md:gap-3 overflow-y-auto max-h-[120vh] border border-gray-100 rounded-lg p-1.5">
+                    <aside className={`bg-white rounded-2xl shadow border border-gray-100 flex flex-col self-start min-h-[80vh] sm:min-h-[100vh] lg:min-h-[120vh] w-[365px] sm:p-3 md:p-4 lg:p-4 ${isJobListOpen ? 'block' : 'hidden lg:flex'}`}>
+
+                        <div className="mb-2 sm:mb-3">
+                            <h2 className="text-lg sm:text-xl lg:text-2xl font-extrabold mb-1">Job List</h2>
+                            <p className="text-gray-500 text-xs">Top Jobs Picks for you</p>
+                        </div>
+                        <div className="flex flex-col gap-1.5 sm:gap-2 md:gap-3 overflow-y-auto max-h-[70vh] sm:max-h-[80vh] lg:max-h-[100vh] border border-gray-100 rounded-lg p-2">
                             <div className="flex flex-col gap-1.5 sm:gap-2 md:gap-3">
                                 {allJobs && allJobs.map((job) => (
                                     <button
@@ -118,18 +134,18 @@ export default function JobDetailsPage() {
                                                 <Badge
                                                     color="bg-gray-100 text-gray-700 hover:bg-gray-200"
                                                 >
-                                                    <span className="truncate">{job.location}</span>
+                                                    <span className="truncate text-xs">{job.location}</span>
                                                 </Badge>
                                                 {job.salary && (
                                                     <Badge
                                                         color="bg-emerald-100 text-emerald-600 hover:bg-emerald-200"
                                                     >
-                                                        <span className="truncate">₹{job.salary}</span>
+                                                        <span className="truncate text-xs">₹{job.salary}</span>
                                                     </Badge>
                                                 )}
                                             </div>
                                         </div>
-                                        <div className="flex flex-col items-end gap-1 min-w-[70px] sm:min-w-[80px] md:min-w-[90px]">
+                                        <div className="flex flex-col items-end gap-1 min-w-[60px] sm:min-w-[70px] md:min-w-[80px] lg:min-w-[90px]">
                                             <Badge
                                                 color={job.hiringStatus === 'Actively Hiring' ? 'bg-red-400 text-white hover:bg-red-500' : 'bg-green-400 text-white hover:bg-green-500'}
                                                 text={job.hiringStatus}
@@ -156,7 +172,10 @@ export default function JobDetailsPage() {
                     </aside>
 
                     {/* Right: Job Details */}
-                    <main className={`bg-white rounded-xl shadow border border-gray-100 p-2 sm:p-3 md:p-4 lg:p-6 flex flex-col relative ${showFullDetails ? 'min-h-auto' : 'min-h-[120vh] max-h-[100vh] overflow-hidden'}`}>
+                    <main
+                        className={`bg-white rounded-2xl shadow border border-gray-100 p-2 sm:p-3 md:p-4 lg:p-6 flex flex-col relative w-full max-w-[760px] mx-auto 
+                          ${showFullDetails ? 'min-h-auto' : 'min-h-[80vh] sm:min-h-[100vh] lg:min-h-[120vh] max-h-[100vh] overflow-hidden'}`}
+                    >
                         {jobDetailsLoading ? (
                             <Loader message="Loading job details..." />
                         ) : jobDetailsError ? (
@@ -177,19 +196,19 @@ export default function JobDetailsPage() {
                                         alt="Company Logo"
                                         className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-lg object-contain bg-gray-100 border border-gray-200 flex-shrink-0 self-start"
                                     />
-                                    <div className="flex-1">
-                                        <div className="font-bold text-base sm:text-lg md:text-xl leading-tight mb-1.5">{selectedJobDetails.jobProfile}</div>
-                                        <div className="text-gray-600 text-sm sm:text-base mb-2">{selectedJobDetails.companyName}</div>
+                                    <div className="flex-1 min-w-0">
+                                        <div className="font-bold text-base sm:text-lg md:text-xl leading-tight mb-1.5 truncate">{selectedJobDetails.jobProfile}</div>
+                                        <div className="text-gray-600 text-sm sm:text-base mb-2 truncate">{selectedJobDetails.companyName}</div>
 
                                         {/* Job Tags */}
-                                        <div className="flex flex-wrap gap-1.5 mb-3">
+                                        <div className="flex flex-wrap gap-1 sm:gap-1.5 mb-3">
                                             {
                                                 selectedJobDetails.companyLocation && (
                                                     <Badge
                                                         color="bg-purple-100 text-purple-700 hover:bg-purple-200"
                                                     >
                                                         <FaMapMarkerAlt className="text-purple-500 text-xs" />
-                                                        <span className="truncate">{selectedJobDetails.companyLocation}</span>
+                                                        <span className="truncate text-xs sm:text-sm">{selectedJobDetails.companyLocation}</span>
                                                     </Badge>
                                                 )
                                             }
@@ -200,7 +219,7 @@ export default function JobDetailsPage() {
                                                         color="bg-orange-100 text-orange-700 hover:bg-orange-200"
                                                     >
                                                         <FaUserTie className="text-orange-500 text-xs" />
-                                                        <span className="truncate">{selectedJobDetails.opportunityType}</span>
+                                                        <span className="truncate text-xs sm:text-sm">{selectedJobDetails.opportunityType}</span>
                                                     </Badge>
                                                 )
                                             }
@@ -209,7 +228,7 @@ export default function JobDetailsPage() {
                                                     <Badge
                                                         color="bg-emerald-100 text-emerald-600 hover:bg-emerald-200"
                                                     >
-                                                        <span className="truncate">₹{selectedJobDetails.salary}</span>
+                                                        <span className="truncate text-xs sm:text-sm">₹{selectedJobDetails.salary}</span>
                                                     </Badge>)
                                             }
                                             {
@@ -218,7 +237,7 @@ export default function JobDetailsPage() {
                                                         color="bg-blue-100 text-blue-700 hover:bg-blue-200"
                                                     >
                                                         <FaCalendarAlt className="text-blue-500 text-xs inline mr-1" />
-                                                        <span className="truncate">{selectedJobDetails.postedDaysAgo}</span>
+                                                        <span className="truncate text-xs sm:text-sm">{selectedJobDetails.postedDaysAgo}</span>
                                                     </Badge>
                                                 )
                                             }
@@ -228,7 +247,7 @@ export default function JobDetailsPage() {
                                                         color="bg-teal-100 text-teal-700 hover:bg-teal-200"
                                                     >
                                                         <FaUsers className="text-teal-500 text-xs inline mr-1" />
-                                                        <span className="truncate">{selectedJobDetails.numberOfApplicants} applicants</span>
+                                                        <span className="truncate text-xs sm:text-sm">{selectedJobDetails.numberOfApplicants} applicants</span>
                                                     </Badge>
                                                 )
                                             }
@@ -236,7 +255,7 @@ export default function JobDetailsPage() {
                                                 color="bg-teal-100 text-teal-700 hover:bg-teal-200"
                                             >
                                                 <FaUsers className="text-teal-500 text-xs inline mr-1" />
-                                                <span className="truncate">{selectedJobDetails.numberOfApplicants} applicants</span>
+                                                <span className="truncate text-xs sm:text-sm">{selectedJobDetails.numberOfApplicants} applicants</span>
                                             </Badge>
                                             {
                                                 selectedJobDetails.jobType && (
@@ -244,7 +263,7 @@ export default function JobDetailsPage() {
                                                         color="bg-indigo-100 text-indigo-700 hover:bg-indigo-200"
                                                     >
                                                         <FaLaptop className="text-indigo-500 text-xs inline mr-1" />
-                                                        <span className="truncate">{selectedJobDetails.jobType}</span>
+                                                        <span className="truncate text-xs sm:text-sm">{selectedJobDetails.jobType}</span>
                                                     </Badge>
                                                 )
                                             }
@@ -263,7 +282,8 @@ export default function JobDetailsPage() {
                                                 console.log('Applying for job:', selectedJobDetails.jobId);
                                             }}
                                         >
-                                            Apply Now
+                                            <span className="hidden sm:inline">Apply Now</span>
+                                            <span className="sm:hidden">Apply</span>
                                         </Button>
                                     </div>
                                 </div>
@@ -282,7 +302,7 @@ export default function JobDetailsPage() {
                                 </div>
 
                                 {/* Job Details - Single Column */}
-                                <div className="space-y-4 mb-4">
+                                <div className="space-y-3 sm:space-y-4 mb-4">
                                     {/* Internship Details */}
                                     {selectedJobDetails.opportunityType === 'Internship' && (
                                         <div className="bg-blue-50 rounded-lg p-3 border border-blue-200">
@@ -486,7 +506,7 @@ export default function JobDetailsPage() {
                                         Recruiter Information
                                     </h3>
                                     <div className="bg-blue-50 rounded-lg p-3 sm:p-4 border border-blue-200">
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                             <div className="flex items-center gap-2">
                                                 <img
                                                     src={getImageUrl(selectedJobDetails.recruiterProfilePic)}
@@ -530,7 +550,7 @@ export default function JobDetailsPage() {
                                         <FaCheckCircle className="text-blue-600 text-sm" />
                                         Verification Status
                                     </h3>
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                                         <div className={`flex items-center gap-1.5 p-2 rounded-lg ${selectedJobDetails.isEmailVerified ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`}>
                                             <FaEnvelope className={`text-xs ${selectedJobDetails.isEmailVerified ? 'text-green-600' : 'text-red-600'}`} />
                                             <span className={`text-xs font-medium ${selectedJobDetails.isEmailVerified ? 'text-green-700' : 'text-red-700'}`}>

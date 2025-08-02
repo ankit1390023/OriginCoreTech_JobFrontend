@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import { FaTimes, FaInfoCircle } from "react-icons/fa";
 import { useDomainsApi } from "../../../hooks/useDomainsApi";
 import { useSkillApi } from "../../../hooks/useSkillApi";
@@ -16,6 +17,7 @@ export default function DomainsForm() {
   const [selectedSkills, setSelectedSkills] = useState({}); // Store selected skills for each domain
   const [showMoreSkills, setShowMoreSkills] = useState({}); // Track show more state for each domain
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
 
   // Use custom hook for skills API with Web Development as default domain
   const {
@@ -38,6 +40,9 @@ export default function DomainsForm() {
 
   // Add the image upload hook
   const { uploadImage, batchUploadImages } = useUploadImageApi();
+
+  // Get userId from Redux state
+  const userId = useSelector((state) => state.auth.user?.id);
 
   // Filter domains based on search input
   const filteredDomains = allDomains.filter((domain) => {
@@ -179,9 +184,7 @@ export default function DomainsForm() {
             skills.push({
               skill_id: skills.length + 1,
               skill: skill,
-              domain: domain.name,
               authority: domain.company || "Self",
-              // certificate_image will be added after upload
             });
           });
         } else {
@@ -189,9 +192,7 @@ export default function DomainsForm() {
           skills.push({
             skill_id: skills.length + 1,
             skill: domain.name,
-            domain: domain.name,
             authority: domain.company || "Self",
-            // certificate_image will be added after upload
           });
         }
       });
@@ -221,23 +222,15 @@ export default function DomainsForm() {
         return;
       }
 
-      // 2. Map certificate URLs to skills (assuming one certificate per domain, assign to all skills for that domain)
-      domainsWithCertificates.forEach((domain, domainIdx) => {
-        const certUrl = certificateUrls[domainIdx];
-        // Find all skills for this domain and assign the certificate URL
-        skills.forEach((skill) => {
-          if (skill.domain === domain.name) {
-            skill.certificate_image = certUrl;
-          }
-        });
+      // 2. Clean up skills array - remove certificate_image property as it will be sent separately
+      skills.forEach((skill) => {
+        delete skill.certificate_image;
       });
-      console.log('Step 3: Final skills array with certificate_image URLs:', skills);
+      console.log('Step 3: Final skills array (cleaned):', skills);
 
-      // 3. Upload skills using custom hook
-      const userId = localStorage.getItem("userId");
-      const payload = { user_id: userId, skills };
-      console.log('Step 4: Payload sent to uploadSkills API:', payload);
-      const response = await uploadSkills(userId, skills);
+      // 3. Upload skills using custom hook - pass certificate URLs separately
+      console.log('Step 4: Certificate URLs to pass to API:', certificateUrls);
+      const response = await uploadSkills(userId, skills, certificateUrls);
 
       console.log("Skills uploaded successfully:", response);
       alert("Skills uploaded successfully!");
@@ -285,6 +278,7 @@ export default function DomainsForm() {
         <Label>Areas of Interest</Label>
         <div className="flex items-center border rounded-md px-1.5 sm:px-2 py-1.5 sm:py-2 mb-1 sm:mb-2 focus-within:ring-1 focus-within:ring-blue-400 focus-within:border-transparent transition-all duration-200 border-gray-300 hover:border-gray-400">
           <input
+            type="text"
             className="flex-1 outline-none text-xs"
             placeholder="Search and add domains..."
             value={searchInput}
@@ -299,21 +293,7 @@ export default function DomainsForm() {
               }
             }}
           />
-          <button
-            className="ml-2 text-gray-400"
-            onClick={() => searchInput.trim() && filteredDomains.length > 0 && handleAddDomain(filteredDomains[0].domain_name || filteredDomains[0])}
-            type="button"
-          >
-            <svg width="16" height="16" fill="none">
-              <circle cx="8" cy="8" r="7" stroke="#888" />
-              <path
-                d="M8 4v8M4 8h8"
-                stroke="#888"
-                strokeWidth="2"
-                strokeLinecap="round"
-              />
-            </svg>
-          </button>
+         
         </div>
 
         {/* Show matched domains when searching */}
@@ -448,7 +428,8 @@ export default function DomainsForm() {
             <div className="mb-2 sm:mb-3">
               <Label>Where did you learn this skill?</Label>
               <input
-                className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-transparent text-xs transition-all duration-200 border-gray-300 hover:border-gray-400"
+                type="text"
+                 className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-transparent text-xs transition-all duration-200 border-gray-300 hover:border-gray-400"
                 placeholder="College/ Company name"
                 value={domain.company}
                 onChange={(e) => handleCompanyChange(idx, e.target.value)}
@@ -467,6 +448,7 @@ export default function DomainsForm() {
       {/* Submit button for skills */}
       <div className="mt-2 sm:mt-3">
         <Button
+          type="button"
           variant="secondary"
           loading={skillUploadLoading}
           disabled={skillUploadLoading}

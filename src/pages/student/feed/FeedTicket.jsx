@@ -43,7 +43,7 @@ const FeedTicket = () => {
         <div className="hidden lg:block flex-grow "></div>
 
     <section
-      className="w-full max-w-[729px] h-auto min-h-[466px] rounded-[10px] p-4 sm:p-5 bg-white flex flex-col gap-2 shadow-md mx-auto mt-6 sm:mt-10"
+     className="bg-white rounded-[10px] p-5 shadow-lg mt-2 w-[780px] h-[1000px] opacity-100 gap-[10px]"
     >
       <h2 className="text-2xl sm:text-3xl font-bold mb-1">Create Quick Ticket</h2>
       <p className="text-gray-500 text-sm sm:text-base mb-4">Write and address new queries and issues</p>
@@ -80,7 +80,7 @@ const FeedTicket = () => {
       </form>
     </section>
      {/* Profile Card */}
-     <aside className="hidden lg:block w-full max-w-[350px] p-2 sticky top-4 h-fit mt-5 sm:mt-10">
+     <aside className="hidden lg:block w-full max-w-[350px] p-2 sticky top-4 h-fit">
   <FeedRightProfile />
 </aside>
         {/* Right Spacer */}

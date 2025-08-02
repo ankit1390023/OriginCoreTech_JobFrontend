@@ -315,7 +315,7 @@ export default function RecruiterPostJobInternDetails() {
 
   // Fetch all domains on component mount
   useEffect(() => {
-    fetchAllDomains();
+    fetchAllDomains(token);
   }, []);
 
   const fetchAllDomains = async () => {

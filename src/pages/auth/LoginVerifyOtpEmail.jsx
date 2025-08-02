@@ -34,6 +34,8 @@ export default function LoginVerifyOtpEmail() {
 
   const [loading, setLoading] = useState(false);
   const [otpError, setOtpError] = useState("");
+  const [resendTimer, setResendTimer] = useState(0);
+  const [resendLoading, setResendLoading] = useState(false);
   const otpRefs = [useRef(), useRef(), useRef(), useRef()];
   const otpValue = watch("otp") || "";
   const navigate = useNavigate();
@@ -46,6 +48,60 @@ export default function LoginVerifyOtpEmail() {
       setValue("email", rememberedEmail);
     }
   }, [setValue]);
+
+  // Timer effect for resend OTP
+  useEffect(() => {
+    let interval;
+    if (resendTimer > 0) {
+      interval = setInterval(() => {
+        setResendTimer((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [resendTimer]);
+
+  const handleResendOtp = async () => {
+    const email = watch("email");
+    if (!email) {
+      setOtpError("Please enter your email first");
+      return;
+    }
+
+    setResendLoading(true);
+    setOtpError("");
+    
+    try {
+      await axios.post(`${BASE_URL}/otp/send-otp`, {
+        email: email,
+      });
+      setResendTimer(15);
+      setOtpError(""); // Clear any previous errors
+    } catch (error) {
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
+        const errorMessage = error.response.data.message;
+        
+        // Extract waiting time from error message if it contains seconds
+        const timeMatch = errorMessage.match(/(\d+)\s*seconds?/i);
+        if (timeMatch) {
+          const waitTime = parseInt(timeMatch[1]);
+          setResendTimer(waitTime);
+          setOtpError(""); // Don't show the error message, just start the timer
+        } else {
+          setOtpError(errorMessage);
+        }
+      } else {
+        setOtpError("Failed to resend OTP. Please try again.");
+      }
+    } finally {
+      setResendLoading(false);
+    }
+  };
 
   const handleOtpChange = (index, value) => {
     if (value.length > 1) {
@@ -181,6 +237,36 @@ export default function LoginVerifyOtpEmail() {
             <ErrorMessage size="small" className="mb-1 sm:mb-2">
               {otpError}
             </ErrorMessage>
+          )}
+
+          {/* Timer Display */}
+          {resendTimer > 0 && (
+            <div className="text-center mb-2 sm:mb-3 p-2 bg-blue-50 border border-blue-200 rounded-md">
+              <div className="flex items-center justify-center space-x-2">
+                <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                <p className="text-sm text-gray-700">
+                  Resend OTP available in <span className="font-bold text-blue-600 text-lg">{resendTimer}s</span>
+                </p>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-1 mt-2">
+    
+              </div>
+            </div>
+          )}
+
+          {/* Resend OTP Button - Only show when timer is 0 */}
+          {resendTimer === 0 && (
+            <Button
+              type="button"
+              variant="outline"
+              loading={resendLoading}
+              disabled={resendLoading}
+              size="small"
+              className="w-full mb-1 sm:mb-2"
+              onClick={handleResendOtp}
+            >
+              {resendLoading ? "Sending..." : "Resend OTP"}
+            </Button>
           )}
 
           {/* Submit Button - Using new UI component */}

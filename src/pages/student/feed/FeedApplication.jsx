@@ -60,7 +60,7 @@ const FeedApplication = () => {
                 <div className="hidden lg:block flex-grow"></div>
                 {/* Left: Applications List (scrollable on lg+) */}
                 <section 
-                    className="max-w-4xl bg-white mt-2 mx-auto p-4 sm:p-6 lg:p-8 w-full lg:w-[60%] lg:h-screen lg:overflow-y-auto"
+                    className="bg-white rounded-[10px] p-5 shadow-lg mt-2 w-[800px] h-[1000px] opacity-100 gap-[10px]"
                 >
                     {/* Header */}
                     <h1 className="text-2xl sm:text-3xl font-bold text-black mb-4 sm:mb-6">

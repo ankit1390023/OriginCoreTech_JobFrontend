@@ -225,25 +225,14 @@ const FeedResume = () => {
 
   return (
     <MainLayout>
-  <div className="flex justify-center bg-gray-100 min-h-screen px-2 lg:px-8 items-start">
+  <div className="flex justify-center gap-2 bg-gray-100 min-h-screen px-2 lg:px-8 items-start">
   {/* Left Spacer */}
-  <div className="hidden lg:block w-4"></div>
+  <div className="hidden lg:block flex-grow "></div>
     {/* Left Spacer */}
-    <section className="min-h-screen  py-4 sm:py-6 lg:py-8 px-2 sm:px-4 lg:px-6 ">
-      <div 
-        className="mx-auto bg-white rounded-lg shadow-lg"
-        style={{
-          width: '100%',
-          maxWidth: '729px',
-          minHeight: 'auto',
-          marginTop: '1px',
-          marginLeft: 'auto',
-          marginRight: 'auto',
-          borderRadius: '10px',
-          padding: '16px',
-          gap: '10px',
-          opacity: 1
-        }}
+    {/* Resume Template Section */}
+      <section 
+        className="bg-white rounded-[10px] p-5 shadow-lg mt-2 w-[780px] h-auto opacity-100 gap-[10px]"
+      
       >
         {/* Page Title */}
         <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 lg:mb-8 px-2">
@@ -376,14 +365,14 @@ const FeedResume = () => {
             Download
           </Button>
         </div>
-      </div>
-    </section>
+      </section>
+
     {/* Profile Card */}
     <aside className="hidden lg:block w-full max-w-[350px] p-2 sticky top-4 h-fit ml-4">
                     <FeedRightProfile />
                 </aside>
                 {/* Right Spacer */}
-                <div className="hidden lg:block w-4"></div>
+                <div className="hidden lg:block flex-grow "></div>
                 </div>
     </MainLayout>
   );

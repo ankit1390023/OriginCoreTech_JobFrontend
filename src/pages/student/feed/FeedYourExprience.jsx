@@ -330,9 +330,9 @@ const FeedYourExprience = () => {
         <div className="hidden lg:block flex-grow "></div>
 
         {/* Responsive Main Card */}
-        <section className="bg-gray-100 flex flex-col items-center w-full max-w-[750px] p-2 mx-auto">
-          <div className="w-full flex flex-col">
-            <div className="bg-white rounded border shadow-sm w-full flex flex-col">
+        <section className="w-full max-w-[95vw] sm:max-w-[600px] md:max-w-[700px] lg:max-w-[800px] h-auto p-3 sm:p-4 md:p-5 lg:p-6 rounded-[5px] bg-white flex flex-col shadow-lg gap-3 sm:gap-4 mt-2 mx-auto">
+       
+            <div className="bg-white rounded   w-full flex flex-col">
               {/* Header */}
               <div className="mb-4 sm:mb-6 px-4 sm:px-6 pt-4 sm:pt-6">
                 <div className="flex items-center gap-3 mb-3 sm:mb-4">
@@ -590,7 +590,7 @@ const FeedYourExprience = () => {
                 </Button>
               </div>
             </div>
-          </div>
+        
         </section>
 
         {/* Certificate Modal */}

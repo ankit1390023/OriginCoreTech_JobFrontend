@@ -63,13 +63,11 @@ const FeedChangePassword = () => {
 
   return (
     <MainLayout>
-      <div className="flex flex-col lg:flex-row justify-center items-start min-h-screen bg-gray-100 px-2 sm:px-4 md:px-8">
-        {/* Left Spacer */}
+     <div className="flex justify-between gap-2 bg-gray-100 min-h-screen px-2 lg:px-8"> {/* Left Spacer */}
         <div className="hidden lg:block flex-grow"></div>
         <section
-          className="w-full max-w-[95vw] sm:max-w-[500px] md:max-w-[600px] lg:max-w-[720px] h-auto rounded-[10px] p-4 sm:p-6 md:p-8 bg-white flex flex-col gap-2 shadow-md mx-auto mt-4 lg:mt-8 border border-blue-200"
-          style={{ top: '99px', left: '159px', opacity: 1 }}
-        >
+     className="bg-white rounded-[10px] p-5 shadow-lg mt-2 w-[780px] h-[500px] opacity-100 gap-[10px]"
+    >
           <h2 className="text-2xl sm:text-3xl font-bold mb-1">Change password</h2>
           <p className="text-gray-500 text-xs sm:text-sm mb-4">
             Please enter your current password and choose a new password to update your account security.
@@ -88,7 +86,7 @@ const FeedChangePassword = () => {
               />
               <button
                 type="button"
-                className="absolute right-3 bottom-2.5 text-gray-400 hover:text-gray-700 focus:outline-none"
+                className="absolute right-3 bg-white  bottom-2.5 text-gray-400 hover:text-gray-700 focus:outline-none"
                 tabIndex={-1}
                 onClick={() => setShowOldPassword((prev) => !prev)}
               >
@@ -109,7 +107,7 @@ const FeedChangePassword = () => {
               />
               <button
                 type="button"
-                className="absolute right-3 bottom-2.5 text-gray-400 hover:text-gray-700 focus:outline-none"
+                className="absolute right-3 bg-white bottom-2.5 text-gray-400 hover:text-gray-700 focus:outline-none"
                 tabIndex={-1}
                 onClick={() => setShowNewPassword((prev) => !prev)}
               >
@@ -130,7 +128,7 @@ const FeedChangePassword = () => {
               />
               <button
                 type="button"
-                className="absolute right-3 bottom-2.5 text-gray-400 hover:text-gray-700 focus:outline-none"
+                className="absolute right-3 bg-white bottom-2.5 text-gray-400 hover:text-gray-700 focus:outline-none"
                 tabIndex={-1}
                 onClick={() => setShowRetypePassword((prev) => !prev)}
               >
@@ -153,7 +151,7 @@ const FeedChangePassword = () => {
           </form>
         </section>
         {/* Profile Card (only on large screens) */}
-        <aside className="hidden lg:block w-full max-w-[350px] p-2 sticky top-4 h-fit lg:mt-8">
+        <aside className="hidden lg:block w-full max-w-[350px] p-2 sticky top-4 h-fit">
           <FeedRightProfile />
         </aside>
         {/* Right Spacer */}

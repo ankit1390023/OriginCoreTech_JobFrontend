@@ -2,6 +2,16 @@ import React from "react";
 import { useEducationData } from "../../../hooks/useEducationData";
 import { Loader, Input, Select, Label, ErrorMessage } from "../../../components/ui";
 
+// Generate year options for dropdown
+const generateYearOptions = () => {
+  const currentYear = new Date().getFullYear();
+  const years = [];
+  for (let year = currentYear + 5; year >= 1990; year--) {
+    years.push({ value: year.toString(), label: year.toString() });
+  }
+  return years;
+};
+
 export default function EducationInfo({ register, errors, watch }) {
   const {
     data: { jobRoles, courses, specializations, colleges },
@@ -211,26 +221,27 @@ export default function EducationInfo({ register, errors, watch }) {
           />
           <div className="flex gap-1 sm:gap-2 mb-2 sm:mb-3">
             <div className="flex-1">
-              <Input
+              <Select
                 label="Start Year"
-                type="number"
                 placeholder="Choose year"
                 error={errors.startYear?.message}
+                options={generateYearOptions()}
                 {...register("startYear", {
                   required: "Start Year is required",
                 })}
               />
             </div>
             <div className="flex-1">
-              <Input
+              <Select
                 label="End Year"
-                type="number"
                 placeholder="Choose year"
                 error={errors.endYear?.message}
+                options={generateYearOptions()}
                 {...register("endYear", { required: "End Year is required" })}
               />
             </div>
           </div>
+          
         </>
       )}
       {watch("type") === "Fresher" && (

@@ -16,7 +16,7 @@ export default function Header() {
     };
 
     return (
-        <div className="relative flex items-center justify-between px-2 sm:px-3 md:px-4 py-1 w-full h-14" style={{ background: 'linear-gradient(90deg, #f5f6f7 60%, #ffe9b3 100%)' }}>
+        <div className="sticky top-0 z-50 flex items-center justify-between px-2 sm:px-3 md:px-4 py-1 w-full h-14 bg-white shadow-sm" style={{ background: 'linear-gradient(90deg, #f5f6f7 60%, #ffe9b3 100%)' }}>
             {/* Logo */}
             <div className="flex items-center">
                 <p className="text-base sm:text-lg md:text-xl font-bold">
@@ -97,7 +97,7 @@ export default function Header() {
 
             {/* Mobile Search Bar - Expandable */}
             {isSearchExpanded && (
-                <div className="absolute top-full left-0 right-0 bg-white shadow-lg p-2 md:p-3 z-20 md:hidden">
+                <div className="absolute top-full left-0 right-0 bg-white shadow-lg p-2 md:p-3 z-50 md:hidden">
                     <div className="flex items-center rounded-full px-2 md:px-3 py-1.5 border border-gray-200">
                         <input
                             type="text"
@@ -112,7 +112,7 @@ export default function Header() {
 
             {/* Mobile Navigation Menu */}
             {isMobileMenuOpen && (
-                <div className="absolute top-full left-0 right-0 bg-white shadow-lg z-20 md:hidden">
+                <div className="absolute top-full left-0 right-0 bg-white shadow-lg z-50 md:hidden">
                     <div className="flex flex-col p-2 md:p-3 space-y-2 md:space-y-3">
                         {/* Mobile Nav Links */}
                         <div className="flex flex-col space-y-1.5 md:space-y-2">

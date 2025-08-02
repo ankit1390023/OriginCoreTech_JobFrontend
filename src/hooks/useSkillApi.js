@@ -8,8 +8,17 @@ export const useSkillApi = () => {
     const { token } = useSelector((state) => state.auth);
 
     // Upload skills
-    const uploadSkills = useCallback(async (user_id, skills, certificateFiles) => {
-        if (!token) return;
+    const uploadSkills = useCallback(async (user_id, skills, certificateFiles = []) => {
+        if (!token) {
+            setError('Authentication token not found. Please log in again.');
+            return;
+        }
+        
+        if (!user_id) {
+            setError('User ID is required.');
+            return;
+        }
+        
         try {
             setLoading(true);
             setError(null);

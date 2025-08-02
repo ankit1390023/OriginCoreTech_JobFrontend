@@ -4,7 +4,8 @@ import websiteLogo from "../../assets/WebsiteLogo.svg";
 import { Link } from "react-router-dom";
 export default function AuthLayout({ children, title, subtitle, showIllustration = true }) {
     return (
-        <div className="w-full min-h-screen bg-white overflow-hidden relative">
+        <div className="fixed inset-0 w-full h-screen bg-white overflow-hidden sticky top-0 z-50">
+
             {/* Large screen background split: top half blue, bottom half white */}
             <div className="hidden lg:block absolute inset-0 z-0 pointer-events-none">
                 <div className="w-full h-1/2 bg-[#072366]"></div>

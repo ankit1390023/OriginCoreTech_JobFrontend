@@ -54,13 +54,11 @@ const FeedAuthentication = () => {
 
   return (
     <MainLayout>
-    <div className="flex justify-center bg-gray-100 min-h-screen px-2 lg:px-8 items-start">
+    <div className="flex justify-center  bg-gray-100 min-h-screen px-2 lg:px-8 items-start">
     {/* Left Spacer */}
-    <div className="hidden lg:block w-4"></div>
-    <section 
-      className="w-[729px] h-[1100px] top-[99px]  mt-2 left-[159px] gap-[10px] opacity-100 bg-white border border-blue-200 rounded-[10px] p-5"
-
-    
+    <div className="hidden lg:block flex-grow "></div>
+    <section
+     className="bg-white rounded-[10px] p-5 shadow-lg mt-2 w-[780px] h-[1100px] opacity-100 gap-[10px]"
     >
       {/* Title */}
       <h1 className="text-2xl font-bold text-black mb-6">Authentication</h1>
@@ -248,7 +246,7 @@ const FeedAuthentication = () => {
                     <FeedRightProfile />
                 </aside>
                 {/* Right Spacer */}
-                <div className="hidden lg:block w-4"></div>
+                <div className="hidden lg:block flex-grow "></div>
                 </div>
     </MainLayout>
   );

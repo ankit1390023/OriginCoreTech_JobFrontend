@@ -3,12 +3,16 @@ import { Link, useNavigate } from 'react-router-dom';
 import { FaCamera } from 'react-icons/fa';
 import MainLayout from '../../../components/layout/MainLayout';
 import FeedRightProfile from './FeedRightProfile';
+import uploadImageApi from '../../../api/uploadImageApi';
 
 const FeedView = () => {
   const navigate = useNavigate();
   const [profileImage, setProfileImage] = useState('/src/assets/dummyProfile1.jpg');
   const [activeSection, setActiveSection] = useState(null);
   const [showContent, setShowContent] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadStatus, setUploadStatus] = useState(null);
+  const [resumeUrl, setResumeUrl] = useState(null);
 
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
@@ -40,8 +44,55 @@ const FeedView = () => {
   };
 
   const handleUploadResume = () => {
-    console.log('Upload Resume clicked');
+    // Create a hidden file input
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = '.pdf';
+    fileInput.style.display = 'none';
+    
+    fileInput.onchange = async (event) => {
+      const file = event.target.files[0];
+      if (file) {
+        if (file.type !== 'application/pdf') {
+          setUploadStatus({ type: 'error', message: 'Please select a PDF file' });
+          return;
+        }
+        
+        if (file.size > 10 * 1024 * 1024) { // 10MB limit
+          setUploadStatus({ type: 'error', message: 'File size should be less than 10MB' });
+          return;
+        }
+
+        setIsUploading(true);
+        setUploadStatus(null);
+        
+        try {
+          // Get token from localStorage or your auth state
+          const token = localStorage.getItem('token'); // Adjust based on your auth implementation
+          
+          const uploadedUrl = await uploadImageApi.uploadImage(file, 'resume', token);
+          
+          if (uploadedUrl) {
+            setResumeUrl(uploadedUrl);
+            setUploadStatus({ type: 'success', message: 'Resume uploaded successfully!' });
+          } else {
+            setUploadStatus({ type: 'error', message: 'Failed to upload resume' });
+          }
+        } catch (error) {
+          console.error('Error uploading resume:', error);
+          setUploadStatus({ 
+            type: 'error', 
+            message: error.response?.data?.message || 'Failed to upload resume. Please try again.' 
+          });
+        } finally {
+          setIsUploading(false);
+        }
+      }
+    };
+    
+    fileInput.click();
   };
+  
 
   const handleGetVerified = () => {
     console.log('Get Verified clicked');
@@ -55,7 +106,7 @@ const FeedView = () => {
                 {/* Feed Content */}
     
     <section
-      className="bg-white rounded-[10px] p-4 sm:p-6 shadow-lg relative overflow-hidden mx-auto mt-2  w-full max-w-[729px] min-h-[1000px]"
+      className="bg-white rounded-[10px] p-4 sm:p-6 shadow-lg relative overflow-hidden mx-auto mt-2  w-full max-w-[800px] min-h-[1000px]"
     >
       {/* Profile Section */}
       <div className="flex flex-col items-center mb-8">
@@ -96,11 +147,42 @@ const FeedView = () => {
             <div className="flex-1">
               <h3 className="font-semibold text-gray-900 mb-2">{section === 'Languages' ? 'Languages you know' : section}</h3>
             </div>
+
             <div className="flex items-center gap-2">
               {section === 'Resume' ? (
-                <button className="text-sm text-blue-600 hover:text-blue-800 transition-colors" onClick={handleUploadResume}>
-                  Upload Resume
-                </button>
+                <div className="flex flex-col items-end gap-2">
+                  {resumeUrl ? (
+                    <div className="flex items-center gap-2">
+                      <a 
+                        href={resumeUrl} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-sm text-green-600 hover:text-green-800 transition-colors"
+                      >
+                        View Resume
+                      </a>
+                      <button 
+                        className="text-sm text-blue-600 hover:text-blue-800 transition-colors" 
+                        onClick={handleUploadResume}
+                      >
+                        Replace
+                      </button>
+                    </div>
+                  ) : (
+                    <button 
+                      className="text-sm text-blue-600 hover:text-blue-800 transition-colors" 
+                      onClick={handleUploadResume}
+                      disabled={isUploading}
+                    >
+                      {isUploading ? 'Uploading...' : 'Upload Resume'}
+                    </button>
+                  )}
+                  {uploadStatus && (
+                    <div className={`text-xs ${uploadStatus.type === 'success' ? 'text-green-600' : 'text-red-600'}`}>
+                      {uploadStatus.message}
+                    </div>
+                  )}
+                </div>
               ) : section === 'Authentication' ? (
                 <>
                   <button className="text-sm text-blue-600 hover:text-blue-800 transition-colors" onClick={handleGetVerified}>
@@ -116,6 +198,8 @@ const FeedView = () => {
                 </button>
               )}
             </div>
+
+
           </div>
         ))}
       </div>
@@ -145,10 +229,6 @@ const FeedView = () => {
               </p>
             )}
 
-
-
-
-
             {activeSection === 'Languages' && (
               <div className="space-y-3">
                 {[
@@ -164,6 +244,7 @@ const FeedView = () => {
               </div>
             )}
           </div>
+
         </div>
       )}
     </section>

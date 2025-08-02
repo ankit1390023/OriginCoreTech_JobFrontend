@@ -59,8 +59,9 @@ export default function FeedHelp() {
         {/* Left Spacer */}
         <div className="hidden lg:block flex-grow"></div>
         {/* Main Content Section */}
-        <section className="w-full max-w-[600px] p-2 mx-auto bg-white flex flex-col shadow-lg rounded-[10px] gap-2 mt-2">
-      {/* Header */}
+        <section 
+                    className="bg-white rounded-[10px] p-5 shadow-lg mt-2 w-[800px] h-[1000px] opacity-100 gap-[10px]"
+                >{/* Header */}
       <div className="px-4 sm:px-6 pt-4 sm:pt-6 pb-2 border-b border-gray-200">
         <h1 className="text-2xl sm:text-3xl font-bold mb-1">How can we help you?</h1>
         <p className="text-gray-500 text-xs sm:text-sm mb-2">Write and address new queries and issues</p>

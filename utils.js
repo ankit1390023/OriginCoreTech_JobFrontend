@@ -2,6 +2,9 @@ const API_BASE = import.meta.env.VITE_BASE_URL; // "http://localhost:5000/api"
 
 // Utility function to get image url
 export function getImageUrl(filePath) {
+    if(!filePath)return(
+       '/default-image.png'
+    );
     // Replace backslashes with forward slashes
     let cleanPath = filePath.replace(/\\/g, "/");
     // Remove leading 'uploads/' if present

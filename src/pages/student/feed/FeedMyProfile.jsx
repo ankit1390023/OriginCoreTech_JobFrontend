@@ -93,7 +93,7 @@ const FeedMyProfile = () => {
         {/* Left Spacer */}
         <div className="hidden lg:block flex-grow "></div>
                  <section
-           className="w-[729px] max-w-[800px] p-2 mt-2 mx-auto bg-white"
+           className="w-[800px] max-w-[800px] p-2 mt-2 mx-auto bg-white"
          >
           {/* Profile Header */}
           <div className="text-center space-y-4 mb-6">
