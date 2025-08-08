@@ -4,10 +4,14 @@ const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 // API service functions for company recruiter profile
 export const recruiterApi = {
-    // Create recruiter profile with file upload support(new )
+    // Create recruiter profile with file upload support (main method)
     createProfileWithFileUpload: async (profileData, token) => {
         try {
-            //create formData with multipart upload
+            if (!token) {
+                console.error(" createProfileWithFileUpload - Request setup error: Token is missing in createProfileWithFileUpload");
+                throw new Error("Token is missing in createProfileWithFileUpload");
+            }
+            // Create formData with multipart upload
             const formData = new FormData();
 
             // Add text fields
@@ -22,7 +26,6 @@ export const recruiterApi = {
             formData.append('isPhoneVerified', profileData.isPhoneVerified);
             formData.append('isGstVerified', profileData.isGstVerified);
 
-            console.log("profileData from recruiterApi", profileData.logoPic);
             // Add files if they exist
             if (profileData.logoUrl && profileData?.logoUrl[0]) {
                 formData.append("logoUrl", profileData?.logoUrl[0]);
@@ -30,17 +33,17 @@ export const recruiterApi = {
             if (profileData.profilePic && profileData?.profilePic[0]) {
                 formData.append("profilePic", profileData?.profilePic[0]);
             }
-            console.log("formData", formData)
+
             const response = await axios.post(`${BASE_URL}/company-recruiter/profile/upload`, formData, {
                 headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'multipart/form-data'
+                    'Authorization': `Bearer ${token}`
+                    // Don't set Content-Type - let browser set it with boundary for multipart
                 }
             });
             console.log("response from createProfileWithFileUpload", response.data);
             return response.data;
         } catch (error) {
-            console.log("error while cretaProfileWithFileUpload from recruiterApi")
+            console.log("error while createProfileWithFileUpload from recruiterApi", error);
             throw error;
         }
     },
@@ -117,8 +120,8 @@ export const recruiterApi = {
             formData.append('isGstVerified', profileData.isGstVerified);
 
             // Add files if they exist
-            if (profileData.logo && profileData.logo instanceof File) {
-                formData.append('logo', profileData.logo);
+            if (profileData.logoUrl && profileData.logoUrl instanceof File) {
+                formData.append('logoUrl', profileData.logoUrl);
             }
             if (profileData.profilePic && profileData.profilePic instanceof File) {
                 formData.append('profilePic', profileData.profilePic);

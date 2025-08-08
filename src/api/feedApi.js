@@ -18,6 +18,7 @@ const feedApi = {
             throw error;
         }
     },
+
     getFeed: async (page, limit, token) => {
         try {
             const response = await axios.get(`${BASE_URL}/feed/posts?page=${page}&limit=${limit}`,
@@ -37,6 +38,7 @@ const feedApi = {
             throw error;
         }
     },
+    
     postComment: async (postId, data, token) => {
         try {
             const response = await axios.post(`${BASE_URL}/feed/posts/${postId}/comment`, data,

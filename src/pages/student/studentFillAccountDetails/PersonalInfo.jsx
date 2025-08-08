@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useFormContext } from "react-hook-form";
-import { useEducationData } from "../../../hooks/useEducationData";
+import { useLocations } from "../../../hooks/useLocations";
 import { Loader, Input, Select, Label, ErrorMessage, PhoneInput } from "../../../components/ui";
 import { useSelector } from "react-redux";
 
@@ -21,19 +21,19 @@ export default function PersonalInfo() {
     }
   }, [user, setValue]);
   const {
-    data,
-    loading,
-    error,
-    refetch,
-  } = useEducationData();
-  const locations = Array.isArray(data?.locations) ? data.locations : [];
+    data: locationData,
+    loading: locationLoading,
+    error: locationError,
+    refetch: refetchLocations,
+  } = useLocations();
+  const locations = Array.isArray(locationData?.data) ? locationData.data : [];
 
   const CustomErrorMessage = ({ message }) => (
     <div className="w-full p-3 border rounded bg-red-50 text-red-500 text-xs">
       <div className="flex items-center justify-between">
         <span>{message}</span>
         <button
-          onClick={refetch}
+          onClick={refetchLocations}
           className="ml-2 px-2 py-1 bg-red-500 text-white rounded text-xs hover:bg-red-600 transition-colors"
         >
           Retry
@@ -85,14 +85,17 @@ export default function PersonalInfo() {
         error={errors.dob?.message}
         {...register("dob")}
       />
-      {loading ? (
+      {locationLoading ? (
         <Loader message="Loading locations..." />
-      ) : error ? (
-        <CustomErrorMessage message={error} />
+      ) : locationError ? (
+        <CustomErrorMessage message={locationError} />
       ) : (
         <Select
           label="City"
-          options={locations.map(location => ({ value: location, label: location }))}
+          options={locations.map(location => ({ 
+            value: location.name || location.id, 
+            label: location.name || location.id 
+          }))}
           placeholder="Select your current city"
           error={errors.city?.message}
           {...register("city")}

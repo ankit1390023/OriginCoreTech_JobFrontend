@@ -5,7 +5,7 @@ import { FaEllipsisH } from 'react-icons/fa';
 import { FiHeart, FiMessageSquare, FiSend } from 'react-icons/fi';
 import { BsBookmarkFill } from 'react-icons/bs';
 import MainLayout from '../../../components/layout/MainLayout';
-import FeedRightProfile from './FeedRightProfile';
+import FeedRightProfile from '../feed/FeedRightProfile';
 import { useUserDetailsApi } from '../../../hooks/useUserDetailsApi';
 import useFeedApi from '../../../hooks/useFeedApi';
 import { formatTimeAgo, formatNumber } from '../../../../utils';
@@ -361,25 +361,47 @@ const FeedMyProfile = () => {
             ) : (
               <>
                 <div className="space-y-4">
-                  {displayedSkills.map((skill) => (
-                    <div key={skill.id} className="bg-white border rounded-lg p-4">
-                      <div className="flex items-start gap-3">
-                        <img src={skill.logo} alt={skill.skill} className="w-10 h-10 rounded-full object-cover" />
-                        <div className="flex-1">
-                          <div className="flex flex-col sm:flex-row sm:justify-between">
-                            <div>
-                              <h3 className="font-semibold text-gray-900">{skill.skill}</h3>
-                              <p className="text-gray-600">{skill.category}</p>
+                  {displayedSkills.map((skill, index) => {
+                    // Handle both formatted skill objects and raw API response objects
+                    const skillName = skill.skill || skill.domain || skill.name || 'Unknown Skill';
+                    const skillCategory = skill.category || 'Technical Skills';
+                    const skillDescription = skill.description || 
+                      (skill.subSkills && Array.isArray(skill.subSkills) ? 
+                        `Sub-skills: ${skill.subSkills.join(', ')}` : 
+                        `Proficient in ${skillName}`);
+                    const skillLogo = skill.logo || skill.certificate_image || "/src/assets/WebsiteLogo.svg";
+                    const skillId = skill.id || skill._id || index;
+                    
+                    return (
+                      <div key={skillId} className="bg-white border rounded-lg p-4">
+                        <div className="flex items-start gap-3">
+                          <img 
+                            src={skillLogo} 
+                            alt={skillName} 
+                            className="w-10 h-10 rounded-full object-cover"
+                            onError={(e) => {
+                              e.target.src = "/src/assets/WebsiteLogo.svg";
+                            }}
+                          />
+                          <div className="flex-1">
+                            <div className="flex flex-col sm:flex-row sm:justify-between">
+                              <div>
+                                <h3 className="font-semibold text-gray-900">{skillName}</h3>
+                                <p className="text-gray-600">{skillCategory}</p>
+                                {skill.authority && (
+                                  <p className="text-gray-500 text-xs">Authority: {skill.authority}</p>
+                                )}
+                              </div>
+                              <FaEllipsisH className="text-gray-400 mt-2 sm:mt-0 cursor-pointer" />
                             </div>
-                            <FaEllipsisH className="text-gray-400 mt-2 sm:mt-0 cursor-pointer" />
+                            <p className="text-gray-700 text-sm mt-2 leading-relaxed line-clamp-2">
+                              {skillDescription}
+                            </p>
                           </div>
-                          <p className="text-gray-700 text-sm mt-2 leading-relaxed line-clamp-2">
-                            {skill.description}
-                          </p>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
                 {skillsData.length > 1 && (
                   <div className="text-center mt-4">

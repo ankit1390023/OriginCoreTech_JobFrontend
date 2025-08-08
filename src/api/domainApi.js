@@ -6,15 +6,19 @@ export const domainApi = {
     // Fetch all skills (areas of interest) from backend
     getAllDomains: async (token) => {
         try {
+            console.log('Making domain API call with token:', !!token);
             const response = await axios.get(`${BASE_URL}/domain/all`,{
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 }
             });
+            console.log('Domain API response:', response.data);
             return response.data.domains || [];
         } catch (error) {
             console.error('Error fetching domains:', error);
+            console.log('Error response data:', error.response?.data);
+            console.log('Error status:', error.response?.status);
             throw error;
         }
     },

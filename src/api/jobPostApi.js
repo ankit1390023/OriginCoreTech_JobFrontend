@@ -7,6 +7,10 @@ export const jobPostApi = {
     // Create a new job post
     createJobPost: async (jobPostData, token) => {
         try {
+            if (!token) {
+                throw new Error('No auth token provided');
+              }
+
             const response = await axios.post(`${BASE_URL}/jobpost/create`, jobPostData, {
                 headers: {
                     'Content-Type': 'application/json',

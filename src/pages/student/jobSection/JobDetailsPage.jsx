@@ -6,16 +6,19 @@ import { useGetJobApi } from "../../../hooks/useGetJobApi";
 import { useGetJobById } from "../../../hooks/useGetJobApi";
 import { Button, Loader, Badge } from '../../../components/ui';
 import { getImageUrl } from "../../../../utils";
+import { useApplyToJob } from "../../../hooks/useApplyToJob";
 export default function JobDetailsPage() {
     const { jobId } = useParams();
     const navigate = useNavigate();
     const { allJobs, loading: allJobsLoading, error: allJobsError, refetch } = useGetJobApi();
     const { job: selectedJobDetails, loading: jobDetailsLoading, error: jobDetailsError } = useGetJobById(jobId);
+    const { applyToJob, loading: applyLoading, error: applyError, success: applySuccess, resetState } = useApplyToJob();
 
     const [selectedId, setSelectedId] = useState(jobId);
     const [isJobListOpen, setIsJobListOpen] = useState(false);
     const [showFullDetails, setShowFullDetails] = useState(false);
     const [isLargeScreen, setIsLargeScreen] = useState(false);
+    const [applicationStatus, setApplicationStatus] = useState(null); // Track application status
 
     useEffect(() => {
         const checkScreenSize = () => {
@@ -276,17 +279,83 @@ export default function JobDetailsPage() {
                                         <Button
                                             variant="secondary"
                                             size="small"
-                                            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1.5 sm:py-2 px-2 sm:px-3 md:px-6 rounded-lg shadow-lg transition-colors duration-200 flex items-center gap-1.5 text-xs sm:text-sm"
-                                            onClick={() => {
-                                                // Handle apply functionality here
-                                                console.log('Applying for job:', selectedJobDetails.jobId);
+                                            className={`font-semibold py-1.5 sm:py-2 px-2 sm:px-3 md:px-6 rounded-lg shadow-lg transition-colors duration-200 flex items-center gap-1.5 text-xs sm:text-sm ${
+                                                applySuccess 
+                                                    ? 'bg-green-600 hover:bg-green-700 text-white' 
+                                                    : 'bg-blue-600 hover:bg-blue-700 text-white'
+                                            }`}
+                                            onClick={async () => {
+                                                if (applySuccess) return; // Prevent multiple applications
+                                                
+                                                try {
+                                                    const result = await applyToJob(selectedJobDetails.jobId);
+                                                    if (result.success) {
+                                                        setApplicationStatus('success');
+                                                        // Auto-hide success message after 5 seconds
+                                                        setTimeout(() => {
+                                                            setApplicationStatus(null);
+                                                            resetState();
+                                                        }, 5000);
+                                                    } else {
+                                                        setApplicationStatus('error');
+                                                        // Auto-hide error message after 5 seconds
+                                                        setTimeout(() => {
+                                                            setApplicationStatus(null);
+                                                        }, 5000);
+                                                    }
+                                                } catch (error) {
+                                                    console.error('Application failed:', error);
+                                                    setApplicationStatus('error');
+                                                    setTimeout(() => {
+                                                        setApplicationStatus(null);
+                                                    }, 5000);
+                                                }
                                             }}
+                                            loading={applyLoading}
+                                            disabled={applyLoading || applySuccess}
                                         >
-                                            <span className="hidden sm:inline">Apply Now</span>
-                                            <span className="sm:hidden">Apply</span>
+                                            {applyLoading ? (
+                                                <span>Applying...</span>
+                                            ) : applySuccess ? (
+                                                <>
+                                                    <FaCheckCircle className="text-white text-xs" />
+                                                    <span className="hidden sm:inline">Applied Successfully</span>
+                                                    <span className="sm:hidden">Applied</span>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <span className="hidden sm:inline">Apply Now</span>
+                                                    <span className="sm:hidden">Apply</span>
+                                                </>
+                                            )}
                                         </Button>
                                     </div>
                                 </div>
+
+                                {/* Application Status Messages */}
+                                {(applyError || applySuccess || applicationStatus) && (
+                                    <div className="mb-4">
+                                        {(applySuccess || applicationStatus === 'success') && (
+                                            <div className="bg-green-50 border border-green-200 rounded-lg p-3 flex items-center gap-2">
+                                                <FaCheckCircle className="text-green-600 text-sm flex-shrink-0" />
+                                                <span className="text-green-700 text-sm font-medium">
+                                                    Application submitted successfully! The employer will review your application.
+                                                </span>
+                                            </div>
+                                        )}
+                                        {(applyError || applicationStatus === 'error') && (
+                                            <div className="bg-red-50 border border-red-200 rounded-lg p-3 flex items-center gap-2">
+                                                <FaQuestionCircle className="text-red-600 text-sm flex-shrink-0" />
+                                                <div className="text-red-700 text-sm">
+                                                    <p className="font-medium">Application failed</p>
+                                                    <p className="text-xs mt-1">
+                                                        {applyError || 'Something went wrong. Please try again.'}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
 
                                 {/* Job Description */}
                                 <div className="mb-4">
@@ -572,6 +641,64 @@ export default function JobDetailsPage() {
                                     </div>
                                 </div>
 
+                                   
+                                    {/* Apply Now Button - Top Right */}
+                                    <div className="absolute bottom-0 right-0 flex items-center justify-center">
+                                        <Button
+                                            variant="secondary"
+                                            size="small"
+                                            className={`font-semibold py-1.5 sm:py-2 px-2 sm:px-3 md:px-6 rounded-lg shadow-lg transition-colors duration-200 flex items-center gap-1.5 text-xs sm:text-sm ${
+                                                applySuccess 
+                                                    ? 'bg-green-600 hover:bg-green-700 text-white' 
+                                                    : 'bg-blue-600 hover:bg-blue-700 text-white'
+                                            }`}
+                                            onClick={async () => {
+                                                if (applySuccess) return; // Prevent multiple applications
+                                                
+                                                try {
+                                                    const result = await applyToJob(selectedJobDetails.jobId);
+                                                    if (result.success) {
+                                                        setApplicationStatus('success');
+                                                        // Auto-hide success message after 5 seconds
+                                                        setTimeout(() => {
+                                                            setApplicationStatus(null);
+                                                            resetState();
+                                                        }, 5000);
+                                                    } else {
+                                                        setApplicationStatus('error');
+                                                        // Auto-hide error message after 5 seconds
+                                                        setTimeout(() => {
+                                                            setApplicationStatus(null);
+                                                        }, 5000);
+                                                    }
+                                                } catch (error) {
+                                                    console.error('Application failed:', error);
+                                                    setApplicationStatus('error');
+                                                    setTimeout(() => {
+                                                        setApplicationStatus(null);
+                                                    }, 5000);
+                                                }
+                                            }}
+                                            loading={applyLoading}
+                                            disabled={applyLoading || applySuccess}
+                                        >
+                                            {applyLoading ? (
+                                                <span>Applying...</span>
+                                            ) : applySuccess ? (
+                                                <>
+                                                    <FaCheckCircle className="text-white text-xs" />
+                                                    <span className="hidden sm:inline">Applied Successfully</span>
+                                                    <span className="sm:hidden">Applied</span>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <span className="hidden sm:inline">Apply Now</span>
+                                                    <span className="sm:hidden">Apply</span>
+                                                </>
+                                            )}
+                                        </Button>
+                                    </div>
+                                  <br/>
                                 {/* Show More/Less Button */}
                                 {!showFullDetails && (
                                     <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-white via-white to-transparent h-10 flex items-end justify-center pb-1">

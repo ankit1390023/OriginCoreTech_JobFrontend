@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Badge } from '../../../components/ui';
 import MainLayout from '../../../components/layout/MainLayout';
-import FeedRightProfile from './FeedRightProfile';
+import FeedRightProfile from '../feed/FeedRightProfile';
 
 const FeedApplication = () => {
     const [activeFilter, setActiveFilter] = useState('All');
@@ -58,6 +58,7 @@ const FeedApplication = () => {
         <MainLayout>
             <div className="flex justify-center bg-gray-100 min-h-screen px-2 lg:px-8 items-start">
                 <div className="hidden lg:block flex-grow"></div>
+                
                 {/* Left: Applications List (scrollable on lg+) */}
                 <section 
                     className="bg-white rounded-[10px] p-5 shadow-lg mt-2 w-[800px] h-[1000px] opacity-100 gap-[10px]"

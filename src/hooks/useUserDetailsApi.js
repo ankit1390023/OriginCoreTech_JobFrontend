@@ -139,13 +139,46 @@ export const useUserDetailsApi = () => {
                 
                 // Format and set skills data
                 if (data.skills?.length) {
-                    formattedSkills = data.skills.map((skill, index) => ({
-                        id: index + 1,
-                        logo: "/src/assets/WebsiteLogo.svg",
-                        skill: skill,
-                        category: "Technical Skills",
-                        description: `Proficient in ${skill} with practical experience and knowledge.`
-                    }));
+                    formattedSkills = data.skills.map((skill, index) => {
+                        // Handle both string skills and object skills
+                        if (typeof skill === 'string') {
+                            return {
+                                id: index + 1,
+                                logo: "/src/assets/WebsiteLogo.svg",
+                                skill: skill,
+                                category: "Technical Skills",
+                                description: `Proficient in ${skill} with practical experience and knowledge.`
+                            };
+                        } else if (typeof skill === 'object' && skill !== null) {
+                            // Handle object skills with domain, subSkills, authority, certificate_image
+                            const skillName = skill.domain || skill.name || skill.skill || 'Unknown Skill';
+                            const skillDescription = skill.subSkills && Array.isArray(skill.subSkills) && skill.subSkills.length > 0
+                                ? `Sub-skills: ${skill.subSkills.join(', ')}`
+                                : `Proficient in ${skillName} with practical experience and knowledge.`;
+                            const skillLogo = skill.certificate_image || skill.logo || "/src/assets/WebsiteLogo.svg";
+                            
+                            return {
+                                id: skill._id || skill.id || index + 1,
+                                logo: skillLogo,
+                                skill: skillName,
+                                category: skill.category || "Technical Skills",
+                                description: skillDescription,
+                                authority: skill.authority,
+                                subSkills: skill.subSkills,
+                                certificate_image: skill.certificate_image,
+                                domain: skill.domain
+                            };
+                        } else {
+                            // Fallback for unexpected data types
+                            return {
+                                id: index + 1,
+                                logo: "/src/assets/WebsiteLogo.svg",
+                                skill: 'Unknown Skill',
+                                category: "Technical Skills",
+                                description: 'Skill information not available.'
+                            };
+                        }
+                    });
                     setSkillsData(formattedSkills);
                 } else {
                     setSkillsData([]);

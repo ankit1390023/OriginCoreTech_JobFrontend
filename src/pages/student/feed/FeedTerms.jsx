@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import FeedRightProfile from './FeedRightProfile';
+import FeedRightProfile from '../feed/FeedRightProfile';
 import MainLayout from '../../../components/layout/MainLayout';
 import feedApi from '../../../api/feedApi';
 
@@ -128,14 +128,15 @@ const FeedTerms = () => {
           <h1 className="text-2xl font-bold text-gray-800">
             Terms & Conditions
           </h1>
-          {!loading && !error && (
+          {/* {!loading && !error && (
             <button
               onClick={handleEdit}
               className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
             >
               Edit
             </button>
-          )}
+          )} */}
+          
         </div>
         
         <div className="space-y-4 text-sm text-gray-700 leading-relaxed">

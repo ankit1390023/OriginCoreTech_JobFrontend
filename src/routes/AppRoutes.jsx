@@ -20,7 +20,6 @@ import FeedApplication from "../pages/student/feed/FeedApplication";
 import FeedTerms from "../pages/student/feed/FeedTerms";
 import FeedResume from "../pages/student/feed/FeedResume";
 import FeedTicket from "../pages/student/feed/FeedTicket";
-import FeedHelp from "../pages/student/feed/FeedHelp";
 import Feedprofile from "../pages/student/feed/Feedprofile";
 import FeedChangeEmail from "../pages/student/feed/FeedchangeEmail";
 import FeedChangePassword from "../pages/student/feed/FeedChangePassword";
@@ -29,6 +28,20 @@ import FeedYourEducation from "../pages/student/feed/FeedYourEducation";
 import FeedYourExprience from "../pages/student/feed/FeedYourExprience";
 import FeedDashBoard from "../pages/student/feed/FeedDashBoard";
 import FeedAuthentication from "../pages/student/feed/FeedAuthentication";
+import FeedFaq from "../pages/student/feed/FeedFaq";    
+import Myapplication1 from "../pages/student/application/Myapplication1";      
+import Myapplication3 from "../pages/student/application/Myapplication3"; 
+import Myapplication4 from "../pages/student/application/Myapplication4"; 
+import Myapplication5 from "../pages/student/application/Myapplication5";
+import Myapplication6 from "../pages/student/application/Myapplication6";  
+import Myapplication from "../pages/student/application/Myapplication"; 
+import Myapplication9 from "../pages/student/application/Myapplication9";
+import Myapplication8 from "../pages/student/application/Myapplication8";
+import Myapplication7 from "../pages/student/application/Myapplication7";
+import Myapplication2 from "../pages/student/application/Myapplication2";
+
+
+
 
 export const appRouter = createBrowserRouter([
     {
@@ -116,10 +129,6 @@ export const appRouter = createBrowserRouter([
         element: <FeedTicket />,
     },
     {
-        path: "/feed-help",
-        element: <FeedHelp />,
-    },
-    {
         path: "/feed-profile",
         element: <Feedprofile />,
     },
@@ -151,8 +160,66 @@ export const appRouter = createBrowserRouter([
     {
         path:"/feed-authentication",
         element:<FeedAuthentication/>
-    }
+    },
+    {
+        path:"/feed-faq",
+        element:<FeedFaq/>
+    },
     
+    {
+        path:"/application-myapplication1",
+        element:<Myapplication1/>    
+    } ,
     
+    {
+        path:"/application-myapplication2",
+        element:<Myapplication2/>    
+    } ,
+
+
+    {
+        path:"/application-myapplication3",
+        element:<Myapplication3/>    
+    } , 
+    {
+        path:"/application-myapplication4",
+        element:<Myapplication4/>    
+    } ,
+    {
+        path:"/application-myapplication5",
+        element:<Myapplication5/>    
+    } ,
+    {
+        path:"/application-myapplication6",
+        element:<Myapplication6/>    
+    } , 
+    {
+        path:"/application-myapplication9",
+        element:<Myapplication9/>    
+    } , 
+    {
+        path:"/application-myapplication8",
+        element:<Myapplication8/>    
+    } , 
+    {
+        path:"/application-myapplication7",
+        element:<Myapplication7/>    
+    } , 
+
+
+
+
+
+
+
+
+
+
+
+    {
+        path:"/application-myapplication",
+        element:<Myapplication/>    
+    } ,
+
    
 ])

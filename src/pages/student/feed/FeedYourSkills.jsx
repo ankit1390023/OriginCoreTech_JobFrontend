@@ -2,17 +2,21 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Input, Button, Badge } from '../../../components/ui';
 import MainLayout from '../../../components/layout/MainLayout';
-import FeedRightProfile from './FeedRightProfile';
+import FeedRightProfile from '../feed/FeedRightProfile';
 import { IoIosInformationCircleOutline } from 'react-icons/io';
 import { IoIosSearch } from 'react-icons/io';
 import { IoIosArrowBack } from 'react-icons/io';
 import { HiOutlineEye } from 'react-icons/hi';
 import { FaEdit } from 'react-icons/fa';
 import { RxCross2 } from 'react-icons/rx';
-
+import { useDomainsApi } from '../../../hooks/useDomainsApi';
+import { useEducationData } from '../../../hooks/useEducationData';
+import { skillApi } from '../../../api/skillApi';
+import { useSelector } from 'react-redux';
 
 const FeedYourSkills = () => {
   const navigate = useNavigate();
+  const { token, user } = useSelector((state) => state.auth);
   const [searchTerm, setSearchTerm] = useState('');
   const [showMoreSkills, setShowMoreSkills] = useState({});
   const [showCollegeDropdown, setShowCollegeDropdown] = useState({});
@@ -24,11 +28,14 @@ const FeedYourSkills = () => {
   const [firstCardCertificate, setFirstCardCertificate] = useState(null);
   const [firstCardSelectedSkills, setFirstCardSelectedSkills] = useState([]);
   const [firstCardLearningSource, setFirstCardLearningSource] = useState('');
-  const [currentMainSkill, setCurrentMainSkill] = useState('Web Development');
+  const [currentMainSkill, setCurrentMainSkill] = useState('');
   const [showFirstCard, setShowFirstCard] = useState(true);
   
   // State for other cards' selected skills
   const [otherCardsSelectedSkills, setOtherCardsSelectedSkills] = useState({});
+  const [saving, setSaving] = useState(false);
+  const [showCertificateModal, setShowCertificateModal] = useState(false);
+  const [selectedCertificate, setSelectedCertificate] = useState(null);
   
   const [skills, setSkills] = useState([
     {
@@ -44,6 +51,8 @@ const FeedYourSkills = () => {
       name: 'Design',
       learningSource: 'Delhi Technological University',
       hasCertificate: true,
+      certificateName: 'UI/UX Design Certificate',
+      certificateUrl: 'https://example.com/certificates/design-cert-1.pdf',
       borderColor: 'border-orange-300',
       bgColor: 'bg-orange-50'
     },
@@ -52,6 +61,8 @@ const FeedYourSkills = () => {
       name: 'Design',
       learningSource: 'Delhi Technological University',
       hasCertificate: true,
+      certificateName: 'Graphic Design Certificate',
+      certificateUrl: 'https://example.com/certificates/design-cert-2.jpg',
       borderColor: 'border-green-300',
       bgColor: 'bg-green-50'
     },
@@ -60,74 +71,73 @@ const FeedYourSkills = () => {
       name: 'Design',
       learningSource: 'Delhi Technological University',
       hasCertificate: true,
+      certificateName: 'Digital Design Certificate',
+      certificateUrl: 'https://example.com/certificates/design-cert-3.pdf',
       borderColor: 'border-red-300',
       bgColor: 'bg-red-50'
     }
   ]);
 
-  // Dummy college/company names for suggestions
-  const dummyColleges = [
+  // Use the domains API hook
+  const { 
+    allDomains, 
+    skillsByDomain, 
+    loading, 
+    error, 
+    fetchAllDomains, 
+    fetchSkillsByDomain 
+  } = useDomainsApi('Web Development');
+
+  // Use the education data hook to get colleges
+  const { data: educationData, loading: collegesLoading, error: collegesError } = useEducationData();
+  
+  // Fallback dummy colleges in case API fails or returns empty data
+  const fallbackColleges = [
     'Delhi University', 'IIT Delhi', 'Delhi Technological University', 'JNU Delhi',
     'Amity University', 'GGSIPU', 'NSIT Delhi', 'DTU Delhi', 'IIIT Delhi',
     'Google India', 'Microsoft India', 'Amazon India', 'TCS', 'Infosys',
     'Wipro', 'HCL', 'Tech Mahindra', 'Cognizant', 'Accenture', 'IBM India'
   ];
+  
+  const colleges = educationData.colleges && educationData.colleges.length > 0 
+    ? educationData.colleges 
+    : fallbackColleges;
 
+  // Set initial main skill when domains are loaded
+  useEffect(() => {
+    if (allDomains.length > 0 && !currentMainSkill) {
+      setCurrentMainSkill(allDomains[0]);
+    }
+  }, [allDomains, currentMainSkill]);
 
-  // // Web Development related skills for first card
-  // const webDevelopmentSkills = ['HTML', 'CSS', 'JavaScript', 'React', 'Bootstrap'];
+  // Fetch skills for current main skill
+  useEffect(() => {
+    if (currentMainSkill) {
+      fetchSkillsByDomain(currentMainSkill);
+    }
+  }, [currentMainSkill, fetchSkillsByDomain]);
 
-  // Categorized related skills for search bar
-  const categorizedSkills = {
-    'Programming Languages': ['JavaScript', 'Python', 'Java', 'C++', 'C#', 'PHP', 'Ruby', 'Go', 'Swift', 'Kotlin', 'Rust', 'TypeScript'],
-    'Web Development': ['HTML', 'CSS', 'React', 'Node.js', 'Vue.js', 'Angular', 'Bootstrap', 'Tailwind CSS', 'Sass', 'Less', 'jQuery'],
-    'Database & Backend': ['SQL', 'MySQL', 'PostgreSQL', 'MongoDB', 'Redis', 'GraphQL', 'REST APIs', 'Express.js', 'Django', 'Flask'],
-    'Cloud & DevOps': ['AWS', 'Azure', 'Google Cloud', 'Docker', 'Kubernetes', 'Git', 'GitHub', 'CI/CD', 'Jenkins', 'Terraform'],
-    'Data Science & AI': ['Data Analysis', 'Machine Learning', 'Deep Learning', 'Data Science', 'TensorFlow', 'PyTorch', 'Pandas', 'NumPy', 'Jupyter'],
-    'Mobile Development': ['React Native', 'Flutter', 'Android Development', 'iOS Development', 'Mobile App Design', 'Xamarin', 'Ionic'],
-    'Design & Creative': ['UI/UX Design', 'Graphic Design', 'Illustration', 'Typography', 'Figma', 'Adobe Photoshop', 'Adobe Illustrator', 'Sketch'],
-    'Digital Marketing': ['SEO', 'Content Writing', 'Social Media Marketing', 'Email Marketing', 'Google Ads', 'Analytics', 'PPC', 'Brand Management'],
-    'Business & Management': ['Project Management', 'Agile', 'Scrum', 'Product Management', 'Business Analysis', 'Team Leadership', 'Quality Assurance'],
-    'Cybersecurity': ['Cybersecurity', 'Network Security', 'Application Security', 'Penetration Testing', 'Ethical Hacking', 'Security Auditing'],
-    'Emerging Technologies': ['Blockchain', 'Web3', 'IoT', 'AR/VR', 'Metaverse', 'Quantum Computing', 'Robotics', 'Automation'],
-    'Soft Skills': ['Communication', 'Leadership', 'Problem Solving', 'Critical Thinking', 'Creativity', 'Adaptability', 'Time Management']
+  // Get related skills for main domain skills from API
+  const getRelatedSkillsForMainDomain = (mainSkill) => {
+    if (mainSkill === currentMainSkill) {
+      return skillsByDomain || [];
+    }
+    // For other skills, return empty array as we'll fetch them when needed
+    return [];
+  };
+
+  // Get all available domains for search
+  const getMainDomainSkills = () => {
+    return allDomains || [];
   };
 
   // Flatten all skills for search functionality
-  const allSkills = Object.values(categorizedSkills).flat();
+  const getAllSkills = () => {
+    return skillsByDomain || [];
+  };
 
   // Default related skills (fallback)
   const defaultRelatedSkills = ['HTML', 'CSS', 'JavaScript', 'React', 'Node.js', 'Bootstrap'];
-
-  // Main domain skills that can replace the first card
-  const mainDomainSkills = [
-    'Web Development', 'Mobile Development', 'Data Science', 'Data Analysis', 
-    'Machine Learning', 'Artificial Intelligence', 'UI/UX Design', 'Graphic Design',
-    'Digital Marketing', 'Cybersecurity', 'Cloud Computing', 'DevOps',
-    'Software Engineering', 'Product Management', 'Business Analysis'
-  ];
-
-  // Related skills for main domain skills
-  const getRelatedSkillsForMainDomain = (mainSkill) => {
-    const relatedSkillsMap = {
-      'Web Development': ['HTML', 'CSS', 'JavaScript', 'React', 'Node.js', 'Vue.js', 'Angular', 'Bootstrap', 'Tailwind CSS', 'Sass', 'Less', 'jQuery', 'Express.js', 'Django', 'Flask'],
-      'Mobile Development': ['React Native', 'Flutter', 'Android Development', 'iOS Development', 'Mobile App Design', 'Xamarin', 'Ionic', 'Cordova', 'Swift', 'Kotlin', 'Java'],
-      'Data Science': ['Python', 'R', 'SQL', 'Pandas', 'NumPy', 'Matplotlib', 'Seaborn', 'Scikit-learn', 'TensorFlow', 'PyTorch', 'Jupyter', 'Tableau', 'Power BI'],
-      'Data Analysis': ['Excel', 'SQL', 'Python', 'R', 'Tableau', 'Power BI', 'Google Analytics', 'Pandas', 'NumPy', 'Matplotlib', 'Seaborn', 'Statistics'],
-      'Machine Learning': ['Python', 'TensorFlow', 'PyTorch', 'Scikit-learn', 'Pandas', 'NumPy', 'Matplotlib', 'Seaborn', 'Jupyter', 'Keras', 'OpenCV', 'NLTK'],
-      'Artificial Intelligence': ['Python', 'TensorFlow', 'PyTorch', 'Machine Learning', 'Deep Learning', 'Natural Language Processing', 'Computer Vision', 'Neural Networks', 'OpenAI', 'Hugging Face'],
-      'UI/UX Design': ['Figma', 'Adobe XD', 'Sketch', 'InVision', 'Prototyping', 'Wireframing', 'User Research', 'Design Systems', 'Typography', 'Color Theory', 'Accessibility Design'],
-      'Graphic Design': ['Adobe Photoshop', 'Adobe Illustrator', 'Adobe InDesign', 'Canva', 'Typography', 'Color Theory', 'Layout Design', 'Brand Identity', 'Logo Design', 'Print Design'],
-      'Digital Marketing': ['SEO', 'Content Writing', 'Social Media Marketing', 'Email Marketing', 'Google Ads', 'Facebook Ads', 'Analytics', 'PPC', 'Google Analytics', 'Facebook Pixel', 'Brand Management'],
-      'Cybersecurity': ['Network Security', 'Application Security', 'Penetration Testing', 'Ethical Hacking', 'Security Auditing', 'Incident Response', 'Threat Intelligence', 'Cryptography', 'Security Compliance'],
-      'Cloud Computing': ['AWS', 'Azure', 'Google Cloud', 'Docker', 'Kubernetes', 'Terraform', 'Ansible', 'Jenkins', 'CI/CD', 'Microservices', 'Serverless'],
-      'DevOps': ['Docker', 'Kubernetes', 'Jenkins', 'Git', 'GitHub', 'CI/CD', 'Terraform', 'Ansible', 'AWS', 'Azure', 'Monitoring', 'Logging'],
-      'Software Engineering': ['Java', 'Python', 'C++', 'JavaScript', 'React', 'Node.js', 'SQL', 'Git', 'Docker', 'AWS', 'Testing', 'Agile'],
-      'Product Management': ['Agile', 'Scrum', 'Kanban', 'User Research', 'Market Research', 'Data Analysis', 'Stakeholder Management', 'Roadmapping', 'A/B Testing', 'Analytics'],
-      'Business Analysis': ['Requirements Gathering', 'Process Modeling', 'Data Analysis', 'SQL', 'Excel', 'Power BI', 'Stakeholder Management', 'Documentation', 'UML', 'Business Process']
-    };
-    return relatedSkillsMap[mainSkill] || [];
-  };
 
   // Click outside handler to close dropdowns
   useEffect(() => {
@@ -167,9 +177,12 @@ const FeedYourSkills = () => {
   const handleCertificateUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
+      // Create a URL for the file to display it
+      const fileUrl = URL.createObjectURL(file);
       setFirstCardCertificate({
         name: file.name,
-        file: file
+        file: file,
+        url: fileUrl
       });
     }
   };
@@ -210,10 +223,29 @@ const FeedYourSkills = () => {
   };
 
   const handleViewCertificate = (skillId) => {
-    // Handle view certificate functionality
-    console.log('Viewing certificate for skill:', skillId);
-    // You can implement modal or navigation to view certificate
-    alert('View certificate functionality - Skill ID: ' + skillId);
+    // Find the skill to get certificate information
+    const skill = skills.find(s => s.id === skillId);
+    
+    if (skill && skill.hasCertificate) {
+      // For the first card
+      if (skillId === 1 && firstCardCertificate) {
+        setSelectedCertificate({
+          name: firstCardCertificate.name,
+          url: firstCardCertificate.url || firstCardCertificate.file,
+          type: firstCardCertificate.file ? firstCardCertificate.file.type : 'url'
+        });
+      } else {
+        // For other cards, you might have certificate URL stored
+        setSelectedCertificate({
+          name: skill.certificateName || `Certificate for ${skill.name}`,
+          url: skill.certificateUrl || null,
+          type: 'url'
+        });
+      }
+      setShowCertificateModal(true);
+    } else {
+      alert('No certificate available for this skill.');
+    }
   };
 
   const handleEditCertificate = (skillId) => {
@@ -226,12 +258,22 @@ const FeedYourSkills = () => {
     input.onchange = (e) => {
       const file = e.target.files[0];
       if (file) {
-        alert(`Certificate uploaded for skill ${skillId}: ${file.name}`);
+        // Create a URL for the file to display it
+        const fileUrl = URL.createObjectURL(file);
+        
         // Update the skill with certificate info
         const updatedSkills = skills.map(s => 
-          s.id === skillId ? { ...s, hasCertificate: true, certificateName: file.name } : s
+          s.id === skillId ? { 
+            ...s, 
+            hasCertificate: true, 
+            certificateName: file.name,
+            certificateUrl: fileUrl
+          } : s
         );
         setSkills(updatedSkills);
+        
+        // Show success message
+        alert(`Certificate uploaded for skill ${skillId}: ${file.name}`);
       }
     };
     input.click();
@@ -257,11 +299,50 @@ const FeedYourSkills = () => {
     }));
   };
 
-  const handleSaveChanges = () => {
-    // Handle save functionality
-    console.log('Saving skills:', skills);
-    // Navigate back to feed view after saving
-    navigate('/feed-view');
+  const handleSaveChanges = async () => {
+    try {
+      setSaving(true);
+      // Prepare skills data for API
+      const skillsData = [];
+      
+      // Add first card data if it exists
+      if (showFirstCard && currentMainSkill) {
+        skillsData.push({
+          domain: currentMainSkill,
+          skills: firstCardSelectedSkills,
+          learning_source: firstCardLearningSource,
+          has_certificate: !!firstCardCertificate,
+          certificate_url: firstCardCertificate?.url || null
+        });
+      }
+      
+      // Add other skills data
+      skills.slice(1).forEach(skill => {
+        const selectedSkills = otherCardsSelectedSkills[skill.id] || [];
+        skillsData.push({
+          domain: skill.name,
+          skills: selectedSkills,
+          learning_source: skill.learningSource,
+          has_certificate: skill.hasCertificate,
+          certificate_url: skill.certificateUrl || null
+        });
+      });
+      
+      // Get user ID from Redux store
+      const user_id = user?.id || 1;
+      
+      // Call the API to save skills
+      await skillApi.uploadSkills(user_id, skillsData, [], token);
+      
+      console.log('Skills saved successfully:', skillsData);
+      navigate('/feed-view');
+    } catch (error) {
+      console.error('Error saving skills:', error);
+      // You can add error handling UI here
+      alert('Failed to save skills. Please try again.');
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleGoBack = () => {
@@ -270,55 +351,91 @@ const FeedYourSkills = () => {
 
   // Get related skills based on the current skill
   const getRelatedSkills = (skillName) => {
-    return relatedSkillsByCategory[skillName] || defaultRelatedSkills;
+    return defaultRelatedSkills;
   };
 
   // Filter colleges based on search query
   const filteredColleges = (query, id) => {
     const searchTerm = collegeSearchQuery[id] || '';
-    return dummyColleges.filter(college =>
-      college.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    if (!colleges || colleges.length === 0) return [];
+    
+    return colleges.filter(college => {
+      // Handle both string and object formats for college data
+      const collegeName = typeof college === 'string' ? college : college.name || college.college_name || '';
+      return collegeName.toLowerCase().includes(searchTerm.toLowerCase());
+    });
   };
 
   // Filter skills based on search query
   const filteredSkills = () => {
-    return allSkills.filter(skill =>
+    return getAllSkills().filter(skill =>
       skill.toLowerCase().includes(skillsSearchQuery.toLowerCase())
     );
   };
 
+  // Handle skill selection from search
+  const handleSkillSelect = async (skillName) => {
+    try {
+      // Always add as a new card, don't replace the first card
+      const newSkill = {
+        id: Date.now(),
+        name: skillName,
+        learningSource: '',
+        hasCertificate: false,
+        borderColor: 'border-gray-200',
+        bgColor: 'bg-white'
+      };
+     
+       // Insert new skill at index 1 (after the first card)
+       const updatedSkills = [...skills];
+       updatedSkills.splice(1, 0, newSkill);
+       setSkills(updatedSkills);
+       setSkillsSearchQuery('');
+       setShowSkillsDropdown(false);
+    } catch (error) {
+      console.error('Error adding skill:', error);
+      // Still add the skill even if there's an error
+      const newSkill = {
+        id: Date.now(),
+        name: skillName,
+        learningSource: '',
+        hasCertificate: false,
+        borderColor: 'border-gray-200',
+        bgColor: 'bg-white'
+      };
+      const updatedSkills = [...skills];
+      updatedSkills.splice(1, 0, newSkill);
+      setSkills(updatedSkills);
+      setSkillsSearchQuery('');
+      setShowSkillsDropdown(false);
+    }
+  };
+
+  // Function to get related skills for any domain
+  const getRelatedSkillsForDomain = async (domainName) => {
+    try {
+      const skills = await fetchSkillsByDomain(domainName);
+      return skills;
+    } catch (error) {
+      console.error('Error fetching skills for domain:', domainName, error);
+      return [];
+    }
+  };
+
   // Handle college selection
   const handleCollegeSelect = (id, college) => {
+    // Extract college name from the college object or string
+    const collegeName = typeof college === 'string' ? college : college.name || college.college_name || '';
+    
     const updatedSkills = skills.map(s => 
-      s.id === id ? { ...s, learningSource: college } : s
+      s.id === id ? { ...s, learningSource: collegeName } : s
     );
     setSkills(updatedSkills);
     setShowCollegeDropdown(prev => ({ ...prev, [id]: false }));
     setCollegeSearchQuery(prev => ({ ...prev, [id]: '' }));
   };
 
-  // Handle skill selection from search
-  const handleSkillSelect = (skillName) => {
-    // Always add as a new card, don't replace the first card
-    const newSkill = {
-      id: Date.now(),
-      name: skillName,
-      learningSource: '',
-      hasCertificate: false,
-      borderColor: 'border-gray-200',
-      bgColor: 'bg-white'
-    };
-   
-     // Insert new skill at index 1 (after the first card)
-     const updatedSkills = [...skills];
-     updatedSkills.splice(1, 0, newSkill);
-     setSkills(updatedSkills);
-     setSkillsSearchQuery('');
-     setShowSkillsDropdown(false);
-  
-   
-  };
+
   
 
   useEffect(() => {
@@ -358,34 +475,55 @@ const FeedYourSkills = () => {
     }}
     onFocus={() => setShowSkillsDropdown(true)}
     className="pr-10 h-[46px] w-full"
+    disabled={loading}
   />
   <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-    <IoIosSearch className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
+    {loading ? (
+      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></div>
+    ) : (
+      <IoIosSearch className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
+    )}
   </div>
+
+  {/* Error Message */}
+  {error && (
+    <div className="mt-2 text-red-600 text-sm bg-red-50 p-2 rounded">
+      {error}
+    </div>
+  )}
 
   {/* Skills Dropdown */}
   {showSkillsDropdown && (
     <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-96 overflow-y-auto">
-      {mainDomainSkills
-        .filter(skill =>
-          skill.toLowerCase().includes(skillsSearchQuery.toLowerCase())
-        )
-        .map((skill, index) => (
-          <div
-            key={index}
-            className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm flex items-center justify-between"
-            onClick={() => handleSkillSelect(skill)}
-          >
-            <span>{skill}</span>
-            <span className="text-gray-400 text-xs">Click to select</span>
-          </div>
-        ))}
-      {mainDomainSkills.filter(skill =>
-        skill.toLowerCase().includes(skillsSearchQuery.toLowerCase())
-      ).length === 0 && (
-        <div className="px-3 py-2 text-gray-500 text-sm">
-          No main domain skills found.
+      {loading ? (
+        <div className="px-3 py-4 text-center text-gray-500">
+          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500 mx-auto mb-2"></div>
+          Loading domains...
         </div>
+      ) : (
+        <>
+          {getMainDomainSkills()
+            .filter(skill =>
+              skill.toLowerCase().includes(skillsSearchQuery.toLowerCase())
+            )
+            .map((skill, index) => (
+              <div
+                key={index}
+                className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm flex items-center justify-between"
+                onClick={() => handleSkillSelect(skill)}
+              >
+                <span>{skill}</span>
+                <span className="text-gray-400 text-xs">Click to select</span>
+              </div>
+            ))}
+          {getMainDomainSkills().filter(skill =>
+            skill.toLowerCase().includes(skillsSearchQuery.toLowerCase())
+          ).length === 0 && !loading && (
+            <div className="px-3 py-2 text-gray-500 text-sm">
+              {skillsSearchQuery ? 'No domains found matching your search.' : 'No domains available.'}
+            </div>
+          )}
+        </>
       )}
     </div>
   )}
@@ -467,31 +605,43 @@ const FeedYourSkills = () => {
       {/* Skills Selection */}
       <div className="mb-4">
         <p className="text-sm text-gray-700 mb-2">Select related skills for {currentMainSkill}:</p>
-        <div className="flex flex-wrap gap-2 mb-2">
-          {getRelatedSkillsForMainDomain(currentMainSkill).slice(1, showMoreSkills['firstCard'] ? getRelatedSkillsForMainDomain(currentMainSkill).length : 6).map((skill) => (
-            <button
-              key={skill}
-              onClick={() => handleSkillToggle(skill)}
-              className={`px-3 py-1 rounded-full text-sm border transition-colors ${
-                firstCardSelectedSkills.includes(skill)
-                  ? 'bg-blue-500 text-white border-blue-500'
-                  : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200'
-              }`}
-            >
-              {skill}
-            </button>
-          ))}
-        </div>
-        {getRelatedSkillsForMainDomain(currentMainSkill).length > 6 && (
-          <button
-            onClick={() => handleShowMoreSkills('firstCard')}
-            className="text-blue-600 text-sm hover:underline"
-          >
-            {showMoreSkills['firstCard'] ? 'Show less' : `See more +${getRelatedSkillsForMainDomain(currentMainSkill).length - 6}`}
-          </button>
-        )}
-        {firstCardSelectedSkills.length > 0 && (
-          <p className="text-green-600 text-sm">Selected: {firstCardSelectedSkills.length} skill(s)</p>
+        {loading ? (
+          <div className="flex items-center justify-center py-4">
+            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500 mr-2"></div>
+            <span className="text-gray-500 text-sm">Loading related skills...</span>
+          </div>
+        ) : (
+          <>
+            <div className="flex flex-wrap gap-2 mb-2">
+              {getRelatedSkillsForMainDomain(currentMainSkill).slice(0, showMoreSkills['firstCard'] ? getRelatedSkillsForMainDomain(currentMainSkill).length : 6).map((skill) => (
+                <button
+                  key={skill}
+                  onClick={() => handleSkillToggle(skill)}
+                  className={`px-3 py-1 rounded-full text-sm border transition-colors ${
+                    firstCardSelectedSkills.includes(skill)
+                      ? 'bg-blue-500 text-white border-blue-500'
+                      : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200'
+                  }`}
+                >
+                  {skill}
+                </button>
+              ))}
+            </div>
+            {getRelatedSkillsForMainDomain(currentMainSkill).length > 6 && (
+              <button
+                onClick={() => handleShowMoreSkills('firstCard')}
+                className="text-blue-600 text-sm hover:underline"
+              >
+                {showMoreSkills['firstCard'] ? 'Show less' : `See more +${getRelatedSkillsForMainDomain(currentMainSkill).length - 6}`}
+              </button>
+            )}
+            {firstCardSelectedSkills.length > 0 && (
+              <p className="text-green-600 text-sm">Selected: {firstCardSelectedSkills.length} skill(s)</p>
+            )}
+            {getRelatedSkillsForMainDomain(currentMainSkill).length === 0 && !loading && (
+              <p className="text-gray-500 text-sm">No related skills available for this domain.</p>
+            )}
+          </>
         )}
       </div>
       {/* Learning Source */}
@@ -532,19 +682,39 @@ const FeedYourSkills = () => {
               className="w-full px-3 py-2 border-b border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
               autoFocus
             />
-            {filteredColleges('', 'firstCard').map((college, collegeIndex) => (
-              <div
-                key={collegeIndex}
-                className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
-                onClick={() => {
-                  setFirstCardLearningSource(college);
-                  setShowCollegeDropdown(prev => ({ ...prev, 'firstCard': false }));
-                  setCollegeSearchQuery(prev => ({ ...prev, 'firstCard': '' }));
-                }}
-              >
-                {college}
+            {collegesLoading ? (
+              <div className="px-3 py-4 text-center text-gray-500">
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500 mx-auto mb-2"></div>
+                Loading colleges...
               </div>
-            ))}
+            ) : collegesError ? (
+              <div className="px-3 py-2 text-red-600 text-sm">
+                Error loading colleges. Please try again.
+              </div>
+            ) : filteredColleges('', 'firstCard').length === 0 ? (
+              <div className="px-3 py-2 text-gray-500 text-sm">
+                {collegeSearchQuery['firstCard'] ? 'No colleges found matching your search.' : 'No colleges available.'}
+              </div>
+            ) : (
+              <>
+                {filteredColleges('', 'firstCard').map((college, collegeIndex) => {
+                  const collegeName = typeof college === 'string' ? college : college.name || college.college_name || '';
+                  return (
+                    <div
+                      key={collegeIndex}
+                      className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
+                      onClick={() => {
+                        setFirstCardLearningSource(collegeName);
+                        setShowCollegeDropdown(prev => ({ ...prev, 'firstCard': false }));
+                        setCollegeSearchQuery(prev => ({ ...prev, 'firstCard': '' }));
+                      }}
+                    >
+                      {collegeName}
+                    </div>
+                  );
+                })}
+              </>
+            )}
           </div>
         )}
       </div>
@@ -600,22 +770,24 @@ const FeedYourSkills = () => {
                 {![3, 4, 5].includes(skill.id) && (
                   <p className="text-sm text-gray-700 mb-2">Select related skills for {skill.name}:</p>
                 )}
-                <div className="flex flex-wrap gap-2 mb-2">
-                  {getRelatedSkillsForMainDomain(skill.name).slice(2, showMoreSkills[skill.id] ? getRelatedSkillsForMainDomain(skill.name).length : 6).map((relatedSkill) => (
-                    <button
-                      key={relatedSkill}
-                      onClick={() => handleOtherCardSkillToggle(skill.id, relatedSkill)}
-                      className={`px-3 py-1 rounded-full text-sm border transition-colors ${
-                        (otherCardsSelectedSkills[skill.id] || []).includes(relatedSkill)
-                          ? 'bg-blue-500 text-white border-blue-500'
-                          : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200'
-                      }`}
-                    >
-                      {relatedSkill}
-                    </button>
-                  ))}
-                </div>
-                {getRelatedSkillsForMainDomain(skill.name).length > 6 && (
+                {![3, 4, 5].includes(skill.id) && (
+                  <div className="flex flex-wrap gap-2 mb-2">
+                    {getRelatedSkillsForMainDomain(skill.name).slice(0, showMoreSkills[skill.id] ? getRelatedSkillsForMainDomain(skill.name).length : 6).map((relatedSkill) => (
+                      <button
+                        key={relatedSkill}
+                        onClick={() => handleOtherCardSkillToggle(skill.id, relatedSkill)}
+                        className={`px-3 py-1 rounded-full text-sm border transition-colors ${
+                          (otherCardsSelectedSkills[skill.id] || []).includes(relatedSkill)
+                            ? 'bg-blue-500 text-white border-blue-500'
+                            : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200'
+                        }`}
+                      >
+                        {relatedSkill}
+                      </button>
+                    ))}
+                  </div>
+                )}
+                {![3, 4, 5].includes(skill.id) && getRelatedSkillsForMainDomain(skill.name).length > 6 && (
                   <button
                     onClick={() => handleShowMoreSkills(skill.id)}
                     className="text-blue-600 text-sm hover:underline"
@@ -625,6 +797,9 @@ const FeedYourSkills = () => {
                 )}
                 {(otherCardsSelectedSkills[skill.id] || []).length > 0 && (
                   <p className="text-green-600 text-sm">Selected: {(otherCardsSelectedSkills[skill.id] || []).length} skill(s)</p>
+                )}
+                {![3, 4, 5].includes(skill.id) && getRelatedSkillsForMainDomain(skill.name).length === 0 && !loading && (
+                  <p className="text-gray-500 text-sm">No related skills available for this domain.</p>
                 )}
               </div>
 
@@ -674,15 +849,35 @@ const FeedYourSkills = () => {
                       className="w-full px-3 py-2 border-b border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
                       autoFocus
                     />
-                    {filteredColleges('', skill.id).map((college, collegeIndex) => (
-                      <div
-                        key={collegeIndex}
-                        className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
-                        onClick={() => handleCollegeSelect(skill.id, college)}
-                      >
-                        {college}
+                    {collegesLoading ? (
+                      <div className="px-3 py-4 text-center text-gray-500">
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500 mx-auto mb-2"></div>
+                        Loading colleges...
                       </div>
-                    ))}
+                    ) : collegesError ? (
+                      <div className="px-3 py-2 text-red-600 text-sm">
+                        Error loading colleges. Please try again.
+                      </div>
+                    ) : filteredColleges('', skill.id).length === 0 ? (
+                      <div className="px-3 py-2 text-gray-500 text-sm">
+                        {collegeSearchQuery[skill.id] ? 'No colleges found matching your search.' : 'No colleges available.'}
+                      </div>
+                    ) : (
+                      <>
+                        {filteredColleges('', skill.id).map((college, collegeIndex) => {
+                          const collegeName = typeof college === 'string' ? college : college.name || college.college_name || '';
+                          return (
+                            <div
+                              key={collegeIndex}
+                              className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
+                              onClick={() => handleCollegeSelect(skill.id, college)}
+                            >
+                              {collegeName}
+                            </div>
+                          );
+                        })}
+                      </>
+                    )}
                   </div>
                 )}
                 
@@ -698,9 +893,17 @@ const FeedYourSkills = () => {
           variant="primary"
           size="large"
           onClick={handleSaveChanges}
-          className="w-full sm:w-auto px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg bg-red-500 hover:bg-red-600 text-white font-semibold text-sm sm:text-base transition-colors duration-200"
+          disabled={saving || loading}
+          className="w-full sm:w-auto px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg bg-red-500 hover:bg-red-600 text-white font-semibold text-sm sm:text-base transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Save Changes
+          {saving ? (
+            <div className="flex items-center">
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+              Saving...
+            </div>
+          ) : (
+            'Save Changes'
+          )}
         </Button>
       </div>
     </section>
@@ -711,6 +914,88 @@ const FeedYourSkills = () => {
   {/* Right Spacer */}
   <div className="hidden lg:block flex-grow"></div>
 </div>
+
+      {/* Certificate Modal */}
+      {showCertificateModal && selectedCertificate && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between p-4 border-b border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-800">
+                {selectedCertificate.name}
+              </h3>
+              <button
+                onClick={() => {
+                  setShowCertificateModal(false);
+                  setSelectedCertificate(null);
+                }}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <RxCross2 className="w-6 h-6" />
+              </button>
+            </div>
+            
+            {/* Modal Content */}
+            <div className="p-4 overflow-auto max-h-[calc(90vh-120px)]">
+              {selectedCertificate.type === 'url' && selectedCertificate.url ? (
+                <div className="space-y-4">
+                  {/* PDF Viewer */}
+                  {selectedCertificate.url.includes('.pdf') ? (
+                    <iframe
+                      src={selectedCertificate.url}
+                      className="w-full h-96 border border-gray-300 rounded"
+                      title={selectedCertificate.name}
+                    />
+                  ) : (
+                    /* Image Viewer */
+                    <div className="flex justify-center">
+                      <img
+                        src={selectedCertificate.url}
+                        alt={selectedCertificate.name}
+                        className="max-w-full max-h-96 object-contain rounded border border-gray-300"
+                      />
+                    </div>
+                  )}
+                  
+                  {/* Download Link */}
+                  <div className="flex justify-center">
+                    <a
+                      href={selectedCertificate.url}
+                      download={selectedCertificate.name}
+                      className="inline-flex items-center px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                    >
+                      <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                      Download Certificate
+                    </a>
+                  </div>
+                </div>
+              ) : selectedCertificate.type === 'file' ? (
+                <div className="text-center space-y-4">
+                  <div className="p-8 bg-gray-50 rounded-lg">
+                    <svg className="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <p className="text-gray-600 mb-4">{selectedCertificate.name}</p>
+                    <p className="text-sm text-gray-500">This certificate file is ready for upload</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center p-8">
+                  <div className="text-gray-400 mb-4">
+                    <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <p className="text-gray-600">Certificate uploaded successfully!</p>
+                  <p className="text-sm text-gray-500 mt-2">The certificate has been saved for this skill.</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 </MainLayout>
   );
 };

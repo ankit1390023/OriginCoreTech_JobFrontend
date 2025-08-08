@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Input, Button } from '../../../components/ui';
 import MainLayout from '../../../components/layout/MainLayout';
 import { HiOutlineEye, HiOutlineEyeOff } from 'react-icons/hi';
-import FeedRightProfile from './FeedRightProfile';
+import FeedRightProfile from '../feed/FeedRightProfile';
 import { userProfileApi } from '../../../api/userProfileApi';
 
 const FeedChangePassword = () => {

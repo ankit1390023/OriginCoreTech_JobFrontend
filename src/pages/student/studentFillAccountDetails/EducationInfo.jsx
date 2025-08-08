@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
+import { useFormContext } from "react-hook-form";
 import { useEducationData } from "../../../hooks/useEducationData";
 import { Loader, Input, Select, Label, ErrorMessage } from "../../../components/ui";
 
@@ -12,13 +13,26 @@ const generateYearOptions = () => {
   return years;
 };
 
-export default function EducationInfo({ register, errors, watch }) {
+export default function EducationInfo() {
   const {
-    data: { jobRoles, courses, specializations, colleges },
+    register,
+    formState: { errors },
+    watch,
+  } = useFormContext();
+
+  const {
+    data: { jobRoles, courses, specializations, colleges},
     loading,
     error,
     refetch,
   } = useEducationData();
+
+  // State for showing all courses or limited courses
+  const [showAll, setShowAll] = useState(false);
+
+  // Logic to show limited or all courses
+  const visibleCourses = showAll ? courses : courses?.slice(0, 5);
+  
 
   const CustomErrorMessage = ({ message }) => (
     <div className="w-full p-3 border rounded bg-red-50 text-red-500 text-xs">
@@ -152,59 +166,81 @@ export default function EducationInfo({ register, errors, watch }) {
           )}
         </div>
       )}
-      {watch("type") === "College Student" && (
+      {(watch("type") === "College Student" || watch("type") === "Fresher") && (
         <>
-          <div className="mb-2 sm:mb-3">
-            <Label>Course</Label>
-            {loading ? (
-              <Loader message="Loading courses..." />
-            ) : error ? (
-              <CustomErrorMessage message={error} />
-            ) : (
-              <div className="flex gap-1 sm:gap-2 flex-wrap">
-                {courses.map((course, index) => (
-                  <label
-                    key={index}
-                    className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${watch("course") === course
+ 
+<div className="mb-2 sm:mb-3">
+      <Label>Course</Label>
+      {loading ? (
+        <Loader message="Loading courses..." />
+      ) : error ? (
+        <CustomErrorMessage message={error} />
+      ) : (
+        <>
+          <div className="flex gap-1 sm:gap-2 flex-wrap">
+            {visibleCourses &&
+              visibleCourses.map((course, index) => (
+                <label
+                  key={index}
+                  className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${
+                    watch("course") === course.name
                       ? "bg-blue-500 text-white border-blue-500"
                       : "bg-gray-100 border-gray-300 hover:border-gray-400"
-                      }`}
-                  >
-                    <input
-                      type="radio"
-                      value={course}
-                      {...register("course", {
-                        required: "Course is required",
-                      })}
-                      className="hidden"
-                    />
-                    {course}
-                  </label>
-                ))}
-                <label
-                  className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${courses.includes(watch("course")) || !watch("course")
-                    ? "bg-gray-100 border-gray-300 hover:border-gray-400"
-                    : "bg-blue-500 text-white border-blue-500"
-                    }`}
+                  }`}
                 >
                   <input
                     type="radio"
-                    value={watch("course")}
-                    {...register("course", { required: "Course is required" })}
+                    value={course.name}
+                    {...register("course", {
+                      required: "Course is required",
+                    })}
                     className="hidden"
                   />
-                  Add your course +
+                  {course.name}
                 </label>
-              </div>
-            )}
-            {errors.course && (
-              <ErrorMessage>{errors.course.message}</ErrorMessage>
-            )}
+              ))}
+
+            <label
+              className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${
+                (courses && courses.some(course => course.name === watch("course"))) || !watch("course")
+                  ? "bg-gray-100 border-gray-300 hover:border-gray-400"
+                  : "bg-blue-500 text-white border-blue-500"
+              }`}
+            >
+              <input
+                type="radio"
+                value={watch("course")}
+                {...register("course", { required: "Course is required" })}
+                className="hidden"
+              />
+              Add your course +
+            </label>
           </div>
+
+          {/* Toggle Button */}
+          {courses?.length > 5 && (
+            <button
+              type="button"
+              onClick={() => setShowAll(prev => !prev)}
+              className="mt-2 text-sm text-blue-600 underline focus:outline-none"
+            >
+              {showAll ? "Show less" : "See more"}
+            </button>
+          )}
+        </>
+      )}
+      {errors.course && (
+        <ErrorMessage>{errors.course.message}</ErrorMessage>
+      )}
+    </div>
+
+
+
           <Select
             label="College Name"
             error={errors.college?.message}
-            options={colleges.map(college => ({ value: college, label: college }))}
+            options={colleges.map(college => ({
+               value: college.name, label: college.name }))}
             placeholder="Select a college"
             {...register("college", {
               required: "College Name is required",
@@ -213,7 +249,10 @@ export default function EducationInfo({ register, errors, watch }) {
           <Select
             label="Specialization"
             error={errors.specialization?.message}
-            options={specializations.map(specialization => ({ value: specialization, label: specialization }))}
+            options={specializations.map(specialization => ({ 
+              value: specialization.name, 
+              label: `${specialization.name} (${specialization.Course?.name || 'Unknown Course'})` 
+            }))}
             placeholder="Select a specialization"
             {...register("specialization", {
               required: "Specialization is required",
@@ -242,97 +281,6 @@ export default function EducationInfo({ register, errors, watch }) {
             </div>
           </div>
           
-        </>
-      )}
-      {watch("type") === "Fresher" && (
-        <>
-          <div className="mb-2 sm:mb-3">
-            <Label>Course</Label>
-            {loading ? (
-              <Loader message="Loading courses..." />
-            ) : error ? (
-              <CustomErrorMessage message={error} />
-            ) : (
-              <div className="flex gap-1 sm:gap-2 flex-wrap">
-                {courses.map((course, index) => (
-                  <label
-                    key={index}
-                    className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${watch("course") === course
-                      ? "bg-blue-500 text-white border-blue-500"
-                      : "bg-gray-100 border-gray-300 hover:border-gray-400"
-                      }`}
-                  >
-                    <input
-                      type="radio"
-                      value={course}
-                      {...register("course", {
-                        required: "Course is required",
-                      })}
-                      className="hidden"
-                    />
-                    {course}
-                  </label>
-                ))}
-                <label
-                  className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${courses.includes(watch("course")) || !watch("course")
-                    ? "bg-gray-100 border-gray-300 hover:border-gray-400"
-                    : "bg-blue-500 text-white border-blue-500"
-                    }`}
-                >
-                  <input
-                    type="radio"
-                    value={watch("course")}
-                    {...register("course", { required: "Course is required" })}
-                    className="hidden"
-                  />
-                  Add your course +
-                </label>
-              </div>
-            )}
-            {errors.course && (
-              <ErrorMessage>{errors.course.message}</ErrorMessage>
-            )}
-          </div>
-          <Select
-            label="College Name"
-            error={errors.college?.message}
-            options={colleges.map(college => ({ value: college, label: college }))}
-            placeholder="Select a college"
-            {...register("college", {
-              required: "College Name is required",
-            })}
-          />
-          <Select
-            label="Specialization"
-            error={errors.specialization?.message}
-            options={specializations.map(specialization => ({ value: specialization, label: specialization }))}
-            placeholder="Select a specialization"
-            {...register("specialization", {
-              required: "Specialization is required",
-            })}
-          />
-          <div className="flex gap-1 sm:gap-2 mb-2 sm:mb-3">
-            <div className="flex-1">
-              <Input
-                label="Start Year"
-                type="number"
-                placeholder="Choose year"
-                error={errors.startYear?.message}
-                {...register("startYear", {
-                  required: "Start Year is required",
-                })}
-              />
-            </div>
-            <div className="flex-1">
-              <Input
-                label="End Year"
-                type="number"
-                placeholder="Choose year"
-                error={errors.endYear?.message}
-                {...register("endYear", { required: "End Year is required" })}
-              />
-            </div>
-          </div>
         </>
       )}
       {watch("type") === "Working Professional" && (
@@ -378,24 +326,24 @@ export default function EducationInfo({ register, errors, watch }) {
               required: "Company Name is required",
             })}
           />
-          <div className="flex gap-1 sm:gap-2 mb-2 sm:mb-3">
+           <div className="flex gap-1 sm:gap-2 mb-2 sm:mb-3">
             <div className="flex-1">
-              <Input
+              <Select
                 label="Start Year"
-                type="number"
                 placeholder="Choose year"
                 error={errors.startYear?.message}
+                options={generateYearOptions()}
                 {...register("startYear", {
                   required: "Start Year is required",
                 })}
               />
             </div>
             <div className="flex-1">
-              <Input
+              <Select
                 label="End Year"
-                type="number"
                 placeholder="Choose year"
                 error={errors.endYear?.message}
+                options={generateYearOptions()}
                 {...register("endYear", { required: "End Year is required" })}
               />
             </div>

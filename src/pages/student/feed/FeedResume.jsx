@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button } from '../../../components/ui';
 import MainLayout from '../../../components/layout/MainLayout';
-import FeedRightProfile from './FeedRightProfile';
+import FeedRightProfile from '../feed/FeedRightProfile';
 
 const FeedResume = () => {
   const [selectedTemplate, setSelectedTemplate] = useState(1);

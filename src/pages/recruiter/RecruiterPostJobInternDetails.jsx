@@ -299,6 +299,12 @@ export default function RecruiterPostJobInternDetails() {
   // Add state to track if device is small
   const [isSmallDevice, setIsSmallDevice] = useState(false);
   const { user, token } = useSelector((state) => state.auth);
+
+  // Debug token state
+  useEffect(() => {
+    console.log("Auth state - user:", !!user, "token:", !!token);
+  }, [user, token]);
+
   useEffect(() => {
     const checkDeviceSize = () => {
       setIsSmallDevice(window.innerWidth < 1024); // lg breakpoint
@@ -315,21 +321,36 @@ export default function RecruiterPostJobInternDetails() {
 
   // Fetch all domains on component mount
   useEffect(() => {
-    fetchAllDomains(token);
-  }, []);
+    console.log("Token available:", !!token);
+    if (token) {
+      fetchAllDomains(token);
+    } else {
+      console.error("No token available for domain API call");
+      setDomainError("Authentication required. Please log in again.");
+    }
+  }, [token]);
 
-  const fetchAllDomains = async () => {
+  const fetchAllDomains = async (authToken) => {
     try {
       setDomainsLoading(true);
       setDomainError("");
-      const domainsData = await domainApi.getAllDomains();
+
+      if (!authToken) {
+        throw new Error("No authentication token available");
+      }
+
+      const domainsData = await domainApi.getAllDomains(authToken);
       // The API already returns an array of domain names
       console.log("All domains", domainsData);
 
       setAllDomains(domainsData);
     } catch (error) {
       console.error("Error fetching domains:", error);
-      setDomainError("Failed to load domains. Please try again.");
+      if (error.response?.status === 401) {
+        setDomainError("Authentication expired. Please log in again.");
+      } else {
+        setDomainError("Failed to load domains. Please try again.");
+      }
     } finally {
       setDomainsLoading(false);
     }
@@ -337,22 +358,31 @@ export default function RecruiterPostJobInternDetails() {
 
 
 
-  const handleDomainClick = async (domain) => {
+  const handleDomainClick = async (domainName) => {
     try {
-      setSelectedDomain(domain);
+      setSelectedDomain(domainName);
 
       // If we haven't fetched skills for this domain yet, fetch them
-      if (!domainSkills[domain]) {
+      if (!domainSkills[domainName]) {
         setSkillsLoading(true);
-        const skills = await domainApi.getSkillsByDomain(domain);
+
+        if (!token) {
+          throw new Error("No authentication token available");
+        }
+
+        const skills = await domainApi.getSkillsByDomain(domainName, token);
         setDomainSkills(prev => ({
           ...prev,
-          [domain]: skills
+          [domainName]: skills
         }));
       }
     } catch (error) {
-      console.error("Error fetching skills for domain:", domain, error);
-      setDomainError("Failed to load skills for this domain.");
+      console.error("Error fetching skills for domain:", domainName, error);
+      if (error.response?.status === 401) {
+        setDomainError("Authentication expired. Please log in again.");
+      } else {
+        setDomainError("Failed to load skills for this domain.");
+      }
     } finally {
       setSkillsLoading(false);
     }
@@ -419,8 +449,9 @@ export default function RecruiterPostJobInternDetails() {
         stipendType: data.opportunityType === "Job" ? "Fixed" : data.stipendType,
         stipendMin: data.stipendMin ? parseInt(data.stipendMin) : null,
         stipendMax: data.stipendMax ? parseInt(data.stipendMax) : null,
-        incentivePerYear: data.incentivesMin && data.incentivesMax ?
-          `${data.incentivesMin}-${data.incentivesMax} ${data.incentivesMode || 'Month'}` : null,
+        incentivePerYear: data.incentivesMin && data.incentivesMax
+          ? `${data.incentivesMin}-${data.incentivesMax} ${data.incentivesMode || 'Month'}`
+          : null,
         perks: data.perks ? (Array.isArray(data.perks) ? data.perks.join(', ') : data.perks) : null,
         screeningQuestions: data.screeningQuestions || null,
         phoneContact: data.phoneContact || null,
@@ -646,7 +677,7 @@ export default function RecruiterPostJobInternDetails() {
                   <p className="text-xs text-red-800">{domainError}</p>
                   <button
                     type="button"
-                    onClick={fetchAllDomains}
+                    onClick={() => fetchAllDomains(token)}
                     className="text-xs text-red-600 hover:text-red-800 underline mt-1"
                   >
                     Retry
@@ -670,26 +701,30 @@ export default function RecruiterPostJobInternDetails() {
 
                     {/* Display domains as rounded badges */}
                     <div className="flex flex-wrap gap-1 sm:gap-2 mb-2">
-                      {(showAllDomains ? allDomains : allDomains.slice(0, 4)).map((domain) => (
-                        <button
-                          key={domain}
-                          type="button"
-                          onClick={() => handleDomainClick(domain)}
-                          className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium transition-colors ${selectedDomain === domain
-                            ? "bg-blue-100 text-blue-800 border border-blue-300"
-                            : "bg-gray-100 text-gray-700 border border-gray-300 hover:bg-gray-200 hover:text-gray-800"
-                            }`}
-                        >
-                          {domain}
-                        </button>
-                      ))}
+                      {(showAllDomains ? allDomains : allDomains.slice(0, 4)).map((domain) => {
+                        const domainName = typeof domain === 'string' ? domain : domain.name;
+                        const domainKey = typeof domain === 'string' ? domain : domain.id || domain.name;
+                        return (
+                          <button
+                            key={domainKey}
+                            type="button"
+                            onClick={() => handleDomainClick(domainName)}
+                            className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium transition-colors ${selectedDomain === domainName
+                              ? "bg-blue-100 text-blue-800 border border-blue-300"
+                              : "bg-gray-100 text-gray-700 border border-gray-300 hover:bg-gray-200 hover:text-gray-800"
+                              }`}
+                          >
+                            {domainName}
+                          </button>
+                        );
+                      })}
 
                       {/* Show More/Less button */}
                       {allDomains.length > 4 && (
                         <button
                           type="button"
                           onClick={() => setShowAllDomains(!showAllDomains)}
-                          className="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-medium hover:bg-gray-200 hover:text-gray-800 transition-colors"
+                          className="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 text-blue-800 rounded-full text-xs font-medium hover:bg-gray-200 hover:text-gray-800 transition-colors"
                         >
                           <span>{showAllDomains ? "Show Less" : "Show More"}</span>
                         </button>
@@ -1191,8 +1226,8 @@ export default function RecruiterPostJobInternDetails() {
                 placeholder="Select a city"
                 error={methods.formState.errors.city?.message}
                 options={educationData.locations ? educationData.locations.map(location => ({
-                  value: location,
-                  label: location
+                  value: typeof location === 'string' ? location : location.name,
+                  label: typeof location === 'string' ? location : location.name
                 })) : []}
                 {...methods.register("city")}
               />
@@ -1329,8 +1364,8 @@ export default function RecruiterPostJobInternDetails() {
                   <Select
                     placeholder="Select a college"
                     options={educationData.colleges ? educationData.colleges.map(college => ({
-                      value: college,
-                      label: college
+                      value: typeof college === 'string' ? college : college.name,
+                      label: typeof college === 'string' ? college : college.name
                     })) : []}
                     {...methods.register("collegeName")}
                   />
@@ -1359,8 +1394,8 @@ export default function RecruiterPostJobInternDetails() {
                     label="Course"
                     placeholder="Select a course"
                     options={educationData.courses ? educationData.courses.map(course => ({
-                      value: course,
-                      label: course
+                      value: typeof course === 'string' ? course : course.name,
+                      label: typeof course === 'string' ? course : course.name
                     })) : []}
                     {...methods.register("course")}
                   />
@@ -1479,5 +1514,4 @@ export default function RecruiterPostJobInternDetails() {
       </div>
     </SignUpLayout>
   );
-
 }

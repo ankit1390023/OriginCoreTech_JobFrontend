@@ -5,8 +5,9 @@ import axios from 'axios';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { recruiterApi } from "../../api/recuiterApi";
 import { useNavigate } from "react-router-dom";
-import { Input, Textarea, Label, Button, Checkbox  } from "../../components/ui";
+import { Input, Textarea, Label, Button, Checkbox } from "../../components/ui";
 import SignUpLayout from "../../components/layout/SignUpLayout";
+import { useSelector } from "react-redux";
 
 const formSchema = z.object({
     designation: z.string().min(1, { message: "Designation is required" }),
@@ -32,6 +33,7 @@ const formSchema = z.object({
 export default function CompanyRecruiterProfile() {
     const [logoPreview, setLogoPreview] = useState(null);
     const [profilePicPreview, setProfilePicPreview] = useState(null);
+    const { token } = useSelector((state) => state.auth); // <-- get token from Redux
     const {
         register,
         handleSubmit,
@@ -43,7 +45,11 @@ export default function CompanyRecruiterProfile() {
 
     const onSubmit = async (data) => {
         try {
-            const response = await recruiterApi.createProfileWithFileUpload(data);
+            if (!token) {
+                alert("Authentication token missing. Please log in again.");
+                return;
+            }
+            const response = await recruiterApi.createProfileWithFileUpload(data, token); // <-- pass token here
             console.log("response from createProfileWithFileUpload", response);
             if (response && response.profile) {
                 alert("Profile created successfully");
@@ -243,4 +249,4 @@ export default function CompanyRecruiterProfile() {
             </div>
         </SignUpLayout>
     );
-} 
+}

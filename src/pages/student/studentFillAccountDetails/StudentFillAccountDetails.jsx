@@ -3,13 +3,14 @@ import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import PersonalInfo from "./PersonalInfo";
 import EducationInfo from "./EducationInfo";
 import ProgressBar from "./ProgressBar";
-
 import SkillsForm from "./SkillsForm";
 import PreferencesForm from "./PreferencesForm";
 import { userDetailsApi } from "../../../api/userDetailsApi";
+import { useEducationData } from "../../../hooks/useEducationData";
 import { Button } from "../../../components/ui";
 import SignUpLayoutForLarge from "../../../components/layout/SignUpLayoutForLarge";
 
@@ -45,57 +46,134 @@ const personalInfoSchema = z.object({
   gender: z.string().min(1, { message: "Gender is required" }),
 });
 
+// Validation schema for EducationInfo step
+const educationInfoSchema = z.object({
+  type: z.string().min(1, { message: "Type is required" }),
+  standard: z.string().optional(),
+  course: z.string().optional(),
+  specialization: z.string().optional(),
+  college: z.string().optional(),
+  startYear: z.string().optional(),
+  endYear: z.string().optional(),
+  experience: z.string().optional(),
+  jobRole: z.string().optional(),
+  company: z.string().optional(),
+  salary: z.string().optional(),
+});
+
+// Validation schema for Preferences step
+const preferencesSchema = z.object({
+  currentlyLookingFor: z.array(z.string()).optional(),
+  workMode: z.array(z.string()).optional(),
+});
+
 // Combined schema for all steps
 const formSchema = z.object({
   ...personalInfoSchema.shape,
-  // Add other step schemas here as needed
+  ...educationInfoSchema.shape,
+  ...preferencesSchema.shape,
 });
+
 export default function StudentFillAccountDetails() {
+  const { user, token } = useSelector((state) => state.auth);
+  const { data: educationData } = useEducationData();
   const methods = useForm({
     mode: "onTouched",
     resolver: zodResolver(formSchema),
     defaultValues: {
       city: "",
       gender: "",
+      type: "",
+      currentlyLookingFor: [],
+      workMode: [],
     },
   });
+  
   const [step, setStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
+  // Get userId from Redux state
+  const userId = user?.id;
+
+  // Redirect if user is not authenticated
+  useEffect(() => {
+    if (!user || !token) {
+      navigate("/login");
+    }
+  }, [user, token, navigate]);
+
   const onNext = async () => {
-    // Skip validation on Skills step (step 3) since it doesn't have registered fields
-    if (step === 3) {
+    // Skip validation on Skills step (step 2) since it doesn't have registered fields
+    if (step === 2) {
       setStep((s) => s + 1);
       return;
     }
 
-    // Only validate PersonalInfo step for now
+    // Define fields to validate for each step
     const stepFields = {
       0: ["firstName", "lastName", "email", "phone", "dob", "city", "gender"],
+      1: ["type"], // Basic validation for type, other fields are conditional
+      3: ["currentlyLookingFor", "workMode"],
     };
 
     const fieldsToValidate = stepFields[step] || [];
     const valid = await methods.trigger(fieldsToValidate);
-    if (valid && step < steps.length - 1) setStep((s) => s + 1);
+    
+    if (valid && step < steps.length - 1) {
+      setStep((s) => s + 1);
+    }
   };
+
   const onBack = () => setStep((s) => s - 1);
 
   const handleSubmitClick = async () => {
+    console.log('=== FORM SUBMISSION STARTED ===');
+    if (!userId || !token) {
+      alert("Authentication required. Please login again.");
+      navigate("/login");
+      return;
+    }
+
     setIsSubmitting(true);
+    console.log('Setting isSubmitting to true');
 
     try {
+      console.log('Getting form values...');
       const formData = methods.getValues();
+      console.log('Raw form data:', formData);
 
-  
+      // Validate required fields before proceeding
+      if (!formData.firstName || !formData.lastName || !formData.email || !formData.phone || !formData.dob || !formData.city || !formData.gender) {
+        alert("Please fill in all required fields: First Name, Last Name, Email, Phone, Date of Birth, City, and Gender.");
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Validate email format
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(formData.email)) {
+        alert("Please enter a valid email address.");
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Validate phone format (basic validation)
+      const phoneRegex = /^[+]?[\d\s\-()]{10,}$/;
+      if (!phoneRegex.test(formData.phone)) {
+        alert("Please enter a valid phone number (at least 10 digits).");
+        setIsSubmitting(false);
+        return;
+      }
+
       // Prepare the data structure for the API based on original backend structure
       const userData = {
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        email: formData.email,
-        phone: formData.phone,
+        firstName: formData.firstName.trim(),
+        lastName: formData.lastName.trim(),
+        email: formData.email.trim().toLowerCase(),
+        phone: formData.phone.trim(),
         dob: formData.dob,
-        city: formData.city,
+        city: formData.city.trim(),
         gender: formData.gender,
         userType: formData.type || "Working Professional",
         experiences: [],
@@ -116,71 +194,150 @@ export default function StudentFillAccountDetails() {
 
       // Add education fields based on user type
       if (formData.type === "School Student") {
-        userData.educationStandard = formData.standard;
-      } else if (formData.type === "College Student") {
-        userData.course = formData.course;
-        userData.specialization = formData.specialization;
-        userData.collegeName = formData.college;
-        userData.startYear = formData.startYear;
-        userData.endYear = formData.endYear;
+        userData.educationStandard = formData.standard || "";
+        // Validate required fields for school students
+        if (!formData.standard) {
+          alert("Please select your education standard.");
+          setIsSubmitting(false);
+          return;
+        }
+      } else if (formData.type === "College Student" || formData.type === "Fresher") {
+        // Validate required fields for college students/freshers
+        if (!formData.course) {
+          alert("Please select your course.");
+          setIsSubmitting(false);
+          return;
+        }
+        
+        // Find course ID by name
+        const selectedCourse = educationData?.courses?.find(course => course.name === formData.course);
+        // Find specialization ID by name
+        const selectedSpecialization = educationData?.specializations?.find(spec => spec.name === formData.specialization);
+        // Find college ID by name
+        const selectedCollege = educationData?.colleges?.find(college => college.name === formData.college);
+        
+        // Only set IDs if they exist to avoid sending null/undefined values
+        if (selectedCourse?.id) {
+          userData.courseId = selectedCourse.id;
+        } else {
+          console.warn('Course ID not found for:', formData.course);
+        }
+        
+        if (selectedSpecialization?.id) {
+          userData.specializationId = selectedSpecialization.id;
+        } else if (formData.specialization) {
+          console.warn('Specialization ID not found for:', formData.specialization);
+        }
+        
+        if (selectedCollege?.id) {
+          userData.collegeId = selectedCollege.id;
+        } else if (formData.college) {
+          console.warn('College ID not found for:', formData.college);
+        }
+        
+        userData.course = formData.course || ""; // Keep name for backward compatibility
+        userData.specialization = formData.specialization || ""; // Keep name for backward compatibility
+        userData.collegeName = formData.college || "";
+        userData.startYear = formData.startYear || "";
+        userData.endYear = formData.endYear || "";
       } else if (formData.type === "Working Professional") {
         // Add working professional specific fields
         userData.jobLocation = formData.city; // Using city as job location
         userData.salaryDetails = formData.salary || "";
-        userData.currentlyLookingFor = formData.currentlyLookingFor || "";
-        userData.workMode = formData.workMode || "";
+        
+        // Handle array fields from PreferencesForm properly
+        if (Array.isArray(formData.currentlyLookingFor) && formData.currentlyLookingFor.length > 0) {
+          userData.currentlyLookingFor = formData.currentlyLookingFor.join(", ");
+        } else {
+          userData.currentlyLookingFor = "";
+        }
+        
+        if (Array.isArray(formData.workMode) && formData.workMode.length > 0) {
+          userData.workMode = formData.workMode.join(", ");
+        } else {
+          userData.workMode = "";
+        }
 
         // Add experience data if available
-        if (formData.company && formData.startYear) {
+        if (formData.company && formData.jobRole) {
           userData.experiences.push({
-            currentJobRole: formData.jobRole || "Software Engineer",
-            currentCompany: formData.company,
+            currentJobRole: formData.jobRole.trim(),
+            currentCompany: formData.company.trim(),
             totalExperience: formData.experience || "1-2 years",
           });
         }
       }
 
-      // Handle array fields from PreferencesForm
-      if (
-        typeof formData.currentlyLookingFor === "string" &&
-        formData.currentlyLookingFor
-      ) {
-        userData.currentlyLookingFor = formData.currentlyLookingFor
-          .split(",")
-          .filter((item) => item.trim())
-          .join(", ");
+      // Handle preferences for all user types
+      if (Array.isArray(formData.currentlyLookingFor) && formData.currentlyLookingFor.length > 0) {
+        userData.currentlyLookingFor = formData.currentlyLookingFor.join(", ");
+      } else if (!userData.currentlyLookingFor) {
+        userData.currentlyLookingFor = "";
       }
-      if (typeof formData.workMode === "string" && formData.workMode) {
-        userData.workMode = formData.workMode
-          .split(",")
-          .filter((item) => item.trim())
-          .join(", ");
+      
+      if (Array.isArray(formData.workMode) && formData.workMode.length > 0) {
+        userData.workMode = formData.workMode.join(", ");
+      } else if (!userData.workMode) {
+        userData.workMode = "";
       }
 
+      // Remove any undefined or null values from userData
+      const cleanUserData = Object.fromEntries(
+        Object.entries(userData).filter(([key, value]) => value !== undefined && value !== null && value !== '')
+      );
+
+      // Ensure required fields are present
+      const requiredFields = ['firstName', 'lastName', 'email', 'phone', 'dob', 'city', 'gender', 'userType'];
+      const missingFields = requiredFields.filter(field => !cleanUserData[field]);
+      
+      if (missingFields.length > 0) {
+        alert(`Missing required fields: ${missingFields.join(', ')}`);
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Log the userData being sent for debugging
+      console.log('Form Data being sent:', JSON.stringify(cleanUserData, null, 2));
+      console.log('Education Data available:', educationData);
+      console.log('User ID:', userId);
+      console.log('Token available:', !!token);
+
       // Check if user details already exist
+      console.log('Checking if user details exist...');
       const { exists } = await userDetailsApi.checkUserDetailsExist(userId);
+      console.log('User details exist:', exists);
 
       let response;
       if (exists) {
         // Update existing user details
-        response = await userDetailsApi.updateUserDetails(userId, userData);
+        console.log('Updating existing user details...');
+        response = await userDetailsApi.updateUserDetails(userId, cleanUserData, token);
       } else {
         // Create new user details
-        response = await userDetailsApi.createUserDetails(userData);
+        console.log('Creating new user details...');
+        response = await userDetailsApi.createUserDetails(cleanUserData, token);
       }
+      console.log('API response:', response);
 
       alert("Form submitted successfully!");
       // Redirect to all-jobs page after successful submission
       navigate("/all-jobs");
     } catch (error) {
+      // Log detailed error information for debugging
+      console.error('Form submission error:', error);
+      console.error('Error response data:', JSON.stringify(error.response?.data, null, 2));
+      console.error('Error status:', error.response?.status);
+      console.error('Error message:', error.message);
+      console.error('Full error response:', error.response);
+      
       // Show specific error message from backend
       let errorMessage = "Error submitting form. Please try again.";
-      if (
-        error.response &&
-        error.response.data &&
-        error.response.data.message
-      ) {
+      if (error.response && error.response.data && error.response.data.message) {
         errorMessage = error.response.data.message;
+      } else if (error.response?.data?.error) {
+        errorMessage = `Validation Error: ${error.response.data.error}`;
+      } else if (error.response?.data) {
+        errorMessage = `Server Error: ${JSON.stringify(error.response.data)}`;
       }
 
       alert(errorMessage);
@@ -196,29 +353,15 @@ export default function StudentFillAccountDetails() {
           <ProgressBar currentStep={step} steps={steps} />
         </div>
         <FormProvider {...methods}>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-            }}
-          >
-            {step === 0 && (
-              <PersonalInfo
-                register={methods.register}
-                errors={methods.formState.errors}
-              />
-            )}
-            {step === 1 && (
-              <EducationInfo
-                register={methods.register}
-                errors={methods.formState.errors}
-                watch={methods.watch}
-              />
-            )}
+          <form onSubmit={methods.handleSubmit(handleSubmitClick)}>
+            {step === 0 && <PersonalInfo />}
+            {step === 1 && <EducationInfo />}
             {step === 2 && <SkillsForm />}
             {step === 3 && <PreferencesForm />}
             <div className="flex justify-between mt-8">
               {step > 0 ? (
                 <Button
+                  type="button"
                   variant="outline"
                   onClick={onBack}
                 >
@@ -229,6 +372,7 @@ export default function StudentFillAccountDetails() {
               )}
               {step < steps.length - 1 ? (
                 <Button
+                  type="button"
                   variant="secondary"
                   onClick={onNext}
                 >
@@ -236,10 +380,10 @@ export default function StudentFillAccountDetails() {
                 </Button>
               ) : (
                 <Button
+                  type="submit"
                   variant="primary"
                   loading={isSubmitting}
                   disabled={isSubmitting}
-                  onClick={handleSubmitClick}
                 >
                   {isSubmitting ? "Submitting..." : "Submit"}
                 </Button>
@@ -250,6 +394,24 @@ export default function StudentFillAccountDetails() {
       </div>
     </div>
   );
+
+  // Show loading if user data is not available
+  if (!user || !token) {
+    return (
+      <SignUpLayoutForLarge
+        heading="Let's Get Started!"
+        subheading="Create an account to continue!"
+      >
+        <div className="flex-1 w-full flex justify-center items-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p>Loading...</p>
+          </div>
+        </div>
+      </SignUpLayoutForLarge>
+    );
+  }
+
   // Render different layouts based on device size
   return (
     <SignUpLayoutForLarge

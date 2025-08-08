@@ -20,12 +20,13 @@ export const educationApi = {
     // Fetch locations from backend
     getLocations: async (token) => {
         try {
-            const response = await axios.get(`${BASE_URL}/locations`, {
+            const response = await axios.get(`${BASE_URL}/master/location`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
             });
-            return response.data;
+            console.log("response", response.data);
+            return response.data.data;
         } catch (error) {
             console.error('Error fetching locations:', error);
             throw error;
@@ -35,12 +36,13 @@ export const educationApi = {
     // Fetch courses from backend
     getCourses: async (token) => {
         try {
-            const response = await axios.get(`${BASE_URL}/courses`, {
+            const response = await axios.get(`${BASE_URL}/master/courses`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
             });
-            return response.data;
+            console.log("response", response.data);
+            return response.data.data;
         } catch (error) {
             console.error('Error fetching courses:', error);
             throw error;
@@ -50,12 +52,14 @@ export const educationApi = {
     // Fetch specializations from backend
     getSpecializations: async (token) => {
         try {
-            const response = await axios.get(`${BASE_URL}/specializations`, {
+            const response = await axios.get(`${BASE_URL}/master/specialization`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
             });
-            return response.data;
+            console.log('specializations response', response.data);
+            // Return the data array from the response
+            return response.data.data || [];
         } catch (error) {
             console.error('Error fetching specializations:', error);
             throw error;
@@ -65,12 +69,14 @@ export const educationApi = {
     // Fetch colleges from backend
     getColleges: async (token) => {
         try {
-            const response = await axios.get(`${BASE_URL}/colleges`, {
+            const response = await axios.get(`${BASE_URL}/master/school-college`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
             });
-            return response.data;
+            console.log("colleges response", response.data);
+            // Return the data array from the response
+            return response.data.data || [];
         } catch (error) {
             console.error('Error fetching colleges:', error);
             throw error;
@@ -97,6 +103,7 @@ export const educationApi = {
             };
         } catch (error) {
             console.error('Error fetching education data:', error);
+
             throw error;
         }
     }

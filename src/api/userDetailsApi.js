@@ -19,6 +19,31 @@ export const userDetailsApi = {
         }
     },
     
+    // Check if user details exist
+    checkUserDetailsExist: async (userId, token) => {
+        if (!userId) {
+            return { exists: false, error: 'User ID is required.' };
+        }
+        try {
+            const response = await axios.get(`${BASE_URL}/user-details/detail/${userId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            return { exists: true, data: response.data };
+        } catch (error) {
+            if (error.response && error.response.status === 404) {
+                return { exists: false };
+            }
+            console.error('Error checking user details:', error);
+            return { 
+                exists: false, 
+                error: error?.response?.data?.message || error.message || 'Unknown error occurred'
+            };
+        }
+    },
+    
     getUserDetails: async (userId) => {
         if (!userId) {
             return { success: false, error: 'User ID is required.' };
@@ -63,6 +88,15 @@ export const userDetailsApi = {
             
             if (!response.data) {
                 return { success: true, data: null };
+            }
+
+            // Log the skills data structure for debugging
+            if (response.data.skills) {
+                console.log('Skills data structure:', response.data.skills);
+                console.log('First skill type:', typeof response.data.skills[0]);
+                if (response.data.skills[0]) {
+                    console.log('First skill content:', response.data.skills[0]);
+                }
             }
             
             // Return specific data type if requested

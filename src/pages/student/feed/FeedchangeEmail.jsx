@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { Input, Button } from '../../../components/ui';
 import MainLayout from '../../../components/layout/MainLayout';
 import { HiOutlineEye, HiOutlineEyeOff } from 'react-icons/hi';
-import FeedRightProfile from './FeedRightProfile';
+import FeedRightProfile from '../feed/FeedRightProfile';
 import {userProfileApi} from '../../../api/userProfileApi';
 
 const FeedchangeEmail = () => {
+  const { token, user } = useSelector((state) => state.auth);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -23,8 +25,12 @@ const FeedchangeEmail = () => {
     }
     setLoading(true);
     try {
-      const data = { email, password };
-      await userProfileApi.changeEmail(data);
+      const data = { 
+        userId: user?.id || user?.userId,
+        newEmail: email,
+        password 
+      };
+      await userProfileApi.changeEmail(data, token);
       setSuccess(true);
     } catch (err) {
       setError(

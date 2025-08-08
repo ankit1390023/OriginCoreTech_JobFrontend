@@ -1,15 +1,15 @@
+
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaCamera } from 'react-icons/fa';
 import MainLayout from '../../../components/layout/MainLayout';
-import FeedRightProfile from './FeedRightProfile';
+import FeedRightProfile from '../feed/FeedRightProfile';
 import uploadImageApi from '../../../api/uploadImageApi';
 
 const FeedView = () => {
   const navigate = useNavigate();
   const [profileImage, setProfileImage] = useState('/src/assets/dummyProfile1.jpg');
   const [activeSection, setActiveSection] = useState(null);
-  const [showContent, setShowContent] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadStatus, setUploadStatus] = useState(null);
   const [resumeUrl, setResumeUrl] = useState(null);
@@ -33,14 +33,9 @@ const FeedView = () => {
     } else if (section === 'Education') {
       navigate('/feed-your-education');
     } else {
-      setActiveSection(section);
-      setShowContent(true);
+      // Toggle the section - if it's already active, close it; otherwise, open it
+      setActiveSection(activeSection === section ? null : section);
     }
-  };
-
-  const handleCloseContent = () => {
-    setShowContent(false);
-    setActiveSection(null);
   };
 
   const handleUploadResume = () => {
@@ -98,6 +93,149 @@ const FeedView = () => {
     console.log('Get Verified clicked');
   };
 
+  // Function to render specific section content
+  const renderSectionContent = (section) => {
+    switch (section) {
+      case 'About':
+        return (
+          <div className="border border-gray-200 rounded-lg p-4 mt-3">
+            <p className="text-gray-700 leading-relaxed">
+              Hi, I am Aman working as a designer from 3 years...
+            </p>
+          </div>
+        );
+      
+      case 'Career Objective':
+        return (
+          <div className="border border-gray-200 rounded-lg p-4 mt-3">
+            <p className="text-gray-700 leading-relaxed">
+              lorem ipsum
+            </p>
+          </div>
+        );
+      
+      case 'Resume':
+        return (
+          <div className="border border-gray-200 rounded-lg p-4 mt-3">
+            {resumeUrl ? (
+              <div className="flex items-center gap-2">
+                <a 
+                  href={resumeUrl} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-sm text-green-600 hover:text-green-800 transition-colors"
+                >
+                  View Resume
+                </a>
+                <button 
+                  className="text-sm text-blue-600 hover:text-blue-800 transition-colors" 
+                  onClick={handleUploadResume}
+                >
+                  Replace
+                </button>
+              </div>
+            ) : (
+              <button 
+                className="text-sm text-blue-600 hover:text-blue-800 transition-colors" 
+                onClick={handleUploadResume}
+                disabled={isUploading}
+              >
+                {isUploading ? 'Uploading...' : 'Upload Resume'}
+              </button>
+            )}
+            {uploadStatus && (
+              <div className={`text-xs mt-2 ${uploadStatus.type === 'success' ? 'text-green-600' : 'text-red-600'}`}>
+                {uploadStatus.message}
+              </div>
+            )}
+          </div>
+        );
+      
+      case 'Skills':
+        return (
+          <div className="border border-gray-200 rounded-lg p-4 mt-3">
+            <div className="flex flex-wrap gap-2">
+              {['Digital Marketing', 'Sales', 'UI Design', 'SEO'].map((skill, idx) => (
+                <div key={idx} className="flex items-center">
+                  <span className="text-gray-700">{skill}</span>
+                  {idx < 3 && <span className="text-red-500 mx-2">•</span>}
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      
+      case 'Work Experience':
+        return (
+          <div className="border border-gray-200 rounded-lg p-4 mt-3">
+            <div className="flex flex-wrap gap-2">
+              {['Microsoft', 'Startup', 'Google'].map((company, idx) => (
+                <div key={idx} className="flex items-center">
+                  <span className="text-gray-700">{company}</span>
+                  {idx < 2 && <span className="text-red-500 mx-2">•</span>}
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      
+      case 'Education':
+        return (
+          <div className="border border-gray-200 rounded-lg p-4 mt-3">
+            <div className="flex flex-wrap gap-2">
+              {['abc', 'abc', 'abc'].map((edu, idx) => (
+                <div key={idx} className="flex items-center">
+                  <span className="text-gray-700">{edu}</span>
+                  {idx < 2 && <span className="text-red-500 mx-2">•</span>}
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      
+      case 'Languages':
+        return (
+          <div className="border border-gray-200 rounded-lg p-4 mt-3">
+            <div className="flex flex-wrap gap-2">
+              {['English', 'Hindi', 'Spanish'].map((lang, idx) => (
+                <div key={idx} className="flex items-center">
+                  <span className="text-gray-700">{lang}</span>
+                  {idx < 2 && <span className="text-red-500 mx-2">•</span>}
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      
+      case 'Authentication':
+        return (
+          <div className="border border-gray-200 rounded-lg p-4 mt-3">
+            <div className="flex items-center justify-between">
+              <div className="flex flex-wrap gap-2">
+                {['Email ID', 'Phone no.', 'Aadhaar'].map((auth, idx) => (
+                  <div key={idx} className="flex items-center">
+                    <span className="text-gray-700">{auth}</span>
+                    {idx < 2 && <span className="text-red-500 mx-2">•</span>}
+                  </div>
+                ))}
+              </div>
+              <div className="flex items-center gap-2">
+                <button className="text-sm text-blue-600 hover:text-blue-800 transition-colors" onClick={handleGetVerified}>
+                  Get Verified
+                </button>
+                <div className="w-4 h-4 bg-gray-300 rounded-full flex items-center justify-center">
+                  <span className="text-xs text-gray-600 font-bold">i</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      
+      default:
+        return null;
+    }
+  };
+
   return (
     <MainLayout>
        <div className="flex justify-center bg-gray-100 min-h-screen px-2 lg:px-8">
@@ -106,7 +244,7 @@ const FeedView = () => {
                 {/* Feed Content */}
     
     <section
-      className="bg-white rounded-[10px] p-4 sm:p-6 shadow-lg relative overflow-hidden mx-auto mt-2  w-full max-w-[800px] min-h-[1000px]"
+      className="bg-white rounded-[10px] p-4 sm:p-6 shadow-lg relative overflow-hidden mx-auto mt-2  w-full max-w-[729px] min-h-[1000px]"
     >
       {/* Profile Section */}
       <div className="flex flex-col items-center mb-8">
@@ -143,110 +281,69 @@ const FeedView = () => {
           'Languages',
           'Authentication'
         ].map((section, index) => (
-          <div key={index} className="flex justify-between items-start flex-col sm:flex-row gap-2">
-            <div className="flex-1">
-              <h3 className="font-semibold text-gray-900 mb-2">{section === 'Languages' ? 'Languages you know' : section}</h3>
-            </div>
+          <div key={index}>
+            <div className="flex justify-between items-start flex-col sm:flex-row gap-2">
+              <div className="flex-1">
+                <h3 className="font-semibold text-gray-900 mb-2">{section === 'Languages' ? 'Languages you know' : section}</h3>
+              </div>
 
-            <div className="flex items-center gap-2">
-              {section === 'Resume' ? (
-                <div className="flex flex-col items-end gap-2">
-                  {resumeUrl ? (
-                    <div className="flex items-center gap-2">
-                      <a 
-                        href={resumeUrl} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="text-sm text-green-600 hover:text-green-800 transition-colors"
-                      >
-                        View Resume
-                      </a>
+              <div className="flex items-center gap-2">
+                {section === 'Resume' ? (
+                  <div className="flex flex-col items-end gap-2">
+                    {resumeUrl ? (
+                      <div className="flex items-center gap-2">
+                        <a 
+                          href={resumeUrl} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="text-sm text-green-600 hover:text-green-800 transition-colors"
+                        >
+                          View Resume
+                        </a>
+                        <button 
+                          className="text-sm text-blue-600 hover:text-blue-800 transition-colors" 
+                          onClick={handleUploadResume}
+                        >
+                          Replace
+                        </button>
+                      </div>
+                    ) : (
                       <button 
                         className="text-sm text-blue-600 hover:text-blue-800 transition-colors" 
                         onClick={handleUploadResume}
+                        disabled={isUploading}
                       >
-                        Replace
+                        {isUploading ? 'Uploading...' : 'Upload Resume'}
                       </button>
-                    </div>
-                  ) : (
-                    <button 
-                      className="text-sm text-blue-600 hover:text-blue-800 transition-colors" 
-                      onClick={handleUploadResume}
-                      disabled={isUploading}
-                    >
-                      {isUploading ? 'Uploading...' : 'Upload Resume'}
-                    </button>
-                  )}
-                  {uploadStatus && (
-                    <div className={`text-xs ${uploadStatus.type === 'success' ? 'text-green-600' : 'text-red-600'}`}>
-                      {uploadStatus.message}
-                    </div>
-                  )}
-                </div>
-              ) : section === 'Authentication' ? (
-                <>
-                  <button className="text-sm text-blue-600 hover:text-blue-800 transition-colors" onClick={handleGetVerified}>
-                    Get Verified
-                  </button>
-                  <div className="w-4 h-4 bg-gray-300 rounded-full flex items-center justify-center">
-                    <span className="text-xs text-gray-600 font-bold">i</span>
+                    )}
+                    {uploadStatus && (
+                      <div className={`text-xs ${uploadStatus.type === 'success' ? 'text-green-600' : 'text-red-600'}`}>
+                        {uploadStatus.message}
+                      </div>
+                    )}
                   </div>
-                </>
-              ) : (
-                <button className="text-sm text-blue-600 hover:text-blue-800 transition-colors" onClick={() => handleViewEdit(section)}>
-                  View/Edit
-                </button>
-              )}
+                ) : section === 'Authentication' ? (
+                  <>
+                    <button className="text-sm text-blue-600 hover:text-blue-800 transition-colors" onClick={handleGetVerified}>
+                      Get Verified
+                    </button>
+                    <div className="w-4 h-4 bg-gray-300 rounded-full flex items-center justify-center">
+                      <span className="text-xs text-gray-600 font-bold">i</span>
+                    </div>
+                  </>
+                ) : (
+                  <button className="text-sm text-blue-600 hover:text-blue-800 transition-colors" onClick={() => handleViewEdit(section)}>
+                    {activeSection === section ? 'Close' : 'View/Edit'}
+                  </button>
+                )}    
+              </div>
             </div>
-
-
+            
+            {/* Show section content inline if active */}
+            {activeSection === section && renderSectionContent(section)}
           </div>
         ))}
       </div>
-
-      {/* Content Overlay */}
-      {showContent && (
-        <div className="absolute inset-0 bg-white z-10 p-4 sm:p-6 overflow-y-auto">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg sm:text-xl font-bold text-gray-900">{activeSection}</h2>
-            <button onClick={handleCloseContent} className="text-gray-500 hover:text-gray-700 transition-colors">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
-
-          <div className="space-y-4 text-sm sm:text-base">
-            {activeSection === 'About' && (
-              <p className="text-gray-700 leading-relaxed">
-                Hi, I am Aman working as a designer from 3 years...
-              </p>
-            )}
-
-            {activeSection === 'Career Objective' && (
-              <p className="text-gray-700 leading-relaxed">
-                To secure a challenging position in a reputable organization...
-              </p>
-            )}
-
-            {activeSection === 'Languages' && (
-              <div className="space-y-3">
-                {[
-                  { lang: 'English', level: 'Native' },
-                  { lang: 'Hindi', level: 'Fluent' },
-                  { lang: 'Spanish', level: 'Intermediate' }
-                ].map((lang, idx) => (
-                  <div key={idx} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <span className="font-medium text-gray-800">{lang.lang}</span>
-                    <span className="text-sm text-gray-600">{lang.level}</span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-        </div>
-      )}
     </section>
 
 {/* Profile Card */}

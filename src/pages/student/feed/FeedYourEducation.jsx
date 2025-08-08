@@ -1,87 +1,98 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import { Input, Select, Button, Badge } from '../../../components/ui';
 import MainLayout from '../../../components/layout/MainLayout';
-import FeedRightProfile from './FeedRightProfile';
+import FeedRightProfile from '../feed/FeedRightProfile';
 import { IoIosArrowBack } from 'react-icons/io';
+import { educationApi } from '../../../api/educationApi';
 
 const FeedYourEducation = () => {
     const navigate = useNavigate();
-    // Dummy data for colleges and specializations
-    const dummyColleges = [
-        'Indian Institute of Technology (IIT) Delhi',
-        'Indian Institute of Technology (IIT) Bombay',
-        'Indian Institute of Technology (IIT) Madras',
-        'Indian Institute of Technology (IIT) Kanpur',
-        'Indian Institute of Technology (IIT) Kharagpur',
-        'National Institute of Technology (NIT) Trichy',
-        'National Institute of Technology (NIT) Surathkal',
-        'Delhi Technological University (DTU)',
-        'Netaji Subhas University of Technology (NSUT)',
-        'Vellore Institute of Technology (VIT)',
-        'SRM Institute of Science and Technology',
-        'Manipal Institute of Technology',
-        'BITS Pilani',
-        'Amrita School of Engineering',
-        'PES University',
-        'RV College of Engineering',
-        'MS Ramaiah Institute of Technology',
-        'JSS Academy of Technical Education',
-        'Dayananda Sagar College of Engineering',
-        'Bangalore Institute of Technology'
-    ];
+    
+    // Redux state for authentication
+    const { user, token, isAuthenticated } = useSelector((state) => state.auth);
+    
+    // State for API data
+    const [educationData, setEducationData] = useState({
+        courses: [],
+        specializations: [],
+        colleges: [],
+        jobRoles: [],
+        locations: []
+    });
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [isUsingFallbackData, setIsUsingFallbackData] = useState(false);
 
-    const dummySpecializations = [
-        'Computer Science Engineering',
-        'Information Technology',
-        'Electronics and Communication Engineering',
-        'Electrical Engineering',
-        'Mechanical Engineering',
-        'Civil Engineering',
-        'Chemical Engineering',
-        'Biotechnology',
-        'Aerospace Engineering',
-        'Automobile Engineering',
-        'Industrial Engineering',
-        'Textile Engineering',
-        'Agricultural Engineering',
-        'Mining Engineering',
-        'Metallurgical Engineering',
-        'Petroleum Engineering',
-        'Environmental Engineering',
-        'Biomedical Engineering',
-        'Robotics Engineering',
-        'Artificial Intelligence and Machine Learning',
-        'Data Science',
-        'Cybersecurity',
-        'Cloud Computing',
-        'Software Engineering',
-        'Network Engineering'
-    ];
+    // Fetch education data from API
+    const fetchEducationData = async () => {
+        try {
+            setIsLoading(true);
+            setError(null);
+            
+            // Check if user is authenticated and has token from Redux
+            if (!isAuthenticated || !token) {
+                throw new Error('User not authenticated. Please login to continue.');
+            }
 
-    const dummyCourses = [
-        'B.Tech',
-        'M.Tech',
-        'MBA',
-        'B.Sc',
-        'M.Sc',
-        'BCA',
-        'MCA',
-        'BBA',
-        'PhD',
-        'Diploma',
-        'PGDM',
-        'B.Des',
-        'M.Des',
-        'B.Com',
-        'M.Com',
-        'LLB',
-        'LLM',
-        'MBBS',
-        'B.Pharm',
-        'M.Pharm',
-    ];
+            const data = await educationApi.getAllEducationData(token);
+            setEducationData(data);
+            setIsUsingFallbackData(false);
+        } catch (err) {
+            console.error('Error fetching education data:', err);
+            setError(err.message || 'Failed to fetch education data');
+            setIsUsingFallbackData(true);
+            
+            // Fallback to dummy data if API fails
+            setEducationData({
+                courses: [
+                    'B.Tech', 'M.Tech', 'MBA', 'B.Sc', 'M.Sc', 'BCA', 'MCA', 'BBA', 'PhD', 'Diploma',
+                    'PGDM', 'B.Des', 'M.Des', 'B.Com', 'M.Com', 'LLB', 'LLM', 'MBBS', 'B.Pharm', 'M.Pharm'
+                ],
+                specializations: [
+                    'Computer Science Engineering', 'Information Technology', 'Electronics and Communication Engineering',
+                    'Electrical Engineering', 'Mechanical Engineering', 'Civil Engineering', 'Chemical Engineering',
+                    'Biotechnology', 'Aerospace Engineering', 'Automobile Engineering', 'Industrial Engineering',
+                    'Textile Engineering', 'Agricultural Engineering', 'Mining Engineering', 'Metallurgical Engineering',
+                    'Petroleum Engineering', 'Environmental Engineering', 'Biomedical Engineering', 'Robotics Engineering',
+                    'Artificial Intelligence and Machine Learning', 'Data Science', 'Cybersecurity', 'Cloud Computing',
+                    'Software Engineering', 'Network Engineering'
+                ],
+                colleges: [
+                    'Indian Institute of Technology (IIT) Delhi', 'Indian Institute of Technology (IIT) Bombay',
+                    'Indian Institute of Technology (IIT) Madras', 'Indian Institute of Technology (IIT) Kanpur',
+                    'Indian Institute of Technology (IIT) Kharagpur', 'National Institute of Technology (NIT) Trichy',
+                    'National Institute of Technology (NIT) Surathkal', 'Delhi Technological University (DTU)',
+                    'Netaji Subhas University of Technology (NSUT)', 'Vellore Institute of Technology (VIT)',
+                    'SRM Institute of Science and Technology', 'Manipal Institute of Technology', 'BITS Pilani',
+                    'Amrita School of Engineering', 'PES University', 'RV College of Engineering',
+                    'MS Ramaiah Institute of Technology', 'JSS Academy of Technical Education',
+                    'Dayananda Sagar College of Engineering', 'Bangalore Institute of Technology'
+                ],
+                jobRoles: [],
+                locations: []
+            });
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
+    // Redirect to login if not authenticated
+    useEffect(() => {
+        if (!isAuthenticated) {
+            navigate('/login');
+            return;
+        }
+    }, [isAuthenticated, navigate]);
+
+    useEffect(() => {
+        if (isAuthenticated && token) {
+            fetchEducationData();
+        }
+    }, [isAuthenticated, token]);
+
+    // Education entries state
     const [educationEntries, setEducationEntries] = useState([
         {
             id: 1,
@@ -212,7 +223,22 @@ const FeedYourEducation = () => {
 
     const handleSaveChanges = () => {
         console.log('Saving education data:', educationEntries);
-        // Add your save logic here
+        console.log('User ID:', user?._id || user?.id);
+        console.log('User authenticated:', isAuthenticated);
+        
+        // Add your save logic here with user ID
+        const educationDataToSave = {
+            userId: user?._id || user?.id,
+            userEmail: user?.email,
+            educationEntries: educationEntries,
+            timestamp: new Date().toISOString()
+        };
+        
+        console.log('Education data to save:', educationDataToSave);
+        
+        // TODO: Implement API call to save education data
+        // Example: await saveEducationData(educationDataToSave, token);
+        
         // Navigate back to feed view after saving
         navigate('/feed-view');
     };
@@ -223,14 +249,14 @@ const FeedYourEducation = () => {
 
     const filteredColleges = (query, id) => {
         const searchTerm = collegeSearchQuery[id] || '';
-        return dummyColleges.filter(college =>
+        return educationData.colleges.filter(college =>
             college.toLowerCase().includes(searchTerm.toLowerCase())
         );
     };
 
     const filteredSpecializations = (query, id) => {
         const searchTerm = specializationSearchQuery[id] || '';
-        return dummySpecializations.filter(specialization =>
+        return educationData.specializations.filter(specialization =>
             specialization.toLowerCase().includes(searchTerm.toLowerCase())
         );
     };
@@ -352,6 +378,61 @@ const FeedYourEducation = () => {
                
                 {/* Responsive Main Card */} 
                 <section className="w-full max-w-[95vw] sm:max-w-[600px] md:max-w-[700px] lg:max-w-[800px] h-auto p-3 sm:p-4 md:p-5 lg:p-6 rounded-[5px] bg-white flex flex-col shadow-lg gap-3 sm:gap-4 mt-2 mx-auto">
+                    
+                    {/* Loading State */}
+                    {isLoading && (
+                        <div className="flex items-center justify-center py-8">
+                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                            <span className="ml-3 text-gray-600">Loading education data...</span>
+                        </div>
+                    )}
+
+                    {/* Success State - API Data Loaded */}
+                    {!isLoading && !error && !isUsingFallbackData && (
+                        <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-4">
+                            <div className="flex items-center">
+                                <svg className="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                </svg>
+                                <span className="text-green-800 text-sm">Education data loaded successfully from server</span>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Error State */}
+                    {error && !isLoading && (
+                        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center">
+                                    <svg className="w-5 h-5 text-red-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                                    </svg>
+                                    <span className="text-red-800 text-sm">{error}</span>
+                                </div>
+                                <button
+                                    onClick={fetchEducationData}
+                                    className="text-red-600 hover:text-red-800 text-sm font-medium underline"
+                                >
+                                    Retry
+                                </button>
+                            </div>
+                            <p className="text-red-600 text-xs mt-1">Using fallback data. Some features may be limited.</p>
+                        </div>
+                    )}
+
+                    {/* Debug Info - Only show in development */}
+                    {import.meta.env.DEV && user && (
+                        <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 mb-4">
+                            <div className="text-xs text-gray-600">
+                                <div className="font-medium mb-1">Debug Info (Development Only):</div>
+                                <div>User ID: {user._id || user.id || 'N/A'}</div>
+                                <div>Email: {user.email || 'N/A'}</div>
+                                <div>Name: {user.name || 'N/A'}</div>
+                                <div>Authenticated: {isAuthenticated ? 'Yes' : 'No'}</div>
+                                <div>Token: {token ? 'Present' : 'Missing'}</div>
+                            </div>
+                        </div>
+                    )}
             
                         <div className="bg-white rounded  w-full flex flex-col">
                             {/* Header */}
@@ -363,7 +444,25 @@ const FeedYourEducation = () => {
                                     >
                                         <IoIosArrowBack className="w-5 h-5 text-gray-600" />
                                     </button>
-                                    <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-black">Your Education</h1>
+                                    <div className="flex flex-col">
+                                        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-black">Your Education</h1>
+                                        <div className="flex items-center gap-2 mt-1">
+                                            {!isLoading && (
+                                                <span className={`text-xs px-2 py-1 rounded-full ${
+                                                    isUsingFallbackData 
+                                                        ? 'bg-yellow-100 text-yellow-800' 
+                                                        : 'bg-green-100 text-green-800'
+                                                }`}>
+                                                    {isUsingFallbackData ? 'Offline Mode' : 'Live Data'}
+                                                </span>
+                                            )}
+                                            {user && (
+                                                <span className="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-800">
+                                                    {user.name || user.email}
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
                                 </div>
                                 {/* Search Bar */}
                                 <div className="relative mb-4 sm:mb-6">
@@ -385,7 +484,7 @@ const FeedYourEducation = () => {
                                     </div>
                                     {showCourseDropdown && searchQuery.trim() && (
                                         <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
-                                            {dummyCourses
+                                            {educationData.courses
                                                 .filter(course =>
                                                     course.toLowerCase().includes(searchQuery.toLowerCase()) &&
                                                     !educationEntries.some(entry => entry.course === course)
@@ -400,7 +499,7 @@ const FeedYourEducation = () => {
                                                     </div>
                                                 ))}
                                             {/* Show message if no results */}
-                                            {dummyCourses.filter(course =>
+                                            {educationData.courses.filter(course =>
                                                 course.toLowerCase().includes(searchQuery.toLowerCase()) &&
                                                 !educationEntries.some(entry => entry.course === course)
                                             ).length === 0 && (
