@@ -6,12 +6,12 @@ export const educationApi = {
     //Fetch job role from backend
     getJobRoles: async (token) => {
         try {
-            const response = await axios.get(`${BASE_URL}/job-roles`, {
+            const response = await axios.get(`${BASE_URL}/master/job-roles`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
             });
-            return response.data;
+            return response.data.data;
         } catch (error) {
             console.error('Error fetching job roles:', error);
             throw error;
@@ -25,7 +25,6 @@ export const educationApi = {
                     'Authorization': `Bearer ${token}`
                 }
             });
-            console.log("response", response.data);
             return response.data.data;
         } catch (error) {
             console.error('Error fetching locations:', error);
@@ -41,7 +40,6 @@ export const educationApi = {
                     'Authorization': `Bearer ${token}`
                 }
             });
-            console.log("response", response.data);
             return response.data.data;
         } catch (error) {
             console.error('Error fetching courses:', error);
@@ -57,8 +55,6 @@ export const educationApi = {
                     'Authorization': `Bearer ${token}`
                 }
             });
-            console.log('specializations response', response.data);
-            // Return the data array from the response
             return response.data.data || [];
         } catch (error) {
             console.error('Error fetching specializations:', error);
@@ -74,8 +70,6 @@ export const educationApi = {
                     'Authorization': `Bearer ${token}`
                 }
             });
-            console.log("colleges response", response.data);
-            // Return the data array from the response
             return response.data.data || [];
         } catch (error) {
             console.error('Error fetching colleges:', error);

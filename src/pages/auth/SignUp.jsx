@@ -138,7 +138,7 @@ export default function SignUp() {
       subheading="Create an account to continue!"
       hideMobileIllustration={true}
     >
-      <div className="w-full sm:min-h-screen flex md:items-center md:justify-center overflow-hidden relative">
+      <div className="w-full  px-0 sm:max-w-sm mx-auto flex flex-col items-center justify-center -mt-4 sm:-mt-2">
         {/* Form */}
         <div className="flex-1 w-full flex justify-center mt-6 md:mt-0">
           <form

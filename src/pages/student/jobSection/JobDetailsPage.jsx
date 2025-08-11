@@ -17,19 +17,7 @@ export default function JobDetailsPage() {
     const [selectedId, setSelectedId] = useState(jobId);
     const [isJobListOpen, setIsJobListOpen] = useState(false);
     const [showFullDetails, setShowFullDetails] = useState(false);
-    const [isLargeScreen, setIsLargeScreen] = useState(false);
     const [applicationStatus, setApplicationStatus] = useState(null); // Track application status
-
-    useEffect(() => {
-        const checkScreenSize = () => {
-            setIsLargeScreen(window.innerWidth >= 1024);
-        };
-
-        checkScreenSize();
-        window.addEventListener('resize', checkScreenSize);
-
-        return () => window.removeEventListener('resize', checkScreenSize);
-    }, []);
 
     const handleSelect = (id) => {
         setSelectedId(id);
@@ -108,7 +96,7 @@ export default function JobDetailsPage() {
             </div>
 
             <div className="max-w-7xl mx-auto pt-1 sm:pt-2 md:pt-4 lg:pt-6 pb-2 sm:pb-3 px-2 sm:px-3 md:px-4 lg:px-6">
-                <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] sm:gap-4 lg:gap-6" style={{ marginLeft: isLargeScreen ? '35px' : '0px' }}>
+                <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] sm:gap-4 lg:gap-6">
                     {/* Left: Job List */}
                     <aside className={`bg-white rounded-2xl shadow border border-gray-100 flex flex-col self-start min-h-[80vh] sm:min-h-[100vh] lg:min-h-[120vh] w-[365px] sm:p-3 md:p-4 lg:p-4 ${isJobListOpen ? 'block' : 'hidden lg:flex'}`}>
 

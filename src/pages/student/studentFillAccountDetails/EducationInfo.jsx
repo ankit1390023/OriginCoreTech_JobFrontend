@@ -239,8 +239,11 @@ export default function EducationInfo() {
           <Select
             label="College Name"
             error={errors.college?.message}
-            options={colleges.map(college => ({
-               value: college.name, label: college.name }))}
+            isLoading={loading}
+            options={colleges?.map(college => ({
+               value: college.name, 
+               label: college.name 
+            })) || []}
             placeholder="Select a college"
             {...register("college", {
               required: "College Name is required",
@@ -249,10 +252,11 @@ export default function EducationInfo() {
           <Select
             label="Specialization"
             error={errors.specialization?.message}
-            options={specializations.map(specialization => ({ 
+            isLoading={loading}
+            options={specializations?.map(specialization => ({
               value: specialization.name, 
-              label: `${specialization.name} (${specialization.Course?.name || 'Unknown Course'})` 
-            }))}
+              label: `${specialization.name} (${specialization.Course?.name || 'N/A'})` 
+            })) || []}
             placeholder="Select a specialization"
             {...register("specialization", {
               required: "Specialization is required",

@@ -3,7 +3,6 @@ import { useSelector } from "react-redux";
 import { FaTimes, FaInfoCircle } from "react-icons/fa";
 import { useDomainsApi } from "../../../hooks/useDomainsApi";
 import { useSkillApi } from "../../../hooks/useSkillApi";
-import { domainApi } from "../../../api/domainApi";
 import { Input, Label, Button, ErrorMessage, Loader } from "../../../components/ui";
 import useUploadImageApi from '../../../hooks/useUploadImageApi';
 
@@ -17,7 +16,7 @@ export default function DomainsForm() {
   const [selectedSkills, setSelectedSkills] = useState({}); // Store selected skills for each domain
   const [showMoreSkills, setShowMoreSkills] = useState({}); // Track show more state for each domain
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+  const [domainId, setDomainId] = useState(1);
 
   // Use custom hook for skills API with Web Development as default domain
   const {
@@ -26,16 +25,14 @@ export default function DomainsForm() {
     loading: domainsLoading,
     error: domainsError,
     refreshDomains,
-    setError: setDomainsError,
     fetchSkillsByDomain,
-  } = useDomainsApi("Web Development");
-
+  } = useDomainsApi(domainId);
+console.log("SkillsByDomain ",skillsByDomain)
   // Use custom hook for skill uploads
   const {
     loading: skillUploadLoading,
     error: skillUploadError,
     uploadSkills,
-    setError: setSkillUploadError,
   } = useSkillApi();
 
   // Add the image upload hook
@@ -46,81 +43,81 @@ export default function DomainsForm() {
 
   // Filter domains based on search input
   const filteredDomains = allDomains.filter((domain) => {
-    const domainName = domain.domain_name || domain;
-    return domainName.toLowerCase().includes(searchInput.toLowerCase());
+    const domainName = typeof domain === 'string' ? domain : (domain.name || '');
+    return domainName && domainName.toString().toLowerCase().includes(searchInput.toLowerCase());
   });
 
   const handleAddDomain = async (domain) => {
-    if (!domains.find((d) => d.name === domain)) {
+    if (!domains.find((d) => d.id === domain.id)) {
       // Fetch skills for this specific domain
       try {
-        const skills = await domainApi.getSkillsByDomain(domain);
+        const skills = await fetchSkillsByDomain(domain.id);
         setDomainSkills((prev) => ({
           ...prev,
-          [domain]: skills,
+          [domain.id]: skills,
         }));
         // Initialize selected skills for this domain
         setSelectedSkills((prev) => ({
           ...prev,
-          [domain]: [],
+          [domain.id]: [],
         }));
         // Initialize show more state for this domain
         setShowMoreSkills((prev) => ({
           ...prev,
-          [domain]: false,
+          [domain.id]: false,
         }));
       } catch (err) {
         console.error("Error fetching skills for domain:", domain, err);
         setDomainSkills((prev) => ({
           ...prev,
-          [domain]: [],
+          [domain.id]: [],
         }));
       }
 
       setDomains([
         ...domains,
-        { name: domain, certificate: null, company: "" },
+        { id: domain.id, name: domain.name, certificate: null, company: "" },
       ]);
     }
     setInput("");
     setSearchInput(""); // Clear search input after adding domain
   };
 
-  const handleRemoveDomain = (idx) => {
-    const domainToRemove = domains[idx];
-    setDomains(domains.filter((_, i) => i !== idx));
+  const handleRemoveDomain = (domainId) => {
+    const domainToRemove = domains.find((domain) => domain.id === domainId);
+    setDomains(domains.filter((domain) => domain.id !== domainId));
 
     // Remove skills for this domain from state
     setDomainSkills((prev) => {
       const newSkills = { ...prev };
-      delete newSkills[domainToRemove.name];
+      delete newSkills[domainId];
       return newSkills;
     });
 
     // Remove selected skills for this domain
     setSelectedSkills((prev) => {
       const newSelectedSkills = { ...prev };
-      delete newSelectedSkills[domainToRemove.name];
+      delete newSelectedSkills[domainId];
       return newSelectedSkills;
     });
 
     // Remove show more state for this domain
     setShowMoreSkills((prev) => {
       const newShowMoreSkills = { ...prev };
-      delete newShowMoreSkills[domainToRemove.name];
+      delete newShowMoreSkills[domainId];
       return newShowMoreSkills;
     });
   };
 
-  const handleCompanyChange = (idx, value) => {
+  const handleCompanyChange = (domainId, value) => {
     setDomains(
-      domains.map((d, i) => (i === idx ? { ...d, company: value } : d))
+      domains.map((domain) => (domain.id === domainId ? { ...domain, company: value } : domain))
     );
   };
 
-  const handleCertificateChange = (idx, file) => {
+  const handleCertificateChange = (domainId, file) => {
     setDomains(
-      domains.map((d, i) => (i === idx ? { ...d, certificate: file } : d))
+      domains.map((domain) => (domain.id === domainId ? { ...domain, certificate: file } : domain))
     );
   };
 
@@ -133,31 +130,31 @@ export default function DomainsForm() {
     }
   };
 
-  const handleSkillToggle = (domainName, skill) => {
+  const handleSkillToggle = (domainId, skill) => {
     setSelectedSkills((prev) => {
-      const currentSelected = prev[domainName] || [];
-      const isSelected = currentSelected.includes(skill);
+      const currentSelected = prev[domainId] || [];
+      const isSelected = currentSelected.some(s => s.id === skill.id);
 
       if (isSelected) {
         // Remove skill
         return {
           ...prev,
-          [domainName]: currentSelected.filter(s => s !== skill)
+          [domainId]: currentSelected.filter(s => s.id !== skill.id)
         };
       } else {
         // Add skill
         return {
           ...prev,
-          [domainName]: [...currentSelected, skill]
+          [domainId]: [...currentSelected, skill]
         };
       }
     });
   };
 
-  const toggleShowMoreSkills = (domainName) => {
+  const toggleShowMoreSkills = (domainId) => {
     setShowMoreSkills((prev) => ({
       ...prev,
-      [domainName]: !prev[domainName]
+      [domainId]: !prev[domainId]
     }));
   };
 
@@ -175,22 +172,22 @@ export default function DomainsForm() {
 
       // Prepare skills data for API - only include selected skills
       const skills = [];
-      domainsWithCertificates.forEach((domain, index) => {
-        const selectedSkillsForDomain = selectedSkills[domain.name] || [];
+      domainsWithCertificates.forEach((domain) => {
+        const selectedSkillsForDomain = selectedSkills[domain.id] || [];
 
         if (selectedSkillsForDomain.length > 0) {
           // Add selected skills for this domain
-          selectedSkillsForDomain.forEach((skill, skillIndex) => {
+          selectedSkillsForDomain.forEach((skill) => {
             skills.push({
-              skill_id: skills.length + 1,
-              skill: skill,
+              skill_id: skill.id,
+              skill: skill.name,
               authority: domain.company || "Self",
             });
           });
         } else {
           // If no skills selected, add the domain itself
           skills.push({
-            skill_id: skills.length + 1,
+            skill_id: domain.id,
             skill: domain.name,
             authority: domain.company || "Self",
           });
@@ -269,7 +266,7 @@ export default function DomainsForm() {
           e.preventDefault();
           e.stopPropagation();
           if (searchInput.trim() && filteredDomains.length > 0) {
-            handleAddDomain(filteredDomains[0].domain_name || filteredDomains[0]);
+            handleAddDomain(filteredDomains[0]);
           }
         }
       }}
@@ -288,12 +285,12 @@ export default function DomainsForm() {
                 e.preventDefault();
                 e.stopPropagation();
                 if (searchInput.trim() && filteredDomains.length > 0) {
-                  handleAddDomain(filteredDomains[0].domain_name || filteredDomains[0]);
+                  handleAddDomain(filteredDomains[0]);
                 }
               }
             }}
           />
-         
+
         </div>
 
         {/* Show matched domains when searching */}
@@ -303,12 +300,12 @@ export default function DomainsForm() {
             <div className="flex flex-wrap gap-1 sm:gap-2">
               {filteredDomains.slice(0, 8).map((domain) => (
                 <button
-                  key={domain.domain_name || domain}
+                  key={domain.id}
                   type="button"
                   className="bg-blue-100 text-blue-800 rounded-md px-1.5 sm:px-2 py-1.5 sm:py-2 text-xs border border-blue-300 hover:border-blue-400 transition-all duration-200"
-                  onClick={() => handleAddDomain(domain.domain_name || domain)}
+                  onClick={() => handleAddDomain(domain)}
                 >
-                  {domain.domain_name || domain} +
+                  {domain.name} +
                 </button>
               ))}
             </div>
@@ -323,11 +320,10 @@ export default function DomainsForm() {
         )}
 
 
-
         {/* Display added domains with their related skills */}
-        {domains.map((domain, idx) => (
+        {domains.map((domain) => (
           <div
-            key={domain.name}
+            key={domain.id}
             className="border rounded-md p-2 sm:p-3 mb-2 sm:mb-3 flex flex-col gap-1 sm:gap-2 relative"
           >
             <div className="flex items-center gap-1 sm:gap-2">
@@ -336,7 +332,7 @@ export default function DomainsForm() {
               </span>
               <button
                 className="ml-1 sm:ml-2 text-gray-400"
-                onClick={() => handleRemoveDomain(idx)}
+                onClick={() => handleRemoveDomain(domain.id)}
                 type="button"
               >
                 <FaTimes className="text-xs" />
@@ -344,17 +340,17 @@ export default function DomainsForm() {
               <button
                 className="ml-1 sm:ml-2 text-blue-500 text-xs underline"
                 type="button"
-                onClick={() => document.getElementById(`cert-${idx}`).click()}
+                onClick={() => document.getElementById(`cert-${domain.id}`).click()}
               >
                 Upload Certificate
               </button>
               <input
-                id={`cert-${idx}`}
+                id={`cert-${domain.id}`}
                 type="file"
                 className="hidden"
                 accept="image/*,.pdf"
                 onChange={(e) =>
-                  handleCertificateChange(idx, e.target.files[0])
+                  handleCertificateChange(domain.id, e.target.files[0])
                 }
               />
             </div>
@@ -368,7 +364,7 @@ export default function DomainsForm() {
                 </span>
                 <button
                   type="button"
-                  onClick={() => handleCertificateChange(idx, null)}
+                  onClick={() => handleCertificateChange(domain.id, null)}
                   className="text-red-500 text-xs hover:text-red-700"
                 >
                   Remove
@@ -377,49 +373,49 @@ export default function DomainsForm() {
             )}
 
             {/* Display related skills for this specific domain */}
-            {domainSkills[domain.name] &&
-              domainSkills[domain.name].length > 0 && (
+            {domainSkills[domain.id] &&
+              domainSkills[domain.id].length > 0 && (
                 <div className="mt-1 sm:mt-2">
                   <div className="text-xs mb-1 sm:mb-2 text-gray-500">
                     Select related skills for {domain.name}:
                   </div>
                   <div className="flex flex-wrap gap-1 sm:gap-2">
-                    {(showMoreSkills[domain.name]
-                      ? domainSkills[domain.name]
-                      : domainSkills[domain.name].slice(0, 6)
+                    {(showMoreSkills[domain.id]
+                      ? domainSkills[domain.id]
+                      : domainSkills[domain.id].slice(0, 6)
                     ).map((skill) => {
-                      const isSelected = (selectedSkills[domain.name] || []).includes(skill);
+                      const isSelected = (selectedSkills[domain.id] || []).some(s => s.id === skill.id);
                       return (
                         <button
-                          key={skill}
+                          key={skill.id}
                           type="button"
-                          onClick={() => handleSkillToggle(domain.name, skill)}
+                          onClick={() => handleSkillToggle(domain.id, skill)}
                           className={`rounded-md px-1.5 sm:px-2 py-1.5 sm:py-2 text-xs border transition-all duration-200 ${isSelected
                             ? "bg-blue-600 text-white border-blue-600"
                             : "bg-gray-100 text-gray-800 border-gray-300 hover:border-gray-400"
                             }`}
                         >
-                          {skill}
+                          {skill.name}
                         </button>
                       );
                     })}
                   </div>
 
                   {/* Show more/less button for skills */}
-                  {domainSkills[domain.name].length > 6 && (
+                  {domainSkills[domain.id].length > 6 && (
                     <button
                       type="button"
                       className="text-blue-500 underline text-xs mt-1 sm:mt-2"
-                      onClick={() => toggleShowMoreSkills(domain.name)}
+                      onClick={() => toggleShowMoreSkills(domain.id)}
                     >
-                      {showMoreSkills[domain.name] ? "Show less skills" : "Show more skills"}
+                      {showMoreSkills[domain.id] ? "Show less skills" : "Show more skills"}
                     </button>
                   )}
 
                   {/* Show selected skills count */}
-                  {(selectedSkills[domain.name] || []).length > 0 && (
+                  {(selectedSkills[domain.id] || []).length > 0 && (
                     <div className="text-xs text-green-600 mt-1 sm:mt-2">
-                      Selected: {(selectedSkills[domain.name] || []).length} skill(s)
+                      Selected: {(selectedSkills[domain.id] || []).length} skill(s)
                     </div>
                   )}
                 </div>
@@ -429,10 +425,10 @@ export default function DomainsForm() {
               <Label>Where did you learn this skill?</Label>
               <input
                 type="text"
-                 className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-transparent text-xs transition-all duration-200 border-gray-300 hover:border-gray-400"
+                className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-transparent text-xs transition-all duration-200 border-gray-300 hover:border-gray-400"
                 placeholder="College/ Company name"
                 value={domain.company}
-                onChange={(e) => handleCompanyChange(idx, e.target.value)}
+                onChange={(e) => handleCompanyChange(domain.id, e.target.value)}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     e.preventDefault();

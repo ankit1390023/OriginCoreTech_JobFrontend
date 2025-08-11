@@ -15,7 +15,8 @@ export const useDomainsApi = (defaultDomain) => {
             setLoading(true);
             setError("");
             const domainsData = await domainApi.getAllDomains(token);
-            setAllDomains(domainsData);
+            // Ensure domainsData is always an array
+            setAllDomains(Array.isArray(domainsData) ? domainsData : []);
             return domainsData;
         } catch (err) {
             console.error("Error fetching all domains:", err);
@@ -27,12 +28,13 @@ export const useDomainsApi = (defaultDomain) => {
     }, [token]);
 
     // Fetch skills by domain
-    const fetchSkillsByDomain = useCallback(async (domainName) => {
+    const fetchSkillsByDomain = useCallback(async (domainId) => {
         try {
             setLoading(true);
             setError("");
-            const domainsData = await domainApi.getSkillsByDomain(domainName, token);
-            setSkillsByDomain(domainsData);
+            const domainsData = await domainApi.getSkillsByDomain(domainId, token);
+            // Ensure domainsData is always an array
+            setSkillsByDomain(Array.isArray(domainsData) ? domainsData : []);
             return domainsData;
         } catch (err) {
             console.error("Error fetching skills by domain:", err);

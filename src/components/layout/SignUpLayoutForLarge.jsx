@@ -31,7 +31,7 @@ export default function SignUpLayoutForLarge({
             />
 
             {/* Main Content */}
-            <div className="relative z-20 flex flex-col lg:flex-row items-start lg:items-center justify-start lg:justify-center max-w-5xl lg:max-w-6xl xl:max-w-7xl mx-auto lg:px-6 py-8 sm:py-12 md:py-16 gap-y-6 sm:gap-y-8 md:gap-y-10 lg:gap-x-8 xl:gap-x-16 2xl:gap-x-32 mt-20 md:mt-28 lg:mt-4 min-h-screen">
+            <div className="relative z-20 flex flex-col lg:flex-row items-start lg:items-center justify-start lg:justify-center max-w-5xl lg:max-w-6xl xl:max-w-7xl mx-auto lg:px-6 py-8 sm:py-12 md:py-16 gap-y-6 sm:gap-y-8 md:gap-y-10 lg:gap-x-8 xl:gap-x-16 2xl:gap-x-32 mt-20 md:mt-28 lg:mt-4 min-h-[calc(100vh-2rem)]">
                 {/* Left Section - Desktop Only */}
                 <div className="hidden relative -top-8 ml-14 lg:flex flex-1 flex-col items-center lg:items-start text-center lg:text-left space-y-2 sm:space-y-3 lg:sticky lg:top-8">
                     <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-black">
@@ -48,7 +48,7 @@ export default function SignUpLayoutForLarge({
                 </div>
 
                 {/* Right Section */}
-                <div className="flex-1 w-full flex flex-col items-center justify-center">
+                <div className="flex-1 w-full flex flex-col items-center justify-center h-full">
                     {/* Heading and Subheading for mobile/tablet */}
                     <div
                         className={`block lg:hidden flex flex-col mb-8 w-full -mt-4 ${centerMobileContent
