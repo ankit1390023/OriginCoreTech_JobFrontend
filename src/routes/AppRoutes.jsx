@@ -29,12 +29,10 @@ import FeedYourExprience from "../pages/student/feed/FeedYourExprience";
 import FeedDashBoard from "../pages/student/feed/FeedDashBoard";
 import FeedAuthentication from "../pages/student/feed/FeedAuthentication";
 import FeedFaq from "../pages/student/feed/FeedFaq";    
-import Myapplication1 from "../pages/student/application/Myapplication1";      
-import Myapplication3 from "../pages/student/application/Myapplication3"; 
-import Myapplication4 from "../pages/student/application/Myapplication4"; 
+import Myapplication1 from "../pages/student/application/Myapplication1"; 
+import Myapplication3 from "../pages/student/application/Myapplication3";
 import Myapplication5 from "../pages/student/application/Myapplication5";
 import Myapplication6 from "../pages/student/application/Myapplication6";  
-import Myapplication from "../pages/student/application/Myapplication"; 
 import Myapplication9 from "../pages/student/application/Myapplication9";
 import Myapplication8 from "../pages/student/application/Myapplication8";
 import Myapplication7 from "../pages/student/application/Myapplication7";
@@ -176,19 +174,17 @@ export const appRouter = createBrowserRouter([
         element:<Myapplication2/>    
     } ,
 
-
     {
         path:"/application-myapplication3",
         element:<Myapplication3/>    
-    } , 
-    {
-        path:"/application-myapplication4",
-        element:<Myapplication4/>    
     } ,
+
+
+   
     {
         path:"/application-myapplication5",
         element:<Myapplication5/>    
-    } ,
+    } ,  
     {
         path:"/application-myapplication6",
         element:<Myapplication6/>    
@@ -206,20 +202,6 @@ export const appRouter = createBrowserRouter([
         element:<Myapplication7/>    
     } , 
 
-
-
-
-
-
-
-
-
-
-
-    {
-        path:"/application-myapplication",
-        element:<Myapplication/>    
-    } ,
 
    
 ])

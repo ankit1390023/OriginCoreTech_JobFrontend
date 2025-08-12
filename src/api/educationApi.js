@@ -40,6 +40,7 @@ export const educationApi = {
                     'Authorization': `Bearer ${token}`
                 }
             });
+            console.log("response.data from getCourses", response.data.data);
             return response.data.data;
         } catch (error) {
             console.error('Error fetching courses:', error);
@@ -55,6 +56,7 @@ export const educationApi = {
                     'Authorization': `Bearer ${token}`
                 }
             });
+            console.log("response.data from getSpecializations", response.data.data);
             return response.data.data || [];
         } catch (error) {
             console.error('Error fetching specializations:', error);
@@ -80,8 +82,8 @@ export const educationApi = {
     // Fetch all education data at once
     getAllEducationData: async (token) => {
         try {
-            const [jobRoles, locations, courses, specializations, colleges] = await Promise.all([
-                educationApi.getJobRoles(token),
+            const [ locations, courses, specializations, colleges] = await Promise.all([
+               // educationApi.getJobRoles(token),
                 educationApi.getLocations(token),
                 educationApi.getCourses(token),
                 educationApi.getSpecializations(token),
@@ -89,7 +91,7 @@ export const educationApi = {
             ]);
 
             return {
-                jobRoles,
+            // jobRoles,
                 locations,
                 courses,
                 specializations,

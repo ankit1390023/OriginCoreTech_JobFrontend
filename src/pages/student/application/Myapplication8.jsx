@@ -1,125 +1,183 @@
-import React from 'react';
-import { Badge, Button } from '../../../components/ui';
+import React, { useState } from 'react';
+import { Badge } from '../../../components/ui';
 import MainLayout from '../../../components/layout/MainLayout';
-import FeedRightProfile from '../feed/FeedRightProfile'; 
-
+import FeedRightProfile from '../feed/FeedRightProfile';
 
 const Myapplication8 = () => {
-  const pathways = [
-    {
-      id: 1,
-      title: "Pathway 1",
-      background: "bg-blue-500",
-      contentBadges: ["Course", "Internship", "Project"],
-      duration: "3 months",
-      skills: "21 Skills"
-    },
-    {
-      id: 2,
-      title: "Pathway 2",
-      background: "bg-orange-400",
-      contentBadges: ["Internship", "Project", "Project"],
-      duration: "2 months",
-      skills: "21 Skills"
-    },
-    {
-      id: 3,
-      title: "Pathway 3",
-      background: "bg-purple-500",
-      contentBadges: ["Project", "Course", "Project"],
-      duration: "4 weeks",
-      skills: "21 Skills"
-    }
-  ];
+  const [expandedCard, setExpandedCard] = useState(null);
 
+  const handleCardClick = (cardType) => {
+    setExpandedCard(expandedCard === cardType ? null : cardType);
+  };
   return (
-
     <MainLayout>
     <div className="flex justify-center bg-gray-100 min-h-screen px-2 lg:px-8 items-start">
         <div className="hidden lg:block flex-grow"></div>
-    
+      
+
     <div className="min-h-screen bg-white p-6">
-      <div className="max-w-4xl mx-auto space-y-8">
-        {/* Header */}
-        <div className="text-center">
-          <h1 className="text-4xl font-bold text-gray-900 mb-8">
-            Your personalised pathways
-          </h1>
-        </div>
-
-        {/* Pathway Cards */}
-        <div className="space-y-6">
-          {pathways.map((pathway) => (
-            <div
-              key={pathway.id}
-              className={`${pathway.background} rounded-lg p-6 text-white relative overflow-hidden`}
-            >
-              <div className="flex items-center justify-between">
-                {/* Left side - Image and content */}
-                <div className="flex items-center space-x-6">
-                  {/* Thumbnail Image */}
-                  <div className="w-20 h-20 bg-white/20 rounded-lg flex items-center justify-center backdrop-blur-sm">
-                    <div className="w-16 h-12 bg-white/30 rounded flex items-center justify-center">
-                      <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                      </svg>
-                    </div>
-                  </div>
-
-                  {/* Content */}
-                  <div className="space-y-2">
-                    <h2 className="text-2xl font-bold">{pathway.title}</h2>
-                    <p className="text-white/80 text-lg">?</p>
-                    
-                    {/* Content Badges */}
-                    <div className="flex items-center space-x-2">
-                      <Badge 
-                        color={`${pathway.background.replace('bg-', 'bg-').replace('-500', '-600').replace('-400', '-500')} text-white border-0`}
-                        text={pathway.contentBadges.join(", ")}
-                      />
-                      <Badge 
-                        color={`${pathway.background.replace('bg-', 'bg-').replace('-500', '-600').replace('-400', '-500')} text-white border-0`}
-                        text={pathway.duration}
-                      />
-                    </div>
-                  </div>
+    <div className="w-[689px] h-[503px] rounded-[10px] p-6 gap-[10px] opacity-100 mx-auto space-y-6">
+ 
+        {/* Top Section: User Profile and Skills Overview */}
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 mb-6">Dashboard</h1>
+          
+          {/* User Profile Card */}
+          <div className="bg-blue-900 rounded-lg p-6 text-white">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <div className="w-16 h-16 bg-gray-300 rounded-full flex items-center justify-center">
+                  <svg className="w-8 h-8 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                  </svg>
                 </div>
-
-                {/* Right side - Skills badge */}
-                <div className="flex items-center space-x-2">
-                  <Badge 
-                    color="bg-white text-gray-900 border border-gray-300"
-                    text={
-                      <div className="flex items-center space-x-1">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                        </svg>
-                        <span>{pathway.skills}</span>
-                      </div>
-                    }
-                  />
+                <div>
+                  <h2 className="text-xl font-bold">Aman Gupta</h2>
+                  <p className="text-blue-200">@amangupta09</p>
+                  <p className="text-blue-200">Level 0</p>
+                </div>
+              </div>
+              <div className="text-right">
+                <p className="text-lg font-semibold">SKILLS 10 / 21</p>
+                <div className="w-32 h-2 bg-blue-800 rounded-full mt-2">
+                  <div className="w-16 h-2 bg-yellow-400 rounded-full"></div>
                 </div>
               </div>
             </div>
-          ))}
+          </div>
         </div>
 
-        {/* Get Started Button */}
-        <div className="text-center pt-8">
-          <Button 
-            variant="primary" 
-            size="large"
-            className="bg-red-500 hover:bg-red-600 text-white font-bold text-lg px-8 py-4 rounded-lg"
-          >
-            Get Started
-          </Button>
+        {/* Middle Section: Clickable Cards */}
+        <div className="space-y-4">
+          {/* Graphic Design Card */}
+          <div>
+            <div 
+              className="rounded-lg p-6 cursor-pointer"
+              style={{ backgroundColor: '#6EB5DD' }}
+              onClick={() => handleCardClick('graphic')}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <div className="w-16 h-16 bg-white/30 rounded-full flex items-center justify-center">
+                    <span className="text-white font-bold text-lg">38%</span>
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-white">Graphic Design</h3>
+                    <p className="text-white/80">16,856 learners</p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Badge color="bg-white/20 text-white border-0" text="Course" />
+                  <Badge color="bg-white/20 text-white border-0" text="8 weeks" />
+                  <Badge color="bg-white text-gray-900" text="9 Skills" />
+                </div>
+              </div>
+            </div>
+
+            {/* Skills Dropdown for Graphic Design */}
+            {expandedCard === 'graphic' && (
+              <div className="mt-2 space-y-2">
+                {[
+                  { name: "Typography", icon: "Aa", bgColor: "bg-blue-50" },
+                  { name: "Color Theory", icon: "Aa", bgColor: "bg-blue-50" },
+                  { name: "Adobe Photoshop", icon: "🎨", bgColor: "bg-blue-50" },
+                  { name: "Composition", icon: "🔺", bgColor: "bg-gray-50" },
+                  { name: "Adobe Illustrator", icon: "🎨", bgColor: "bg-gray-50" },
+                  { name: "Color wheel", icon: "🎨", bgColor: "bg-gray-50" },
+                  { name: "Figma", icon: "🔺", bgColor: "bg-gray-50" },
+                  { name: "Typography", icon: "Aa", bgColor: "bg-gray-50" },
+                  { name: "Color Theory", icon: "Aa", bgColor: "bg-gray-50" }
+                ].map((skill, index) => (
+                  <div key={index} className={`${skill.bgColor} rounded-lg p-4 flex items-center justify-between`}>
+                    <span className="font-medium text-gray-900">{skill.name}</span>
+                    <span className="text-gray-600">{skill.icon}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Bottom Section: Company Applications */}
+        <div className="space-y-4 ">
+          {/* First Application Card (Orange) - Clickable */}
+          <div className='bg-gray-300 rounded-lg'>
+            <div 
+              className="rounded-lg p-6 bg-gray-300 cursor-pointer"
+             // style={{ backgroundColor: '#D9D9D9' }}
+              onClick={() => handleCardClick('company1')}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <div className="w-12 h-12 bg-white/30 rounded-lg flex items-center justify-center">
+                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-white">Company Name</h3>
+                    <p className="text-white/80">62,583 applicants</p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Badge color="bg-white/20 text-white border-0" text="Internship" />
+                  <Badge color="bg-white/20 text-white border-0" text="2 months" />
+                  <Badge color="bg-green-200 text-green-800" text="Hired" />
+                  <Badge color="bg-white text-gray-900" text="7 Skills" />
+                </div>
+              </div>
+            </div>
+
+            {/* Company 1 Dropdown Content */}
+            {expandedCard === 'company1' && (
+              <div className="mt-2 space-y-2 ">
+                <div className="bg-white rounded-lg p-4 border border-gray-200">
+                  <h4 className="font-semibold text-gray-900 mb-2">Application Details</h4>
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Status:</span>
+                      <Badge color="bg-green-100 text-green-800" text="Hired" />
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Applied Date:</span>
+                      <span className="text-gray-900">March 15, 2024</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Response Time:</span>
+                      <span className="text-gray-900">5 days</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Second Application Card (Gray) */}
+          <div className="bg-gray-300 rounded-lg p-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <div className="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center">
+                  <svg className="w-6 h-6 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-gray-900">Company Name</h3>
+                  <p className="text-gray-600">122,263 applicants</p>
+                </div>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Badge color="bg-gray-100 text-gray-800" text="Project" />
+                <Badge color="bg-gray-100 text-gray-800" text="2 weeks" />
+                <Badge color="bg-gray-100 text-gray-800" text="5 Skills" />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-
-                    {/* Profile Card */}
-                    <aside className="hidden lg:block w-full max-w-[350px] p-2 sticky top-4 h-fit">
+   {/* Profile Card */}
+   <aside className="hidden lg:block w-full max-w-[350px] p-2 sticky top-4 h-fit">
                         <FeedRightProfile />
                     </aside>
                     {/* Right Spacer */}

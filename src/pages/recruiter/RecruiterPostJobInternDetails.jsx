@@ -321,11 +321,9 @@ export default function RecruiterPostJobInternDetails() {
 
   // Fetch all domains on component mount
   useEffect(() => {
-    console.log("Token available:", !!token);
     if (token) {
       fetchAllDomains(token);
     } else {
-      console.error("No token available for domain API call");
       setDomainError("Authentication required. Please log in again.");
     }
   }, [token]);
@@ -334,18 +332,11 @@ export default function RecruiterPostJobInternDetails() {
     try {
       setDomainsLoading(true);
       setDomainError("");
-
-      if (!authToken) {
-        throw new Error("No authentication token available");
-      }
-
+      if (!authToken) throw new Error("No authentication token available");
+      // Use domainApi.getAllDomains to fetch domains from backend
       const domainsData = await domainApi.getAllDomains(authToken);
-      // The API already returns an array of domain names
-      console.log("All domains", domainsData);
-
       setAllDomains(domainsData);
     } catch (error) {
-      console.error("Error fetching domains:", error);
       if (error.response?.status === 401) {
         setDomainError("Authentication expired. Please log in again.");
       } else {
@@ -356,28 +347,26 @@ export default function RecruiterPostJobInternDetails() {
     }
   };
 
-
-
   const handleDomainClick = async (domainName) => {
     try {
       setSelectedDomain(domainName);
-
-      // If we haven't fetched skills for this domain yet, fetch them
+      // Find the domain object by name
+      const domainObj = allDomains.find(
+        d => (typeof d === "string" ? d : d.name) === domainName
+      );
+      const domainId = typeof domainObj === "string" ? domainObj : domainObj?.id || domainObj?.name;
+      // Only fetch if not already loaded
       if (!domainSkills[domainName]) {
         setSkillsLoading(true);
-
-        if (!token) {
-          throw new Error("No authentication token available");
-        }
-
-        const skills = await domainApi.getSkillsByDomain(domainName, token);
+        if (!token) throw new Error("No authentication token available");
+        // Use domainApi.getSkillsByDomain to fetch skills from backend
+        const skills = await domainApi.getSkillsByDomain(domainId, token); // <-- CORRECT
         setDomainSkills(prev => ({
           ...prev,
           [domainName]: skills
         }));
       }
     } catch (error) {
-      console.error("Error fetching skills for domain:", domainName, error);
       if (error.response?.status === 401) {
         setDomainError("Authentication expired. Please log in again.");
       } else {
@@ -411,8 +400,8 @@ export default function RecruiterPostJobInternDetails() {
   };
 
   const onSubmit = async (data) => {
-    try {
-      // Check if form is valid before submission
+   
+      console.log("data received onSubmit",data);
       const isValid = await methods.trigger();
 
 
@@ -436,8 +425,8 @@ export default function RecruiterPostJobInternDetails() {
       const jobPostData = {
         opportunityType: data.opportunityType,
         jobProfile: data.opportunityType === "Internship" ? data.profile : data.jobTitle,
-        skillsRequired: data.skills,
-        skillRequiredNote: data.skills, // Use the skills field directly
+        skillsRequired: data.skills.id,
+        skillRequiredNote: data.skills.id ? null : data.skills, // Use the skills field directly
         jobType: data.opportunityType === "Internship" ? data.internshipType : data.jobType,
         daysInOffice: data.inOfficeDays ? parseInt(data.inOfficeDays) : null,
         jobTime: data.partFullTime,
@@ -477,8 +466,8 @@ export default function RecruiterPostJobInternDetails() {
       }
 
       // Call the API
-      const response = await jobPostApi.createJobPost(jobPostData);
-
+      const response = await jobPostApi.createJobPost(jobPostData, token);
+       console.log("rersponse in recruiterPostJonInternzdetails page is",response);
       setSuccessMessage(`${data.opportunityType} posted successfully!`);
 
       // Reset form after successful submission
@@ -492,33 +481,7 @@ export default function RecruiterPostJobInternDetails() {
         setSuccessMessage("");
       }, 5000);
 
-    } catch (error) {
-
-      // Handle different types of errors
-      if (error.response) {
-        const status = error.response.status;
-        let errorMessage = "Error posting internship/job";
-
-        if (status === 401) {
-          errorMessage = "Authentication failed. Please log in again.";
-        } else if (status === 400) {
-          errorMessage = error.response.data?.message || "Invalid data provided. Please check your inputs.";
-        } else if (status === 500) {
-          errorMessage = "Server error. Please try again later.";
-        } else {
-          errorMessage = error.response.data?.message || "Error posting internship/job";
-        }
-
-        setErrorMessage(errorMessage);
-      } else if (error.request) {
-        console.error("=== NETWORK ERROR ===");
-        setErrorMessage("Network error. Please check your connection and ensure the backend server is running.");
-      } else {
-        setErrorMessage("An unexpected error occurred. Please try again.");
-      }
-    } finally {
-      setIsSubmitting(false);
-    }
+   
   };
 
   // Common input styles

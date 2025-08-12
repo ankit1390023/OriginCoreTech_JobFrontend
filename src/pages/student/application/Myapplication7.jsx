@@ -38,7 +38,8 @@ const Myapplication7 = () => {
         <div className="hidden lg:block flex-grow"></div>
         
         <div className="min-h-screen bg-white p-6">
-          <div className="max-w-4xl mx-auto space-y-6">
+        <div className="w-[689px] h-[503px] rounded-[10px] p-5 gap-[10px] opacity-100 mx-auto space-y-6">
+
             {/* Header */}
             <div>
               <h1 className="text-3xl font-bold text-gray-900 mb-6">Dashboard</h1>

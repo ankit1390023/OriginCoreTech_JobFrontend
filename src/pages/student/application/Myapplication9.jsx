@@ -16,7 +16,8 @@ const Myapplication9 = () => {
       
 
     <div className="min-h-screen bg-white p-6">
-      <div className="max-w-4xl mx-auto space-y-6">
+    <div className="w-[729px] h-[458px] mt-[10px] ml-[159px] rounded-[10px] p-5 gap-[10px] opacity-100 space-y-6">
+
         {/* Top Section: User Profile and Skills Overview */}
         <div>
           <h1 className="text-3xl font-bold text-gray-900 mb-6">Dashboard</h1>

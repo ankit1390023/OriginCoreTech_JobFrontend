@@ -6,21 +6,20 @@ const BASE_URL = import.meta.env.VITE_BASE_URL;
 export const jobPostApi = {
     // Create a new job post
     createJobPost: async (jobPostData, token) => {
-        try {
+       
             if (!token) {
                 throw new Error('No auth token provided');
               }
-
+            console.log("received token in createJobPost",token)
             const response = await axios.post(`${BASE_URL}/jobpost/create`, jobPostData, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 }
             });
+            console.log("response from createJobPost", response.data);
             return response.data;
-        } catch (error) {
-            throw error;
-        }
+        
     },
 
     // Get all domains (for skills suggestions)

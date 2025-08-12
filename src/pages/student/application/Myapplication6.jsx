@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import MainLayout from '../../../components/layout/MainLayout';
-import FeedRightProfile from '../feed/FeedRightProfile'; 
+//import FeedRightProfile from '../feed/FeedRightProfile'; 
 
 
 // Dummy messages
@@ -59,7 +59,7 @@ const Messages = () => {
 
     <div
       className="bg-white rounded-lg shadow-md p-4"
-      style={{ width: 375, height: 528 }}
+      style={{ width: 375, height: 650,  }}
     >
       <h1 className="text-2xl font-bold mb-4">Messages</h1>
 
@@ -108,12 +108,7 @@ const Messages = () => {
     </div>
 
     
-                    {/* Profile Card */}
-                    <aside className="hidden lg:block w-full max-w-[350px] p-2 sticky top-4 h-fit">
-                        <FeedRightProfile />
-                    </aside>
-                    {/* Right Spacer */}
-                    <div className="hidden lg:block flex-grow"></div>
+            
                 </div>
             </MainLayout>
 

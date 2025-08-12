@@ -267,14 +267,13 @@ export default function JobDetailsPage() {
                                         <Button
                                             variant="secondary"
                                             size="small"
-                                            className={`font-semibold py-1.5 sm:py-2 px-2 sm:px-3 md:px-6 rounded-lg shadow-lg transition-colors duration-200 flex items-center gap-1.5 text-xs sm:text-sm ${
-                                                applySuccess 
-                                                    ? 'bg-green-600 hover:bg-green-700 text-white' 
+                                            className={`font-semibold py-1.5 sm:py-2 px-2 sm:px-3 md:px-6 rounded-lg shadow-lg transition-colors duration-200 flex items-center gap-1.5 text-xs sm:text-sm ${applySuccess
+                                                    ? 'bg-green-600 hover:bg-green-700 text-white'
                                                     : 'bg-blue-600 hover:bg-blue-700 text-white'
-                                            }`}
+                                                }`}
                                             onClick={async () => {
                                                 if (applySuccess) return; // Prevent multiple applications
-                                                
+
                                                 try {
                                                     const result = await applyToJob(selectedJobDetails.jobId);
                                                     if (result.success) {
@@ -627,34 +626,63 @@ export default function JobDetailsPage() {
                                             </span>
                                         </div>
                                     </div>
+
                                 </div>
 
-                                   
-                                    {/* Apply Now Button - Top Right */}
-                                    <div className="absolute bottom-0 right-0 flex items-center justify-center">
+
+                                <br />
+                                {/* Show More/Less Button */}
+                                {!showFullDetails && (
+                                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-white via-white to-transparent h-10 flex items-end justify-center pb-1">
+                                        <Button
+                                            onClick={() => setShowFullDetails(true)}
+                                            variant="outline"
+                                            size="small"
+                                            className="bg-gray-100 hover:bg-gray-200 text-gray-600 font-normal py-1 px-3 rounded-full shadow-sm border border-gray-300 transition-all duration-200 flex items-center gap-1 text-xs hover:shadow-md hover:scale-105"
+                                        >
+                                            Show more
+                                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                            </svg>
+                                        </Button>
+                                    </div>
+                                )}
+
+                                {showFullDetails && (
+                                    <div className="mt-4 flex flex-col items-center gap-3">
+                                        <Button
+                                            onClick={() => setShowFullDetails(false)}
+                                            variant="outline"
+                                            size="small"
+                                            className="bg-gray-100 hover:bg-gray-200 text-gray-600 font-medium py-1.5 px-4 rounded-full shadow-sm border border-gray-200 transition-all duration-200 flex items-center gap-1.5 text-sm hover:shadow-md hover:scale-105"
+                                        >
+                                            Show less
+                                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                                            </svg>
+                                        </Button>
+
+                                        {/* Apply Button moved below Show Less */}
                                         <Button
                                             variant="secondary"
-                                            size="small"
-                                            className={`font-semibold py-1.5 sm:py-2 px-2 sm:px-3 md:px-6 rounded-lg shadow-lg transition-colors duration-200 flex items-center gap-1.5 text-xs sm:text-sm ${
-                                                applySuccess 
-                                                    ? 'bg-green-600 hover:bg-green-700 text-white' 
+                                            size="large"
+                                            className={`font-semibold py-2 px-6 rounded-lg shadow-lg transition-colors duration-200 flex items-center gap-1.5 text-base mt-2 ${applySuccess
+                                                    ? 'bg-green-600 hover:bg-green-700 text-white'
                                                     : 'bg-blue-600 hover:bg-blue-700 text-white'
-                                            }`}
+                                                }`}
                                             onClick={async () => {
                                                 if (applySuccess) return; // Prevent multiple applications
-                                                
+
                                                 try {
                                                     const result = await applyToJob(selectedJobDetails.jobId);
                                                     if (result.success) {
                                                         setApplicationStatus('success');
-                                                        // Auto-hide success message after 5 seconds
                                                         setTimeout(() => {
                                                             setApplicationStatus(null);
                                                             resetState();
                                                         }, 5000);
                                                     } else {
                                                         setApplicationStatus('error');
-                                                        // Auto-hide error message after 5 seconds
                                                         setTimeout(() => {
                                                             setApplicationStatus(null);
                                                         }, 5000);
@@ -675,56 +703,24 @@ export default function JobDetailsPage() {
                                             ) : applySuccess ? (
                                                 <>
                                                     <FaCheckCircle className="text-white text-xs" />
-                                                    <span className="hidden sm:inline">Applied Successfully</span>
-                                                    <span className="sm:hidden">Applied</span>
+                                                    <span>Applied Successfully</span>
                                                 </>
                                             ) : (
                                                 <>
-                                                    <span className="hidden sm:inline">Apply Now</span>
-                                                    <span className="sm:hidden">Apply</span>
+                                                    <span>Apply Now</span>
                                                 </>
                                             )}
                                         </Button>
                                     </div>
-                                  <br/>
-                                {/* Show More/Less Button */}
-                                {!showFullDetails && (
-                                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-white via-white to-transparent h-10 flex items-end justify-center pb-1">
-                                        <Button
-                                            onClick={() => setShowFullDetails(true)}
-                                            variant="outline"
-                                            size="small"
-                                            className="bg-gray-100 hover:bg-gray-200 text-gray-600 font-normal py-1 px-3 rounded-full shadow-sm border border-gray-300 transition-all duration-200 flex items-center gap-1 text-xs hover:shadow-md hover:scale-105"
-                                        >
-                                            Show more
-                                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                            </svg>
-                                        </Button>
-                                    </div>
                                 )}
 
-                                {showFullDetails && (
-                                    <div className="mt-4 flex justify-center">
-                                        <Button
-                                            onClick={() => setShowFullDetails(false)}
-                                            variant="outline"
-                                            size="small"
-                                            className="bg-gray-100 hover:bg-gray-200 text-gray-600 font-medium py-1.5 px-4 rounded-full shadow-sm border border-gray-200 transition-all duration-200 flex items-center gap-1.5 text-sm hover:shadow-md hover:scale-105"
-                                        >
-                                            Show less
-                                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
-                                            </svg>
-                                        </Button>
-                                    </div>
-                                )}
 
                             </>
+
                         )}
                     </main>
                 </div>
             </div>
         </div>
     );
-} 
+}
