@@ -7,23 +7,35 @@ export const useSkillApi = () => {
     const [error, setError] = useState(null);
     const { token } = useSelector((state) => state.auth);
 
-    // Upload skills
     const uploadSkills = useCallback(async (user_id, skills, certificateFiles = []) => {
         if (!token) {
             setError('Authentication token not found. Please log in again.');
             return;
         }
-        
+    
         if (!user_id) {
             setError('User ID is required.');
             return;
         }
-        
+    
+        if (!Array.isArray(skills) || skills.length === 0) {
+            setError('Please select at least one skill.');
+            return;
+        }
+    
+        if (!Array.isArray(certificateFiles) || certificateFiles.length === 0) {
+            setError('Please upload a certificate.');
+            return;
+        }
+    
+        // 🛠️ Duplicate the single certificate for each skill
+        const duplicatedCertificates = Array(skills.length).fill(certificateFiles[0]);
+    
         try {
             setLoading(true);
             setError(null);
-
-            const response = await skillApi.uploadSkills(user_id, skills, certificateFiles, token);
+    
+            const response = await skillApi.uploadSkills(user_id, skills, duplicatedCertificates, token);
             console.log('Upload response:', response);
             return response;
         } catch (err) {
@@ -34,8 +46,7 @@ export const useSkillApi = () => {
                 status: err.response?.status,
                 statusText: err.response?.statusText
             });
-
-            // Set more specific error message
+    
             let errorMessage = 'Failed to upload skills. Please try again.';
             if (err.response?.data?.error) {
                 errorMessage = err.response.data.error;
@@ -44,13 +55,14 @@ export const useSkillApi = () => {
             } else if (err.message) {
                 errorMessage = err.message;
             }
-
+    
             setError(errorMessage);
             throw err;
         } finally {
             setLoading(false);
         }
     }, [token]);
+    
 
     // Get user skills
     const getUserSkills = useCallback(async (userId) => {

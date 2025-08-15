@@ -39,7 +39,7 @@ export const jobPostApi = {
     // Get job posts by recruiter
     getJobPostsByRecruiter: async (token) => {
         try {
-            const response = await axios.get(`${BASE_URL}/company-recruiter-profile/jobpost/list`, {
+            const response = await axios.get(`${BASE_URL}/company-recruiter/jobpost/list`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }

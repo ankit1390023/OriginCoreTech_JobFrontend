@@ -28,16 +28,22 @@ import FeedYourEducation from "../pages/student/feed/FeedYourEducation";
 import FeedYourExprience from "../pages/student/feed/FeedYourExprience";
 import FeedDashBoard from "../pages/student/feed/FeedDashBoard";
 import FeedAuthentication from "../pages/student/feed/FeedAuthentication";
-import FeedFaq from "../pages/student/feed/FeedFaq";    
-import Myapplication1 from "../pages/student/application/Myapplication1"; 
+import FeedFaq from "../pages/student/feed/FeedFaq";
+import Myapplication1 from "../pages/student/application/Myapplication1";
 import Myapplication3 from "../pages/student/application/Myapplication3";
 import Myapplication5 from "../pages/student/application/Myapplication5";
-import Myapplication6 from "../pages/student/application/Myapplication6";  
+import Myapplication6 from "../pages/student/application/Myapplication6";
 import Myapplication9 from "../pages/student/application/Myapplication9";
 import Myapplication8 from "../pages/student/application/Myapplication8";
 import Myapplication7 from "../pages/student/application/Myapplication7";
 import Myapplication2 from "../pages/student/application/Myapplication2";
-
+import RecruiterDashboard from "../pages/recruiter/profile/RecruiterDashboard";
+import RecruiterRightProfile from "../pages/recruiter/profile/RecruiterRightProfile";
+import RecruiterTotalJobPost from "../pages/recruiter/profile/RecruiterTotalJobPost";
+import RecruiterApplication from "../pages/recruiter/profile/RecruiterApplication";
+import RecruiterApplicationDetails from "../pages/recruiter/profile/RecruiterApplicationDetails";
+import RecruiterApplicationData from "../pages/recruiter/profile/RecruiterApplicationData";
+import RecruiterSendAssignment from "../pages/recruiter/profile/RecruiterSendAssignment";
 
 
 
@@ -150,58 +156,88 @@ export const appRouter = createBrowserRouter([
         path: "/feed-your-exprience",
         element: <FeedYourExprience />,
     },
-    
+
     {
-        path:"feed-dashboard",
-        element:<FeedDashBoard />
+        path: "feed-dashboard",
+        element: <FeedDashBoard />
     },
     {
-        path:"/feed-authentication",
-        element:<FeedAuthentication/>
+        path: "/feed-authentication",
+        element: <FeedAuthentication />
     },
     {
-        path:"/feed-faq",
-        element:<FeedFaq/>
+        path: "/feed-faq",
+        element: <FeedFaq />
     },
-    
-    {
-        path:"/application-myapplication1",
-        element:<Myapplication1/>    
-    } ,
-    
-    {
-        path:"/application-myapplication2",
-        element:<Myapplication2/>    
-    } ,
 
     {
-        path:"/application-myapplication3",
-        element:<Myapplication3/>    
-    } ,
+        path: "/application-myapplication1",
+        element: <Myapplication1 />
+    },
+
+    {
+        path: "/application-myapplication2",
+        element: <Myapplication2 />
+    },
+
+    {
+        path: "/application-myapplication3",
+        element: <Myapplication3 />
+    },
 
 
-   
+
     {
-        path:"/application-myapplication5",
-        element:<Myapplication5/>    
-    } ,  
+        path: "/application-myapplication5",
+        element: <Myapplication5 />
+    },
     {
-        path:"/application-myapplication6",
-        element:<Myapplication6/>    
-    } , 
+        path: "/application-myapplication6",
+        element: <Myapplication6 />
+    },
     {
-        path:"/application-myapplication9",
-        element:<Myapplication9/>    
-    } , 
+        path: "/application-myapplication9",
+        element: <Myapplication9 />
+    },
     {
-        path:"/application-myapplication8",
-        element:<Myapplication8/>    
-    } , 
+        path: "/application-myapplication8",
+        element: <Myapplication8 />
+    },
     {
-        path:"/application-myapplication7",
-        element:<Myapplication7/>    
-    } , 
+        path: "/application-myapplication7",
+        element: <Myapplication7 />
+    },
+
+    {
+        path: "/recruiter-dashboard",
+        element: <RecruiterDashboard />
+    },
+    {
+        path: "/recruiter-dashboard-profile",
+        element: <RecruiterRightProfile />
+    },
+    {
+        path: "/recruiter-total-job-post",
+        element: <RecruiterTotalJobPost />  
+    },
+    {
+        path: "/recruiter-application",
+        element: <RecruiterApplication />  
+    },  
+
+    {
+        path: "/recruiter-application-details",
+        element: <RecruiterApplicationDetails />  
+    },
+
+    {
+        path: "/recruiter-application-data",
+        element: <RecruiterApplicationData />  
+    },  
+    {
+        path: "/recruiter-send-assignment",
+        element: <RecruiterSendAssignment />  
+    },  
 
 
-   
 ])

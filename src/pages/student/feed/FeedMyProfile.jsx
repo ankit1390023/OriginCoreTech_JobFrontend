@@ -135,11 +135,7 @@ const FeedMyProfile = () => {
                  {followLoading ? "Processing..." : isFollowing ? "Unfollow" : "Follow"}
                </Button>
              )}
-                         {profile?.aboutus && (
-               <p className="text-gray-400 font-medium text-sm leading-[140%] tracking-[-0.02em] max-w-md mx-auto">
-                 {profile.aboutus}
-               </p>
-             )}
+                         
                          <div className="flex flex-wrap items-center gap-2 mt-4 justify-center">
                <span className="bg-gray-100 text-blue-600 text-sm px-3 py-1 rounded">
                  {followersCount} followers
@@ -273,9 +269,7 @@ const FeedMyProfile = () => {
                               <p className="text-gray-500 text-sm">{experience.duration}</p>
                               <p className="text-gray-500 text-sm">{experience.timeSpan}</p>
                             </div>
-                            <p className="text-gray-700 text-sm mt-2 leading-relaxed line-clamp-2">
-                              {experience.description}
-                            </p>
+                           
                           </div>
                         </div>
                       </div>

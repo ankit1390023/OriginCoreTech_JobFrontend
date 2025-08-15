@@ -40,15 +40,16 @@ export const educationApi = {
                     'Authorization': `Bearer ${token}`
                 }
             });
-            console.log("response.data from getCourses", response.data.data);
-            return response.data.data;
+            const courses = response.data.data || [];
+            console.log("Courses fetched:", courses);
+            return courses;
         } catch (error) {
             console.error('Error fetching courses:', error);
             throw error;
         }
     },
 
-    // Fetch specializations from backend
+    // Fetch specializations from backend and filter by selected courseId
     getSpecializations: async (token) => {
         try {
             const response = await axios.get(`${BASE_URL}/master/specialization`, {
@@ -56,13 +57,35 @@ export const educationApi = {
                     'Authorization': `Bearer ${token}`
                 }
             });
-            console.log("response.data from getSpecializations", response.data.data);
-            return response.data.data || [];
+
+
+            console.log(`Specializations for courseId :`, response.data.data);
+            return response.data.data;
+        } catch (error) {
+            console.error(`Error fetching specializations for courseId :`, error);
+            throw error;
+        }
+    },
+
+    // Fetch specializations by course ID
+    getSpecializationsByCourseId: async (courseId, token) => {
+        try {
+            const response = await axios.get(
+                `${BASE_URL}/master/specialization/course/${courseId}`,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                }
+            );
+            console.log("Specializations fetched:", response.data.data);
+            return response.data.data; // returns the array of specializations
         } catch (error) {
             console.error('Error fetching specializations:', error);
             throw error;
         }
     },
+
 
     // Fetch colleges from backend
     getColleges: async (token) => {
@@ -82,8 +105,8 @@ export const educationApi = {
     // Fetch all education data at once
     getAllEducationData: async (token) => {
         try {
-            const [ locations, courses, specializations, colleges] = await Promise.all([
-               // educationApi.getJobRoles(token),
+            const [locations, courses, specializations, colleges] = await Promise.all([
+                // educationApi.getJobRoles(token),
                 educationApi.getLocations(token),
                 educationApi.getCourses(token),
                 educationApi.getSpecializations(token),
@@ -91,7 +114,7 @@ export const educationApi = {
             ]);
 
             return {
-            // jobRoles,
+                // jobRoles,
                 locations,
                 courses,
                 specializations,
