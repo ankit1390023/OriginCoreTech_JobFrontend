@@ -3,24 +3,32 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { FcGoogle } from "react-icons/fc";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+
 import AuthLayout from "../../components/layout/AuthLayout";
 import { Input, Button, Link } from "../../components/ui";
-import { useDispatch, useSelector } from 'react-redux';
 import { login } from "../../redux/feature/authSlice";
 
-
+// ✅ Validation schema
 const schema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
-  password: z.string().min(6, { message: "Password must be at least 6 characters" }),
+  password: z
+    .string()
+    .min(6, { message: "Password must be at least 6 characters" }),
   remember: z.coerce.boolean().optional(),
 });
 
 export default function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { loading, error, isAuthenticated, user } = useSelector((state) => state.auth);
+  const location = useLocation();
 
+  const { loading, error, isAuthenticated, user } = useSelector(
+    (state) => state.auth
+  );
+
+  // React Hook Form setup
   const {
     register,
     handleSubmit,
@@ -31,42 +39,38 @@ export default function Login() {
     defaultValues: { email: "", password: "", remember: false },
   });
 
-  // Prefill email from localStorage if remembered
+  // ✅ Prefill email (from localStorage OR state passed via navigation)
   useEffect(() => {
     const rememberedEmail = localStorage.getItem("userEmail");
-    if (rememberedEmail) {
+    const stateEmail = location.state?.email;
+    if (stateEmail) {
+      setValue("email", stateEmail);
+    } else if (rememberedEmail) {
       setValue("email", rememberedEmail);
     }
-  }, [setValue]);
+  }, [setValue, location.state]);
 
-  // Redirect after login
+  // ✅ Redirect after login success
   useEffect(() => {
-    console.log('Auth state changed:', { isAuthenticated, user });
     if (isAuthenticated && user) {
       switch (user.userRole) {
-        case 'STUDENT':
-          console.log('Navigating to /student-fill-account-details');
+        case "STUDENT":
           navigate("/student-fill-account-details");
           break;
-        case 'COMPANY':
-          console.log('Navigating to /recruiter-post-job-intern-details');
+        case "COMPANY":
           navigate("/recruiter-post-job-intern-details");
           break;
-        case 'UNIVERSITY':
-          console.log('Navigating to /university-fill-details');
+        case "UNIVERSITY":
           navigate("/university-fill-details");
           break;
         default:
-          console.log('Navigating to /student-fill-account-details (default)');
           navigate("/student-fill-account-details");
       }
     }
   }, [isAuthenticated, user, navigate]);
 
-
-
+  // ✅ Handle submit
   const onSubmit = (data) => {
-    console.log('Login form submitted with:', data);
     if (data.remember) {
       localStorage.setItem("userEmail", data.email);
     } else {
@@ -89,8 +93,10 @@ export default function Login() {
     >
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="w-full bg-white p-0 rounded-none shadow-none max-w-full md:p-4 md:rounded-lg md:shadow-md md:max-w-md md:mx-auto"
+        className="w-full bg-white p-0 rounded-none shadow-none max-w-full 
+                   md:p-4 md:rounded-lg md:shadow-md md:max-w-md md:mx-auto"
       >
+        {/* Email */}
         <Input
           label="Email"
           type="email"
@@ -99,6 +105,8 @@ export default function Login() {
           variant={errors.email ? "error" : "default"}
           {...register("email")}
         />
+
+        {/* Password */}
         <Input
           label="Password"
           type="password"
@@ -108,6 +116,8 @@ export default function Login() {
           variant={errors.password ? "error" : "default"}
           {...register("password")}
         />
+
+        {/* Remember + Forgot Password */}
         <div className="flex flex-row items-center justify-between mb-2 sm:mb-3 gap-1 sm:gap-0">
           <label className="flex items-center text-[10px] cursor-pointer space-x-1">
             <input
@@ -121,6 +131,8 @@ export default function Login() {
             Forgot Password?
           </Link>
         </div>
+
+        {/* Submit */}
         <Button
           type="submit"
           loading={loading}
@@ -129,19 +141,26 @@ export default function Login() {
         >
           {loading ? "Logging in..." : "Log In"}
         </Button>
+
+        {/* Error */}
         {error && (
-          <div className="text-xs text-red-500 mb-2 sm:mb-3 text-center bg-red-50 p-2 sm:p-3 rounded-md">
+          <div className="text-xs text-red-500 mb-2 sm:mb-3 text-center 
+                          bg-red-50 p-2 sm:p-3 rounded-md"
+          >
             {error}
           </div>
         )}
 
+        {/* Divider */}
         <div className="flex items-center my-2 sm:my-3">
           <div className="flex-grow h-px bg-gray-300"></div>
-          <span className="mx-1.5 sm:mx-2 text-gray-400 text-xs font-medium">Or</span>
+          <span className="mx-1.5 sm:mx-2 text-gray-400 text-xs font-medium">
+            Or
+          </span>
           <div className="flex-grow h-px bg-gray-300"></div>
         </div>
 
-        {/* Google Button - Using new UI component */}
+        {/* Google Button */}
         <Button
           type="button"
           variant="outline"
@@ -152,7 +171,7 @@ export default function Login() {
           <span className="text-xs">Continue with Google</span>
         </Button>
 
-        {/* OTP Button - Using new UI component */}
+        {/* OTP Button */}
         <Button
           type="button"
           variant="outline"

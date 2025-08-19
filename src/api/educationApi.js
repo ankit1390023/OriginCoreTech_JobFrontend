@@ -105,11 +105,12 @@ export const educationApi = {
     // Fetch all education data at once
     getAllEducationData: async (token) => {
         try {
-            const [locations, courses, specializations, colleges] = await Promise.all([
+            const [locations, courses, specializations, specializationsByCourseId, colleges] = await Promise.all([
                 // educationApi.getJobRoles(token),
                 educationApi.getLocations(token),
                 educationApi.getCourses(token),
                 educationApi.getSpecializations(token),
+                educationApi.getSpecializationsByCourseId(courses[0].id, token),
                 educationApi.getColleges(token)
             ]);
 
@@ -118,6 +119,7 @@ export const educationApi = {
                 locations,
                 courses,
                 specializations,
+                specializationsByCourseId,
                 colleges
             };
         } catch (error) {

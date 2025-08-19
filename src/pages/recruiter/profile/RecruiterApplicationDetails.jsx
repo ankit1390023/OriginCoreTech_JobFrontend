@@ -1,7 +1,17 @@
 import React from "react";
+import MainLayout from "../../../components/layout/MainLayout"; 
+import RecruiterApplicationData from "./RecruiterApplicationData";
 
 const ApplicationDetail = () => {
   return (
+    <MainLayout>
+                <div className="flex justify-center bg-gray-100 min-h-screen px-2 gap-x-2 lg:px-8 items-start">
+                  <div className="hidden lg:block flex-grow"></div>
+                  <aside className="hidden lg:block w-[729px] max-w-[729px] p-2 sticky top-4 h-fit ml-4 mt-2 ">
+                                 
+                                 <RecruiterApplicationData />
+                             </aside>
+    
     <div className="bg-white rounded-lg shadow-md w-[729px] h-[843px] py-5 px-6 flex flex-col gap-5 overflow-y-auto">
       {/* Header */}
       <div className="flex justify-between items-start border border-gray-200 rounded-lg p-4">
@@ -145,6 +155,10 @@ const ApplicationDetail = () => {
         </button>
       </div>
     </div>
+                          <div className="hidden lg:block flex-grow "></div>
+              </div>
+            </MainLayout> 
+
   );
 };
 

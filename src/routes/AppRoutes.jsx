@@ -44,6 +44,14 @@ import RecruiterApplication from "../pages/recruiter/profile/RecruiterApplicatio
 import RecruiterApplicationDetails from "../pages/recruiter/profile/RecruiterApplicationDetails";
 import RecruiterApplicationData from "../pages/recruiter/profile/RecruiterApplicationData";
 import RecruiterSendAssignment from "../pages/recruiter/profile/RecruiterSendAssignment";
+import RecruiterInterview from "../pages/recruiter/profile/RecruiterInterview";
+import RecruiterApproval from "../pages/recruiter/profile/RecruiterApproval";
+import RecruitePipeline from "../pages/recruiter/profile/RecruiterPipeline";
+import RecruiterUpcommingInterview from "../pages/recruiter/profile/RecruiterUpcommingInterview";
+import RecruiterPendingTask from "../pages/recruiter/profile/RecruiterPendingTask";
+
+
+
 
 
 
@@ -218,26 +226,47 @@ export const appRouter = createBrowserRouter([
     },
     {
         path: "/recruiter-total-job-post",
-        element: <RecruiterTotalJobPost />  
+        element: <RecruiterTotalJobPost />
     },
     {
         path: "/recruiter-application",
-        element: <RecruiterApplication />  
-    },  
+        element: <RecruiterApplication />
+    },
 
     {
         path: "/recruiter-application-details",
-        element: <RecruiterApplicationDetails />  
+        element: <RecruiterApplicationDetails />
     },
 
     {
         path: "/recruiter-application-data",
-        element: <RecruiterApplicationData />  
-    },  
+        element: <RecruiterApplicationData />
+    },
     {
         path: "/recruiter-send-assignment",
-        element: <RecruiterSendAssignment />  
-    },  
+        element: <RecruiterSendAssignment />
+    },
+    {
+        path: "/recruiter-interview",
+        element: <RecruiterInterview />
+    },
+    {
+        path: "/recruiter-approval",
+        element: <RecruiterApproval />
+    },
+    {
+        path: "/recruiter-pipeline-candidates",
+        element: <RecruitePipeline />
+    },
+    {
+        path: "/recruiter-upcoming-interview",
+        element: <RecruiterUpcommingInterview />
+    },
+    {
+        path: "/recruiter-pending-task",
+        element: <RecruiterPendingTask />
+    }
+
 
 
 ])

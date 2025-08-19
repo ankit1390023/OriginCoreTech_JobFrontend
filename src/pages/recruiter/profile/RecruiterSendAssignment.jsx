@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-
+import MainLayout from "../../../components/layout/MainLayout";
+import RecruiterApplicationData from "./RecruiterApplicationData";
 export default function SendAssignment() {
   const [message, setMessage] = useState(
     "Thank you for your interest in our internship opening. As a next step, we are expecting you to complete a short assignment.\n\nThanks,\nMansi"
@@ -31,7 +32,15 @@ export default function SendAssignment() {
   };
 
   return (
-    <div
+     <MainLayout>
+              <div className="flex justify-center bg-gray-100 min-h-screen px-2 lg:px-8 items-start">
+                <div className="hidden lg:block flex-grow"></div>
+                <aside className="hidden lg:block w-[729px] max-w-[729px] p-2 sticky top-4 h-fit ml-4 mt-2 ">
+                               
+                               <RecruiterApplicationData />
+                           </aside>
+        
+      <div
       className="bg-white shadow-md rounded-lg p-6 w-[729px] min-h-[499px] flex flex-col gap-5"
       style={{ top: "99px", left: "522px" }}
     >
@@ -93,6 +102,12 @@ export default function SendAssignment() {
       >
         Send Assignment
       </button>
-    </div>
+       </div>
+    
+                            {/* Right Spacer */}
+                            <div className="hidden lg:block flex-grow "></div>
+          </div>
+        </MainLayout> 
+    
   );
 }

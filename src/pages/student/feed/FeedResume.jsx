@@ -5,6 +5,7 @@ import FeedRightProfile from '../feed/FeedRightProfile';
 
 const FeedResume = () => {
   const [selectedTemplate, setSelectedTemplate] = useState(1);
+  
 
   const resumeTemplates = [
     {

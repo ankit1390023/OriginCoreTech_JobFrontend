@@ -400,88 +400,88 @@ export default function RecruiterPostJobInternDetails() {
   };
 
   const onSubmit = async (data) => {
-   
-      console.log("data received onSubmit",data);
-      const isValid = await methods.trigger();
+
+    console.log("data received onSubmit", data);
+    const isValid = await methods.trigger();
 
 
-      if (!isValid) {
-        // Get specific error messages
-        const errorMessages = Object.values(methods.formState.errors)
-          .map(error => error?.message)
-          .filter(Boolean);
+    if (!isValid) {
+      // Get specific error messages
+      const errorMessages = Object.values(methods.formState.errors)
+        .map(error => error?.message)
+        .filter(Boolean);
 
 
-        setErrorMessage(errorMessages.length > 0
-          ? errorMessages.join(", ")
-          : "Please fill in all required fields correctly.");
-        return;
-      }
+      setErrorMessage(errorMessages.length > 0
+        ? errorMessages.join(", ")
+        : "Please fill in all required fields correctly.");
+      return;
+    }
 
 
-      setIsSubmitting(true);
+    setIsSubmitting(true);
 
-      // Transform form data to match the exact backend API structure
-      const jobPostData = {
-        opportunityType: data.opportunityType,
-        jobProfile: data.opportunityType === "Internship" ? data.profile : data.jobTitle,
-        skillsRequired: data.skills.id,
-        skillRequiredNote: data.skills.id ? null : data.skills, // Use the skills field directly
-        jobType: data.opportunityType === "Internship" ? data.internshipType : data.jobType,
-        daysInOffice: data.inOfficeDays ? parseInt(data.inOfficeDays) : null,
-        jobTime: data.partFullTime,
-        cityChoice: data.city,
-        numberOfOpenings: data.openings ? parseInt(data.openings) : null,
-        jobDescription: data.responsibilities,
-        candidatePreferences: data.preferences || null,
-        womenPreferred: data.womenOnly || false,
-        stipendType: data.opportunityType === "Job" ? "Fixed" : data.stipendType,
-        stipendMin: data.stipendMin ? parseInt(data.stipendMin) : null,
-        stipendMax: data.stipendMax ? parseInt(data.stipendMax) : null,
-        incentivePerYear: data.incentivesMin && data.incentivesMax
-          ? `${data.incentivesMin}-${data.incentivesMax} ${data.incentivesMode || 'Month'}`
-          : null,
-        perks: data.perks ? (Array.isArray(data.perks) ? data.perks.join(', ') : data.perks) : null,
-        screeningQuestions: data.screeningQuestions || null,
-        phoneContact: data.phoneContact || null,
-        alternatePhoneNumber: data.alternatePhone || null,
-        // Only include internship-specific fields for Internship opportunity type
-        ...(data.opportunityType === "Internship" && {
-          internshipDuration: data.duration,
-          internshipStartDate: data.startDateType === "Immediately" ? "Immediately" : null,
-          internshipFromDate: data.startDateType === "Custom" ? data.startDateFrom : null,
-          internshipToDate: data.startDateType === "Custom" ? data.startDateTo : null,
-          isCustomInternshipDate: data.startDateType === "Custom",
-          collegeName: data.collegeName || null,
-          course: data.course || null,
-        }),
-      };
+    // Transform form data to match the exact backend API structure
+    const jobPostData = {
+      opportunityType: data.opportunityType,
+      jobProfile: data.opportunityType === "Internship" ? data.profile : data.jobTitle,
+      skillsRequired: data.skills.id,
+      skillRequiredNote: data.skills.id ? null : data.skills, // Use the skills field directly
+      jobType: data.opportunityType === "Internship" ? data.internshipType : data.jobType,
+      daysInOffice: data.inOfficeDays ? parseInt(data.inOfficeDays) : null,
+      jobTime: data.partFullTime,
+      cityChoice: data.city,
+      numberOfOpenings: data.openings ? parseInt(data.openings) : null,
+      jobDescription: data.responsibilities,
+      candidatePreferences: data.preferences || null,
+      womenPreferred: data.womenOnly || false,
+      stipendType: data.opportunityType === "Job" ? "Fixed" : data.stipendType,
+      stipendMin: data.stipendMin ? parseInt(data.stipendMin) : null,
+      stipendMax: data.stipendMax ? parseInt(data.stipendMax) : null,
+      incentivePerYear: data.incentivesMin && data.incentivesMax
+        ? `${data.incentivesMin}-${data.incentivesMax} ${data.incentivesMode || 'Month'}`
+        : null,
+      perks: data.perks ? (Array.isArray(data.perks) ? data.perks.join(', ') : data.perks) : null,
+      screeningQuestions: data.screeningQuestions || null,
+      phoneContact: data.phoneContact || null,
+      alternatePhoneNumber: data.alternatePhone || null,
+      // Only include internship-specific fields for Internship opportunity type
+      ...(data.opportunityType === "Internship" && {
+        internshipDuration: data.duration,
+        internshipStartDate: data.startDateType === "Immediately" ? "Immediately" : null,
+        internshipFromDate: data.startDateType === "Custom" ? data.startDateFrom : null,
+        internshipToDate: data.startDateType === "Custom" ? data.startDateTo : null,
+        isCustomInternshipDate: data.startDateType === "Custom",
+        collegeName: data.collegeName || null,
+        course: data.course || null,
+      }),
+    };
 
-      // Get authentication token
+    // Get authentication token
 
 
-      if (!token) {
-        setErrorMessage("Authentication token not found. Please log in again.");
-        return;
-      }
+    if (!token) {
+      setErrorMessage("Authentication token not found. Please log in again.");
+      return;
+    }
 
-      // Call the API
-      const response = await jobPostApi.createJobPost(jobPostData, token);
-       console.log("rersponse in recruiterPostJonInternzdetails page is",response);
-      setSuccessMessage(`${data.opportunityType} posted successfully!`);
+    // Call the API
+    const response = await jobPostApi.createJobPost(jobPostData, token);
+    console.log("rersponse in recruiterPostJonInternzdetails page is", response);
+    setSuccessMessage(`${data.opportunityType} posted successfully!`);
 
-      // Reset form after successful submission
-      methods.reset();
-      setSelectedDomain(null);
-      setDomainSkills({});
-      setShowAllDomains(false);
+    // Reset form after successful submission
+    methods.reset();
+    setSelectedDomain(null);
+    setDomainSkills({});
+    setShowAllDomains(false);
 
-      // Clear success message after 5 seconds
-      setTimeout(() => {
-        setSuccessMessage("");
-      }, 5000);
+    // Clear success message after 5 seconds
+    setTimeout(() => {
+      setSuccessMessage("");
+    }, 5000);
 
-   
+
   };
 
   // Common input styles

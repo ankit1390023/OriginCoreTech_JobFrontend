@@ -96,27 +96,38 @@ export default function SignUp() {
   });
 
   const onSubmit = async (data) => {
-    // Dispatch signup thunk
-    await dispatch(signup({
-      firstName: data.firstName,
-      lastName: data.lastName,
-      phone: data.phone,
-      email: data.email,
-      password: data.password,
-      userRole: data.userRole,
-    }));
-    // After successful signup, send OTP and redirect
     try {
+      // Dispatch signup thunk
+      const resultAction = await dispatch(
+        signup({
+          firstName: data.firstName,
+          lastName: data.lastName,
+          phone: data.phone,
+          email: data.email,
+          password: data.password,
+          userRole: data.userRole,
+        })
+      );
+  
+      // Check if signup failed (email exists or other error)
+      if (signup.rejected.match(resultAction)) {
+        // Redux will already set `error` in state
+        // Just stop here without sending OTP
+        return;
+      }
+  
+      // ✅ Signup successful → Send OTP
       const otpResponse = await axios.post(`${BASE_URL}/otp/send-otp`, {
         email: data.email,
       });
+  
       if (otpResponse.status === 200) {
         alert("Registration successful! OTP sent to your email.");
         navigate("/signup-verify-otp-email", {
           state: {
             email: data.email,
-            userRole: data.userRole
-          }
+            userRole: data.userRole,
+          },
         });
       } else {
         alert("Registration successful but failed to send OTP. Please try again.");
@@ -125,6 +136,7 @@ export default function SignUp() {
       alert("Registration successful but failed to send OTP. Please try again.");
     }
   };
+  
 
   useEffect(() => {
     if (!location.state?.selectedRole) {

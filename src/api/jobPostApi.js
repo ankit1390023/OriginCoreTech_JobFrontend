@@ -6,20 +6,20 @@ const BASE_URL = import.meta.env.VITE_BASE_URL;
 export const jobPostApi = {
     // Create a new job post
     createJobPost: async (jobPostData, token) => {
-       
-            if (!token) {
-                throw new Error('No auth token provided');
-              }
-            console.log("received token in createJobPost",token)
-            const response = await axios.post(`${BASE_URL}/jobpost/create`, jobPostData, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            console.log("response from createJobPost", response.data);
-            return response.data;
-        
+
+        if (!token) {
+            throw new Error('No auth token provided');
+        }
+        console.log("received token in createJobPost", token)
+        const response = await axios.post(`${BASE_URL}/jobpost/create`, jobPostData, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        console.log("response from createJobPost", response.data);
+        return response.data;
+
     },
 
     // Get all domains (for skills suggestions)
@@ -39,7 +39,7 @@ export const jobPostApi = {
     // Get job posts by recruiter
     getJobPostsByRecruiter: async (token) => {
         try {
-            const response = await axios.get(`${BASE_URL}/company-recruiter/jobpost/list`, {
+            const response = await axios.get(`${BASE_URL}/company-recruiter-profile/jobpost/list`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -55,6 +55,7 @@ export const jobPostApi = {
         try {
             const response = await axios.get(`${BASE_URL}/jobpost/totalcount`, {
                 headers: {
+                    'content-type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 }
             });

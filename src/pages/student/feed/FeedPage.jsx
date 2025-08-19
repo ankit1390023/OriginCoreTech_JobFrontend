@@ -246,7 +246,7 @@ export default function FeedPage() {
                                             onChange={e => setCommentInputs(prev => ({ ...prev, [post.id]: e.target.value }))}
                                         />
                                         <button
-                                            className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-lg text-sm transition-colors"
+                                            className="bg-blue-500 hover:bg-blue-600 text-white px-2 py-2 rounded- text-sm transition-colors"
                                             onClick={() => handleComment(post.id)}
                                         >
                                             Comment
@@ -324,9 +324,11 @@ export default function FeedPage() {
                                                 </div>
                                             ))}
                                         </div>
-                                    ) : (
-                                        <div className="text-xs text-gray-400 text-center py-2">No comments yet.</div>
-                                    )}
+
+                                    )
+                                        : (
+                                            <div className="text-xs text-gray-400 text-center py-2">No comments yet.</div>
+                                        )}
                                 </div>
                             )}
                         </article>
@@ -339,8 +341,8 @@ export default function FeedPage() {
                                 <button
                                     key={num}
                                     className={`px-2 sm:px-3 py-1 sm:py-2 rounded border text-xs sm:text-sm mx-0.5 transition-colors ${num === page
-                                            ? 'bg-blue-500 text-white border-blue-500'
-                                            : 'bg-white text-blue-500 border-blue-300 hover:bg-blue-100'
+                                        ? 'bg-blue-500 text-white border-blue-500'
+                                        : 'bg-white text-blue-500 border-blue-300 hover:bg-blue-100'
                                         }`}
                                     onClick={() => handlePageChange(num)}
                                     disabled={num === page}

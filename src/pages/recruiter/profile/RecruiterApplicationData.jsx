@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import { Search } from "lucide-react";
-import MainLayout from "../../../components/layout/MainLayout";
-import RecruiterApplicationDetails from "./RecruiterApplicationDetails";
 
 
 const applicationsData = [
@@ -57,11 +55,12 @@ const ApplicationsSmall = () => {
   );
 
   return (
-     <MainLayout>
+     
           <div className="flex justify-center bg-gray-100 min-h-screen px-2 lg:px-8 items-start">
+             
             <div className="hidden lg:block flex-grow"></div>
     
-    <div className="bg-white rounded-lg shadow-md w-[447px] h-[627px] mt-4 py-5 px-2 flex flex-col gap-[30px]">
+    <div className="bg-white rounded-lg shadow-md w-[447px] h-[627px] mt-2 py-5 px-2 flex flex-col gap-[30px]">
       {/* Title */}
       <div>
         <h1 className="text-2xl font-bold">Applications</h1>
@@ -98,14 +97,11 @@ const ApplicationsSmall = () => {
         ))}
       </div>
     </div>
-    <aside className="hidden lg:block w-[729px] max-w-[729px] p-2 sticky top-4 h-fit ml-4 mt-2 ">
-                           <RecruiterApplicationDetails />  
-                           <RecruiteSendAssignment />  
-                        </aside>
+  
                         {/* Right Spacer */}
                         <div className="hidden lg:block flex-grow "></div>
       </div>
-    </MainLayout>
+    
   );
 };
 
