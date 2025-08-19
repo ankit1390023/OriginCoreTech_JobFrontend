@@ -78,7 +78,7 @@ const RecruiterDashboard = () => {
       <div className="flex justify-center bg-gray-100 min-h-screen px-2 lg:px-3 items-start">
         {/* Left Spacer */}
         <div className="hidden lg:block flex-grow"></div>
-  
+
         {/* Main content + right profile with horizontal gap */}
         <div className="flex gap-2 mt-5">
           {/* Left Section */}
@@ -86,7 +86,7 @@ const RecruiterDashboard = () => {
             {/* Header */}
             <h1 className="text-3xl font-bold">Dashboard</h1>
             <p className="text-gray-500">Lorem Ipsum</p>
-  
+
             {/* Search bar */}
             <div className="relative mt-4">
               <input
@@ -96,7 +96,7 @@ const RecruiterDashboard = () => {
               />
               <Search className="absolute right-3 top-2.5 text-gray-400" size={20} />
             </div>
-  
+
             {/* Cards */}
             <div className="grid grid-cols-2 gap-4 mt-5">
               {data.map((item, index) => (
@@ -118,20 +118,20 @@ const RecruiterDashboard = () => {
               ))}
             </div>
           </section>
-  
+
           {/* Right Section */}
           <aside className="hidden lg:block w-[375px] h-[553px] rounded-[10px] p-[20px] pr-[10px] pb-[20px] pl-[10px] gap-[30px] bg-white shadow-md sticky top-4">
             <RecruiterRightProfile />
           </aside>
         </div>
-  
+
         {/* Right Spacer */}
         <div className="hidden lg:block flex-grow"></div>
       </div>
     </MainLayout>
   );
-  
-  
+
+
 };
 
 export default RecruiterDashboard;
