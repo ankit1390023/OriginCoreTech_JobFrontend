@@ -101,16 +101,9 @@ const Myapplication1 = () => {
         <div className="hidden lg:block flex-grow"></div>
         
     <div
-      className="mx-auto mt-10"
-      style={{
-        width: 729,
-        height: 700,
-        borderRadius: 10,
-        padding: 20,
-        gap: 10,
-        background: '#fff',
-      }}
-    >
+     className="mx-auto mt-2 w-[729px] h-[950px] rounded-[10px] p-5 gap-[10px] bg-white"
+     >
+     
       <div className="max-w-3xl mx-auto">
         <h1 className="text-4xl font-bold text-gray-900 mb-8">Your personalised pathways</h1>
         <div className="space-y-6">

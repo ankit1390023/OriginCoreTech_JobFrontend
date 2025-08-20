@@ -54,8 +54,11 @@ export default function ForgotPassword() {
   // Get logged-in user's email from localStorage
   useEffect(() => {
     const rememberedEmail = localStorage.getItem("userEmail");
+    console.log("rememberedEmail", rememberedEmail);    
     if (rememberedEmail) {
       setValue("email", rememberedEmail);
+    } else {
+      setValue("email", "");
     }
   }, [setValue]);
 

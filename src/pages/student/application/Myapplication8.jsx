@@ -15,8 +15,8 @@ const Myapplication8 = () => {
         <div className="hidden lg:block flex-grow"></div>
       
 
-    <div className="min-h-screen bg-white p-6">
-    <div className="w-[689px] h-[503px] rounded-[10px] p-6 gap-[10px] opacity-100 mx-auto space-y-6">
+    <div className="min-h-screen mt-2 bg-white p-6 w-full max-w-3xl">
+    <div className="w-[689px] min-h-screen rounded-[10px] p-6 gap-[10px] opacity-100 mx-auto space-y-6">
  
         {/* Top Section: User Profile and Skills Overview */}
         <div>

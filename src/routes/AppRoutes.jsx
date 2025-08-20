@@ -192,9 +192,6 @@ export const appRouter = createBrowserRouter([
         path: "/application-myapplication3",
         element: <Myapplication3 />
     },
-
-
-
     {
         path: "/application-myapplication5",
         element: <Myapplication5 />

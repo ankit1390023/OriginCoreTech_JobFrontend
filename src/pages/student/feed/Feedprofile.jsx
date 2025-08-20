@@ -16,11 +16,13 @@ import {
 import { HiOutlineEye } from 'react-icons/hi';
 import FeedRightProfile from '../feed/FeedRightProfile';
 import MainLayout from '../../../components/layout/MainLayout';
-
+import { useDispatch } from 'react-redux';
+import { logout } from '../../../redux/feature/authSlice';
 
 const Feedprofile = () => {
   const [activeDropdown, setActiveDropdown] = useState(null);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const toggleDropdown = (id) => {
     setActiveDropdown(activeDropdown === id ? null : id);
@@ -56,13 +58,21 @@ const Feedprofile = () => {
       title: 'Help & Support',
       hasChevron: true,
       action: () => navigate('/feed-faq'),
+      // no navigate here → handled by toggleDropdown
     },
     {
       id: 'manage',
       icon: <Settings size={20} />,
       title: 'Manage Account',
       hasChevron: true,
-      action: () => console.log('Navigate to Manage Account'),
+      // no navigate here → handled by toggleDropdown
+    },
+    {
+      id: 'notifications',
+      icon: <Bell size={20} />,
+      title: 'Notifications',
+      hasChevron: true,
+      action: () => navigate('/feed-notifications'),
     },
     {
       id: 'logout',
@@ -71,7 +81,7 @@ const Feedprofile = () => {
       subtitle: 'Further secure your account for safety',
       hasChevron: true,
       action: () => {
-        localStorage.clear();
+        dispatch(logout());
         navigate('/login');
       },
     },
@@ -87,7 +97,7 @@ const Feedprofile = () => {
           <div className="bg-[#002B6B] text-white p-3 sm:p-4 lg:p-4 flex flex-col sm:flex-row sm:items-center justify-between rounded-[5px] gap-3 sm:gap-4">
             <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
               <img
-                src="https://i.pravatar.cc/100"
+                src="https://i.pravatar.cc/100?img=1"
                 alt="avatar"
                 className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-18 lg:h-18 rounded-md object-cover flex-shrink-0"
               />
@@ -97,7 +107,10 @@ const Feedprofile = () => {
                 <p className="text-xs sm:text-sm text-gray-200 truncate">Visual Designer</p>
               </div>
             </div>
-            <button className="border border-white rounded-full px-3 py-2 sm:px-4 sm:py-2.5 text-xs sm:text-sm text-[#002B6B] transition-colors flex items-center gap-1.5 sm:gap-2 self-start sm:self-auto whitespace-nowrap min-h-[44px] sm:min-h-[40px]">
+            <button
+              className="border border-white rounded-full px-3 py-2 sm:px-4 sm:py-2.5 text-xs sm:text-sm text-[#002B6B] transition-colors flex items-center gap-1.5 sm:gap-2 self-start sm:self-auto whitespace-nowrap min-h-[44px] sm:min-h-[40px]"
+              onClick={() => navigate('/feed-my-profile')}
+            >
               <HiOutlineEye size={14} className="sm:w-4 sm:h-4" />
               <span className="hidden xs:inline">Profile</span>
               <span className="xs:hidden">View</span>
@@ -110,9 +123,10 @@ const Feedprofile = () => {
               <div key={option.id}>
                 <button
                   onClick={() => {
-                    option.action();
-                    if (option.hasChevron) {
+                    if (option.id === 'manage') {
                       toggleDropdown(option.id);
+                    } else {
+                      option.action?.();
                     }
                   }}
                   className="w-full flex items-center justify-between p-3 sm:p-4 md:p-5 rounded-lg bg-white hover:bg-gray-50 active:bg-gray-100 transition-colors border border-transparent hover:border-gray-200 min-h-[60px] sm:min-h-[64px] md:min-h-[72px]"
@@ -124,9 +138,13 @@ const Feedprofile = () => {
                       </div>
                     </div>
                     <div className="flex flex-col w-auto text-left opacity-100">
-                      <span className="text-sm sm:text-base md:text-medium lg:text-medium text-gray-900 font-medium">{option.title}</span>
+                      <span className="text-sm sm:text-base md:text-medium lg:text-medium text-gray-900 font-medium">
+                        {option.title}
+                      </span>
                       {option.subtitle && (
-                        <span className="text-xs sm:text-sm md:text-base text-gray-400">{option.subtitle}</span>
+                        <span className="text-xs sm:text-sm md:text-base text-gray-400">
+                          {option.subtitle}
+                        </span>
                       )}
                     </div>
                   </div>
@@ -137,19 +155,38 @@ const Feedprofile = () => {
                 </button>
 
                 {/* Dropdowns */}
-                {(activeDropdown === 'help' || activeDropdown === 'manage') &&
-                  activeDropdown === option.id && (
+                {activeDropdown === option.id && (
                     <div className="ml-10 sm:ml-12 md:ml-14 lg:ml-16 mt-1 sm:mt-2 space-y-1 sm:space-y-2">
                       {(activeDropdown === 'help'
                         ? [
-                          { icon: <Settings size={16} />, label: 'Raise a ticket', action: () => navigate('/feed-ticket') },
-                          { icon: <Settings size={16} />, label: 'Chat with us!', action: () => navigate('/feed-help') },
-                        ]
+                            {
+                              icon: <Settings size={16} />,
+                              label: 'Raise a ticket',
+                              action: () => navigate('/feed-ticket'),
+                            },
+                            {
+                              icon: <Settings size={16} />,
+                              label: 'Chat with us!',
+                              action: () => navigate('/feed-help'),
+                            },
+                          ]
                         : [
-                          { icon: <Mail size={16} />, label: 'Change email', action: () => navigate('/feed-change-email') },
-                          { icon: <Lock size={16} />, label: 'Change password', action: () => navigate('/feed-change-password') },
-                          { icon: <Trash2 size={16} />, label: 'Delete my account', action: () => console.log('Delete account') },
-                        ]
+                            {
+                              icon: <Mail size={16} />,
+                              label: 'Change email',
+                              action: () => navigate('/feed-change-email'),
+                            },
+                            {
+                              icon: <Lock size={16} />,
+                              label: 'Change password',
+                              action: () => navigate('/feed-change-password'),
+                            },
+                            {
+                              icon: <Trash2 size={16} />,
+                              label: 'Delete my account',
+                              action: () => console.log('Delete account'),
+                            },
+                          ]
                       ).map((item, i) => (
                         <button
                           key={i}
@@ -161,14 +198,15 @@ const Feedprofile = () => {
                               {item.icon}
                             </div>
                           </div>
-                          <span className="text-sm sm:text-base md:text-lg text-gray-900 font-medium truncate">{item.label}</span>
+                          <span className="text-sm sm:text-base md:text-lg text-gray-900 font-medium truncate">
+                            {item.label}
+                          </span>
                         </button>
                       ))}
                     </div>
                   )}
               </div>
             ))}
-
           </div>
         </section>
 

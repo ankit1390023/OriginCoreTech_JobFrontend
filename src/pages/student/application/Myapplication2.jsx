@@ -95,7 +95,7 @@ const Myapplication2 = () => {
       <div className="flex justify-center bg-gray-100 min-h-screen px-2 lg:px-8 items-start">
         <div className="hidden lg:block flex-grow"></div>
         
-        <div className="min-h-screen bg-white p-6 w-full max-w-2xl">
+        <div className="min-h-screen mt-2 bg-white p-6 w-full max-w-3xl">
           <div className="space-y-6">
             {/* Header */}
             <div>

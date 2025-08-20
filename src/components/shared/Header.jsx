@@ -1,4 +1,5 @@
 import { NavLink } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { FaSearch, FaBell, FaUser, FaBars, FaTimes } from "react-icons/fa";
 import { FiMessageCircle } from "react-icons/fi";
 import { useState } from "react";
@@ -147,13 +148,23 @@ export default function Header() {
 
                         {/* Mobile Action Icons */}
                         <div className="flex items-center justify-around pt-2 md:pt-3 border-t border-gray-200">
-                            <div className="bg-gray-100 cursor-pointer rounded-full w-8 h-8 md:w-10 md:h-10 flex items-center justify-center">
-                                <FiMessageCircle className="text-[#00194A] text-sm md:text-base" />
+                            <div
+                                onClick={() => Navigate('/application-myapplication6')}
+                                className="bg-gray-100 cursor-pointer rounded-full w-8 h-8 md:w-10 md:h-10 flex items-center justify-center hover:bg-gray-200 active:bg-gray-300 transition"
+                            >
+                                <FiMessageCircle className="text-[#00194A] text-sm md:text-base" /> 
                             </div>
-                            <div className="bg-gray-100 cursor-pointer rounded-full w-8 h-8 md:w-10 md:h-10 flex items-center justify-center">
+                            <div
+                                onClick={() => Navigate('/feed-notifications')}
+                                className="bg-gray-100 cursor-pointer rounded-full w-8 h-8 md:w-10 md:h-10 flex items-center justify-center hover:bg-gray-200 active:bg-gray-300 transition"
+                            >
                                 <FaBell className="text-[#00194A] text-sm md:text-base" />
                             </div>
-                            <div className="bg-gray-100 cursor-pointer rounded-full w-8 h-8 md:w-10 md:h-10 flex items-center justify-center">
+
+                               <div
+                                onClick={() =>Navigate('/feed-my-profile')}
+                                className="bg-gray-100 cursor-pointer rounded-full w-8 h-8 md:w-10 md:h-10 flex items-center justify-center hover:bg-gray-200 active:bg-gray-300 transition"
+                            >
                                 <FaUser className="text-[#00194A] text-sm md:text-base" />
                             </div>
                         </div>

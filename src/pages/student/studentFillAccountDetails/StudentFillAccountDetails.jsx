@@ -320,8 +320,8 @@ export default function StudentFillAccountDetails() {
       console.log('API response:', response);
 
       alert("Form submitted successfully!");
-      // Redirect to all-jobs page after successful submission
-      navigate("/all-jobs");
+      // Redirect to feed page after successful submission
+      navigate("/feed");
     } catch (error) {
       // Log detailed error information for debugging
       console.error('Form submission error:', error);
