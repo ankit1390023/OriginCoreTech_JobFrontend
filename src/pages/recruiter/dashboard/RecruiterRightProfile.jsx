@@ -25,12 +25,17 @@ const RecruiterRightProfile = () => {
     ];
 
     return (
-        <div className="flex justify-center bg-gray-100 min-h-screen px-2 lg:px-8 items-start">
-            <div className="hidden lg:block flex-grow"></div>
-
+        <div className="flex justify-center bg-gray-100 min-h-screen items-start">
             <div
-                className="w-[375px] h-[553px] bg-white rounded-[10px] shadow-md 
-                   p-[20px] px-[10px] flex flex-col gap-[30px] mt-[99px]"
+                className="bg-white shadow-md flex flex-col mt-4"
+                style={{
+                    width: "375px",
+                    height: "553.42px",
+                    borderRadius: "10px",
+                    padding: "20px 10px",
+                    gap: "30px",
+                    opacity: 1,
+                }}
             >
                 {/* Post a Job Button */}
                 <button

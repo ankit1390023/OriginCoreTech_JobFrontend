@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Input, Label } from '../../../components/ui';
 import MainLayout from '../../../components/layout/MainLayout';
-import FeedRightProfile from '../feed/FeedRightProfile';
+import FeedRightSide1 from '../feed/FeedRightSide1';
 
 
 const FeedAuthentication = () => {
@@ -243,7 +243,7 @@ const FeedAuthentication = () => {
     </section>
         {/* Profile Card */}
         <aside className="hidden lg:block w-full max-w-[350px] p-2 sticky top-4 h-fit ml-4">
-                    <FeedRightProfile />
+                    <FeedRightSide1 />
                 </aside>
                 {/* Right Spacer */}
                 <div className="hidden lg:block flex-grow "></div>

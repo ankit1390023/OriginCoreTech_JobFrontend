@@ -2,12 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Input, Button, Badge } from '../../../components/ui';
 import MainLayout from '../../../components/layout/MainLayout';
-import FeedRightProfile from '../feed/FeedRightProfile';
+import FeedRightSide1 from '../feed/FeedRightSide1';
 import { IoIosInformationCircleOutline } from 'react-icons/io';
 import { IoIosSearch } from 'react-icons/io';
 import { IoIosArrowBack } from 'react-icons/io';
 import { HiOutlineEye } from 'react-icons/hi';
-import { FaEdit } from 'react-icons/fa';
 import { RxCross2 } from 'react-icons/rx';
 import { useDomainsApi } from '../../../hooks/useDomainsApi';
 import { useEducationData } from '../../../hooks/useEducationData';
@@ -909,7 +908,7 @@ const FeedYourSkills = () => {
     </section>
      {/* Profile Card */}
      <aside className="hidden lg:block w-full max-w-[350px] p-2 sticky top-4 h-fit">
-    <FeedRightProfile />
+    <FeedRightSide1 />
   </aside>
   {/* Right Spacer */}
   <div className="hidden lg:block flex-grow"></div>

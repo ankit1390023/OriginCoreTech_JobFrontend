@@ -1,9 +1,9 @@
 import React from 'react';
 import { Badge } from '../../../components/ui';
 import MainLayout from '../../../components/layout/MainLayout';
-import FeedRightProfile from '../feed/FeedRightProfile';
+import FeedRightSide3 from '../feed/FeedRightSide3';
 
-const Myapplication7 = () => {
+const Myapplication4 = () => {
   const contentCards = [
     {
       id: 1,
@@ -111,7 +111,7 @@ const Myapplication7 = () => {
 
         {/* Profile Card */}
         <aside className="hidden lg:block w-full max-w-[350px] p-2 sticky top-4 h-fit">
-          <FeedRightProfile />
+          <FeedRightSide3 />
         </aside>
         {/* Right Spacer */}
         <div className="hidden lg:block flex-grow"></div>
@@ -120,4 +120,4 @@ const Myapplication7 = () => {
   );
 };
 
-export default Myapplication7;
+export default Myapplication4;

@@ -3,7 +3,7 @@ import { Badge, Button } from '../../../components/ui';
 import uberLogo from '../../../assets/uber-logo.png';
 import carDashboard from '../../../assets/car-dashboard.png';
 import MainLayout from '../../../components/layout/MainLayout';
-import FeedRightProfile from '../feed/FeedRightProfile';
+import FeedRightSide3 from '../feed/FeedRightSide3';
 
 
 const pathwayData = [
@@ -62,6 +62,7 @@ const pathwayData = [
       },
     ],
   },
+  
   {
     id: 2,
     color: '#E8AC6E',
@@ -107,71 +108,94 @@ const Myapplication1 = () => {
       <div className="max-w-3xl mx-auto">
         <h1 className="text-4xl font-bold text-gray-900 mb-8">Your personalised pathways</h1>
         <div className="space-y-6">
-          {pathwayData.map((pathway, idx) => (
-            <div
-              key={pathway.id}
-              className={`rounded-xl px-6 pt-6 pb-4 relative ${pathway.id === 1 ? 'cursor-pointer' : ''}`}
-              style={{ backgroundColor: pathway.color }}
-              onClick={() => handlePathwayClick(pathway.id)}
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-4">
-                  <div className="w-16 h-16 bg-white/30 rounded-lg flex items-center justify-center">
-                    <img
-                      src={carDashboard}
-                      alt="dashboard"
-                      className="w-12 h-12 object-contain rounded"
-                    />
-                  </div>
-                  <div>
-                    <h2 className="text-2xl font-bold text-white">{pathway.title}</h2>
-                    <p className="text-white/80 text-lg">?</p>
-                    <div className="flex items-center space-x-2 mt-2">
-                      {pathway.badges.map((badge, i) => (
-                        <Badge key={i} color={badge.color} text={badge.text} />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Badge
-                    color="bg-white text-gray-900 border border-gray-300"
-                    text={
-                      <div className="flex items-center space-x-1">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                        </svg>
-                        <span>{pathway.skills}</span>
-                      </div>
-                    }
-                  />
-                </div>
-              </div>
-              {/* Subcards for Pathway 1 - Only show when expanded */}
-              {pathway.id === 1 && expandedPathway === 1 && (
-                <div className="mt-4 space-y-3">
-                  {pathway.subCards.map((sub, i) => (
-                    <div
-                      key={i}
-                      className="bg-white rounded-xl flex items-center px-4 py-3 shadow-sm border border-gray-100"
-                    >
-                      <div className="mr-4">{sub.icon}</div>
-                      <div className="flex-1">
-                        <h3 className="text-base font-semibold text-gray-900">{sub.title}</h3>
-                        <p className="text-gray-500 text-sm">{sub.subtitle}</p>
-                        <div className="flex items-center space-x-2 mt-1">
-                          {sub.badges.map((badge, j) => (
-                            <Badge key={j} color={badge.color} text={badge.text} />
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
+
+        {pathwayData.map((pathway) => (
+  <div
+    key={pathway.id}
+    className={`rounded-xl relative ${pathway.id === 1 ? 'cursor-pointer' : ''}`}
+    onClick={() => handlePathwayClick(pathway.id)}
+  >
+    {/* Pathway Header (colored) */}
+    <div
+      className="px-6 pt-6 pb-4 rounded-t-xl"
+      style={{ backgroundColor: pathway.color }}
+    >
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-4">
+          <div className="w-16 h-16 bg-white/30 rounded-lg flex items-center justify-center">
+            <img
+              src={carDashboard}
+              alt="dashboard"
+              className="w-12 h-12 object-contain rounded"
+            />
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold text-white">{pathway.title}</h2>
+            <p className="text-white/80 text-lg">?</p>
+            <div className="flex items-center space-x-2 mt-2">
+              {pathway.badges.map((badge, i) => (
+                <Badge key={i} color={badge.color} text={badge.text} />
+              ))}
             </div>
-          ))}
+          </div>
+        </div>
+        <div className="flex items-center space-x-2">
+          <Badge
+            color="bg-white text-gray-900 border border-gray-300"
+            text={
+              <div className="flex items-center space-x-1">
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                  />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                  />
+                </svg>
+                <span>{pathway.skills}</span>
+              </div>
+            }
+          />
+        </div>
+      </div>
+    </div>
+
+    {/* Subcards (white background only for Pathway 1 when expanded) */}
+    {pathway.id === 1 && expandedPathway === 1 && (
+      <div className="mt-0 p-4 bg-white rounded-b-xl space-y-3">
+        {pathway.subCards.map((sub, i) => (
+          <div
+            key={i}
+            className="bg-white rounded-xl flex items-center px-4 py-3 shadow-sm border border-gray-100"
+          >
+            <div className="mr-4">{sub.icon}</div>
+            <div className="flex-1">
+              <h3 className="text-base font-semibold text-gray-900">{sub.title}</h3>
+              <p className="text-gray-500 text-sm">{sub.subtitle}</p>
+              <div className="flex items-center space-x-2 mt-1">
+                {sub.badges.map((badge, j) => (
+                  <Badge key={j} color={badge.color} text={badge.text} />
+                ))}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    )}
+  </div>
+))}
+
         </div>
         <div className="flex justify-center mt-8">
           <Button
@@ -187,7 +211,7 @@ const Myapplication1 = () => {
     
         {/* Profile Card */}
         <aside className="hidden lg:block w-full max-w-[350px] p-2 sticky top-4 h-fit">
-          <FeedRightProfile />
+          <FeedRightSide3 />
         </aside>
         {/* Right Spacer */}
         <div className="hidden lg:block flex-grow"></div>

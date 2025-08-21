@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Input, Select, Button, Badge } from '../../../components/ui';
 import MainLayout from '../../../components/layout/MainLayout';
-import FeedRightProfile from '../feed/FeedRightProfile';
+import FeedRightSide1 from '../feed/FeedRightSide1';
 import { IoIosArrowBack } from 'react-icons/io';
 
 const FeedYourExprience = () => {
@@ -674,7 +674,7 @@ const FeedYourExprience = () => {
 
         {/* Profile Card */}
         <aside className="hidden lg:block w-full max-w-[350px] p-2 sticky top-4 h-fit">
-          <FeedRightProfile />
+          <FeedRightSide1 />
         </aside>
         {/* Right Spacer */}
         <div className="hidden lg:block flex-grow"></div>
