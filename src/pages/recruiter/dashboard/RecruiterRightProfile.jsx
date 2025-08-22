@@ -25,18 +25,8 @@ const RecruiterRightProfile = () => {
     ];
 
     return (
-        <div className="flex justify-center bg-gray-100 min-h-screen items-start">
-            <div
-                className="bg-white shadow-md flex flex-col mt-4"
-                style={{
-                    width: "375px",
-                    height: "553.42px",
-                    borderRadius: "10px",
-                    padding: "20px 10px",
-                    gap: "30px",
-                    opacity: 1,
-                }}
-            >
+       
+            <div className="bg-white flex flex-col w-[375px] min-h-[553.42px] rounded-[10px] p-[20px_10px] gap-[30px] relative opacity-100 top-[5px]">
                 {/* Post a Job Button */}
                 <button
                     onClick={() => navigate("/recruiter-post-job-intern-details")}
@@ -94,7 +84,7 @@ const RecruiterRightProfile = () => {
                     </button>
                 </div>
             </div>
-        </div>
+      
     );
 };
 

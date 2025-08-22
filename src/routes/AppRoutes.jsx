@@ -79,6 +79,10 @@ import AiProfile1 from "../pages/aiprediction/AiProfile1";
 import AllJObsPart from "../pages/aiprediction/AlljobsPart";
 import AllCoursesPart from "../pages/aiprediction/CoursePart";
 import FeedRightSide3 from "../pages/student/feed/FeedRightSide3";
+import Sidebar from "../components/shared/Sidebar";
+import Header1 from "../components/shared/Header1";
+import Footer1 from "../components/shared/Footer1";
+import FinanceLayout from "../components/layout/FinanceLayout";
 
 
 
@@ -442,6 +446,22 @@ export const appRouter = createBrowserRouter([
         path: "/all-courses-part",
         element: <AllCoursesPart />
     },
+    {
+        path: "/sidebar",
+        element: <Sidebar />
+    },
+    {
+        path: "/header1",
+        element: <Header1 />
+    },
+    {
+        path: "/footer1",
+        element: <Footer1 />
+    },
     
+    {
+        path: "/finance-layout",
+        element: <FinanceLayout />
+    },
 
 ])

@@ -120,9 +120,8 @@ const RecruiterDashboard = () => {
           </section>
 
           {/* Right Section */}
-          <aside className="hidden lg:block w-[375px] h-[553px] rounded-[10px] p-[20px] pr-[10px] pb-[20px] pl-[10px] gap-[30px] bg-white shadow-md sticky top-4">
-            <RecruiterRightProfile />
-          </aside>
+           <RecruiterRightProfile />
+         
         </div>
 
         {/* Right Spacer */}
