@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useFormContext } from "react-hook-form";
 import { useEducationData } from "../../../hooks/useEducationData";
-import { Loader, Input, Select, Label, ErrorMessage } from "../../../components/ui";
+import {
+  Loader,
+  Input,
+  Select,
+  Label,
+  ErrorMessage,
+} from "../../../components/ui";
 import { educationApi } from "../../../api/educationApi";
 
 // Generate year options for dropdown
@@ -41,14 +47,17 @@ export default function EducationInfo() {
       if (selectedCourse) {
         setLoadingSpecializations(true);
         try {
-          const courseObj = courses.find(c => c.name === selectedCourse);
+          const courseObj = courses.find((c) => c.name === selectedCourse);
           if (courseObj) {
-            const token = localStorage.getItem('token'); // Get token from storage
-            const specs = await educationApi.getSpecializationsByCourseId(courseObj.id, token);
+            const token = localStorage.getItem("token"); // Get token from storage
+            const specs = await educationApi.getSpecializationsByCourseId(
+              courseObj.id,
+              token
+            );
             setCourseSpecializations(specs);
           }
         } catch (error) {
-          console.error('Error fetching specializations:', error);
+          console.error("Error fetching specializations:", error);
         } finally {
           setLoadingSpecializations(false);
         }
@@ -63,7 +72,6 @@ export default function EducationInfo() {
 
   // Logic to show limited or all courses
   const visibleCourses = showAll ? courses : courses?.slice(0, 5);
-
 
   const CustomErrorMessage = ({ message }) => (
     <div className="w-full p-3 border rounded bg-red-50 text-red-500 text-xs">
@@ -85,10 +93,11 @@ export default function EducationInfo() {
         <Label>Type</Label>
         <div className="flex gap-1 sm:gap-2 flex-wrap">
           <label
-            className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${watch("type") === "School Student"
-              ? "bg-blue-500 text-white border-blue-500"
-              : "bg-gray-100 border-gray-300 hover:border-gray-400"
-              }`}
+            className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${
+              watch("type") === "School Student"
+                ? "bg-blue-500 text-white border-blue-500"
+                : "bg-gray-100 border-gray-300 hover:border-gray-400"
+            }`}
           >
             <input
               type="radio"
@@ -99,10 +108,11 @@ export default function EducationInfo() {
             School Student
           </label>
           <label
-            className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${watch("type") === "College Student"
-              ? "bg-blue-500 text-white border-blue-500"
-              : "bg-gray-100 border-gray-300 hover:border-gray-400"
-              }`}
+            className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${
+              watch("type") === "College Student"
+                ? "bg-blue-500 text-white border-blue-500"
+                : "bg-gray-100 border-gray-300 hover:border-gray-400"
+            }`}
           >
             <input
               type="radio"
@@ -113,10 +123,11 @@ export default function EducationInfo() {
             College Student
           </label>
           <label
-            className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${watch("type") === "Fresher"
-              ? "bg-blue-500 text-white border-blue-500"
-              : "bg-gray-100 border-gray-300 hover:border-gray-400"
-              }`}
+            className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${
+              watch("type") === "Fresher"
+                ? "bg-blue-500 text-white border-blue-500"
+                : "bg-gray-100 border-gray-300 hover:border-gray-400"
+            }`}
           >
             <input
               type="radio"
@@ -127,10 +138,11 @@ export default function EducationInfo() {
             Fresher
           </label>
           <label
-            className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${watch("type") === "Working Professional"
-              ? "bg-blue-500 text-white border-blue-500"
-              : "bg-gray-100 border-gray-300 hover:border-gray-400"
-              }`}
+            className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${
+              watch("type") === "Working Professional"
+                ? "bg-blue-500 text-white border-blue-500"
+                : "bg-gray-100 border-gray-300 hover:border-gray-400"
+            }`}
           >
             <input
               type="radio"
@@ -141,19 +153,18 @@ export default function EducationInfo() {
             Working Professional
           </label>
         </div>
-        {errors.type && (
-          <ErrorMessage>{errors.type.message}</ErrorMessage>
-        )}
+        {errors.type && <ErrorMessage>{errors.type.message}</ErrorMessage>}
       </div>
       {watch("type") === "School Student" && (
         <div className="mb-2 sm:mb-3">
           <Label>Standard</Label>
           <div className="flex gap-1 sm:gap-2 flex-wrap">
             <label
-              className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${watch("standard") === "Class XII"
-                ? "bg-blue-500 text-white border-blue-500"
-                : "bg-gray-100 border-gray-300 hover:border-gray-400"
-                }`}
+              className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${
+                watch("standard") === "Class XII"
+                  ? "bg-blue-500 text-white border-blue-500"
+                  : "bg-gray-100 border-gray-300 hover:border-gray-400"
+              }`}
             >
               <input
                 type="radio"
@@ -164,10 +175,11 @@ export default function EducationInfo() {
               Class XII
             </label>
             <label
-              className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${watch("standard") === "Class XI"
-                ? "bg-blue-500 text-white border-blue-500"
-                : "bg-gray-100 border-gray-300 hover:border-gray-400"
-                }`}
+              className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${
+                watch("standard") === "Class XI"
+                  ? "bg-blue-500 text-white border-blue-500"
+                  : "bg-gray-100 border-gray-300 hover:border-gray-400"
+              }`}
             >
               <input
                 type="radio"
@@ -178,10 +190,11 @@ export default function EducationInfo() {
               Class XI
             </label>
             <label
-              className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${watch("standard") === "Class X or below"
-                ? "bg-blue-500 text-white border-blue-500"
-                : "bg-gray-100 border-gray-300 hover:border-gray-400"
-                }`}
+              className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${
+                watch("standard") === "Class X or below"
+                  ? "bg-blue-500 text-white border-blue-500"
+                  : "bg-gray-100 border-gray-300 hover:border-gray-400"
+              }`}
             >
               <input
                 type="radio"
@@ -199,7 +212,6 @@ export default function EducationInfo() {
       )}
       {(watch("type") === "College Student" || watch("type") === "Fresher") && (
         <>
-
           <div className="mb-2 sm:mb-3">
             <Label>Course</Label>
             {loading ? (
@@ -213,10 +225,11 @@ export default function EducationInfo() {
                     visibleCourses.map((course, index) => (
                       <label
                         key={index}
-                        className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${watch("course") === course.name
-                          ? "bg-blue-500 text-white border-blue-500"
-                          : "bg-gray-100 border-gray-300 hover:border-gray-400"
-                          }`}
+                        className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${
+                          watch("course") === course.name
+                            ? "bg-blue-500 text-white border-blue-500"
+                            : "bg-gray-100 border-gray-300 hover:border-gray-400"
+                        }`}
                       >
                         <input
                           type="radio"
@@ -231,15 +244,22 @@ export default function EducationInfo() {
                     ))}
 
                   <label
-                    className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${(courses && courses.some(course => course.name === watch("course"))) || !watch("course")
-                      ? "bg-gray-100 border-gray-300 hover:border-gray-400"
-                      : "bg-blue-500 text-white border-blue-500"
-                      }`}
+                    className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${
+                      (courses &&
+                        courses.some(
+                          (course) => course.name === watch("course")
+                        )) ||
+                      !watch("course")
+                        ? "bg-gray-100 border-gray-300 hover:border-gray-400"
+                        : "bg-blue-500 text-white border-blue-500"
+                    }`}
                   >
                     <input
                       type="radio"
                       value={watch("course")}
-                      {...register("course", { required: "Course is required" })}
+                      {...register("course", {
+                        required: "Course is required",
+                      })}
                       className="hidden"
                     />
                     Add your course +
@@ -250,7 +270,7 @@ export default function EducationInfo() {
                 {courses?.length > 5 && (
                   <button
                     type="button"
-                    onClick={() => setShowAll(prev => !prev)}
+                    onClick={() => setShowAll((prev) => !prev)}
                     className="mt-2 text-sm text-blue-600 underline focus:outline-none"
                   >
                     {showAll ? "Show less" : "See more"}
@@ -263,16 +283,16 @@ export default function EducationInfo() {
             )}
           </div>
 
-
-
           <Select
             label="College Name"
             error={errors.college?.message}
             isLoading={loading}
-            options={colleges?.map(college => ({
-              value: college.name,
-              label: college.name
-            })) || []}
+            options={
+              colleges?.map((college) => ({
+                value: college.name,
+                label: college.name,
+              })) || []
+            }
             placeholder="Select a college"
             {...register("college", {
               required: "College Name is required",
@@ -282,11 +302,17 @@ export default function EducationInfo() {
             label="Specialization"
             error={errors.specialization?.message}
             isLoading={loadingSpecializations}
-            options={courseSpecializations.map(specialization => ({
-              value: specialization.name,
-              label: specialization.name
-            })) || []}
-            placeholder={loadingSpecializations ? "Loading specializations..." : "Select a specialization"}
+            options={
+              courseSpecializations.map((specialization) => ({
+                value: specialization.name,
+                label: specialization.name,
+              })) || []
+            }
+            placeholder={
+              loadingSpecializations
+                ? "Loading specializations..."
+                : "Select a specialization"
+            }
             disabled={!selectedCourse || loadingSpecializations}
             {...register("specialization", {
               required: "Specialization is required",
@@ -297,9 +323,9 @@ export default function EducationInfo() {
               <Select
                 label="Start Year"
                 placeholder="Choose year"
-                error={errors.startYear?.message}
+                error={errors.start_year?.message}
                 options={generateYearOptions()}
-                {...register("startYear", {
+                {...register("start_year", {
                   required: "Start Year is required",
                 })}
               />
@@ -308,13 +334,12 @@ export default function EducationInfo() {
               <Select
                 label="End Year"
                 placeholder="Choose year"
-                error={errors.endYear?.message}
+                error={errors.end_year?.message}
                 options={generateYearOptions()}
-                {...register("endYear", { required: "End Year is required" })}
+                {...register("end_year", { required: "End Year is required" })}
               />
             </div>
           </div>
-
         </>
       )}
       {watch("type") === "Working Professional" && (
@@ -328,7 +353,7 @@ export default function EducationInfo() {
               { value: "1-2", label: "1-2 years" },
               { value: "2-3", label: "2-3 years" },
               { value: "3-5", label: "3-5 years" },
-              { value: "5+", label: "5+ years" }
+              { value: "5+", label: "5+ years" },
             ]}
             placeholder="Select experience"
             {...register("experience", {
@@ -339,7 +364,10 @@ export default function EducationInfo() {
             label="Current Job Role"
             required
             error={errors.jobRole?.message}
-            options={jobRoles.map(jobRole => ({ value: jobRole, label: jobRole }))}
+            options={jobRoles.map((jobRole) => ({
+              value: jobRole,
+              label: jobRole,
+            }))}
             placeholder="Job role"
             {...register("jobRole", { required: "Job Role is required" })}
           />
@@ -353,7 +381,7 @@ export default function EducationInfo() {
               { value: "Wipro", label: "Wipro" },
               { value: "Google", label: "Google" },
               { value: "Microsoft", label: "Microsoft" },
-              { value: "Other", label: "Other" }
+              { value: "Other", label: "Other" },
             ]}
             placeholder="Company name"
             {...register("company", {
@@ -365,9 +393,9 @@ export default function EducationInfo() {
               <Select
                 label="Start Year"
                 placeholder="Choose year"
-                error={errors.startYear?.message}
+                error={errors.start_year?.message}
                 options={generateYearOptions()}
-                {...register("startYear", {
+                {...register("start_year", {
                   required: "Start Year is required",
                 })}
               />
@@ -376,9 +404,9 @@ export default function EducationInfo() {
               <Select
                 label="End Year"
                 placeholder="Choose year"
-                error={errors.endYear?.message}
+                error={errors.end_year?.message}
                 options={generateYearOptions()}
-                {...register("endYear", { required: "End Year is required" })}
+                {...register("end_year", { required: "End Year is required" })}
               />
             </div>
           </div>

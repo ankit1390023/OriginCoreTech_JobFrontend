@@ -9,8 +9,8 @@ import WebsiteLogo from "../../assets/WebsiteLogo.svg";
 import { FcGoogle } from "react-icons/fc";
 import { Input, Button, Link, PhoneInput } from "../../components/ui";
 import SignUpLayoutForLarge from "../../components/layout/SignUpLayoutForLarge";
-import { useDispatch, useSelector } from 'react-redux';
-import { signup } from '../../redux/feature/authSlice';
+import { useDispatch, useSelector } from "react-redux";
+import { signup } from "../../redux/feature/authSlice";
 import axios from "axios";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -19,10 +19,10 @@ const companyDomains = [".com", ".org", ".net", ".co", ".io", ".tech", ".in"];
 
 const schema = z
   .object({
-    firstName: z
+    first_name: z
       .string()
       .min(3, { message: "First name must be at least 3 characters" }),
-    lastName: z
+    last_name: z
       .string()
       .min(3, { message: "Last name must be at least 3 characters" }),
     phone: z
@@ -49,13 +49,13 @@ const schema = z
     password: z
       .string()
       .min(6, { message: "Password must be at least 6 characters" }),
-    userRole: z.enum(["COMPANY", "STUDENT", "UNIVERSITY"], {
+    user_role: z.enum(["COMPANY", "STUDENT", "UNIVERSITY"], {
       required_error: "Role is required",
     }),
   })
   .refine(
     (data) => {
-      if (data.userRole === "COMPANY") {
+      if (data.user_role === "COMPANY") {
         return companyDomains.some((domain) =>
           data.email.toLowerCase().endsWith(domain)
         );
@@ -73,7 +73,9 @@ export default function SignUp() {
   const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
-  const { loading, error, isAuthenticated, user } = useSelector((state) => state.auth);
+  const { loading, error, isAuthenticated, user } = useSelector(
+    (state) => state.auth
+  );
 
   const selectedRole = location.state?.selectedRole || "STUDENT";
   const roleLabel =
@@ -86,12 +88,12 @@ export default function SignUp() {
   } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
-      firstName: "",
-      lastName: "",
+      first_name: "",
+      last_name: "",
       phone: "",
       email: "",
       password: "",
-      userRole: selectedRole,
+      user_role: selectedRole,
     },
   });
 
@@ -100,43 +102,46 @@ export default function SignUp() {
       // Dispatch signup thunk
       const resultAction = await dispatch(
         signup({
-          firstName: data.firstName,
-          lastName: data.lastName,
+          first_name: data.first_name,
+          last_name: data.last_name,
           phone: data.phone,
           email: data.email,
           password: data.password,
-          userRole: data.userRole,
+          user_role: data.user_role,
         })
       );
-  
+
       // Check if signup failed (email exists or other error)
       if (signup.rejected.match(resultAction)) {
         // Redux will already set `error` in state
         // Just stop here without sending OTP
         return;
       }
-  
+
       // ✅ Signup successful → Send OTP
       const otpResponse = await axios.post(`${BASE_URL}/otp/send-otp`, {
         email: data.email,
       });
-  
+
       if (otpResponse.status === 200) {
         alert("Registration successful! OTP sent to your email.");
         navigate("/signup-verify-otp-email", {
           state: {
             email: data.email,
-            userRole: data.userRole,
+            user_role: data.user_role,
           },
         });
       } else {
-        alert("Registration successful but failed to send OTP. Please try again.");
+        alert(
+          "Registration successful but failed to send OTP. Please try again."
+        );
       }
     } catch (otpError) {
-      alert("Registration successful but failed to send OTP. Please try again.");
+      alert(
+        "Registration successful but failed to send OTP. Please try again."
+      );
     }
   };
-  
 
   useEffect(() => {
     if (!location.state?.selectedRole) {
@@ -159,7 +164,7 @@ export default function SignUp() {
           >
             <input
               type="hidden"
-              {...register("userRole")}
+              {...register("user_role")}
               value={selectedRole}
             />
             {/* First Name and Last Name in one row */}
@@ -169,10 +174,10 @@ export default function SignUp() {
                   label="First Name"
                   type="text"
                   placeholder="First Name"
-                  error={errors.firstName?.message}
-                  variant={errors.firstName ? "error" : "default"}
+                  error={errors.first_name?.message}
+                  variant={errors.first_name ? "error" : "default"}
                   disabled={loading}
-                  {...register("firstName")}
+                  {...register("first_name")}
                 />
               </div>
               <div className="flex-1">
@@ -180,10 +185,10 @@ export default function SignUp() {
                   label="Last Name"
                   type="text"
                   placeholder="Last Name"
-                  error={errors.lastName?.message}
-                  variant={errors.lastName ? "error" : "default"}
+                  error={errors.last_name?.message}
+                  variant={errors.last_name ? "error" : "default"}
                   disabled={loading}
-                  {...register("lastName")}
+                  {...register("last_name")}
                 />
               </div>
             </div>
@@ -208,8 +213,8 @@ export default function SignUp() {
             {/* Company email hint */}
             {selectedRole && selectedRole.toUpperCase() === "COMPANY" && (
               <p className="text-xs text-gray-500 mt-0.5 mb-2 sm:mb-3">
-                Company emails must use professional domains (.com, .org,
-                .net, etc.)
+                Company emails must use professional domains (.com, .org, .net,
+                etc.)
               </p>
             )}
             {/* Password */}
@@ -245,7 +250,9 @@ export default function SignUp() {
             )}
             <div className="flex items-center my-2 sm:my-3">
               <div className="flex-grow h-px bg-gray-300"></div>
-              <span className="mx-1.5 sm:mx-2 text-gray-400 text-xs font-medium">Or</span>
+              <span className="mx-1.5 sm:mx-2 text-gray-400 text-xs font-medium">
+                Or
+              </span>
               <div className="flex-grow h-px bg-gray-300"></div>
             </div>
             {/* Google Button - Using new UI component */}

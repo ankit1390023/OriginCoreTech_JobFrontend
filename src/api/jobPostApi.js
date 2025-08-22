@@ -1,67 +1,80 @@
-import axios from 'axios';
+import axios from "axios";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 // API service functions for job posting
 export const jobPostApi = {
-    // Create a new job post
-    createJobPost: async (jobPostData, token) => {
+  // Create a new job post
+  createJobPost: async (jobPostData, token) => {
+    if (!token) {
+      throw new Error("No auth token provided");
+    }
+    console.log("received token in createJobPost", token);
+    const response = await axios.post(
+      `${BASE_URL}/jobpost/create`,
+      jobPostData,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    console.log("response from createJobPost", response.data);
+    return response.data;
+  },
 
-        if (!token) {
-            throw new Error('No auth token provided');
+  // Get all domains (for skills suggestions)
+  getAllDomains: async (token) => {
+    try {
+      const response = await axios.get(`${BASE_URL}/domain/all`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.log("error fetching getAllDomains", error);
+      throw error;
+    }
+  },
+
+  // Get job posts by recruiter
+  getJobPostsByRecruiter: async (token) => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/company-recruiter-profile/jobpost/list`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-        console.log("received token in createJobPost", token)
-        const response = await axios.post(`${BASE_URL}/jobpost/create`, jobPostData, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            }
-        });
-        console.log("response from createJobPost", response.data);
-        return response.data;
+      );
+      return response.data;
+    } catch (error) {
+      console.log("error fetching get job posts by recruiter", error);
 
-    },
+      throw error;
+    }
+  },
 
-    // Get all domains (for skills suggestions)
-    getAllDomains: async (token) => {
-        try {
-            const response = await axios.get(`${BASE_URL}/domain/all`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            return response.data;
-        } catch (error) {
-            throw error;
-        }
-    },
+  // Get total job posts count by recruiter
+  getTotalJobPostsCount: async (token) => {
+    try {
+      const response = await axios.get(`${BASE_URL}/jobpost/totalcount`, {
+        headers: {
+          "content-type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.log(
+        "error fetching get total job posts count by recuiter",
+        error
+      );
 
-    // Get job posts by recruiter
-    getJobPostsByRecruiter: async (token) => {
-        try {
-            const response = await axios.get(`${BASE_URL}/company-recruiter-profile/jobpost/list`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            return response.data;
-        } catch (error) {
-            throw error;
-        }
-    },
-
-    // Get total job posts count by recruiter
-    getTotalJobPostsCount: async (token) => {
-        try {
-            const response = await axios.get(`${BASE_URL}/jobpost/totalcount`, {
-                headers: {
-                    'content-type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            return response.data;
-        } catch (error) {
-            throw error;
-        }
-    },
-}; 
+      throw error;
+    }
+  },
+};

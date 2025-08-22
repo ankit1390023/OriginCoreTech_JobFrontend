@@ -13,250 +13,269 @@ import {
   Select,
   SuccessMessage,
   ErrorMessage,
-  Label
+  Label,
 } from "../../components/ui";
 import SignUpLayout from "../../components/layout/SignUpLayout";
 import SignUpIllustration from "../../assets/SignUp_Illustration.png";
 import { useSelector } from "react-redux";
 
-const formSchema = z.object({
-  opportunityType: z.enum(["Internship", "Job", "Project"]),
-  profile: z.string().optional(),
-  skills: z.string().min(1, { message: "Skills are required" }),
-  internshipType: z.enum(["In office", "Hybrid", "Remote"]).optional(),
-  jobType: z.enum(["In office", "Hybrid", "Remote"]).optional(),
-  partFullTime: z.enum(["Part-time", "Full-time"]),
-  city: z.string().min(1, { message: "City is required" }),
-  onlyThisCity: z.boolean().optional(),
-  openings: z.string().optional(),
-  startDateType: z.enum(["Immediately", "Custom"]).optional(),
-  startDateFrom: z.string().optional(),
-  startDateTo: z.string().optional(),
-  inOfficeDays: z.string().optional(),
-  jobTitle: z.string().optional(),
-  duration: z.string().optional(),
-  responsibilities: z.string().min(1, { message: "Responsibilities required" }),
-  preferences: z.string().optional(),
-  womenOnly: z.boolean().optional(),
-  stipendType: z.enum(["Paid", "Unpaid", "Fixed"]),
-  stipendMin: z.string().optional(),
-  stipendMax: z.string().optional(),
-  stipendMode: z.enum(["Month", "Lump sum"]).optional(),
-  incentivesMin: z.string().optional(),
-  incentivesMax: z.string().optional(),
-  incentivesMode: z.enum(["Month", "Lump sum"]).optional(),
-  perks: z.array(z.string()).optional(),
-  ppo: z.string().optional(),
-  screeningQuestions: z.string().optional(),
-  alternatePhone: z.string().optional(),
-  phoneContact: z.string().optional(),
-  collegeName: z.string().optional(),
-  course: z.string().optional(),
-}).superRefine((data, ctx) => {
-  // Common validation for all opportunity types
-  if (!data.skills || data.skills.trim() === "") {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: "Skills are required",
-      path: ["skills"]
-    });
-  }
-
-  if (!data.city || data.city.trim() === "") {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: "City is required",
-      path: ["city"]
-    });
-  }
-
-  if (!data.responsibilities || data.responsibilities.trim() === "") {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: "Responsibilities are required",
-      path: ["responsibilities"]
-    });
-  }
-
-  if (!data.partFullTime) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: "Please select Part-time or Full-time",
-      path: ["partFullTime"]
-    });
-  }
-
-  // Conditional validation for internship fields
-  if (data.opportunityType === "Internship") {
-    if (!data.profile || data.profile.trim() === "") {
+const formSchema = z
+  .object({
+    opportunity_type: z.enum(["Internship", "Job", "Project"]),
+    profile: z.string().optional(),
+    skills: z.string().min(1, { message: "Skills are required" }),
+    internshipType: z.enum(["In office", "Hybrid", "Remote"]).optional(),
+    job_type: z.enum(["In office", "Hybrid", "Remote"]).optional(),
+    partFullTime: z.enum(["Part-time", "Full-time"]),
+    city: z.string().min(1, { message: "City is required" }),
+    onlyThisCity: z.boolean().optional(),
+    openings: z.string().optional(),
+    startDateType: z.enum(["Immediately", "Custom"]).optional(),
+    startDateFrom: z.string().optional(),
+    startDateTo: z.string().optional(),
+    inOfficeDays: z.string().optional(),
+    jobTitle: z.string().optional(),
+    duration: z.string().optional(),
+    responsibilities: z
+      .string()
+      .min(1, { message: "Responsibilities required" }),
+    preferences: z.string().optional(),
+    womenOnly: z.boolean().optional(),
+    stipend_type: z.enum(["Paid", "Unpaid", "Fixed"]),
+    stipend_min: z.string().optional(),
+    stipend_max: z.string().optional(),
+    stipendMode: z.enum(["Month", "Lump sum"]).optional(),
+    incentivesMin: z.string().optional(),
+    incentivesMax: z.string().optional(),
+    incentivesMode: z.enum(["Month", "Lump sum"]).optional(),
+    perks: z.array(z.string()).optional(),
+    ppo: z.string().optional(),
+    screening_questions: z.string().optional(),
+    alternatePhone: z.string().optional(),
+    phone_contact: z.string().optional(),
+    college_name: z.string().optional(),
+    course: z.string().optional(),
+  })
+  .superRefine((data, ctx) => {
+    // Common validation for all opportunity types
+    if (!data.skills || data.skills.trim() === "") {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: "Internship profile is required",
-        path: ["profile"]
-      });
-    }
-    if (!data.internshipType) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Internship type is required",
-        path: ["internshipType"]
-      });
-    }
-    if (!data.startDateType) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Start date type is required",
-        path: ["startDateType"]
-      });
-    }
-    if (!data.duration || data.duration.trim() === "") {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Internship duration is required",
-        path: ["duration"]
-      });
-    }
-    if (!data.openings || data.openings.trim() === "") {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Number of openings is required",
-        path: ["openings"]
+        message: "Skills are required",
+        path: ["skills"],
       });
     }
 
-    // Validate custom date range
-    if (data.startDateType === "Custom") {
-      if (!data.startDateFrom || !data.startDateTo) {
+    if (!data.city || data.city.trim() === "") {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "City is required",
+        path: ["city"],
+      });
+    }
+
+    if (!data.responsibilities || data.responsibilities.trim() === "") {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Responsibilities are required",
+        path: ["responsibilities"],
+      });
+    }
+
+    if (!data.partFullTime) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Please select Part-time or Full-time",
+        path: ["partFullTime"],
+      });
+    }
+
+    // Conditional validation for internship fields
+    if (data.opportunity_type === "Internship") {
+      if (!data.profile || data.profile.trim() === "") {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: "Custom date range is required",
-          path: ["startDateFrom"]
+          message: "Internship profile is required",
+          path: ["profile"],
         });
       }
-      if (new Date(data.startDateFrom) > new Date(data.startDateTo)) {
+      if (!data.internshipType) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: "End date must be after start date",
-          path: ["startDateTo"]
+          message: "Internship type is required",
+          path: ["internshipType"],
         });
       }
-    }
-
-    // Validate stipend for internships
-    if (data.stipendType === "Paid") {
-      if (!data.stipendMin || !data.stipendMax || data.stipendMin.trim() === "" || data.stipendMax.trim() === "") {
+      if (!data.startDateType) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: "Stipend amount is required for paid internships",
-          path: ["stipendMin"]
+          message: "Start date type is required",
+          path: ["startDateType"],
         });
       }
-      if (parseInt(data.stipendMin) > parseInt(data.stipendMax)) {
+      if (!data.duration || data.duration.trim() === "") {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: "Maximum stipend must be greater than minimum",
-          path: ["stipendMax"]
+          message: "Internship duration is required",
+          path: ["duration"],
+        });
+      }
+      if (!data.openings || data.openings.trim() === "") {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Number of openings is required",
+          path: ["openings"],
+        });
+      }
+
+      // Validate custom date range
+      if (data.startDateType === "Custom") {
+        if (!data.startDateFrom || !data.startDateTo) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Custom date range is required",
+            path: ["startDateFrom"],
+          });
+        }
+        if (new Date(data.startDateFrom) > new Date(data.startDateTo)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "End date must be after start date",
+            path: ["startDateTo"],
+          });
+        }
+      }
+
+      // Validate stipend for internships
+      if (data.stipend_type === "Paid") {
+        if (
+          !data.stipend_min ||
+          !data.stipend_max ||
+          data.stipend_min.trim() === "" ||
+          data.stipend_max.trim() === ""
+        ) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Stipend amount is required for paid internships",
+            path: ["stipend_min"],
+          });
+        }
+        if (parseInt(data.stipend_min) > parseInt(data.stipend_max)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Maximum stipend must be greater than minimum",
+            path: ["stipend_max"],
+          });
+        }
+      }
+    }
+
+    // Conditional validation for job fields
+    if (data.opportunity_type === "Job") {
+      if (!data.jobTitle || data.jobTitle.trim() === "") {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Job title is required",
+          path: ["jobTitle"],
+        });
+      }
+      if (!data.job_type) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Job type is required",
+          path: ["job_type"],
+        });
+      }
+
+      // Jobs have fixed pay (stipend_min/stipend_max), not stipend type
+      if (
+        !data.stipend_min ||
+        !data.stipend_max ||
+        data.stipend_min.trim() === "" ||
+        data.stipend_max.trim() === ""
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Fixed pay amount is required",
+          path: ["stipend_min"],
+        });
+      }
+      if (parseInt(data.stipend_min) > parseInt(data.stipend_max)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Maximum pay must be greater than minimum",
+          path: ["stipend_max"],
         });
       }
     }
-  }
 
-  // Conditional validation for job fields
-  if (data.opportunityType === "Job") {
-    if (!data.jobTitle || data.jobTitle.trim() === "") {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Job title is required",
-        path: ["jobTitle"]
-      });
-    }
-    if (!data.jobType) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Job type is required",
-        path: ["jobType"]
-      });
-    }
+    // Conditional validation for project fields
+    if (data.opportunity_type === "Project") {
+      if (!data.jobTitle || data.jobTitle.trim() === "") {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Project title is required",
+          path: ["jobTitle"],
+        });
+      }
+      if (!data.job_type) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Project type is required",
+          path: ["job_type"],
+        });
+      }
+      if (!data.openings || data.openings.trim() === "") {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Number of openings is required",
+          path: ["openings"],
+        });
+      }
+      if (!data.phone_contact || data.phone_contact.trim() === "") {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Phone contact is required",
+          path: ["phone_contact"],
+        });
+      }
 
-    // Jobs have fixed pay (stipendMin/stipendMax), not stipend type
-    if (!data.stipendMin || !data.stipendMax || data.stipendMin.trim() === "" || data.stipendMax.trim() === "") {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Fixed pay amount is required",
-        path: ["stipendMin"]
-      });
+      // Projects have budget (stipend_min/stipend_max)
+      if (
+        !data.stipend_min ||
+        !data.stipend_max ||
+        data.stipend_min.trim() === "" ||
+        data.stipend_max.trim() === ""
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Project budget is required",
+          path: ["stipend_min"],
+        });
+      }
+      if (parseInt(data.stipend_min) > parseInt(data.stipend_max)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Maximum budget must be greater than minimum",
+          path: ["stipend_max"],
+        });
+      }
     }
-    if (parseInt(data.stipendMin) > parseInt(data.stipendMax)) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Maximum pay must be greater than minimum",
-        path: ["stipendMax"]
-      });
-    }
-  }
-
-  // Conditional validation for project fields
-  if (data.opportunityType === "Project") {
-    if (!data.jobTitle || data.jobTitle.trim() === "") {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Project title is required",
-        path: ["jobTitle"]
-      });
-    }
-    if (!data.jobType) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Project type is required",
-        path: ["jobType"]
-      });
-    }
-    if (!data.openings || data.openings.trim() === "") {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Number of openings is required",
-        path: ["openings"]
-      });
-    }
-    if (!data.phoneContact || data.phoneContact.trim() === "") {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Phone contact is required",
-        path: ["phoneContact"]
-      });
-    }
-
-    // Projects have budget (stipendMin/stipendMax)
-    if (!data.stipendMin || !data.stipendMax || data.stipendMin.trim() === "" || data.stipendMax.trim() === "") {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Project budget is required",
-        path: ["stipendMin"]
-      });
-    }
-    if (parseInt(data.stipendMin) > parseInt(data.stipendMax)) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Maximum budget must be greater than minimum",
-        path: ["stipendMax"]
-      });
-    }
-  }
-});
+  });
 
 export default function RecruiterPostJobInternDetails() {
   const methods = useForm({
     mode: "onSubmit",
     resolver: zodResolver(formSchema),
     defaultValues: {
-      opportunityType: "Internship",
+      opportunity_type: "Internship",
       internshipType: "In office",
-      jobType: "In office",
+      job_type: "In office",
       partFullTime: "Part-time",
       startDateType: "Immediately",
-      stipendType: "Paid",
-      stipendMin: "",
-      stipendMax: "",
+      stipend_type: "Paid",
+      stipend_min: "",
+      stipend_max: "",
       stipendMode: "Month",
       incentivesMin: "",
       incentivesMax: "",
@@ -272,14 +291,14 @@ export default function RecruiterPostJobInternDetails() {
       duration: "",
       responsibilities: "",
       openings: "",
-      phoneContact: "",
+      phone_contact: "",
       alternatePhone: "",
-      collegeName: "",
+      college_name: "",
       course: "",
       preferences: "",
       womenOnly: false,
       perks: [],
-      screeningQuestions: "",
+      screening_questions: "",
       ppo: "",
     },
   });
@@ -315,9 +334,11 @@ export default function RecruiterPostJobInternDetails() {
   }, []);
 
   // Education data hook for cities
-  const { data: educationData, loading: educationLoading, error: educationError } = useEducationData();
-
-
+  const {
+    data: educationData,
+    loading: educationLoading,
+    error: educationError,
+  } = useEducationData();
 
   // Fetch all domains on component mount
   useEffect(() => {
@@ -347,23 +368,26 @@ export default function RecruiterPostJobInternDetails() {
     }
   };
 
-  const handleDomainClick = async (domainName) => {
+  const handleDomainClick = async (domain_name) => {
     try {
-      setSelectedDomain(domainName);
+      setSelectedDomain(domain_name);
       // Find the domain object by name
       const domainObj = allDomains.find(
-        d => (typeof d === "string" ? d : d.name) === domainName
+        (d) => (typeof d === "string" ? d : d.name) === domain_name
       );
-      const domainId = typeof domainObj === "string" ? domainObj : domainObj?.id || domainObj?.name;
+      const domain_id =
+        typeof domainObj === "string"
+          ? domainObj
+          : domainObj?.id || domainObj?.name;
       // Only fetch if not already loaded
-      if (!domainSkills[domainName]) {
+      if (!domainSkills[domain_name]) {
         setSkillsLoading(true);
         if (!token) throw new Error("No authentication token available");
         // Use domainApi.getSkillsByDomain to fetch skills from backend
-        const skills = await domainApi.getSkillsByDomain(domainId, token); // <-- CORRECT
-        setDomainSkills(prev => ({
+        const skills = await domainApi.getSkillsByDomain(domain_id, token); // <-- CORRECT
+        setDomainSkills((prev) => ({
           ...prev,
-          [domainName]: skills
+          [domain_name]: skills,
         }));
       }
     } catch (error) {
@@ -381,10 +405,13 @@ export default function RecruiterPostJobInternDetails() {
     if (selectedDomain && domainSkills[selectedDomain]) {
       const skills = domainSkills[selectedDomain];
       const currentSkills = methods.getValues("skills");
-      const skillsText = skills.join(', ');
+      const skillsText = skills.join(", ");
 
       if (currentSkills) {
-        const updatedSkills = currentSkills + (currentSkills.endsWith(',') ? ' ' : ', ') + skillsText;
+        const updatedSkills =
+          currentSkills +
+          (currentSkills.endsWith(",") ? " " : ", ") +
+          skillsText;
         methods.setValue("skills", updatedSkills);
       } else {
         methods.setValue("skills", skillsText);
@@ -392,73 +419,83 @@ export default function RecruiterPostJobInternDetails() {
     }
   };
 
-
-
   const clearMessages = () => {
     setErrorMessage("");
     setSuccessMessage("");
   };
 
   const onSubmit = async (data) => {
-
     console.log("data received onSubmit", data);
     const isValid = await methods.trigger();
-
 
     if (!isValid) {
       // Get specific error messages
       const errorMessages = Object.values(methods.formState.errors)
-        .map(error => error?.message)
+        .map((error) => error?.message)
         .filter(Boolean);
 
-
-      setErrorMessage(errorMessages.length > 0
-        ? errorMessages.join(", ")
-        : "Please fill in all required fields correctly.");
+      setErrorMessage(
+        errorMessages.length > 0
+          ? errorMessages.join(", ")
+          : "Please fill in all required fields correctly."
+      );
       return;
     }
-
 
     setIsSubmitting(true);
 
     // Transform form data to match the exact backend API structure
     const jobPostData = {
-      opportunityType: data.opportunityType,
-      jobProfile: data.opportunityType === "Internship" ? data.profile : data.jobTitle,
+      opportunity_type: data.opportunity_type,
+      jobProfile:
+        data.opportunity_type === "Internship" ? data.profile : data.jobTitle,
       skillsRequired: data.skills.id,
-      skillRequiredNote: data.skills.id ? null : data.skills, // Use the skills field directly
-      jobType: data.opportunityType === "Internship" ? data.internshipType : data.jobType,
-      daysInOffice: data.inOfficeDays ? parseInt(data.inOfficeDays) : null,
-      jobTime: data.partFullTime,
+      skill_required_note: data.skills.id ? null : data.skills, // Use the skills field directly
+      job_type:
+        data.opportunity_type === "Internship"
+          ? data.internshipType
+          : data.job_type,
+      days_in_office: data.inOfficeDays ? parseInt(data.inOfficeDays) : null,
+      job_time: data.partFullTime,
       cityChoice: data.city,
-      numberOfOpenings: data.openings ? parseInt(data.openings) : null,
-      jobDescription: data.responsibilities,
-      candidatePreferences: data.preferences || null,
-      womenPreferred: data.womenOnly || false,
-      stipendType: data.opportunityType === "Job" ? "Fixed" : data.stipendType,
-      stipendMin: data.stipendMin ? parseInt(data.stipendMin) : null,
-      stipendMax: data.stipendMax ? parseInt(data.stipendMax) : null,
-      incentivePerYear: data.incentivesMin && data.incentivesMax
-        ? `${data.incentivesMin}-${data.incentivesMax} ${data.incentivesMode || 'Month'}`
+      number_of_openings: data.openings ? parseInt(data.openings) : null,
+      job_description: data.responsibilities,
+      candidate_preferences: data.preferences || null,
+      women_preferred: data.womenOnly || false,
+      stipend_type:
+        data.opportunity_type === "Job" ? "Fixed" : data.stipend_type,
+      stipend_min: data.stipend_min ? parseInt(data.stipend_min) : null,
+      stipend_max: data.stipend_max ? parseInt(data.stipend_max) : null,
+      incentive_per_year:
+        data.incentivesMin && data.incentivesMax
+          ? `${data.incentivesMin}-${data.incentivesMax} ${
+              data.incentivesMode || "Month"
+            }`
+          : null,
+      perks: data.perks
+        ? Array.isArray(data.perks)
+          ? data.perks.join(", ")
+          : data.perks
         : null,
-      perks: data.perks ? (Array.isArray(data.perks) ? data.perks.join(', ') : data.perks) : null,
-      screeningQuestions: data.screeningQuestions || null,
-      phoneContact: data.phoneContact || null,
-      alternatePhoneNumber: data.alternatePhone || null,
+      screening_questions: data.screening_questions || null,
+      phone_contact: data.phone_contact || null,
+      alternate_phone_number: data.alternatePhone || null,
       // Only include internship-specific fields for Internship opportunity type
-      ...(data.opportunityType === "Internship" && {
+      ...(data.opportunity_type === "Internship" && {
         internshipDuration: data.duration,
-        internshipStartDate: data.startDateType === "Immediately" ? "Immediately" : null,
-        internshipFromDate: data.startDateType === "Custom" ? data.startDateFrom : null,
-        internshipToDate: data.startDateType === "Custom" ? data.startDateTo : null,
-        isCustomInternshipDate: data.startDateType === "Custom",
-        collegeName: data.collegeName || null,
+        internship_start_date:
+          data.startDateType === "Immediately" ? "Immediately" : null,
+        internship_from_date:
+          data.startDateType === "Custom" ? data.startDateFrom : null,
+        internship_to_date:
+          data.startDateType === "Custom" ? data.startDateTo : null,
+        is_custom_internship_date: data.startDateType === "Custom",
+        college_name: data.college_name || null,
         course: data.course || null,
       }),
     };
 
     // Get authentication token
-
 
     if (!token) {
       setErrorMessage("Authentication token not found. Please log in again.");
@@ -467,8 +504,11 @@ export default function RecruiterPostJobInternDetails() {
 
     // Call the API
     const response = await jobPostApi.createJobPost(jobPostData, token);
-    console.log("rersponse in recruiterPostJonInternzdetails page is", response);
-    setSuccessMessage(`${data.opportunityType} posted successfully!`);
+    console.log(
+      "rersponse in recruiterPostJonInternzdetails page is",
+      response
+    );
+    setSuccessMessage(`${data.opportunity_type} posted successfully!`);
 
     // Reset form after successful submission
     methods.reset();
@@ -480,30 +520,31 @@ export default function RecruiterPostJobInternDetails() {
     setTimeout(() => {
       setSuccessMessage("");
     }, 5000);
-
-
   };
 
   // Common input styles
-  const radioStyles = "w-3 h-3 text-blue-600 border-gray-300 focus:outline-none focus:ring-0";
-  const checkboxStyles = "w-3 h-3 text-blue-600 border-gray-300 rounded focus:outline-none focus:ring-0";
-  const radioContainerStyles = "flex gap-3 p-2 border border-gray-300 rounded-lg bg-white";
+  const radioStyles =
+    "w-3 h-3 text-blue-600 border-gray-300 focus:outline-none focus:ring-0";
+  const checkboxStyles =
+    "w-3 h-3 text-blue-600 border-gray-300 rounded focus:outline-none focus:ring-0";
+  const radioContainerStyles =
+    "flex gap-3 p-2 border border-gray-300 rounded-lg bg-white";
 
   // Watch startDateType for conditional rendering
   const startDateType = methods.watch("startDateType");
-  // Watch stipendType for conditional rendering
-  const stipendType = methods.watch("stipendType");
+  // Watch stipend_type for conditional rendering
+  const stipend_type = methods.watch("stipend_type");
   // Watch internshipType for conditional rendering
   const internshipType = methods.watch("internshipType");
-  // Watch opportunityType for conditional rendering
-  const opportunityType = methods.watch("opportunityType");
-  // Watch jobType for conditional rendering
-  const jobType = methods.watch("jobType");
+  // Watch opportunity_type for conditional rendering
+  const opportunity_type = methods.watch("opportunity_type");
+  // Watch job_type for conditional rendering
+  const job_type = methods.watch("job_type");
 
   // Clear validation errors when opportunity type changes
   const handleOpportunityTypeChange = (e) => {
     const newType = e.target.value;
-    methods.setValue("opportunityType", newType);
+    methods.setValue("opportunity_type", newType);
 
     // Clear any existing validation errors
     methods.clearErrors();
@@ -522,23 +563,26 @@ export default function RecruiterPostJobInternDetails() {
     return (
       <div className="bg-white rounded-xl shadow-none sm:shadow-xl w-full mt-4 max-w-full sm:max-w-2xl p-6 sm:p-8">
         <FormProvider {...methods}>
-          <form
-            onSubmit={methods.handleSubmit(onSubmit)}
-            className="space-y-4"
-          >
+          <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-4">
             {/* Success Message */}
             {successMessage && (
               <div className="relative">
-                <SuccessMessage size="large">
-                  {successMessage}
-                </SuccessMessage>
+                <SuccessMessage size="large">{successMessage}</SuccessMessage>
                 <button
                   type="button"
                   onClick={() => setSuccessMessage("")}
                   className="absolute top-2 right-2 text-green-600 hover:text-green-800 focus:outline-none"
                 >
-                  <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                  <svg
+                    className="h-4 w-4"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                      clipRule="evenodd"
+                    />
                   </svg>
                 </button>
               </div>
@@ -547,16 +591,22 @@ export default function RecruiterPostJobInternDetails() {
             {/* Error Message */}
             {errorMessage && (
               <div className="relative">
-                <ErrorMessage size="large">
-                  {errorMessage}
-                </ErrorMessage>
+                <ErrorMessage size="large">{errorMessage}</ErrorMessage>
                 <button
                   type="button"
                   onClick={() => setErrorMessage("")}
                   className="absolute top-2 right-2 text-red-600 hover:text-red-800 focus:outline-none"
                 >
-                  <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                  <svg
+                    className="h-4 w-4"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                      clipRule="evenodd"
+                    />
                   </svg>
                 </button>
               </div>
@@ -564,14 +614,14 @@ export default function RecruiterPostJobInternDetails() {
 
             {/* Opportunity Type */}
             <div>
-              <Label htmlFor="opportunityType">Opportunity type</Label>
+              <Label htmlFor="opportunity_type">Opportunity type</Label>
               <div className={radioContainerStyles}>
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="radio"
                     value="Internship"
                     className={radioStyles}
-                    checked={opportunityType === "Internship"}
+                    checked={opportunity_type === "Internship"}
                     onChange={handleOpportunityTypeChange}
                   />
                   <span className="text-sm text-gray-700">Internship</span>
@@ -581,7 +631,7 @@ export default function RecruiterPostJobInternDetails() {
                     type="radio"
                     value="Job"
                     className={radioStyles}
-                    checked={opportunityType === "Job"}
+                    checked={opportunity_type === "Job"}
                     onChange={handleOpportunityTypeChange}
                   />
                   <span className="text-sm text-gray-700">Job</span>
@@ -591,28 +641,33 @@ export default function RecruiterPostJobInternDetails() {
                     type="radio"
                     value="Project"
                     className={radioStyles}
-                    checked={opportunityType === "Project"}
+                    checked={opportunity_type === "Project"}
                     onChange={handleOpportunityTypeChange}
                   />
                   <span className="text-sm text-gray-700">Project</span>
                 </label>
               </div>
-
             </div>
 
             {/* Job title (only for Job and Project) */}
-            {(opportunityType === "Job" || opportunityType === "Project") && (
+            {(opportunity_type === "Job" || opportunity_type === "Project") && (
               <Input
-                label={opportunityType === "Job" ? "Job title" : "Project title"}
+                label={
+                  opportunity_type === "Job" ? "Job title" : "Project title"
+                }
                 type="text"
-                placeholder={opportunityType === "Job" ? "e.g. Digital Marketing" : "e.g. Web Development Project"}
+                placeholder={
+                  opportunity_type === "Job"
+                    ? "e.g. Digital Marketing"
+                    : "e.g. Web Development Project"
+                }
                 error={methods.formState.errors.jobTitle?.message}
                 {...methods.register("jobTitle")}
               />
             )}
 
             {/* Internship Profile (only for Internship) */}
-            {opportunityType === "Internship" && (
+            {opportunity_type === "Internship" && (
               <Input
                 label="Internship profile"
                 type="text"
@@ -654,30 +709,42 @@ export default function RecruiterPostJobInternDetails() {
                 </div>
               ) : allDomains.length === 0 ? (
                 <div className="p-3 bg-gray-50 rounded-lg">
-                  <p className="text-xs text-gray-600">No domains available at the moment.</p>
+                  <p className="text-xs text-gray-600">
+                    No domains available at the moment.
+                  </p>
                 </div>
               ) : (
                 <div className="space-y-4">
                   {/* Domain Selection */}
                   <div>
-                    <p className="text-xs text-gray-600 mb-1">Click on a domain to see related skills:</p>
+                    <p className="text-xs text-gray-600 mb-1">
+                      Click on a domain to see related skills:
+                    </p>
 
                     {/* Display domains as rounded badges */}
                     <div className="flex flex-wrap gap-1 sm:gap-2 mb-2">
-                      {(showAllDomains ? allDomains : allDomains.slice(0, 4)).map((domain) => {
-                        const domainName = typeof domain === 'string' ? domain : domain.name;
-                        const domainKey = typeof domain === 'string' ? domain : domain.id || domain.name;
+                      {(showAllDomains
+                        ? allDomains
+                        : allDomains.slice(0, 4)
+                      ).map((domain) => {
+                        const domain_name =
+                          typeof domain === "string" ? domain : domain.name;
+                        const domainKey =
+                          typeof domain === "string"
+                            ? domain
+                            : domain.id || domain.name;
                         return (
                           <button
                             key={domainKey}
                             type="button"
-                            onClick={() => handleDomainClick(domainName)}
-                            className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium transition-colors ${selectedDomain === domainName
-                              ? "bg-blue-100 text-blue-800 border border-blue-300"
-                              : "bg-gray-100 text-gray-700 border border-gray-300 hover:bg-gray-200 hover:text-gray-800"
-                              }`}
+                            onClick={() => handleDomainClick(domain_name)}
+                            className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium transition-colors ${
+                              selectedDomain === domain_name
+                                ? "bg-blue-100 text-blue-800 border border-blue-300"
+                                : "bg-gray-100 text-gray-700 border border-gray-300 hover:bg-gray-200 hover:text-gray-800"
+                            }`}
                           >
-                            {domainName}
+                            {domain_name}
                           </button>
                         );
                       })}
@@ -689,7 +756,9 @@ export default function RecruiterPostJobInternDetails() {
                           onClick={() => setShowAllDomains(!showAllDomains)}
                           className="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 text-blue-800 rounded-full text-xs font-medium hover:bg-gray-200 hover:text-gray-800 transition-colors"
                         >
-                          <span>{showAllDomains ? "Show Less" : "Show More"}</span>
+                          <span>
+                            {showAllDomains ? "Show Less" : "Show More"}
+                          </span>
                         </button>
                       )}
                     </div>
@@ -708,16 +777,12 @@ export default function RecruiterPostJobInternDetails() {
                       </div>
                     )}
                   </div>
-
-
-
                 </div>
               )}
             </div>
 
-
             {/* Internship Type */}
-            {opportunityType === "Internship" && (
+            {opportunity_type === "Internship" && (
               <>
                 <div>
                   <Label htmlFor="internshipType">Internship type</Label>
@@ -750,37 +815,42 @@ export default function RecruiterPostJobInternDetails() {
                       <span className="text-sm text-gray-700">Remote</span>
                     </label>
                   </div>
-
                 </div>
                 {/* No. of in-office days in a week (for Hybrid) */}
                 {internshipType === "Hybrid" && (
                   <div className="my-3">
-                    <Label htmlFor="inOfficeDays">No. of in-office days in a week:</Label>
+                    <Label htmlFor="inOfficeDays">
+                      No. of in-office days in a week:
+                    </Label>
                     <div className="flex gap-1 sm:gap-3 md:gap-8">
                       {[1, 2, 3, 4, 5].map((day) => (
                         <button
                           key={day}
                           type="button"
                           className={`w-10 h-10 rounded-full border text-sm font-semibold flex items-center justify-center
-                              ${methods.getValues("inOfficeDays") === String(day)
-                              ? "bg-blue-600 text-white border-blue-600"
-                              : "bg-white text-gray-700 border-gray-300"}
+                              ${
+                                methods.getValues("inOfficeDays") ===
+                                String(day)
+                                  ? "bg-blue-600 text-white border-blue-600"
+                                  : "bg-white text-gray-700 border-gray-300"
+                              }
                               hover:border-blue-400 transition`}
-                          onClick={() => methods.setValue("inOfficeDays", String(day), { shouldValidate: true })}
+                          onClick={() =>
+                            methods.setValue("inOfficeDays", String(day), {
+                              shouldValidate: true,
+                            })
+                          }
                         >
                           {day}
                         </button>
                       ))}
                     </div>
-
                   </div>
                 )}
 
                 {/* Internship start date (only for Internship) */}
                 <div>
-                  <Label htmlFor="startDateType">
-                    Internship start date
-                  </Label>
+                  <Label htmlFor="startDateType">Internship start date</Label>
                   <div className={radioContainerStyles}>
                     <label className="flex items-center gap-2 cursor-pointer">
                       <input
@@ -789,7 +859,9 @@ export default function RecruiterPostJobInternDetails() {
                         className={radioStyles}
                         {...methods.register("startDateType")}
                       />
-                      <span className="text-sm text-gray-700">Immediately (within 30 days)</span>
+                      <span className="text-sm text-gray-700">
+                        Immediately (within 30 days)
+                      </span>
                     </label>
                     <label className="flex items-center gap-2 cursor-pointer">
                       <input
@@ -801,7 +873,6 @@ export default function RecruiterPostJobInternDetails() {
                       <span className="text-sm text-gray-700">Custom</span>
                     </label>
                   </div>
-
                 </div>
 
                 {/* Show date pickers if Custom is selected */}
@@ -845,17 +916,17 @@ export default function RecruiterPostJobInternDetails() {
             )}
 
             {/* Job type (only for Job) */}
-            {opportunityType === "Job" && (
+            {opportunity_type === "Job" && (
               <>
                 <div>
-                  <Label htmlFor="jobType">Job type</Label>
+                  <Label htmlFor="job_type">Job type</Label>
                   <div className={radioContainerStyles}>
                     <label className="flex items-center gap-2 cursor-pointer">
                       <input
                         type="radio"
                         value="In office"
                         className={radioStyles}
-                        {...methods.register("jobType")}
+                        {...methods.register("job_type")}
                       />
                       <span className="text-sm text-gray-700">In office</span>
                     </label>
@@ -864,7 +935,7 @@ export default function RecruiterPostJobInternDetails() {
                         type="radio"
                         value="Hybrid"
                         className={radioStyles}
-                        {...methods.register("jobType")}
+                        {...methods.register("job_type")}
                       />
                       <span className="text-sm text-gray-700">Hybrid</span>
                     </label>
@@ -873,14 +944,12 @@ export default function RecruiterPostJobInternDetails() {
                         type="radio"
                         value="Remote"
                         className={radioStyles}
-                        {...methods.register("jobType")}
+                        {...methods.register("job_type")}
                       />
                       <span className="text-sm text-gray-700">Remote</span>
                     </label>
                   </div>
                 </div>
-
-
 
                 {/* Job description */}
                 <Textarea
@@ -907,32 +976,35 @@ export default function RecruiterPostJobInternDetails() {
                     {...methods.register("womenOnly")}
                   />
                   <span className="text-sm text-gray-700">
-                    Allow applications from women who are willing to start/restart their career.
+                    Allow applications from women who are willing to
+                    start/restart their career.
                   </span>
                 </div>
 
                 {/* Fixed pay (per year) */}
                 <div>
-                  <Label htmlFor="stipendMin">Fixed pay (per year)</Label>
+                  <Label htmlFor="stipend_min">Fixed pay (per year)</Label>
                   <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
                     <Input
                       type="number"
                       placeholder="₹ Min"
                       min="0"
-                      {...methods.register("stipendMin")}
+                      {...methods.register("stipend_min")}
                     />
                     <Input
                       type="number"
                       placeholder="₹ Max"
                       min="0"
-                      {...methods.register("stipendMax")}
+                      {...methods.register("stipend_max")}
                     />
                   </div>
                 </div>
 
                 {/* Variables/Incentives (per year) */}
                 <div>
-                  <Label htmlFor="incentivesMin">Variables/ Incentives (per year)</Label>
+                  <Label htmlFor="incentivesMin">
+                    Variables/ Incentives (per year)
+                  </Label>
                   <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
                     <Input
                       type="number"
@@ -953,8 +1025,15 @@ export default function RecruiterPostJobInternDetails() {
                 <div>
                   <Label htmlFor="perks">Perks: (Select all that apply)</Label>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2 p-3 bg-gray-50 rounded-lg">
-                    {["5 days a week", "Health Insurance", "Life Insurance"].map((perk) => (
-                      <label key={perk} className="flex items-center gap-2 cursor-pointer">
+                    {[
+                      "5 days a week",
+                      "Health Insurance",
+                      "Life Insurance",
+                    ].map((perk) => (
+                      <label
+                        key={perk}
+                        className="flex items-center gap-2 cursor-pointer"
+                      >
                         <input
                           type="checkbox"
                           value={perk}
@@ -969,20 +1048,26 @@ export default function RecruiterPostJobInternDetails() {
 
                 {/* Screening Questions */}
                 <div>
-                  <Label htmlFor="screeningQuestions">Screening Questions</Label>
+                  <Label htmlFor="screening_questions">
+                    Screening Questions
+                  </Label>
                   <Textarea
                     rows={3}
                     placeholder="Add screening questions (optional)"
-                    defaultValue={"Please confirm your availability for this job. If not available immediately, how early would you be able to join?"}
-                    {...methods.register("screeningQuestions")}
+                    defaultValue={
+                      "Please confirm your availability for this job. If not available immediately, how early would you be able to join?"
+                    }
+                    {...methods.register("screening_questions")}
                   />
                   {/* Add more questions (Optional) - UI only, not functional */}
-                  <button type="button" className="text-blue-600 mt-2 text-xs">+ Add more questions (Optional)</button>
+                  <button type="button" className="text-blue-600 mt-2 text-xs">
+                    + Add more questions (Optional)
+                  </button>
                 </div>
 
                 {/* Primary phone number */}
                 <div>
-                  <Label htmlFor="phoneContact">Primary phone number</Label>
+                  <Label htmlFor="phone_contact">Primary phone number</Label>
                   <div className="flex">
                     <span className="inline-flex items-center px-2 py-2 border border-r-0 border-gray-300 bg-gray-50 rounded-l-lg text-gray-600 text-sm">
                       <img
@@ -995,15 +1080,17 @@ export default function RecruiterPostJobInternDetails() {
                     <Input
                       type="tel"
                       placeholder="9812345678"
-                      error={methods.formState.errors.phoneContact?.message}
-                      {...methods.register("phoneContact")}
+                      error={methods.formState.errors.phone_contact?.message}
+                      {...methods.register("phone_contact")}
                     />
                   </div>
                 </div>
 
                 {/* Alternate phone number */}
                 <div>
-                  <Label htmlFor="alternatePhone">Alternate phone number for this listing (Optional)</Label>
+                  <Label htmlFor="alternatePhone">
+                    Alternate phone number for this listing (Optional)
+                  </Label>
                   <div className="flex">
                     <span className="inline-flex items-center px-2 py-2 border border-r-0 border-gray-300 bg-gray-50 rounded-l-lg text-gray-600 text-sm">
                       <img
@@ -1024,17 +1111,17 @@ export default function RecruiterPostJobInternDetails() {
             )}
 
             {/* Project type (only for Project) */}
-            {opportunityType === "Project" && (
+            {opportunity_type === "Project" && (
               <>
                 <div>
-                  <Label htmlFor="jobType">Project type</Label>
+                  <Label htmlFor="job_type">Project type</Label>
                   <div className={radioContainerStyles}>
                     <label className="flex items-center gap-2 cursor-pointer">
                       <input
                         type="radio"
                         value="In office"
                         className={radioStyles}
-                        {...methods.register("jobType")}
+                        {...methods.register("job_type")}
                       />
                       <span className="text-sm text-gray-700">In office</span>
                     </label>
@@ -1043,7 +1130,7 @@ export default function RecruiterPostJobInternDetails() {
                         type="radio"
                         value="Hybrid"
                         className={radioStyles}
-                        {...methods.register("jobType")}
+                        {...methods.register("job_type")}
                       />
                       <span className="text-sm text-gray-700">Hybrid</span>
                     </label>
@@ -1052,14 +1139,12 @@ export default function RecruiterPostJobInternDetails() {
                         type="radio"
                         value="Remote"
                         className={radioStyles}
-                        {...methods.register("jobType")}
+                        {...methods.register("job_type")}
                       />
                       <span className="text-sm text-gray-700">Remote</span>
                     </label>
                   </div>
                 </div>
-
-
 
                 {/* Project description */}
                 <Textarea
@@ -1086,44 +1171,51 @@ export default function RecruiterPostJobInternDetails() {
                     {...methods.register("womenOnly")}
                   />
                   <span className="text-sm text-gray-700">
-                    Allow applications from women who are willing to start/restart their career.
+                    Allow applications from women who are willing to
+                    start/restart their career.
                   </span>
                 </div>
 
                 {/* Project budget */}
                 <div>
-                  <Label htmlFor="stipendMin">Project budget</Label>
+                  <Label htmlFor="stipend_min">Project budget</Label>
                   <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
                     <Input
                       type="number"
                       placeholder="₹ Min"
                       min="0"
-                      {...methods.register("stipendMin")}
+                      {...methods.register("stipend_min")}
                     />
                     <Input
                       type="number"
                       placeholder="₹ Max"
                       min="0"
-                      {...methods.register("stipendMax")}
+                      {...methods.register("stipend_max")}
                     />
                   </div>
                 </div>
 
                 {/* Screening Questions */}
                 <div>
-                  <Label htmlFor="screeningQuestions">Screening Questions</Label>
+                  <Label htmlFor="screening_questions">
+                    Screening Questions
+                  </Label>
                   <Textarea
                     rows={3}
                     placeholder="Add screening questions (optional)"
-                    defaultValue={"Please confirm your availability for this project. Share your relevant project experience."}
-                    {...methods.register("screeningQuestions")}
+                    defaultValue={
+                      "Please confirm your availability for this project. Share your relevant project experience."
+                    }
+                    {...methods.register("screening_questions")}
                   />
-                  <button type="button" className="text-blue-600 mt-2 text-xs">+ Add more questions (Optional)</button>
+                  <button type="button" className="text-blue-600 mt-2 text-xs">
+                    + Add more questions (Optional)
+                  </button>
                 </div>
 
                 {/* Primary phone number */}
                 <div>
-                  <Label htmlFor="phoneContact">Primary phone number</Label>
+                  <Label htmlFor="phone_contact">Primary phone number</Label>
                   <div className="flex">
                     <span className="inline-flex items-center px-2 py-2 border border-r-0 border-gray-300 bg-gray-50 rounded-l-lg text-gray-600 text-sm">
                       <img
@@ -1136,15 +1228,17 @@ export default function RecruiterPostJobInternDetails() {
                     <Input
                       type="tel"
                       placeholder="9812345678"
-                      error={methods.formState.errors.phoneContact?.message}
-                      {...methods.register("phoneContact")}
+                      error={methods.formState.errors.phone_contact?.message}
+                      {...methods.register("phone_contact")}
                     />
                   </div>
                 </div>
 
                 {/* Alternate phone number */}
                 <div>
-                  <Label htmlFor="alternatePhone">Alternate phone number for this listing (Optional)</Label>
+                  <Label htmlFor="alternatePhone">
+                    Alternate phone number for this listing (Optional)
+                  </Label>
                   <div className="flex">
                     <span className="inline-flex items-center px-2 py-2 border border-r-0 border-gray-300 bg-gray-50 rounded-l-lg text-gray-600 text-sm">
                       <img
@@ -1188,10 +1282,20 @@ export default function RecruiterPostJobInternDetails() {
                 label="City/Cities"
                 placeholder="Select a city"
                 error={methods.formState.errors.city?.message}
-                options={educationData.locations ? educationData.locations.map(location => ({
-                  value: typeof location === 'string' ? location : location.name,
-                  label: typeof location === 'string' ? location : location.name
-                })) : []}
+                options={
+                  educationData.locations
+                    ? educationData.locations.map((location) => ({
+                        value:
+                          typeof location === "string"
+                            ? location
+                            : location.name,
+                        label:
+                          typeof location === "string"
+                            ? location
+                            : location.name,
+                      }))
+                    : []
+                }
                 {...methods.register("city")}
               />
             )}
@@ -1210,9 +1314,7 @@ export default function RecruiterPostJobInternDetails() {
 
             {/* Part-time/Full-time (Common for all opportunity types) */}
             <div>
-              <Label htmlFor="partFullTime">
-                Part-time/ Full-time
-              </Label>
+              <Label htmlFor="partFullTime">Part-time/ Full-time</Label>
               <div className={radioContainerStyles}>
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
@@ -1236,7 +1338,7 @@ export default function RecruiterPostJobInternDetails() {
             </div>
 
             {/* Number of openings */}
-            {opportunityType === "Internship" && (
+            {opportunity_type === "Internship" && (
               <Input
                 label="Number of openings"
                 type="number"
@@ -1248,16 +1350,16 @@ export default function RecruiterPostJobInternDetails() {
             )}
 
             {/* Stipend */}
-            {opportunityType !== "Job" && opportunityType !== "Project" && (
+            {opportunity_type !== "Job" && opportunity_type !== "Project" && (
               <div>
-                <Label htmlFor="stipendType">Stipend</Label>
+                <Label htmlFor="stipend_type">Stipend</Label>
                 <div className={radioContainerStyles}>
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input
                       type="radio"
                       value="Paid"
                       className={radioStyles}
-                      {...methods.register("stipendType")}
+                      {...methods.register("stipend_type")}
                     />
                     <span className="text-sm text-gray-700">Paid</span>
                   </label>
@@ -1266,7 +1368,7 @@ export default function RecruiterPostJobInternDetails() {
                       type="radio"
                       value="Unpaid"
                       className={radioStyles}
-                      {...methods.register("stipendType")}
+                      {...methods.register("stipend_type")}
                     />
                     <span className="text-sm text-gray-700">Unpaid</span>
                   </label>
@@ -1275,31 +1377,35 @@ export default function RecruiterPostJobInternDetails() {
                       type="radio"
                       value="Fixed"
                       className={radioStyles}
-                      {...methods.register("stipendType")}
+                      {...methods.register("stipend_type")}
                     />
                     <span className="text-sm text-gray-700">Fixed</span>
                   </label>
                 </div>
-                {stipendType === "Paid" && (
+                {stipend_type === "Paid" && (
                   <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
                     <Input
                       type="number"
                       placeholder="₹ Min"
                       min="0"
-                      {...methods.register("stipendMin")}
+                      {...methods.register("stipend_min")}
                     />
                     <Input
                       type="number"
                       placeholder="₹ Max"
                       min="0"
-                      {...methods.register("stipendMax")}
+                      {...methods.register("stipend_max")}
                     />
                     <select
                       className="w-full sm:w-32 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white"
                       {...methods.register("stipendMode")}
                     >
-                      <option value="Month" className="text-sm">Month</option>
-                      <option value="Lump sum" className="text-sm">Lump sum</option>
+                      <option value="Month" className="text-sm">
+                        Month
+                      </option>
+                      <option value="Lump sum" className="text-sm">
+                        Lump sum
+                      </option>
                     </select>
                   </div>
                 )}
@@ -1307,13 +1413,13 @@ export default function RecruiterPostJobInternDetails() {
             )}
 
             {/* College Name & Course (Internship only, below stipend) */}
-            {opportunityType === "Internship" && (
+            {opportunity_type === "Internship" && (
               <div className="mt-6">
                 <div className="flex items-center mb-2">
-                  <Label htmlFor="collegeName">
-                    College Name
-                  </Label>
-                  <span className="ml-2 align-middle inline-block px-2 py-0.5 text-xs font-semibold bg-green-100 text-green-700 rounded-full border border-green-300">PRO Plan</span>
+                  <Label htmlFor="college_name">College Name</Label>
+                  <span className="ml-2 align-middle inline-block px-2 py-0.5 text-xs font-semibold bg-green-100 text-green-700 rounded-full border border-green-300">
+                    PRO Plan
+                  </span>
                 </div>
                 {educationLoading ? (
                   <div className="p-3 bg-gray-50 rounded-lg">
@@ -1326,11 +1432,21 @@ export default function RecruiterPostJobInternDetails() {
                 ) : (
                   <Select
                     placeholder="Select a college"
-                    options={educationData.colleges ? educationData.colleges.map(college => ({
-                      value: typeof college === 'string' ? college : college.name,
-                      label: typeof college === 'string' ? college : college.name
-                    })) : []}
-                    {...methods.register("collegeName")}
+                    options={
+                      educationData.colleges
+                        ? educationData.colleges.map((college) => ({
+                            value:
+                              typeof college === "string"
+                                ? college
+                                : college.name,
+                            label:
+                              typeof college === "string"
+                                ? college
+                                : college.name,
+                          }))
+                        : []
+                    }
+                    {...methods.register("college_name")}
                   />
                 )}
                 <div className="flex items-center mt-2 mb-4">
@@ -1339,8 +1455,12 @@ export default function RecruiterPostJobInternDetails() {
                     className={checkboxStyles}
                     id="onlyThisCollege"
                   />
-                  <label htmlFor="onlyThisCollege" className="ml-2 text-gray-500 text-sm">
-                    Candidates from ONLY the above college should be allowed to apply.
+                  <label
+                    htmlFor="onlyThisCollege"
+                    className="ml-2 text-gray-500 text-sm"
+                  >
+                    Candidates from ONLY the above college should be allowed to
+                    apply.
                   </label>
                 </div>
 
@@ -1356,10 +1476,16 @@ export default function RecruiterPostJobInternDetails() {
                   <Select
                     label="Course"
                     placeholder="Select a course"
-                    options={educationData.courses ? educationData.courses.map(course => ({
-                      value: typeof course === 'string' ? course : course.name,
-                      label: typeof course === 'string' ? course : course.name
-                    })) : []}
+                    options={
+                      educationData.courses
+                        ? educationData.courses.map((course) => ({
+                            value:
+                              typeof course === "string" ? course : course.name,
+                            label:
+                              typeof course === "string" ? course : course.name,
+                          }))
+                        : []
+                    }
                     {...methods.register("course")}
                   />
                 )}
@@ -1367,39 +1493,43 @@ export default function RecruiterPostJobInternDetails() {
             )}
 
             {/* Incentives */}
-            {opportunityType !== "Job" && opportunityType !== "Project" && stipendType === "Paid" && (
-              <div>
-                <Label htmlFor="incentivesMin">Incentives</Label>
-                <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-                  <Input
-                    type="number"
-                    placeholder="₹ Min"
-                    min="0"
-                    {...methods.register("incentivesMin")}
-                  />
-                  <Input
-                    type="number"
-                    placeholder="₹ Max"
-                    min="0"
-                    {...methods.register("incentivesMax")}
-                  />
-                  <select
-                    className="w-full sm:w-32 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white"
-                    {...methods.register("incentivesMode")}
-                  >
-                    <option value="Month" className="text-sm">Month</option>
-                    <option value="Lump sum" className="text-sm">Lump sum</option>
-                  </select>
+            {opportunity_type !== "Job" &&
+              opportunity_type !== "Project" &&
+              stipend_type === "Paid" && (
+                <div>
+                  <Label htmlFor="incentivesMin">Incentives</Label>
+                  <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                    <Input
+                      type="number"
+                      placeholder="₹ Min"
+                      min="0"
+                      {...methods.register("incentivesMin")}
+                    />
+                    <Input
+                      type="number"
+                      placeholder="₹ Max"
+                      min="0"
+                      {...methods.register("incentivesMax")}
+                    />
+                    <select
+                      className="w-full sm:w-32 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white"
+                      {...methods.register("incentivesMode")}
+                    >
+                      <option value="Month" className="text-sm">
+                        Month
+                      </option>
+                      <option value="Lump sum" className="text-sm">
+                        Lump sum
+                      </option>
+                    </select>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
             {/* Perks */}
-            {opportunityType !== "Job" && opportunityType !== "Project" && (
+            {opportunity_type !== "Job" && opportunity_type !== "Project" && (
               <div>
-                <Label htmlFor="perks">
-                  Perks (Select all that apply)
-                </Label>
+                <Label htmlFor="perks">Perks (Select all that apply)</Label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 p-3 bg-gray-50 rounded-lg">
                   {[
                     "Certificate of completion",
@@ -1410,7 +1540,10 @@ export default function RecruiterPostJobInternDetails() {
                     "Free snacks & beverages",
                     "Pre-placement offer (PPO)",
                   ].map((perk) => (
-                    <label key={perk} className="flex items-center gap-2 cursor-pointer">
+                    <label
+                      key={perk}
+                      className="flex items-center gap-2 cursor-pointer"
+                    >
                       <input
                         type="checkbox"
                         value={perk}
@@ -1425,7 +1558,7 @@ export default function RecruiterPostJobInternDetails() {
             )}
 
             {/* PPO Question */}
-            {opportunityType === "Internship" && (
+            {opportunity_type === "Internship" && (
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 p-3 bg-gray-50 rounded-lg">
                 <input
                   type="radio"
@@ -1448,19 +1581,15 @@ export default function RecruiterPostJobInternDetails() {
               >
                 Save Draft
               </Button>
-              <Button
-                type="submit"
-                loading={isSubmitting}
-                variant="primary"
-              >
-                {isSubmitting ? "Posting..." : `Post ${opportunityType}`}
+              <Button type="submit" loading={isSubmitting} variant="primary">
+                {isSubmitting ? "Posting..." : `Post ${opportunity_type}`}
               </Button>
             </div>
           </form>
         </FormProvider>
       </div>
     );
-  }
+  };
 
   // Replace layout logic with SignUpLayout for all devices
   return (

@@ -7,8 +7,8 @@ const workModes = ["In-office", "Hybrid", "Work from home"];
 
 export default function PreferencesForm() {
   const { watch, setValue, register } = useFormContext();
-  const lookingFor = watch("currentlyLookingFor") || [];
-  const workMode = watch("workMode") || [];
+  const lookingFor = watch("currently_looking_for") || [];
+  const work_mode = watch("work_mode") || [];
 
   const toggle = (field, value) => {
     const arr = watch(field) || [];
@@ -27,13 +27,13 @@ export default function PreferencesForm() {
       {/* Hidden inputs to register the fields with react-hook-form */}
       <input
         type="hidden"
-        {...register("currentlyLookingFor")}
+        {...register("currently_looking_for")}
         value={lookingFor.join(",")}
       />
       <input
         type="hidden"
-        {...register("workMode")}
-        value={workMode.join(",")}
+        {...register("work_mode")}
+        value={work_mode.join(",")}
       />
 
       <div className="mb-2 sm:mb-3">
@@ -43,11 +43,12 @@ export default function PreferencesForm() {
             <button
               key={option}
               type="button"
-              className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border text-xs transition-all duration-200 ${lookingFor.includes(option)
-                ? "bg-blue-600 text-white border-blue-600"
-                : "bg-gray-100 text-gray-700 border-gray-300 hover:border-gray-400"
-                }`}
-              onClick={() => toggle("currentlyLookingFor", option)}
+              className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border text-xs transition-all duration-200 ${
+                lookingFor.includes(option)
+                  ? "bg-blue-600 text-white border-blue-600"
+                  : "bg-gray-100 text-gray-700 border-gray-300 hover:border-gray-400"
+              }`}
+              onClick={() => toggle("currently_looking_for", option)}
             >
               {option} +
             </button>
@@ -61,11 +62,12 @@ export default function PreferencesForm() {
             <button
               key={mode}
               type="button"
-              className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border text-xs transition-all duration-200 ${workMode.includes(mode)
-                ? "bg-blue-600 text-white border-blue-600"
-                : "bg-gray-100 text-gray-700 border-gray-300 hover:border-gray-400"
-                }`}
-              onClick={() => toggle("workMode", mode)}
+              className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border text-xs transition-all duration-200 ${
+                work_mode.includes(mode)
+                  ? "bg-blue-600 text-white border-blue-600"
+                  : "bg-gray-100 text-gray-700 border-gray-300 hover:border-gray-400"
+              }`}
+              onClick={() => toggle("work_mode", mode)}
             >
               {mode} +
             </button>

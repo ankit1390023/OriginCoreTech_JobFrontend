@@ -50,223 +50,213 @@ import RecruitePipeline from "../pages/recruiter/profile/RecruiterPipeline";
 import RecruiterUpcommingInterview from "../pages/recruiter/profile/RecruiterUpcommingInterview";
 import RecruiterPendingTask from "../pages/recruiter/profile/RecruiterPendingTask";
 
-
-
-
-
-
 export const appRouter = createBrowserRouter([
-    {
-        path: "/",
-        element: <Home />,
-    },
-    {
-        path: "/login",
-        element: <Login />,
-    },
-    {
-        path: "/forgot-password",
-        element: <ForgotPassword />,
-    },
-    {
-        path: "/login-send-otp-email",
-        element: <LoginSendOtpEmail />,
-    },
-    {
-        path: "/login-verify-otp-email",
-        element: <LoginVerifyOtpEmail />,
-    },
-    {
-        path: "/signup-choose-role",
-        element: <SignUpChooseRole />,
-    },
-    {
-        path: "/signup",
-        element: <SignUp />,
-    },
-    {
-        path: "/signup-verify-otp-email",
-        element: <SignUpVerifyOtpEmail />,
-    },
-    {
-        path: "/student-fill-account-details",
-        element: <StudentFillAccountDetails />
-    },
-    {
-        path: "/recruiter-post-job-intern-details",
-        element: <RecruiterPostJobInternDetails />,
-    },
-    {
-        path: "/all-jobs",
-        element: <AllJObs />,
-    },
-    {
-        path: "/jobs/:jobId",
-        element: <JobDetailsPage />,
-    },
-    {
-        path: "/recruiter-profile",
-        element: <CompanyRecruiterProfile />
-    },
-    {
-        path: "/university-fill-details",
-        element: <UniversityFillDetails />
-    },
-    {
-        path: "/feed",
-        element: <FeedPage />
-    },
-    {
-        path: "/feed-my-profile",
-        element: <FeedMyProfile />,
-    },
-    {
-        path: "/feed-view",
-        element: <FeedView />,
-    },
-    {
-        path: "/feed-application",
-        element: <FeedApplication />,
-    },
-    {
-        path: "/feed-terms",
-        element: <FeedTerms />,
-    },
-    {
-        path: "/feed-resume",
-        element: <FeedResume />,
-    },
-    {
-        path: "/feed-ticket",
-        element: <FeedTicket />,
-    },
-    {
-        path: "/feed-profile",
-        element: <Feedprofile />,
-    },
-    {
-        path: "/feed-change-email",
-        element: <FeedChangeEmail />,
-    },
-    {
-        path: "/feed-change-password",
-        element: <FeedChangePassword />,
-    },
-    {
-        path: "/feed-your-skills",
-        element: <FeedYourSkills />,
-    },
-    {
-        path: "/feed-your-education",
-        element: <FeedYourEducation />,
-    },
-    {
-        path: "/feed-your-exprience",
-        element: <FeedYourExprience />,
-    },
+  {
+    path: "/",
+    element: <Home />,
+  },
+  {
+    path: "/login",
+    element: <Login />,
+  },
+  {
+    path: "/forgot-password",
+    element: <ForgotPassword />,
+  },
+  {
+    path: "/login-send-otp-email",
+    element: <LoginSendOtpEmail />,
+  },
+  {
+    path: "/login-verify-otp-email",
+    element: <LoginVerifyOtpEmail />,
+  },
+  {
+    path: "/signup-choose-role",
+    element: <SignUpChooseRole />,
+  },
+  {
+    path: "/signup",
+    element: <SignUp />,
+  },
+  {
+    path: "/signup-verify-otp-email",
+    element: <SignUpVerifyOtpEmail />,
+  },
+  {
+    path: "/student-fill-account-details",
+    element: <StudentFillAccountDetails />,
+  },
+  {
+    path: "/recruiter-post-job-intern-details",
+    element: <RecruiterPostJobInternDetails />,
+  },
+  {
+    path: "/all-jobs",
+    element: <AllJObs />,
+  },
+  {
+    path: "/jobs/:job_id",
+    element: <JobDetailsPage />,
+  },
+  {
+    path: "/recruiter-profile",
+    element: <CompanyRecruiterProfile />,
+  },
+  {
+    path: "/university-fill-details",
+    element: <UniversityFillDetails />,
+  },
+  {
+    path: "/feed",
+    element: <FeedPage />,
+  },
+  {
+    path: "/feed-my-profile",
+    element: <FeedMyProfile />,
+  },
+  {
+    path: "/feed-view",
+    element: <FeedView />,
+  },
+  {
+    path: "/feed-application",
+    element: <FeedApplication />,
+  },
+  {
+    path: "/feed-terms",
+    element: <FeedTerms />,
+  },
+  {
+    path: "/feed-resume",
+    element: <FeedResume />,
+  },
+  {
+    path: "/feed-ticket",
+    element: <FeedTicket />,
+  },
+  {
+    path: "/feed-profile",
+    element: <Feedprofile />,
+  },
+  {
+    path: "/feed-change-email",
+    element: <FeedChangeEmail />,
+  },
+  {
+    path: "/feed-change-password",
+    element: <FeedChangePassword />,
+  },
+  {
+    path: "/feed-your-skills",
+    element: <FeedYourSkills />,
+  },
+  {
+    path: "/feed-your-education",
+    element: <FeedYourEducation />,
+  },
+  {
+    path: "/feed-your-exprience",
+    element: <FeedYourExprience />,
+  },
 
-    {
-        path: "feed-dashboard",
-        element: <FeedDashBoard />
-    },
-    {
-        path: "/feed-authentication",
-        element: <FeedAuthentication />
-    },
-    {
-        path: "/feed-faq",
-        element: <FeedFaq />
-    },
+  {
+    path: "feed-dashboard",
+    element: <FeedDashBoard />,
+  },
+  {
+    path: "/feed-authentication",
+    element: <FeedAuthentication />,
+  },
+  {
+    path: "/feed-faq",
+    element: <FeedFaq />,
+  },
 
-    {
-        path: "/application-myapplication1",
-        element: <Myapplication1 />
-    },
+  {
+    path: "/application-myapplication1",
+    element: <Myapplication1 />,
+  },
 
-    {
-        path: "/application-myapplication2",
-        element: <Myapplication2 />
-    },
+  {
+    path: "/application-myapplication2",
+    element: <Myapplication2 />,
+  },
 
-    {
-        path: "/application-myapplication3",
-        element: <Myapplication3 />
-    },
+  {
+    path: "/application-myapplication3",
+    element: <Myapplication3 />,
+  },
 
+  {
+    path: "/application-myapplication5",
+    element: <Myapplication5 />,
+  },
+  {
+    path: "/application-myapplication6",
+    element: <Myapplication6 />,
+  },
+  {
+    path: "/application-myapplication9",
+    element: <Myapplication9 />,
+  },
+  {
+    path: "/application-myapplication8",
+    element: <Myapplication8 />,
+  },
+  {
+    path: "/application-myapplication7",
+    element: <Myapplication7 />,
+  },
 
+  {
+    path: "/recruiter-dashboard",
+    element: <RecruiterDashboard />,
+  },
+  {
+    path: "/recruiter-dashboard-profile",
+    element: <RecruiterRightProfile />,
+  },
+  {
+    path: "/recruiter-total-job-post",
+    element: <RecruiterTotalJobPost />,
+  },
+  {
+    path: "/recruiter-application",
+    element: <RecruiterApplication />,
+  },
 
-    {
-        path: "/application-myapplication5",
-        element: <Myapplication5 />
-    },
-    {
-        path: "/application-myapplication6",
-        element: <Myapplication6 />
-    },
-    {
-        path: "/application-myapplication9",
-        element: <Myapplication9 />
-    },
-    {
-        path: "/application-myapplication8",
-        element: <Myapplication8 />
-    },
-    {
-        path: "/application-myapplication7",
-        element: <Myapplication7 />
-    },
+  {
+    path: "/recruiter-application-details",
+    element: <RecruiterApplicationDetails />,
+  },
 
-    {
-        path: "/recruiter-dashboard",
-        element: <RecruiterDashboard />
-    },
-    {
-        path: "/recruiter-dashboard-profile",
-        element: <RecruiterRightProfile />
-    },
-    {
-        path: "/recruiter-total-job-post",
-        element: <RecruiterTotalJobPost />
-    },
-    {
-        path: "/recruiter-application",
-        element: <RecruiterApplication />
-    },
-
-    {
-        path: "/recruiter-application-details",
-        element: <RecruiterApplicationDetails />
-    },
-
-    {
-        path: "/recruiter-application-data",
-        element: <RecruiterApplicationData />
-    },
-    {
-        path: "/recruiter-send-assignment",
-        element: <RecruiterSendAssignment />
-    },
-    {
-        path: "/recruiter-interview",
-        element: <RecruiterInterview />
-    },
-    {
-        path: "/recruiter-approval",
-        element: <RecruiterApproval />
-    },
-    {
-        path: "/recruiter-pipeline-candidates",
-        element: <RecruitePipeline />
-    },
-    {
-        path: "/recruiter-upcoming-interview",
-        element: <RecruiterUpcommingInterview />
-    },
-    {
-        path: "/recruiter-pending-task",
-        element: <RecruiterPendingTask />
-    }
-
-
-
-])
+  {
+    path: "/recruiter-application-data",
+    element: <RecruiterApplicationData />,
+  },
+  {
+    path: "/recruiter-send-assignment",
+    element: <RecruiterSendAssignment />,
+  },
+  {
+    path: "/recruiter-interview",
+    element: <RecruiterInterview />,
+  },
+  {
+    path: "/recruiter-approval",
+    element: <RecruiterApproval />,
+  },
+  {
+    path: "/recruiter-pipeline-candidates",
+    element: <RecruitePipeline />,
+  },
+  {
+    path: "/recruiter-upcoming-interview",
+    element: <RecruiterUpcommingInterview />,
+  },
+  {
+    path: "/recruiter-pending-task",
+    element: <RecruiterPendingTask />,
+  },
+]);
