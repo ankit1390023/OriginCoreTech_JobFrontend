@@ -9,15 +9,27 @@ import { Input, Button, Link } from "../../components/ui";
 
 import SignUpLayoutForLarge from "../../components/layout/SignUpLayoutForLarge";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useDispatch } from 'react-redux';
-import { login } from '../../redux/feature/authSlice';
+import { useDispatch } from "react-redux";
+import { login } from "../../redux/feature/authSlice";
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 // Zod schema for OTP validation
 const otpSchema = z.object({
-  otp1: z.string().length(1, { message: "Required" }).regex(/^\d$/, { message: "Must be a digit" }),
-  otp2: z.string().length(1, { message: "Required" }).regex(/^\d$/, { message: "Must be a digit" }),
-  otp3: z.string().length(1, { message: "Required" }).regex(/^\d$/, { message: "Must be a digit" }),
-  otp4: z.string().length(1, { message: "Required" }).regex(/^\d$/, { message: "Must be a digit" }),
+  otp1: z
+    .string()
+    .length(1, { message: "Required" })
+    .regex(/^\d$/, { message: "Must be a digit" }),
+  otp2: z
+    .string()
+    .length(1, { message: "Required" })
+    .regex(/^\d$/, { message: "Must be a digit" }),
+  otp3: z
+    .string()
+    .length(1, { message: "Required" })
+    .regex(/^\d$/, { message: "Must be a digit" }),
+  otp4: z
+    .string()
+    .length(1, { message: "Required" })
+    .regex(/^\d$/, { message: "Must be a digit" }),
 });
 
 export default function SignUpVerifyOtpEmail() {
@@ -28,7 +40,6 @@ export default function SignUpVerifyOtpEmail() {
   const inputRefs = [useRef(), useRef(), useRef(), useRef()];
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
 
   const {
     register,
@@ -69,20 +80,25 @@ export default function SignUpVerifyOtpEmail() {
 
       // Store user and token in Redux if present
       if (response.data.user && response.data.token) {
-        dispatch(login.fulfilled({ user: response.data.user, token: response.data.token }));
+        dispatch(
+          login.fulfilled({
+            user: response.data.user,
+            token: response.data.token,
+          })
+        );
       }
 
       // Role-based redirection
-      const userRole = response.data.user.userRole;
-      console.log("User role:", userRole);
-      switch (userRole) {
-        case 'STUDENT':
+      const user_role = response.data.user.user_role;
+      console.log("User role:", user_role);
+      switch (user_role) {
+        case "STUDENT":
           navigate("/student-fill-account-details");
           break;
-        case 'COMPANY':
+        case "COMPANY":
           navigate("/recruiter-post-job-intern-details");
           break;
-        case 'UNIVERSITY':
+        case "UNIVERSITY":
           navigate("/university-fill-details");
           break;
         default:
@@ -105,10 +121,12 @@ export default function SignUpVerifyOtpEmail() {
     }
   };
 
-
   const handlePaste = (e) => {
     e.preventDefault();
-    const pastedData = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 4);
+    const pastedData = e.clipboardData
+      .getData("text")
+      .replace(/\D/g, "")
+      .slice(0, 4);
 
     if (pastedData.length === 4) {
       setValue("otp1", pastedData[0]);
@@ -119,11 +137,9 @@ export default function SignUpVerifyOtpEmail() {
     }
   };
 
-
   // Form content component
   const FormContent = () => (
     <div className="w-full min-h-screen flex md:items-center md:justify-center overflow-hidden relative sm:-mt-16">
-
       {/* Form */}
       <div className="flex-1 w-full flex justify-center mt-6 md:mt-0">
         <form
@@ -133,7 +149,9 @@ export default function SignUpVerifyOtpEmail() {
           <div className="mb-2 sm:mb-3">
             <p className="text-gray-600 text-xs mb-2">
               One Time Password (OTP) has been sent to your email on
-              <span className="font-bold text-blue-500 ml-1">{email ? email : "amangupta@gmail.com"}</span>
+              <span className="font-bold text-blue-500 ml-1">
+                {email ? email : "amangupta@gmail.com"}
+              </span>
             </p>
             {/* OTP Input - 4 separate boxes */}
             <div className="mb-2">
@@ -148,13 +166,16 @@ export default function SignUpVerifyOtpEmail() {
                       type="text"
                       maxLength={1}
                       disabled={loading}
-                      className={`w-full h-12 text-center text-lg font-semibold border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${errors[`otp${index + 1}`]
-                        ? "border-red-500 bg-red-50"
-                        : "border-gray-300 hover:border-gray-400"
-                        }`}
+                      className={`w-full h-12 text-center text-lg font-semibold border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                        errors[`otp${index + 1}`]
+                          ? "border-red-500 bg-red-50"
+                          : "border-gray-300 hover:border-gray-400"
+                      }`}
                       placeholder="0"
                       {...register(`otp${index + 1}`)}
-                      onChange={(e) => setValue(`otp${index + 1}`, e.target.value)}
+                      onChange={(e) =>
+                        setValue(`otp${index + 1}`, e.target.value)
+                      }
                       onPaste={handlePaste}
                     />
                   </div>
@@ -192,10 +213,7 @@ export default function SignUpVerifyOtpEmail() {
           <div className="text-center mt-2 pt-2 border-t border-gray-200">
             <p className="text-gray-500 text-xs">
               Already have an account?{" "}
-              <Link
-                to="/login"
-                variant="primary"
-              >
+              <Link to="/login" variant="primary">
                 Login
               </Link>
             </p>
@@ -214,6 +232,4 @@ export default function SignUpVerifyOtpEmail() {
       <FormContent />
     </SignUpLayoutForLarge>
   );
-
-
 }

@@ -34,7 +34,7 @@ import FeedRightSide2 from "../pages/student/feed/FeedRightSide2";
 import Myapplication1 from "../pages/student/application/Myapplication1";
 import Myapplication3 from "../pages/student/application/Myapplication3";
 import MyMassage from "../pages/student/application/MyMassage";
-import MyNotification from "../pages/student/application/MyNotification"; 
+import MyNotification from "../pages/student/application/MyNotification";
 import Myapplication6 from "../pages/student/application/Myapplication6";
 import Myapplication5 from "../pages/student/application/Myapplication5";
 import Myapplication4 from "../pages/student/application/Myapplication4";
@@ -79,389 +79,372 @@ import AiProfile1 from "../pages/aiprediction/AiProfile1";
 import AllJObsPart from "../pages/aiprediction/AlljobsPart";
 import AllCoursesPart from "../pages/aiprediction/CoursePart";
 import FeedRightSide3 from "../pages/student/feed/FeedRightSide3";
-import Sidebar from "../components/shared/Sidebar";
-import Header1 from "../components/shared/Header1";
-import Footer1 from "../components/shared/Footer1";
-import FinanceLayout from "../components/layout/FinanceLayout";
-
-
-
-
-
-
-
-
-
+// import Sidebar from "../components/shared/Sidebar";
+// import Header1 from "../components/shared/Header1";
+// import Footer1 from "../components/shared/Footer1";
+// import FinanceLayout from "../components/layout/FinanceLayout";
 
 export const appRouter = createBrowserRouter([
-    {
-        path: "/",
-        element: <Home />,
-    },
-    {
-        path: "/login",
-        element: <Login />,
-    },
-    {
-        path: "/forgot-password",
-        element: <ForgotPassword />,
-    },
-    {
-        path: "/login-send-otp-email",
-        element: <LoginSendOtpEmail />,
-    },
-    {
-        path: "/login-verify-otp-email",
-        element: <LoginVerifyOtpEmail />,
-    },
-    {
-        path: "/signup-choose-role",
-        element: <SignUpChooseRole />,
-    },
-    {
-        path: "/signup",
-        element: <SignUp />,
-    },
-    {
-        path: "/signup-verify-otp-email",
-        element: <SignUpVerifyOtpEmail />,
-    },
-    {
-        path: "/student-fill-account-details",
-        element: <StudentFillAccountDetails />
-    },
-    {
-        path: "/recruiter-post-job-intern-details",
-        element: <RecruiterPostJobInternDetails />,
-    },
-    {
-        path: "/all-jobs",
-        element: <AllJObs />,
-    },
-    {
-        path: "/jobs/:jobId",
-        element: <JobDetailsPage />,
-    },
+  {
+    path: "/",
+    element: <Home />,
+  },
+  {
+    path: "/login",
+    element: <Login />,
+  },
+  {
+    path: "/forgot-password",
+    element: <ForgotPassword />,
+  },
+  {
+    path: "/login-send-otp-email",
+    element: <LoginSendOtpEmail />,
+  },
+  {
+    path: "/login-verify-otp-email",
+    element: <LoginVerifyOtpEmail />,
+  },
+  {
+    path: "/signup-choose-role",
+    element: <SignUpChooseRole />,
+  },
+  {
+    path: "/signup",
+    element: <SignUp />,
+  },
+  {
+    path: "/signup-verify-otp-email",
+    element: <SignUpVerifyOtpEmail />,
+  },
+  {
+    path: "/student-fill-account-details",
+    element: <StudentFillAccountDetails />,
+  },
+  {
+    path: "/recruiter-post-job-intern-details",
+    element: <RecruiterPostJobInternDetails />,
+  },
+  {
+    path: "/all-jobs",
+    element: <AllJObs />,
+  },
+  {
+    path: "/jobs/:job_id",
+    element: <JobDetailsPage />,
+  },
 
-// Recruiter related routes
+  // Recruiter related routes
 
-{
+  {
     path: "/recruiter-profile",
-    element: <CompanyRecruiterProfile />
-},
+    element: <CompanyRecruiterProfile />,
+  },
 
-{
+  {
     path: "/recruiter-dashboard",
-    element: <RecruiterDashboard />
-},
-{
+    element: <RecruiterDashboard />,
+  },
+  {
     path: "/recruiter-right-profile",
-    element: <RecruiterRightProfile />
-},
-{
+    element: <RecruiterRightProfile />,
+  },
+  {
     path: "/recruiter-total-job-post",
-    element: <RecruiterTotalJobPost /> 
-},
-{
+    element: <RecruiterTotalJobPost />,
+  },
+  {
     path: "/recruiter-application",
-    element: <RecruiterApplication />
-},
+    element: <RecruiterApplication />,
+  },
 
-{
+  {
     path: "/recruiter-application-details",
-    element: <RecruiterApplicationDetails />
-},
+    element: <RecruiterApplicationDetails />,
+  },
 
-{
+  {
     path: "/recruiter-application-data",
-    element: <RecruiterApplicationData />
-},
-{
+    element: <RecruiterApplicationData />,
+  },
+  {
     path: "/recruiter-send-assignment",
-    element: <RecruiterSendAssignment />
-},
-{
+    element: <RecruiterSendAssignment />,
+  },
+  {
     path: "/recruiter-interview",
-    element: <RecruiterInterview />
-},
-{
+    element: <RecruiterInterview />,
+  },
+  {
     path: "/recruiter-approval",
-    element: <RecruiterApproval />
-},
-{
+    element: <RecruiterApproval />,
+  },
+  {
     path: "/recruiter-pipeline",
-    element: <RecruitePipeline />
-},
-{
+    element: <RecruitePipeline />,
+  },
+  {
     path: "/recruiter-upcoming-interview",
-    element: <RecruiterUpcommingInterview />
-},
-{
+    element: <RecruiterUpcommingInterview />,
+  },
+  {
     path: "/recruiter-pending-task",
-    element: <RecruiterPendingTask />
-},
+    element: <RecruiterPendingTask />,
+  },
 
-    {
-        path: "/recruiter-visiter",
-        element: <RecruiterProfile />
-    },
-    {
-        path: "/recruiter-right-side1",
-        element: <RecruiterRightSide1 />
-    },
-    {
-        path: "/recruiter-right-side2",
-        element: <RecruiterRightSide2 />
-    },
-    {
-        path: "/recruiter-right-side3",
-        element: <RecruiterRightSide3 />
-    },
-    {
-        path: "/recruiter-terms",
-        element: <RecruiterTerms />
-    },
-    {
-        path: "/recruiter-view",
-        element: <RecruiterView />
-    },
-    {
-        path: "/recruiter-payment",
-        element: <RecruiterPayment />
-    },
-    {
-        path: "/recruiter-pricing",
-        element: <RecruiterPricing />
-    },
-    {
-        path: "/recruiter-payment-method",
-        element: <RecruiterPaymentMethod />
-    },
-    {
-        path: "/recruiter-payment-password",
-        element: <RecruiterChangePassword />
-    },
-    {
-        path: "/recruiter-change-email",
-        element: <RecruiterChangeEmail />
-    },
-   
+  {
+    path: "/recruiter-visiter",
+    element: <RecruiterProfile />,
+  },
+  {
+    path: "/recruiter-right-side1",
+    element: <RecruiterRightSide1 />,
+  },
+  {
+    path: "/recruiter-right-side2",
+    element: <RecruiterRightSide2 />,
+  },
+  {
+    path: "/recruiter-right-side3",
+    element: <RecruiterRightSide3 />,
+  },
+  {
+    path: "/recruiter-terms",
+    element: <RecruiterTerms />,
+  },
+  {
+    path: "/recruiter-view",
+    element: <RecruiterView />,
+  },
+  {
+    path: "/recruiter-payment",
+    element: <RecruiterPayment />,
+  },
+  {
+    path: "/recruiter-pricing",
+    element: <RecruiterPricing />,
+  },
+  {
+    path: "/recruiter-payment-method",
+    element: <RecruiterPaymentMethod />,
+  },
+  {
+    path: "/recruiter-payment-password",
+    element: <RecruiterChangePassword />,
+  },
+  {
+    path: "/recruiter-change-email",
+    element: <RecruiterChangeEmail />,
+  },
 
-// University related routes
+  // University related routes
 
+  {
+    path: "/university-fill-details",
+    element: <UniversityFillDetails />,
+  },
+  {
+    path: "/university-profile",
+    element: <UniversityProfile />,
+  },
+  {
+    path: "/university-right-side1",
+    element: <UniversityRightSide1 />,
+  },
+  {
+    path: "/university-change-email",
+    element: <UniversityChangeEmail />,
+  },
+  {
+    path: "/university-change-password",
+    element: <UniversityChangePassword />,
+  },
+  {
+    path: "/university-faq",
+    element: <UniversityFaq />,
+  },
 
+  {
+    path: "/university-terms",
+    element: <UniversityTerms />,
+  },
+  {
+    path: "/university-view",
+    element: <UniversityView />,
+  },
+  {
+    path: "/university-ticket",
+    element: <UniversityTicket />,
+  },
+  {
+    path: "/university-pricing",
+    element: <UniversityPricing />,
+  },
+  {
+    path: "/university-payment",
+    element: <UniversityPayment />,
+  },
+  {
+    path: "/university-payment-method",
+    element: <UniversityPaymentMethod />,
+  },
+  {
+    path: "/university-approval",
+    element: <UniversityApproval />,
+  },
 
-    {
-        path: "/university-fill-details",
-        element: <UniversityFillDetails />
-    },
-    {
-        path: "/university-profile",
-        element: <UniversityProfile />
-    },
-    {
-        path: "/university-right-side1",
-        element: <UniversityRightSide1 />
-    },
-    {
-        path: "/university-change-email",
-        element: <UniversityChangeEmail />
-    },
-    {
-        path: "/university-change-password",
-        element: <UniversityChangePassword />
-    },
-    {
-        path: "/university-faq",
-        element: <UniversityFaq />
-    },
-    
-    {
-        path: "/university-terms",
-        element: <UniversityTerms />
-    },
-    {
-        path: "/university-view",
-        element: <UniversityView />
-    },
-    {
-        path: "/university-ticket",
-        element: <UniversityTicket />
-    },
-    {
-        path: "/university-pricing",
-        element: <UniversityPricing />
-    },
-    {
-        path: "/university-payment",
-        element: <UniversityPayment />
-    },
-    {
-        path: "/university-payment-method",
-        element: <UniversityPaymentMethod />
-    },
-    {
-        path: "/university-approval",
-        element: <UniversityApproval />
-    },
+  // Feed related routes
+  {
+    path: "/feed",
+    element: <FeedPage />,
+  },
+  {
+    path: "/feed-my-profile",
+    element: <FeedMyProfile />,
+  },
+  {
+    path: "/feed-view",
+    element: <FeedView />,
+  },
+  {
+    path: "/feed-application",
+    element: <FeedApplication />,
+  },
+  {
+    path: "/feed-terms",
+    element: <FeedTerms />,
+  },
+  {
+    path: "/feed-resume",
+    element: <FeedResume />,
+  },
+  {
+    path: "/feed-ticket",
+    element: <FeedTicket />,
+  },
+  {
+    path: "/feed-profile",
+    element: <Feedprofile />,
+  },
+  {
+    path: "/feed-change-email",
+    element: <FeedChangeEmail />,
+  },
+  {
+    path: "/feed-change-password",
+    element: <FeedChangePassword />,
+  },
+  {
+    path: "/feed-your-skills",
+    element: <FeedYourSkills />,
+  },
+  {
+    path: "/feed-your-education",
+    element: <FeedYourEducation />,
+  },
+  {
+    path: "/feed-your-exprience",
+    element: <FeedYourExprience />,
+  },
 
+  {
+    path: "feed-dashboard",
+    element: <FeedDashBoard />,
+  },
+  {
+    path: "/feed-authentication",
+    element: <FeedAuthentication />,
+  },
+  {
+    path: "/feed-faq",
+    element: <FeedFaq />,
+  },
 
+  {
+    path: "/application-myapplication1",
+    element: <Myapplication1 />,
+  },
 
+  {
+    path: "/application-myapplication2",
+    element: <Myapplication2 />,
+  },
 
-    // Feed related routes
-    {
-        path: "/feed",
-        element: <FeedPage />
-    },
-    {
-        path: "/feed-my-profile",
-        element: <FeedMyProfile />,
-    },
-    {
-        path: "/feed-view",
-        element: <FeedView />,
-    },
-    {
-        path: "/feed-application",
-        element: <FeedApplication />,
-    },
-    {
-        path: "/feed-terms",
-        element: <FeedTerms />,
-    },
-    {
-        path: "/feed-resume",
-        element: <FeedResume />,
-    },
-    {
-        path: "/feed-ticket",
-        element: <FeedTicket />,
-    },
-    {
-        path: "/feed-profile",
-        element: <Feedprofile />,
-    },
-    {
-        path: "/feed-change-email",
-        element: <FeedChangeEmail />,
-    },
-    {
-        path: "/feed-change-password",
-        element: <FeedChangePassword />,
-    },
-    {
-        path: "/feed-your-skills",
-        element: <FeedYourSkills />,
-    },
-    {
-        path: "/feed-your-education",
-        element: <FeedYourEducation />,
-    },
-    {
-        path: "/feed-your-exprience",
-        element: <FeedYourExprience />,
-    },
+  {
+    path: "/application-myapplication3",
+    element: <Myapplication3 />,
+  },
+  {
+    path: "/application-mymassage",
+    element: <MyMassage />,
+  },
+  {
+    path: "/application-mynotification",
+    element: <MyNotification />,
+  },
+  {
+    path: "/application-myapplication6",
+    element: <Myapplication6 />,
+  },
+  {
+    path: "/application-myapplication5",
+    element: <Myapplication5 />,
+  },
+  {
+    path: "/application-myapplication4",
+    element: <Myapplication4 />,
+  },
 
-    {
-        path: "feed-dashboard",
-        element: <FeedDashBoard />
-    },
-    {
-        path: "/feed-authentication",
-        element: <FeedAuthentication />
-    },
-    {
-        path: "/feed-faq",
-        element: <FeedFaq />
-    },
+  {
+    path: "/feed-dashboard",
+    element: <FeedDashBoard />,
+  },
+  {
+    path: "/feed-right-side1",
+    element: <FeedRightSide1 />,
+  },
+  {
+    path: "/feed-right-side2",
+    element: <FeedRightSide2 />,
+  },
+  {
+    path: "/feed-right-side3",
+    element: <FeedRightSide3 />,
+  },
 
-    {
-        path: "/application-myapplication1",
-        element: <Myapplication1 />
-    },
+  // Ai prediction related routes
 
-    {
-        path: "/application-myapplication2",
-        element: <Myapplication2 />
-    },
+  {
+    path: "/ai-prediction",
+    element: <AiProfile />,
+  },
+  {
+    path: "/ai-prediction1",
+    element: <AiProfile1 />,
+  },
+  {
+    path: "/all-jobs-part",
+    element: <AllJObsPart />,
+  },
+  {
+    path: "/all-courses-part",
+    element: <AllCoursesPart />,
+  },
+  // {
+  //     path: "/sidebar",
+  //     element: <Sidebar />
+  // },
+  // {
+  //     path: "/header1",
+  //     element: <Header1 />
+  // },
+  // {
+  //     path: "/footer1",
+  //     element: <Footer1 />
+  // },
 
-    {
-        path: "/application-myapplication3",
-        element: <Myapplication3 />
-    },
-    {
-        path: "/application-mymassage",
-        element: <MyMassage />
-    },
-    {
-        path: "/application-mynotification",
-        element: <MyNotification />
-    },
-    {
-        path: "/application-myapplication6",
-        element: <Myapplication6 />
-    },
-    {
-        path: "/application-myapplication5",
-        element: <Myapplication5 />
-    },
-    {
-        path: "/application-myapplication4",
-        element: <Myapplication4 />
-    },
-
-    {
-        path: "/feed-dashboard",
-        element: <FeedDashBoard />
-    },
-    {
-        path: "/feed-right-side1",
-        element: <FeedRightSide1 />
-    },
-    {
-        path: "/feed-right-side2",
-        element: <FeedRightSide2 />
-    },
-    {
-        path: "/feed-right-side3",
-        element: <FeedRightSide3 />
-    },
-   
-
-// Ai prediction related routes
-
-    {
-        path: "/ai-prediction",
-        element: <AiProfile />
-    },
-    {
-        path: "/ai-prediction1",
-        element: <AiProfile1 />
-    },
-    {
-        path: "/all-jobs-part",
-        element: <AllJObsPart />
-    },
-    {
-        path: "/all-courses-part",
-        element: <AllCoursesPart />
-    },
-    {
-        path: "/sidebar",
-        element: <Sidebar />
-    },
-    {
-        path: "/header1",
-        element: <Header1 />
-    },
-    {
-        path: "/footer1",
-        element: <Footer1 />
-    },
-    
-    {
-        path: "/finance-layout",
-        element: <FinanceLayout />
-    },
-
-])
+  // {
+  //     path: "/finance-layout",
+  //     element: <FinanceLayout />
+  // },
+]);

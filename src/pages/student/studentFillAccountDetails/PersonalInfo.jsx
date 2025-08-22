@@ -1,7 +1,14 @@
 import React, { useEffect } from "react";
 import { useFormContext } from "react-hook-form";
 import { useLocations } from "../../../hooks/useLocations";
-import { Loader, Input, Select, Label, ErrorMessage, PhoneInput } from "../../../components/ui";
+import {
+  Loader,
+  Input,
+  Select,
+  Label,
+  ErrorMessage,
+  PhoneInput,
+} from "../../../components/ui";
 import { useSelector } from "react-redux";
 
 export default function PersonalInfo() {
@@ -14,8 +21,8 @@ export default function PersonalInfo() {
 
   useEffect(() => {
     if (user) {
-      if (user.firstName) setValue("firstName", user.firstName);
-      if (user.lastName) setValue("lastName", user.lastName);
+      if (user.first_name) setValue("first_name", user.first_name);
+      if (user.last_name) setValue("last_name", user.last_name);
       if (user.email) setValue("email", user.email);
       if (user.phone) setValue("phone", user.phone);
     }
@@ -49,16 +56,16 @@ export default function PersonalInfo() {
           <Input
             label="First Name"
             placeholder="Enter your first name"
-            error={errors.firstName?.message}
-            {...register("firstName")}
+            error={errors.first_name?.message}
+            {...register("first_name")}
           />
         </div>
         <div className="flex-1">
           <Input
             label="Last Name"
             placeholder="Enter your last name"
-            error={errors.lastName?.message}
-            {...register("lastName")}
+            error={errors.last_name?.message}
+            {...register("last_name")}
           />
         </div>
       </div>
@@ -92,9 +99,9 @@ export default function PersonalInfo() {
       ) : (
         <Select
           label="City"
-          options={locations.map(location => ({ 
-            value: location.name || location.id, 
-            label: location.name || location.id 
+          options={locations.map((location) => ({
+            value: location.name || location.id,
+            label: location.name || location.id,
           }))}
           placeholder="Select your current city"
           error={errors.city?.message}
@@ -106,7 +113,7 @@ export default function PersonalInfo() {
         options={[
           { value: "Male", label: "Male" },
           { value: "Female", label: "Female" },
-          { value: "Other", label: "Other" }
+          { value: "Other", label: "Other" },
         ]}
         placeholder="Select your gender"
         error={errors.gender?.message}

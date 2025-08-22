@@ -7,8 +7,8 @@ import { useNavigate } from "react-router-dom";
 import AuthLayout from "../../components/layout/AuthLayout";
 import { Input, Button, Link, ErrorMessage } from "../../components/ui";
 import { userDetailsApi } from "../../api/userDetailsApi";
-import { useDispatch } from 'react-redux';
-import { login } from '../../redux/feature/authSlice';
+import { useDispatch } from "react-redux";
+import { login } from "../../redux/feature/authSlice";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
@@ -71,7 +71,7 @@ export default function LoginVerifyOtpEmail() {
 
     setResendLoading(true);
     setOtpError("");
-    
+
     try {
       await axios.post(`${BASE_URL}/otp/send-otp`, {
         email: email,
@@ -85,7 +85,7 @@ export default function LoginVerifyOtpEmail() {
         error.response.data.message
       ) {
         const errorMessage = error.response.data.message;
-        
+
         // Extract waiting time from error message if it contains seconds
         const timeMatch = errorMessage.match(/(\d+)\s*seconds?/i);
         if (timeMatch) {
@@ -140,20 +140,25 @@ export default function LoginVerifyOtpEmail() {
 
       // Store user and token in Redux if present
       if (response.data.user && response.data.token) {
-        dispatch(login.fulfilled({ user: response.data.user, token: response.data.token }));
+        dispatch(
+          login.fulfilled({
+            user: response.data.user,
+            token: response.data.token,
+          })
+        );
       }
 
       // Role-based redirection
-      const userRole = response.data.userRole;
-      console.log("User role:", userRole);
-      switch (userRole) {
-        case 'STUDENT':
+      const user_role = response.data.user_role;
+      console.log("User role:", user_role);
+      switch (user_role) {
+        case "STUDENT":
           navigate("/student-fill-account-details");
           break;
-        case 'COMPANY':
+        case "COMPANY":
           navigate("/recruiter-post-job-intern-details");
           break;
-        case 'UNIVERSITY':
+        case "UNIVERSITY":
           navigate("/university-fill-details");
           break;
         default:
@@ -220,8 +225,11 @@ export default function LoginVerifyOtpEmail() {
                   onChange={(e) => handleOtpChange(index, e.target.value)}
                   onKeyDown={(e) => handleKeyDown(index, e)}
                   placeholder=""
-                  className={`w-full h-7 sm:h-8 text-center text-xs font-semibold border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-transparent transition-all duration-200 ${errors.otp ? "border-red-500 bg-red-50" : "border-gray-300 hover:border-gray-400"}`}
-
+                  className={`w-full h-7 sm:h-8 text-center text-xs font-semibold border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-transparent transition-all duration-200 ${
+                    errors.otp
+                      ? "border-red-500 bg-red-50"
+                      : "border-gray-300 hover:border-gray-400"
+                  }`}
                 />
               ))}
             </div>
@@ -245,12 +253,13 @@ export default function LoginVerifyOtpEmail() {
               <div className="flex items-center justify-center space-x-2">
                 <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
                 <p className="text-sm text-gray-700">
-                  Resend OTP available in <span className="font-bold text-blue-600 text-lg">{resendTimer}s</span>
+                  Resend OTP available in{" "}
+                  <span className="font-bold text-blue-600 text-lg">
+                    {resendTimer}s
+                  </span>
                 </p>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-1 mt-2">
-    
-              </div>
+              <div className="w-full bg-gray-200 rounded-full h-1 mt-2"></div>
             </div>
           )}
 

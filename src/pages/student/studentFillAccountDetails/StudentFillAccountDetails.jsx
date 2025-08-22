@@ -23,8 +23,8 @@ const steps = [
 
 // Validation schema for PersonalInfo step
 const personalInfoSchema = z.object({
-  firstName: z.string().min(1, { message: "First Name is required" }),
-  lastName: z.string().min(1, { message: "Last Name is required" }),
+  first_name: z.string().min(1, { message: "First Name is required" }),
+  last_name: z.string().min(1, { message: "Last Name is required" }),
   email: z.string().email({ message: "Invalid email address" }),
   phone: z
     .string()
@@ -53,8 +53,8 @@ const educationInfoSchema = z.object({
   course: z.string().optional(),
   specialization: z.string().optional(),
   college: z.string().optional(),
-  startYear: z.string().optional(),
-  endYear: z.string().optional(),
+  start_year: z.string().optional(),
+  end_year: z.string().optional(),
   experience: z.string().optional(),
   jobRole: z.string().optional(),
   company: z.string().optional(),
@@ -63,8 +63,8 @@ const educationInfoSchema = z.object({
 
 // Validation schema for Preferences step
 const preferencesSchema = z.object({
-  currentlyLookingFor: z.array(z.string()).optional(),
-  workMode: z.array(z.string()).optional(),
+  currently_looking_for: z.array(z.string()).optional(),
+  work_mode: z.array(z.string()).optional(),
 });
 
 // Combined schema for all steps
@@ -84,17 +84,17 @@ export default function StudentFillAccountDetails() {
       city: "",
       gender: "",
       type: "",
-      currentlyLookingFor: [],
-      workMode: [],
+      currently_looking_for: [],
+      work_mode: [],
     },
   });
-  
+
   const [step, setStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
-  // Get userId from Redux state
-  const userId = user?.id;
+  // Get user_id from Redux state
+  const user_id = user?.id;
 
   // Redirect if user is not authenticated
   useEffect(() => {
@@ -112,14 +112,14 @@ export default function StudentFillAccountDetails() {
 
     // Define fields to validate for each step
     const stepFields = {
-      0: ["firstName", "lastName", "email", "phone", "dob", "city", "gender"],
+      0: ["first_name", "last_name", "email", "phone", "dob", "city", "gender"],
       1: ["type"], // Basic validation for type, other fields are conditional
-      3: ["currentlyLookingFor", "workMode"],
+      3: ["currently_looking_for", "work_mode"],
     };
 
     const fieldsToValidate = stepFields[step] || [];
     const valid = await methods.trigger(fieldsToValidate);
-    
+
     if (valid && step < steps.length - 1) {
       setStep((s) => s + 1);
     }
@@ -128,24 +128,34 @@ export default function StudentFillAccountDetails() {
   const onBack = () => setStep((s) => s - 1);
 
   const handleSubmitClick = async () => {
-    console.log('=== FORM SUBMISSION STARTED ===');
-    if (!userId || !token) {
+    console.log("=== FORM SUBMISSION STARTED ===");
+    if (!user_id || !token) {
       alert("Authentication required. Please login again.");
       navigate("/login");
       return;
     }
 
     setIsSubmitting(true);
-    console.log('Setting isSubmitting to true');
+    console.log("Setting isSubmitting to true");
 
     try {
-      console.log('Getting form values...');
+      console.log("Getting form values...");
       const formData = methods.getValues();
-      console.log('Raw form data:', formData);
+      console.log("Raw form data:", formData);
 
       // Validate required fields before proceeding
-      if (!formData.firstName || !formData.lastName || !formData.email || !formData.phone || !formData.dob || !formData.city || !formData.gender) {
-        alert("Please fill in all required fields: First Name, Last Name, Email, Phone, Date of Birth, City, and Gender.");
+      if (
+        !formData.first_name ||
+        !formData.last_name ||
+        !formData.email ||
+        !formData.phone ||
+        !formData.dob ||
+        !formData.city ||
+        !formData.gender
+      ) {
+        alert(
+          "Please fill in all required fields: First Name, Last Name, Email, Phone, Date of Birth, City, and Gender."
+        );
         setIsSubmitting(false);
         return;
       }
@@ -168,25 +178,25 @@ export default function StudentFillAccountDetails() {
 
       // Prepare the data structure for the API based on original backend structure
       const userData = {
-        firstName: formData.firstName.trim(),
-        lastName: formData.lastName.trim(),
+        first_name: formData.first_name.trim(),
+        last_name: formData.last_name.trim(),
         email: formData.email.trim().toLowerCase(),
         phone: formData.phone.trim(),
         dob: formData.dob,
         city: formData.city.trim(),
         gender: formData.gender,
-        userType: formData.type || "Working Professional",
+        user_type: formData.type || "Working Professional",
         experiences: [],
         // Add default values for optional fields
         languages: "",
-        aboutus: "",
-        careerObjective: "",
+        about_us: "",
+        career_objective: "",
         resume: "",
         language: "",
-        isEmailVerified: false,
-        isPhoneVerified: false,
-        isGstVerified: false,
-        userprofilepic: "",
+        is_email_verified: false,
+        is_phone_verified: false,
+        is_gst_verified: false,
+        user_profile_pic: "",
         aadhaarNumber: "",
         aadhaarCardFile: "",
         isAadhaarVerified: false,
@@ -201,138 +211,189 @@ export default function StudentFillAccountDetails() {
           setIsSubmitting(false);
           return;
         }
-      } else if (formData.type === "College Student" || formData.type === "Fresher") {
+      } else if (
+        formData.type === "College Student" ||
+        formData.type === "Fresher"
+      ) {
         // Validate required fields for college students/freshers
         if (!formData.course) {
           alert("Please select your course.");
           setIsSubmitting(false);
           return;
         }
-        
+
         // Find course ID by name
-        const selectedCourse = educationData?.courses?.find(course => course.name === formData.course);
+        const selectedCourse = educationData?.courses?.find(
+          (course) => course.name === formData.course
+        );
         // Find specialization ID by name
-        const selectedSpecialization = educationData?.specializations?.find(spec => spec.name === formData.specialization);
+        const selectedSpecialization = educationData?.specializations?.find(
+          (spec) => spec.name === formData.specialization
+        );
         // Find college ID by name
-        const selectedCollege = educationData?.colleges?.find(college => college.name === formData.college);
-        
+        const selectedCollege = educationData?.colleges?.find(
+          (college) => college.name === formData.college
+        );
+
         // Only set IDs if they exist to avoid sending null/undefined values
         if (selectedCourse?.id) {
-          userData.courseId = selectedCourse.id;
+          userData.course_id = selectedCourse.id;
         } else {
-          console.warn('Course ID not found for:', formData.course);
+          console.warn("Course ID not found for:", formData.course);
         }
-        
+
         if (selectedSpecialization?.id) {
-          userData.specializationId = selectedSpecialization.id;
+          userData.specialization_id = selectedSpecialization.id;
         } else if (formData.specialization) {
-          console.warn('Specialization ID not found for:', formData.specialization);
+          console.warn(
+            "Specialization ID not found for:",
+            formData.specialization
+          );
         }
-        
+
         if (selectedCollege?.id) {
-          userData.collegeId = selectedCollege.id;
+          userData.college_id = selectedCollege.id;
         } else if (formData.college) {
-          console.warn('College ID not found for:', formData.college);
+          console.warn("College ID not found for:", formData.college);
         }
-        
+
         userData.course = formData.course || ""; // Keep name for backward compatibility
         userData.specialization = formData.specialization || ""; // Keep name for backward compatibility
-        userData.collegeName = formData.college || "";
-        userData.startYear = formData.startYear || "";
-        userData.endYear = formData.endYear || "";
+        userData.college_name = formData.college || "";
+        userData.start_year = formData.start_year || "";
+        userData.end_year = formData.end_year || "";
       } else if (formData.type === "Working Professional") {
         // Add working professional specific fields
         userData.jobLocation = formData.city; // Using city as job location
-        userData.salaryDetails = formData.salary || "";
-        
+        userData.salary_details = formData.salary || "";
+
         // Handle array fields from PreferencesForm properly
-        if (Array.isArray(formData.currentlyLookingFor) && formData.currentlyLookingFor.length > 0) {
-          userData.currentlyLookingFor = formData.currentlyLookingFor.join(", ");
+        if (
+          Array.isArray(formData.currently_looking_for) &&
+          formData.currently_looking_for.length > 0
+        ) {
+          userData.currently_looking_for =
+            formData.currently_looking_for.join(", ");
         } else {
-          userData.currentlyLookingFor = "";
+          userData.currently_looking_for = "";
         }
-        
-        if (Array.isArray(formData.workMode) && formData.workMode.length > 0) {
-          userData.workMode = formData.workMode.join(", ");
+
+        if (
+          Array.isArray(formData.work_mode) &&
+          formData.work_mode.length > 0
+        ) {
+          userData.work_mode = formData.work_mode.join(", ");
         } else {
-          userData.workMode = "";
+          userData.work_mode = "";
         }
 
         // Add experience data if available
         if (formData.company && formData.jobRole) {
           userData.experiences.push({
-            currentJobRole: formData.jobRole.trim(),
-            currentCompany: formData.company.trim(),
+            current_job_role: formData.jobRole.trim(),
+            current_company: formData.company.trim(),
             totalExperience: formData.experience || "1-2 years",
           });
         }
       }
 
       // Handle preferences for all user types
-      if (Array.isArray(formData.currentlyLookingFor) && formData.currentlyLookingFor.length > 0) {
-        userData.currentlyLookingFor = formData.currentlyLookingFor.join(", ");
-      } else if (!userData.currentlyLookingFor) {
-        userData.currentlyLookingFor = "";
+      if (
+        Array.isArray(formData.currently_looking_for) &&
+        formData.currently_looking_for.length > 0
+      ) {
+        userData.currently_looking_for =
+          formData.currently_looking_for.join(", ");
+      } else if (!userData.currently_looking_for) {
+        userData.currently_looking_for = "";
       }
-      
-      if (Array.isArray(formData.workMode) && formData.workMode.length > 0) {
-        userData.workMode = formData.workMode.join(", ");
-      } else if (!userData.workMode) {
-        userData.workMode = "";
+
+      if (Array.isArray(formData.work_mode) && formData.work_mode.length > 0) {
+        userData.work_mode = formData.work_mode.join(", ");
+      } else if (!userData.work_mode) {
+        userData.work_mode = "";
       }
 
       // Remove any undefined or null values from userData
       const cleanUserData = Object.fromEntries(
-        Object.entries(userData).filter(([key, value]) => value !== undefined && value !== null && value !== '')
+        Object.entries(userData).filter(
+          ([key, value]) =>
+            value !== undefined && value !== null && value !== ""
+        )
       );
 
       // Ensure required fields are present
-      const requiredFields = ['firstName', 'lastName', 'email', 'phone', 'dob', 'city', 'gender', 'userType'];
-      const missingFields = requiredFields.filter(field => !cleanUserData[field]);
-      
+      const requiredFields = [
+        "first_name",
+        "last_name",
+        "email",
+        "phone",
+        "dob",
+        "city",
+        "gender",
+        "user_type",
+      ];
+      const missingFields = requiredFields.filter(
+        (field) => !cleanUserData[field]
+      );
+
       if (missingFields.length > 0) {
-        alert(`Missing required fields: ${missingFields.join(', ')}`);
+        alert(`Missing required fields: ${missingFields.join(", ")}`);
         setIsSubmitting(false);
         return;
       }
 
       // Log the userData being sent for debugging
-      console.log('Form Data being sent:', JSON.stringify(cleanUserData, null, 2));
-      console.log('Education Data available:', educationData);
-      console.log('User ID:', userId);
-      console.log('Token available:', !!token);
+      console.log(
+        "Form Data being sent:",
+        JSON.stringify(cleanUserData, null, 2)
+      );
+      console.log("Education Data available:", educationData);
+      console.log("User ID:", user_id);
+      console.log("Token available:", !!token);
 
       // Check if user details already exist
-      console.log('Checking if user details exist...');
-      const { exists } = await userDetailsApi.checkUserDetailsExist(userId);
-      console.log('User details exist:', exists);
+      console.log("Checking if user details exist...");
+      const { exists } = await userDetailsApi.checkUserDetailsExist(user_id);
+      console.log("User details exist:", exists);
 
       let response;
       if (exists) {
         // Update existing user details
-        console.log('Updating existing user details...');
-        response = await userDetailsApi.updateUserDetails(userId, cleanUserData, token);
+        console.log("Updating existing user details...");
+        response = await userDetailsApi.updateUserDetails(
+          user_id,
+          cleanUserData,
+          token
+        );
       } else {
         // Create new user details
-        console.log('Creating new user details...');
+        console.log("Creating new user details...");
         response = await userDetailsApi.createUserDetails(cleanUserData, token);
       }
-      console.log('API response:', response);
+      console.log("API response:", response);
 
       alert("Form submitted successfully!");
       // Redirect to feed page after successful submission
       navigate("/feed");
     } catch (error) {
       // Log detailed error information for debugging
-      console.error('Form submission error:', error);
-      console.error('Error response data:', JSON.stringify(error.response?.data, null, 2));
-      console.error('Error status:', error.response?.status);
-      console.error('Error message:', error.message);
-      console.error('Full error response:', error.response);
-      
+      console.error("Form submission error:", error);
+      console.error(
+        "Error response data:",
+        JSON.stringify(error.response?.data, null, 2)
+      );
+      console.error("Error status:", error.response?.status);
+      console.error("Error message:", error.message);
+      console.error("Full error response:", error.response);
+
       // Show specific error message from backend
       let errorMessage = "Error submitting form. Please try again.";
-      if (error.response && error.response.data && error.response.data.message) {
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
         errorMessage = error.response.data.message;
       } else if (error.response?.data?.error) {
         errorMessage = `Validation Error: ${error.response.data.error}`;
@@ -360,22 +421,14 @@ export default function StudentFillAccountDetails() {
             {step === 3 && <PreferencesForm />}
             <div className="flex justify-between mt-8">
               {step > 0 ? (
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={onBack}
-                >
+                <Button type="button" variant="outline" onClick={onBack}>
                   Back
                 </Button>
               ) : (
                 <div />
               )}
               {step < steps.length - 1 ? (
-                <Button
-                  type="button"
-                  variant="secondary"
-                  onClick={onNext}
-                >
+                <Button type="button" variant="secondary" onClick={onNext}>
                   Next
                 </Button>
               ) : (
@@ -422,7 +475,3 @@ export default function StudentFillAccountDetails() {
     </SignUpLayoutForLarge>
   );
 }
-
-
-
-

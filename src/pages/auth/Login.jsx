@@ -53,7 +53,7 @@ export default function Login() {
   // ✅ Redirect after login success
   useEffect(() => {
     if (isAuthenticated && user) {
-      switch (user.userRole) {
+      switch (user.user_role) {
         case "STUDENT":
           navigate("/student-fill-account-details");
           break;
@@ -144,7 +144,8 @@ export default function Login() {
 
         {/* Error */}
         {error && (
-          <div className="text-xs text-red-500 mb-2 sm:mb-3 text-center 
+          <div
+            className="text-xs text-red-500 mb-2 sm:mb-3 text-center 
                           bg-red-50 p-2 sm:p-3 rounded-md"
           >
             {error}

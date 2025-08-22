@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Search, Eye } from "lucide-react";
 import MainLayout from "../../../components/layout/MainLayout";
@@ -6,8 +5,6 @@ import RecruiterRightProfile from "./RecruiterRightProfile";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useSelector } from "react-redux";
-
-
 
 const BASE_URL = import.meta.env.VITE_BASE_URL; // <-- replace with your backend base url
 
@@ -54,7 +51,7 @@ const TotalJobPosts = () => {
   const filteredJobs = jobPosts.filter(
     (job) =>
       job.JobRole?.toLowerCase().includes(search.toLowerCase()) ||
-      job.skillRequiredNote?.toLowerCase().includes(search.toLowerCase())
+      job.skill_required_note?.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
@@ -98,7 +95,7 @@ const TotalJobPosts = () => {
             ) : (
               filteredJobs.map((job) => (
                 <div
-                  key={job.jobId}
+                  key={job.job_id}
                   className="flex flex-col gap-3 bg-white rounded-lg border border-gray-200 p-4 shadow-sm"
                 >
                   {/* Top Section */}
@@ -108,9 +105,9 @@ const TotalJobPosts = () => {
                       <h2 className="font-semibold">
                         {job.JobRole || "Untitled Job"}
                       </h2>
-                      {job.internshipStartDate ? (
+                      {job.internship_start_date ? (
                         <p className="text-sm text-blue-500">
-                          Starts from {job.internshipStartDate}.
+                          Starts from {job.internship_start_date}.
                         </p>
                       ) : (
                         <p className="text-sm text-gray-400">No start date</p>
@@ -118,7 +115,7 @@ const TotalJobPosts = () => {
                       <button
                         className="mt-2 bg-red-500 text-white px-4 py-1 rounded-md text-sm hover:bg-red-600 transition"
                         onClick={() =>
-                          navigate(`/recruiter-view-applications/${job.jobId}`)
+                          navigate(`/recruiter-view-applications/${job.job_id}`)
                         }
                       >
                         View applications (0)
@@ -128,15 +125,17 @@ const TotalJobPosts = () => {
                     {/* Status & Views */}
                     <div className="flex flex-col items-end gap-2">
                       <span
-                        className={`px-4 py-1 rounded-full text-sm font-medium ${job.numberOfOpenings > 0
-                          ? "bg-green-500 text-white"
-                          : "bg-gray-200 text-gray-600"
-                          }`}
+                        className={`px-4 py-1 rounded-full text-sm font-medium ${
+                          job.number_of_openings > 0
+                            ? "bg-green-500 text-white"
+                            : "bg-gray-200 text-gray-600"
+                        }`}
                       >
-                        {job.numberOfOpenings > 0 ? "Active" : "Closed"}
+                        {job.number_of_openings > 0 ? "Active" : "Closed"}
                       </span>
                       <div className="flex items-center text-gray-500 text-sm gap-1">
-                        <Eye size={16} /> {job.views?.toLocaleString() || 0} views
+                        <Eye size={16} /> {job.views?.toLocaleString() || 0}{" "}
+                        views
                       </div>
                     </div>
                   </div>

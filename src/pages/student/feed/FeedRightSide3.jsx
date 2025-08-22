@@ -1,11 +1,9 @@
-import { useSelector } from 'react-redux';
-import cover from '../../../assets/cover.png';
-import dummyProfile3 from '../../../assets/dummyProfile3.jpg';
-import { useEffect, useState } from 'react';
-import feedApi from '../../../api/feedApi';
-import { userDetailsApi } from '../../../api/userDetailsApi';
-
-
+import { useSelector } from "react-redux";
+import cover from "../../../assets/cover.png";
+import dummyProfile3 from "../../../assets/dummyProfile3.jpg";
+import { useEffect, useState } from "react";
+import feedApi from "../../../api/feedApi";
+import { userDetailsApi } from "../../../api/userDetailsApi";
 
 export default function FeedRightSide3() {
   const [followersCount, setFollowersCount] = useState(0);
@@ -28,11 +26,11 @@ export default function FeedRightSide3() {
         if (result.success) {
           setProfile(result.data.publicProfile);
         } else {
-          setError(result.error || 'Failed to fetch user details.');
+          setError(result.error || "Failed to fetch user details.");
           setProfile(null);
         }
       } catch {
-        setError('Failed to fetch user details.');
+        setError("Failed to fetch user details.");
         setProfile(null);
       } finally {
         setLoading(false);
@@ -52,7 +50,7 @@ export default function FeedRightSide3() {
         const { count: followingCount } = await feedApi.getFollowing(token);
         setFollowingCount(followingCount);
       } catch {
-        setError('Failed to load followers/following');
+        setError("Failed to load followers/following");
       }
     }
     if (token) fetchFollowersAndFollowing();
@@ -68,8 +66,8 @@ export default function FeedRightSide3() {
     <div
       className="bg-white shadow border rounded-[10px] p-5"
       style={{
-        width: '375px',
-        height: '725px',
+        width: "375px",
+        height: "725px",
       }}
     >
       {/* Cover + Profile */}
@@ -96,25 +94,25 @@ export default function FeedRightSide3() {
         ) : profile ? (
           <>
             <h2 className="text-lg font-bold text-gray-800">
-              {profile.firstName} {profile.lastName}
+              {profile.first_name} {profile.last_name}
             </h2>
             <p className="text-sm text-gray-500">{profile.email}</p>
-            <p className="text-sm text-gray-700 font-semibold mt-1">{profile.userType}</p>
-            <p className="text-sm text-gray-600 mt-2">{profile.aboutus}</p>
+            <p className="text-sm text-gray-700 font-semibold mt-1">
+              {profile.user_type}
+            </p>
+            <p className="text-sm text-gray-600 mt-2">{profile.about_us}</p>
           </>
         ) : null}
 
         <div className="flex gap-2 mt-4">
           <button className="bg-gray-100 text-blue-600 text-sm px-3 py-1 rounded">
-            {loading ? 'Loading...' : `${followersCount} followers`}
+            {loading ? "Loading..." : `${followersCount} followers`}
           </button>
           <button className="bg-gray-100 text-blue-600 text-sm px-3 py-1 rounded">
-            {loading ? 'Loading...' : `${followingCount} following`}
+            {loading ? "Loading..." : `${followingCount} following`}
           </button>
         </div>
       </div>
-
-     
     </div>
   );
 }

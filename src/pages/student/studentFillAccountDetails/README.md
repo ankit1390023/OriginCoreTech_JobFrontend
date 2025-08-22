@@ -5,6 +5,7 @@ This is a multi-step form component for students to fill in their account detail
 ## Form Steps
 
 ### Step 1: Personal Information
+
 - First Name (required)
 - Last Name (required)
 - Email ID (required, read-only)
@@ -14,6 +15,7 @@ This is a multi-step form component for students to fill in their account detail
 - Gender (required)
 
 ### Step 2: Education Information
+
 - Type selection (required):
   - School Student
   - College Student
@@ -21,17 +23,20 @@ This is a multi-step form component for students to fill in their account detail
   - Working Professional
 
 **Conditional fields based on type:**
+
 - **School Student**: Standard (Class XII, Class XI, Class X or below)
 - **College Student/Fresher**: Course, College Name, Specialization, Start Year, End Year
 - **Working Professional**: Experience, Job Role, Company, Start Year, End Year, Salary
 
 ### Step 3: Skills
+
 - Domain selection with search functionality
 - Skill selection for each domain
 - Certificate upload for each domain
 - Company/Institution where skills were learned
 
 ### Step 4: Preferences
+
 - Currently looking for: Jobs, Internship, Project (multiple selection)
 - Work mode: In-office, Hybrid, Work from home (multiple selection)
 
@@ -67,7 +72,7 @@ This is a multi-step form component for students to fill in their account detail
 ## Usage
 
 ```jsx
-import StudentFillAccountDetails from './StudentFillAccountDetails';
+import StudentFillAccountDetails from "./StudentFillAccountDetails";
 
 // The component automatically handles:
 // - User authentication check
@@ -79,13 +84,14 @@ import StudentFillAccountDetails from './StudentFillAccountDetails';
 ## API Endpoints Used
 
 - `POST /user-details/detail` - Create user details
-- `PUT /user-details/detail/:userId` - Update user details
-- `GET /user-details/detail/:userId` - Check if user details exist
+- `PUT /user-details/detail/:user_id` - Update user details
+- `GET /user-details/detail/:user_id` - Check if user details exist
 
 ## Error Handling
 
 The form handles various error scenarios:
+
 - Authentication errors (redirects to login)
 - Validation errors (shows field-specific messages)
 - API errors (shows backend error messages)
-- Network errors (shows generic error message) 
+- Network errors (shows generic error message)
