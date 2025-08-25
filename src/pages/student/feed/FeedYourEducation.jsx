@@ -444,85 +444,8 @@ const FeedYourEducation = () => {
 
         {/* Responsive Main Card */}
         <section className="w-full max-w-[95vw] sm:max-w-[600px] md:max-w-[700px] lg:max-w-[800px] h-auto p-3 sm:p-4 md:p-5 lg:p-6 rounded-[5px] bg-white flex flex-col shadow-lg gap-3 sm:gap-4 mt-2 mx-auto">
-          {/* Loading State */}
-          {isLoading && (
-            <div className="flex items-center justify-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-              <span className="ml-3 text-gray-600">
-                Loading education data...
-              </span>
-            </div>
-          )}
-
-          {/* Success State - API Data Loaded */}
-          {!isLoading && !error && !isUsingFallbackData && (
-            <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-4">
-              <div className="flex items-center">
-                <svg
-                  className="w-4 h-4 text-green-500 mr-2"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                <span className="text-green-800 text-sm">
-                  Education data loaded successfully from server
-                </span>
-              </div>
-            </div>
-          )}
-
-          {/* Error State */}
-          {error && !isLoading && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <svg
-                    className="w-5 h-5 text-red-400 mr-2"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  <span className="text-red-800 text-sm">{error}</span>
-                </div>
-                <button
-                  onClick={fetchEducationData}
-                  className="text-red-600 hover:text-red-800 text-sm font-medium underline"
-                >
-                  Retry
-                </button>
-              </div>
-              <p className="text-red-600 text-xs mt-1">
-                Using fallback data. Some features may be limited.
-              </p>
-            </div>
-          )}
-
-          {/* Debug Info - Only show in development */}
-          {import.meta.env.DEV && user && (
-            <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 mb-4">
-              <div className="text-xs text-gray-600">
-                <div className="font-medium mb-1">
-                  Debug Info (Development Only):
-                </div>
-                <div>User ID: {user._id || user.id || "N/A"}</div>
-                <div>Email: {user.email || "N/A"}</div>
-                <div>Name: {user.name || "N/A"}</div>
-                <div>Authenticated: {isAuthenticated ? "Yes" : "No"}</div>
-                <div>Token: {token ? "Present" : "Missing"}</div>
-              </div>
-            </div>
-          )}
-
+        
+        
           <div className="bg-white rounded  w-full flex flex-col">
             {/* Header */}
             <div className="mb-4 sm:mb-6 px-4 sm:px-6 pt-4 sm:pt-6">
@@ -537,24 +460,7 @@ const FeedYourEducation = () => {
                   <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-black">
                     Your Education
                   </h1>
-                  <div className="flex items-center gap-2 mt-1">
-                    {!isLoading && (
-                      <span
-                        className={`text-xs px-2 py-1 rounded-full ${
-                          isUsingFallbackData
-                            ? "bg-yellow-100 text-yellow-800"
-                            : "bg-green-100 text-green-800"
-                        }`}
-                      >
-                        {isUsingFallbackData ? "Offline Mode" : "Live Data"}
-                      </span>
-                    )}
-                    {user && (
-                      <span className="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-800">
-                        {user.name || user.email}
-                      </span>
-                    )}
-                  </div>
+                 
                 </div>
               </div>
               {/* Search Bar */}

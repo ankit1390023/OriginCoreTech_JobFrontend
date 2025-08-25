@@ -333,7 +333,7 @@ export default function FeedPage() {
                         }
                       />
                       <button
-                        className="bg-blue-500 hover:bg-blue-600 text-white px-2 py-2 rounded- text-sm transition-colors"
+                        className="text-blue-500 bg-white border rounded-lg px-1 py-2"
                         onClick={() => handleComment(post.id)}
                       >
                         Comment
@@ -372,7 +372,7 @@ export default function FeedPage() {
                                   {comment.comment}
                                 </p>
                                 <button
-                                  className="text-blue-500 text-xs hover:text-blue-600 transition-colors"
+                                  className="text-blue-500 bg-white border rounded-lg px-3 py-1 text-xs hover:text-blue-600 transition-colors"
                                   onClick={() => toggleReplies(comment.id)}
                                 >
                                   Reply
@@ -395,7 +395,7 @@ export default function FeedPage() {
                                       }
                                     />
                                     <button
-                                      className="bg-blue-400 hover:bg-blue-500 text-white px-2 py-1 rounded-lg text-xs transition-colors"
+                                      className=" text-blue-500 bg-white border rounded-lg px-4 py-1 text-xs transition-colors"
                                       onClick={(e) => {
                                         e.preventDefault();
                                         const replyText =

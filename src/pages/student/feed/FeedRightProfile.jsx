@@ -114,7 +114,8 @@ export default function FeedRightProfile() {
               <h2 className="text-lg font-bold text-gray-800">
                 {profile.first_name} {profile.last_name}
               </h2>
-              <p className="text-sm text-gray-500">{profile.email}</p>
+              <p className="text-sm text-gray-500">{user?.email}</p>
+
               <p className="text-sm text-gray-700 font-semibold mt-1">
                 {profile.user_type}
               </p>

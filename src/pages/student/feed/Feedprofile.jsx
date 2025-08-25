@@ -16,17 +16,50 @@ import {
 import { HiOutlineEye } from 'react-icons/hi';
 import FeedRightProfile from '../feed/FeedRightProfile';
 import MainLayout from '../../../components/layout/MainLayout';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../../redux/feature/authSlice';
+import softDeleteAccount from '../../../api/feedApi'; 
 
 const Feedprofile = () => {
   const [activeDropdown, setActiveDropdown] = useState(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  // ✅ Assuming you store token and user in Redux
+  const { token, user } = useSelector((state) => state.auth);
+
   const toggleDropdown = (id) => {
     setActiveDropdown(activeDropdown === id ? null : id);
   };
+
+ // ✅ Delete Account handler 
+const handleDeleteAccount = async () => {
+  try {
+
+    // confirmation prompt
+    if (!window.confirm("Are you sure you want to delete your account?")) {
+      return;
+    }
+
+    // ✅ Call API correctly
+    const response = await softDeleteAccount(
+      { user_Id: user._id },  
+      token
+    );
+
+    if (response?.success) {
+      // ✅ After delete → log out user
+      dispatch(logout());
+      navigate('/login');
+    } else {
+      alert(response?.message || "Failed to delete account.");
+    }
+  } catch (error) {
+    console.error("Failed to delete account", error);
+    alert(error.response?.data?.message || "Something went wrong while deleting account.");
+  }
+};
+
 
   const profileOptions = [
     {
@@ -58,21 +91,19 @@ const Feedprofile = () => {
       title: 'Help & Support',
       hasChevron: true,
       action: () => navigate('/feed-faq'),
-      // no navigate here → handled by toggleDropdown
     },
     {
       id: 'manage',
       icon: <Settings size={20} />,
       title: 'Manage Account',
       hasChevron: true,
-      // no navigate here → handled by toggleDropdown
-    },
+      },
     {
       id: 'notifications',
       icon: <Bell size={20} />,
       title: 'Notifications',
       hasChevron: true,
-      action: () => navigate('/feed-notifications'),
+      action: () => navigate('/application-mynotification'),
     },
     {
       id: 'logout',
@@ -108,13 +139,13 @@ const Feedprofile = () => {
               </div>
             </div>
             <button
-              className="border border-white rounded-full px-3 py-2 sm:px-4 sm:py-2.5 text-xs sm:text-sm text-[#002B6B] transition-colors flex items-center gap-1.5 sm:gap-2 self-start sm:self-auto whitespace-nowrap min-h-[44px] sm:min-h-[40px]"
-              onClick={() => navigate('/feed-my-profile')}
-            >
-              <HiOutlineEye size={14} className="sm:w-4 sm:h-4" />
-              <span className="hidden xs:inline">Profile</span>
-              <span className="xs:hidden">View</span>
-            </button>
+  className="border border-white rounded-full px-3 py-2 sm:px-4 sm:py-2.5 text-xs sm:text-sm text-[#002B6B] transition-colors flex items-center gap-1.5 sm:gap-2 self-start sm:self-auto whitespace-nowrap min-h-[44px] sm:min-h-[40px]"
+  onClick={() => navigate('/feed-my-profile')}
+>
+  <HiOutlineEye size={14} className="sm:w-4 sm:h-4" />
+  <span>Profile</span>
+</button>
+
           </div>
 
           {/* Main Content */}
@@ -184,7 +215,7 @@ const Feedprofile = () => {
                             {
                               icon: <Trash2 size={16} />,
                               label: 'Delete my account',
-                              action: () => console.log('Delete account'),
+                              action: handleDeleteAccount, // ✅ use API call here
                             },
                           ]
                       ).map((item, i) => (
@@ -205,6 +236,7 @@ const Feedprofile = () => {
                       ))}
                     </div>
                   )}
+                  
               </div>
             ))}
           </div>

@@ -4,9 +4,15 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import AuthLayout from "../../components/layout/AuthLayout";
-import { Input, Button, Link, SuccessMessage, ErrorMessage } from "../../components/ui";
-
+import {
+  Input,
+  Button,
+  Link,
+  SuccessMessage,
+  ErrorMessage,
+} from "../../components/ui";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
@@ -23,6 +29,7 @@ const schema = z
   });
 
 export default function ForgotPassword() {
+  const { user } = useSelector((state) => state.auth); // ✅ Redux user
   const [otpLoading, setOtpLoading] = useState(false);
   const [otpSent, setOtpSent] = useState(false);
   const [otpError, setOtpError] = useState("");
@@ -34,7 +41,6 @@ export default function ForgotPassword() {
   const {
     register,
     handleSubmit,
-    setError,
     formState: { errors },
     getValues,
     setValue,
@@ -51,16 +57,14 @@ export default function ForgotPassword() {
 
   const emailValue = watch("email");
 
-  // Get logged-in user's email from localStorage
+  // ✅ Get email from Redux user instead of localStorage
   useEffect(() => {
-    const rememberedEmail = localStorage.getItem("userEmail");
-    console.log("rememberedEmail", rememberedEmail);    
-    if (rememberedEmail) {
-      setValue("email", rememberedEmail);
+    if (user?.email) {
+      setValue("email", user.email);
     } else {
       setValue("email", "");
     }
-  }, [setValue]);
+  }, [user, setValue]);
 
   // Handler for sending OTP
   const handleGetOtp = async () => {
@@ -79,7 +83,7 @@ export default function ForgotPassword() {
       const response = await axios.post(`${BASE_URL}/otp/send-otp`, {
         email: email,
       });
-      // console.log("response from forgot password", response)
+
       if (response.data.message === "OTP sent successfully") {
         alert("OTP sent successfully! Check your email.");
         setOtpSent(true);
@@ -106,6 +110,12 @@ export default function ForgotPassword() {
     setSaveError("");
     setSaveSuccess("");
 
+    console.log("Resetting password with:", {
+      email: data.email,
+      otp: data.otp,
+      newPassword: data.newPassword,
+    });
+
     try {
       const response = await axios.post(
         `${BASE_URL}/users/resetPasswordWithOtp`,
@@ -115,13 +125,16 @@ export default function ForgotPassword() {
           newPassword: data.newPassword,
         }
       );
-      console.log("response from reset Password", response);
-      console.log("response.data.message", response.data.message);
+
       if (response.data.message === "Password reset successfully") {
-        alert("Password changed successfully! You can now login with your new password.");
-        setSaveSuccess("Password changed successfully! You can now login with your new password.");
+        alert(
+          "Password changed successfully! You can now login with your new password."
+        );
+        setSaveSuccess(
+          "Password changed successfully! You can now login with your new password."
+        );
+
         // Clear form after successful password reset
-        setValue("email", "");
         setValue("otp", "");
         setValue("newPassword", "");
         setValue("retypePassword", "");
@@ -162,7 +175,7 @@ export default function ForgotPassword() {
         onSubmit={handleSubmit(onSubmit)}
         className="bg-white rounded-lg shadow-md p-4 sm:p-6 w-full max-w-full sm:max-w-sm md:max-w-md"
       >
-        {/* Email Input - Using new UI component */}
+        {/* Email Input */}
         <Input
           label="Email Address"
           type="email"
@@ -170,9 +183,10 @@ export default function ForgotPassword() {
           error={errors.email?.message}
           variant={errors.email ? "error" : "default"}
           {...register("email")}
+          disabled={!!user?.email} // ✅ lock if from Redux
         />
 
-        {/* Get OTP Button - Using new UI component */}
+        {/* Get OTP Button */}
         <Button
           type="button"
           onClick={handleGetOtp}
@@ -183,7 +197,7 @@ export default function ForgotPassword() {
           {otpLoading ? "Sending OTP..." : "Get OTP"}
         </Button>
 
-        {/* OTP Input - Using new UI component */}
+        {/* OTP Input */}
         <Input
           label="Enter OTP to verify your Email"
           type="text"
@@ -194,14 +208,14 @@ export default function ForgotPassword() {
           {...register("otp")}
         />
 
-        {/* Success message for OTP - Using new UI component */}
+        {/* Success message for OTP */}
         {otpSent && (
           <SuccessMessage className="mt-0.5 mb-2 sm:mb-3">
             OTP sent successfully! Check your email.
           </SuccessMessage>
         )}
 
-        {/* New Password Input - Using new UI component */}
+        {/* New Password */}
         <Input
           label="New Password"
           type="password"
@@ -211,7 +225,7 @@ export default function ForgotPassword() {
           {...register("newPassword")}
         />
 
-        {/* Retype Password Input - Using new UI component */}
+        {/* Retype Password */}
         <Input
           label="Retype Password"
           type="password"
@@ -221,7 +235,7 @@ export default function ForgotPassword() {
           {...register("retypePassword")}
         />
 
-        {/* Save Changes Button - Using new UI component */}
+        {/* Save Changes Button */}
         <div className="flex justify-center">
           <Button
             type="submit"
@@ -233,16 +247,12 @@ export default function ForgotPassword() {
           </Button>
         </div>
 
-        {/* Error and Success Messages - Using new UI components */}
+        {/* Error and Success Messages */}
         {saveError && (
-          <ErrorMessage className="mt-2 sm:mt-3">
-            {saveError}
-          </ErrorMessage>
+          <ErrorMessage className="mt-2 sm:mt-3">{saveError}</ErrorMessage>
         )}
         {saveSuccess && (
-          <SuccessMessage className="mt-2 sm:mt-3">
-            {saveSuccess}
-          </SuccessMessage>
+          <SuccessMessage className="mt-2 sm:mt-3">{saveSuccess}</SuccessMessage>
         )}
       </form>
     </AuthLayout>

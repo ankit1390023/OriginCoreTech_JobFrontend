@@ -4,7 +4,7 @@ import axios from 'axios';
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const initialState = {
-  user: null,
+  user: JSON.parse(localStorage.getItem("user")) || null,
   token: localStorage.getItem('authToken') || null,
   isAuthenticated: !!localStorage.getItem('authToken'),
   loading: false,
@@ -19,16 +19,14 @@ export const login = createAsyncThunk(
       const response = await axios.post(
         `${BASE_URL}/users/login`,
         {
-          email,          // ✅ for backend expecting `email`
-          userEmail: email, // ✅ fallback for backend expecting `userEmail`
+          email,          // backend expects `email`
+          userEmail: email, // fallback if backend expects `userEmail`
           password,
         },
         {
           headers: { 'Content-Type': 'application/json' },
         }
       );
-
-      console.log('Login API response:', response.data);
 
       const data = response.data;
       const user = data.user || data.data?.user;
@@ -38,13 +36,12 @@ export const login = createAsyncThunk(
         throw new Error('Invalid response format from server');
       }
 
-      // ✅ Persist token
+      // ✅ Persist token + user
       localStorage.setItem('authToken', token);
+      localStorage.setItem('user', JSON.stringify(user));
 
       return { user, token };
     } catch (error) {
-      console.log('Login API error:', error.response?.data || error);
-
       return rejectWithValue(
         error.response?.data?.message ||
           error.response?.statusText ||
@@ -71,7 +68,9 @@ export const signup = createAsyncThunk(
         throw new Error('Invalid response format from server');
       }
 
+      // ✅ Persist token + user
       localStorage.setItem('authToken', token);
+      localStorage.setItem('user', JSON.stringify(user));
 
       return { user, token };
     } catch (error) {
@@ -94,7 +93,22 @@ const authSlice = createSlice({
       state.isAuthenticated = false;
       state.loading = false;
       state.error = null;
-      localStorage.removeItem('authToken'); // 🧹 clear token
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('user'); // ✅ clear user
+    },
+
+    // ✅ Generic updateUser reducer
+    updateUser: (state, action) => {
+      state.user = { ...state.user, ...action.payload };
+      localStorage.setItem("user", JSON.stringify(state.user)); // keep in sync
+    },
+
+    // ✅ Explicit updateEmail reducer for clarity
+    updateEmail: (state, action) => {
+      if (state.user) {
+        state.user.email = action.payload;
+        localStorage.setItem("user", JSON.stringify(state.user));
+      }
     },
   },
   extraReducers: (builder) => {
@@ -105,7 +119,6 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(login.fulfilled, (state, action) => {
-        console.log('Login fulfilled with payload:', action.payload);
         state.user = action.payload.user;
         state.token = action.payload.token;
         state.isAuthenticated = true;
@@ -113,7 +126,6 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(login.rejected, (state, action) => {
-        console.log('Login rejected with error:', action.payload);
         state.loading = false;
         state.error = action.payload;
         state.isAuthenticated = false;
@@ -139,5 +151,7 @@ const authSlice = createSlice({
   },
 });
 
-export const { logout } = authSlice.actions;
+// ✅ Export both actions
+export const { logout, updateUser, updateEmail } = authSlice.actions;
+
 export default authSlice.reducer;

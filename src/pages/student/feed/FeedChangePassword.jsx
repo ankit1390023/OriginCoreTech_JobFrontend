@@ -4,6 +4,7 @@ import MainLayout from '../../../components/layout/MainLayout';
 import { HiOutlineEye, HiOutlineEyeOff } from 'react-icons/hi';
 import FeedRightProfile from '../feed/FeedRightProfile';
 import { userProfileApi } from '../../../api/userProfileApi';
+import { useSelector } from 'react-redux';
 
 const FeedChangePassword = () => {
   const [oldPassword, setOldPassword] = useState('');
@@ -16,12 +17,15 @@ const FeedChangePassword = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
 
+  // ✅ Get token from Redux store
+  const token = useSelector((state) => state.auth.token);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setSuccess(false);
 
-    // Validation
+    // ✅ Validation
     if (!oldPassword.trim() || !newPassword.trim() || !retypePassword.trim()) {
       setError('Please fill in all fields.');
       return;
@@ -39,14 +43,13 @@ const FeedChangePassword = () => {
 
     setLoading(true);
     try {
-      const data = { 
-        oldPassword, 
-        newPassword, 
-        retypePassword 
-      };
-      await userProfileApi.changePassword(data);
+      // ✅ Only send what backend expects
+      const payload = { oldPassword, newPassword };
+
+      await userProfileApi.changePassword(payload, token);
+
       setSuccess(true);
-      // Clear form after successful password change
+      // Clear form
       setOldPassword('');
       setNewPassword('');
       setRetypePassword('');
@@ -63,15 +66,17 @@ const FeedChangePassword = () => {
 
   return (
     <MainLayout>
-     <div className="flex justify-between gap-2 bg-gray-100 min-h-screen px-2 lg:px-8"> {/* Left Spacer */}
+      <div className="flex justify-between gap-2 bg-gray-100 min-h-screen px-2 lg:px-8">
+        {/* Left Spacer */}
         <div className="hidden lg:block flex-grow"></div>
-        <section
-     className="bg-white rounded-[10px] p-5 shadow-lg mt-2 w-[780px] h-[500px] opacity-100 gap-[10px]"
-    >
+
+        {/* Password Change Section */}
+        <section className="bg-white rounded-[10px] p-5 shadow-lg mt-2 w-[780px] h-[500px] opacity-100 gap-[10px]">
           <h2 className="text-2xl sm:text-3xl font-bold mb-1">Change password</h2>
           <p className="text-gray-500 text-xs sm:text-sm mb-4">
             Please enter your current password and choose a new password to update your account security.
           </p>
+
           <form className="flex flex-col gap-4 flex-1" onSubmit={handleSubmit}>
             {/* Old Password Input */}
             <div className="relative">
@@ -86,7 +91,7 @@ const FeedChangePassword = () => {
               />
               <button
                 type="button"
-                className="absolute right-3 bg-white  bottom-2.5 text-gray-400 hover:text-gray-700 focus:outline-none"
+                className="absolute right-3 bg-white bottom-2.5 text-gray-400 hover:text-gray-700 focus:outline-none"
                 tabIndex={-1}
                 onClick={() => setShowOldPassword((prev) => !prev)}
               >
@@ -97,7 +102,7 @@ const FeedChangePassword = () => {
             {/* New Password Input */}
             <div className="relative">
               <Input
-                label="Password"
+                label="New password"
                 type={showNewPassword ? 'text' : 'password'}
                 value={newPassword}
                 onChange={e => setNewPassword(e.target.value)}
@@ -118,7 +123,7 @@ const FeedChangePassword = () => {
             {/* Retype Password Input */}
             <div className="relative">
               <Input
-                label="Retype Password"
+                label="Retype password"
                 type={showRetypePassword ? 'text' : 'password'}
                 value={retypePassword}
                 onChange={e => setRetypePassword(e.target.value)}
@@ -136,9 +141,11 @@ const FeedChangePassword = () => {
               </button>
             </div>
 
+            {/* Messages */}
             {error && <div className="text-red-500 text-xs">{error}</div>}
             {success && <div className="text-green-600 text-xs">Password changed successfully!</div>}
             
+            {/* Submit Button */}
             <div className="flex justify-center mt-2">
               <Button
                 type="submit"
@@ -150,10 +157,12 @@ const FeedChangePassword = () => {
             </div>
           </form>
         </section>
-        {/* Profile Card (only on large screens) */}
+
+        {/* Profile Card */}
         <aside className="hidden lg:block w-full max-w-[350px] p-2 sticky top-4 h-fit">
           <FeedRightProfile />
         </aside>
+
         {/* Right Spacer */}
         <div className="hidden lg:block flex-grow"></div>
       </div>

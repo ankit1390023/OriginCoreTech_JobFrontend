@@ -155,43 +155,58 @@ export default function SignUpVerifyOtpEmail() {
             </p>
             {/* OTP Input - 4 separate boxes */}
             <div className="mb-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Enter OTP to verify your email
-              </label>
-              <div className="flex gap-2 justify-center">
-                {[0, 1, 2, 3].map((index) => (
-                  <div key={index} className="flex-1">
-                    <input
-                      ref={inputRefs[index]}
-                      type="text"
-                      maxLength={1}
-                      disabled={loading}
-                      className={`w-full h-12 text-center text-lg font-semibold border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                        errors[`otp${index + 1}`]
-                          ? "border-red-500 bg-red-50"
-                          : "border-gray-300 hover:border-gray-400"
-                      }`}
-                      placeholder="0"
-                      {...register(`otp${index + 1}`)}
-                      onChange={(e) =>
-                        setValue(`otp${index + 1}`, e.target.value)
-                      }
-                      onPaste={handlePaste}
-                    />
-                  </div>
-                ))}
-              </div>
-              {(errors.otp1 || errors.otp2 || errors.otp3 || errors.otp4) && (
-                <p className="text-red-500 text-xs mt-1">
-                  Please enter a valid 4-digit OTP
-                </p>
-              )}
-              {!errors.otp1 && !errors.otp2 && !errors.otp3 && !errors.otp4 && (
-                <span className="text-xs text-gray-500 mt-0.5 block">
-                  Enter the 4-digit verification code
-                </span>
-              )}
-            </div>
+  <label className="block text-sm font-medium text-gray-700 mb-2">
+    Enter OTP to verify your email
+  </label>
+  <div className="flex gap-2 justify-center">
+    {[0, 1, 2, 3].map((index) => (
+      <div key={index} className="flex-1">
+        <input
+          ref={inputRefs[index]}
+          type="text"
+          maxLength={1}
+          disabled={loading}
+          className={`w-full h-12 text-center text-lg font-semibold border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+            errors[`otp${index + 1}`]
+              ? "border-red-500 bg-red-50"
+              : "border-gray-300 hover:border-gray-400"
+          }`}
+          placeholder="0"
+          {...register(`otp${index + 1}`)}
+          onChange={(e) => {
+            const value = e.target.value;
+            setValue(`otp${index + 1}`, value);
+
+            if (value && index < 3) {
+              // ✅ Move to next input
+              inputRefs[index + 1]?.current?.focus();
+            }
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Backspace" && !e.target.value && index > 0) {
+              // ✅ Move back on Backspace
+              inputRefs[index - 1]?.current?.focus();
+            }
+          }}
+          onPaste={handlePaste}
+        />
+      </div>
+    ))}
+  </div>
+
+  {(errors.otp1 || errors.otp2 || errors.otp3 || errors.otp4) && (
+    <p className="text-red-500 text-xs mt-1">
+      Please enter a valid 4-digit OTP
+    </p>
+  )}
+  {!errors.otp1 && !errors.otp2 && !errors.otp3 && !errors.otp4 && (
+    <span className="text-xs text-gray-500 mt-0.5 block">
+      Enter the 4-digit verification code
+    </span>
+  )}
+</div>
+
+
           </div>
           {/* Submit Button - Using new UI component */}
           <Button

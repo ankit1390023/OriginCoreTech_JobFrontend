@@ -27,11 +27,8 @@ const FeedMyProfile = () => {
   const {
     followersCount,
     followingCount,
-    isFollowing,
-    followLoading,
     fetchFollowersAndFollowing,
     checkFollowStatus,
-    handleFollowToggle,
   } = useFeedApi();
 
   // State for UI controls
@@ -131,28 +128,7 @@ const FeedMyProfile = () => {
                 </>
               ) : null}
             </div>
-
-            {/* Follow/Unfollow Button - hidden if viewing own profile */}
-            {profile && localStorage.getItem("user_id") !== profile._id && (
-              <Button
-                variant={isFollowing ? "secondary" : "primary"}
-                size="default"
-                className={`px-8 ${
-                  isFollowing
-                    ? "bg-gray-500 text-black"
-                    : "bg-blue-500 text-white"
-                } border-radius-md`}
-                onClick={() => handleFollowToggle(profile._id)}
-                disabled={followLoading}
-              >
-                {followLoading
-                  ? "Processing..."
-                  : isFollowing
-                  ? "Unfollow"
-                  : "Follow"}
-              </Button>
-            )}
-
+            
             <div className="flex flex-wrap items-center gap-2 mt-4 justify-center">
               <span className="bg-gray-100 text-blue-600 text-sm px-3 py-1 rounded">
                 {followersCount} followers

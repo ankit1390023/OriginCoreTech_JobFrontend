@@ -3,6 +3,7 @@ import axios from "axios";
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 export const applicationApi = {
+
   applyForJob: async (job_id, applicationData, token) => {
     try {
       // Validate required fields before making the request
@@ -45,4 +46,6 @@ export const applicationApi = {
       };
     }
   },
+   
+
 };

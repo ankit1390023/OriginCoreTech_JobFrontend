@@ -160,7 +160,7 @@ const feedApi = {
   getTermsAndCondition: async (token) => {
     try {
       const response = await axios.get(
-        `${BASE_URL}/user-details/getTermsAndCondition`,
+        `${BASE_URL}/user-details/getterms_and_condition`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -213,6 +213,26 @@ const feedApi = {
       throw error;
     }
   },
+
+  softDeleteAccount: async (data, token) => {
+    try {
+      const response = await axios.delete(
+        `${BASE_URL}/user-details/softDeleteAccount`,
+        data,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.log("error while soft deleting account", error);
+      throw error;
+    }
+  },  
+
 };
 
 export default feedApi;

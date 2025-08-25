@@ -157,4 +157,5 @@ export const userDetailsApi = {
       };
     }
   },
+
 };
