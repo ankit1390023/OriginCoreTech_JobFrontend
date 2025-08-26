@@ -10,7 +10,7 @@ import ProgressBar from "./ProgressBar";
 import SkillsForm from "./SkillsForm";
 import PreferencesForm from "./PreferencesForm";
 import { userDetailsApi } from "../../../api/userDetailsApi";
-import { useEducationData } from "../../../hooks/useEducationData";
+import { useMasterData } from "../../../hooks/master/useMasterData";
 import { Button } from "../../../components/ui";
 import SignUpLayoutForLarge from "../../../components/layout/SignUpLayoutForLarge";
 
@@ -76,7 +76,8 @@ const formSchema = z.object({
 
 export default function StudentFillAccountDetails() {
   const { user, token } = useSelector((state) => state.auth);
-  const { data: educationData } = useEducationData();
+  const { schoolColleges, courses, specializations } = useMasterData();
+  const educationData = { schoolColleges, courses, specializations };
   const methods = useForm({
     mode: "onTouched",
     resolver: zodResolver(formSchema),
@@ -231,7 +232,7 @@ export default function StudentFillAccountDetails() {
           (spec) => spec.name === formData.specialization
         );
         // Find college ID by name
-        const selectedCollege = educationData?.colleges?.find(
+        const selectedCollege = educationData?.schoolColleges?.find(
           (college) => college.name === formData.college
         );
 
@@ -417,7 +418,7 @@ export default function StudentFillAccountDetails() {
           <form onSubmit={methods.handleSubmit(handleSubmitClick)}>
             {step === 0 && <PersonalInfo />}
             {step === 1 && <EducationInfo />}
-            {step === 2 && <SkillsForm />}
+            {step === 2 && <SkillsForm onBack={onBack} onNext={onNext} />}
             {step === 3 && <PreferencesForm />}
             <div className="flex justify-between mt-8">
               {step > 0 ? (

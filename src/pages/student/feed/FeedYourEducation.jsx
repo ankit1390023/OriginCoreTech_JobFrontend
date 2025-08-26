@@ -5,13 +5,24 @@ import { Input, Select, Button, Badge } from "../../../components/ui";
 import MainLayout from "../../../components/layout/MainLayout";
 import FeedRightSide1 from "../feed/FeedRightSide1";
 import { IoIosArrowBack } from "react-icons/io";
-import { educationApi } from "../../../api/educationApi";
+import { useMasterData } from "../../../hooks/master/useMasterData";
 
 const FeedYourEducation = () => {
   const navigate = useNavigate();
 
   // Redux state for authentication
-  const { user, token, isAuthenticated } = useSelector((state) => state.auth);
+  const { user, isAuthenticated } = useSelector((state) => state.auth);
+
+  // Use master data hook
+  const {
+    courses = [],
+    specializations = [],
+    schoolColleges: colleges = [],
+    jobRoles = [],
+    locations = [],
+    loading: isMasterDataLoading,
+    error: masterDataError
+  } = useMasterData();
 
   // State for API data
   const [educationData, setEducationData] = useState({
@@ -25,119 +36,40 @@ const FeedYourEducation = () => {
   const [error, setError] = useState(null);
   const [isUsingFallbackData, setIsUsingFallbackData] = useState(false);
 
-  // Fetch education data from API
-  const fetchEducationData = async () => {
-    try {
-      setIsLoading(true);
-      setError(null);
-
-      // Check if user is authenticated and has token from Redux
-      if (!isAuthenticated || !token) {
-        throw new Error("User not authenticated. Please login to continue.");
+  // Update education data when master data changes
+  useEffect(() => {
+    if (!isMasterDataLoading) {
+      if (masterDataError) {
+        setError(masterDataError);
+        setIsUsingFallbackData(true);
+        // Fallback to dummy data if API fails
+        setEducationData({
+          courses: ["B.Tech", "M.Tech", "MBA", "B.Sc", "M.Sc"],
+          specializations: ["Computer Science", "Mechanical", "Electronics", "Civil", "IT"],
+          colleges: ["IIT Bombay", "NIT Trichy", "BITS Pilani", "VIT Vellore", "SRM"],
+          jobRoles: ["Software Developer", "Data Scientist", "DevOps Engineer"],
+          locations: ["Mumbai", "Bangalore", "Delhi", "Hyderabad", "Pune"]
+        });
+      } else {
+        setEducationData({
+          courses: courses.map(course => course.name || course),
+          specializations: specializations.map(spec => spec.name || spec),
+          colleges: colleges.map(college => college.name || college),
+          jobRoles: jobRoles.map(role => role.name || role),
+          locations: locations.map(loc => loc.name || loc)
+        });
+        setIsUsingFallbackData(false);
       }
-
-      const data = await educationApi.getAllEducationData(token);
-      setEducationData(data);
-      setIsUsingFallbackData(false);
-    } catch (err) {
-      console.error("Error fetching education data:", err);
-      setError(err.message || "Failed to fetch education data");
-      setIsUsingFallbackData(true);
-
-      // Fallback to dummy data if API fails
-      setEducationData({
-        courses: [
-          "B.Tech",
-          "M.Tech",
-          "MBA",
-          "B.Sc",
-          "M.Sc",
-          "BCA",
-          "MCA",
-          "BBA",
-          "PhD",
-          "Diploma",
-          "PGDM",
-          "B.Des",
-          "M.Des",
-          "B.Com",
-          "M.Com",
-          "LLB",
-          "LLM",
-          "MBBS",
-          "B.Pharm",
-          "M.Pharm",
-        ],
-        specializations: [
-          "Computer Science Engineering",
-          "Information Technology",
-          "Electronics and Communication Engineering",
-          "Electrical Engineering",
-          "Mechanical Engineering",
-          "Civil Engineering",
-          "Chemical Engineering",
-          "Biotechnology",
-          "Aerospace Engineering",
-          "Automobile Engineering",
-          "Industrial Engineering",
-          "Textile Engineering",
-          "Agricultural Engineering",
-          "Mining Engineering",
-          "Metallurgical Engineering",
-          "Petroleum Engineering",
-          "Environmental Engineering",
-          "Biomedical Engineering",
-          "Robotics Engineering",
-          "Artificial Intelligence and Machine Learning",
-          "Data Science",
-          "Cybersecurity",
-          "Cloud Computing",
-          "Software Engineering",
-          "Network Engineering",
-        ],
-        colleges: [
-          "Indian Institute of Technology (IIT) Delhi",
-          "Indian Institute of Technology (IIT) Bombay",
-          "Indian Institute of Technology (IIT) Madras",
-          "Indian Institute of Technology (IIT) Kanpur",
-          "Indian Institute of Technology (IIT) Kharagpur",
-          "National Institute of Technology (NIT) Trichy",
-          "National Institute of Technology (NIT) Surathkal",
-          "Delhi Technological University (DTU)",
-          "Netaji Subhas University of Technology (NSUT)",
-          "Vellore Institute of Technology (VIT)",
-          "SRM Institute of Science and Technology",
-          "Manipal Institute of Technology",
-          "BITS Pilani",
-          "Amrita School of Engineering",
-          "PES University",
-          "RV College of Engineering",
-          "MS Ramaiah Institute of Technology",
-          "JSS Academy of Technical Education",
-          "Dayananda Sagar College of Engineering",
-          "Bangalore Institute of Technology",
-        ],
-        jobRoles: [],
-        locations: [],
-      });
-    } finally {
       setIsLoading(false);
     }
-  };
+  }, [isMasterDataLoading, masterDataError, courses, specializations, colleges, jobRoles, locations]);
 
   // Redirect to login if not authenticated
   useEffect(() => {
     if (!isAuthenticated) {
       navigate("/login");
-      return;
     }
   }, [isAuthenticated, navigate]);
-
-  useEffect(() => {
-    if (isAuthenticated && token) {
-      fetchEducationData();
-    }
-  }, [isAuthenticated, token]);
 
   // Education entries state
   const [educationEntries, setEducationEntries] = useState([
@@ -365,11 +297,11 @@ const FeedYourEducation = () => {
               entries.map((entry) =>
                 entry.id === id
                   ? {
-                      ...entry,
-                      certificate: "uploaded",
-                      certificateFile: file,
-                      certificateName: file.name,
-                    }
+                    ...entry,
+                    certificate: "uploaded",
+                    certificateFile: file,
+                    certificateName: file.name,
+                  }
                   : entry
               )
             );
@@ -391,11 +323,11 @@ const FeedYourEducation = () => {
       entries.map((entry) =>
         entry.id === id
           ? {
-              ...entry,
-              certificate: null,
-              certificateFile: null,
-              certificateName: "",
-            }
+            ...entry,
+            certificate: null,
+            certificateFile: null,
+            certificateName: "",
+          }
           : entry
       )
     );
@@ -444,8 +376,8 @@ const FeedYourEducation = () => {
 
         {/* Responsive Main Card */}
         <section className="w-full max-w-[95vw] sm:max-w-[600px] md:max-w-[700px] lg:max-w-[800px] h-auto p-3 sm:p-4 md:p-5 lg:p-6 rounded-[5px] bg-white flex flex-col shadow-lg gap-3 sm:gap-4 mt-2 mx-auto">
-        
-        
+
+
           <div className="bg-white rounded  w-full flex flex-col">
             {/* Header */}
             <div className="mb-4 sm:mb-6 px-4 sm:px-6 pt-4 sm:pt-6">
@@ -460,7 +392,7 @@ const FeedYourEducation = () => {
                   <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-black">
                     Your Education
                   </h1>
-                 
+
                 </div>
               </div>
               {/* Search Bar */}
@@ -522,10 +454,10 @@ const FeedYourEducation = () => {
                           (entry) => entry.course === course
                         )
                     ).length === 0 && (
-                      <div className="px-3 py-2 text-gray-400 text-sm">
-                        No courses found
-                      </div>
-                    )}
+                        <div className="px-3 py-2 text-gray-400 text-sm">
+                          No courses found
+                        </div>
+                      )}
                   </div>
                 )}
               </div>
@@ -921,8 +853,8 @@ const FeedYourEducation = () => {
                         const link = document.createElement("a");
                         link.href = selectedCertificate.certificateFile
                           ? URL.createObjectURL(
-                              selectedCertificate.certificateFile
-                            )
+                            selectedCertificate.certificateFile
+                          )
                           : "#";
                         link.download = selectedCertificate.certificateName;
                         link.click();

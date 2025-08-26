@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useFormContext } from "react-hook-form";
-import { useEducationData } from "../../../hooks/useEducationData";
+import { useMasterData } from "../../../hooks/master/useMasterData";
 import {
   Loader,
   Input,
@@ -8,7 +8,6 @@ import {
   Label,
   ErrorMessage,
 } from "../../../components/ui";
-import { educationApi } from "../../../api/educationApi";
 
 // Generate year options for dropdown
 const generateYearOptions = () => {
@@ -28,76 +27,20 @@ export default function EducationInfo() {
   } = useFormContext();
 
   const {
-    data: { jobRoles, courses, specializations, colleges },
+    data: { jobRoles, courses, specializationByCourse, schoolColleges },
     loading,
     error,
     refetch,
-  } = useEducationData();
+    getSpecializationsForCourse,
+  } = useMasterData();
 
-  // Add state for course-specific specializations and cache
-  const [courseSpecializations, setCourseSpecializations] = useState([]);
-  const [loadingSpecializations, setLoadingSpecializations] = useState(false);
-  const [specializationsCache, setSpecializationsCache] = useState({});
-
-  // Watch the selected course
+  // Get specializations based on selected course
   const selectedCourse = watch("course");
-
-  // Effect to handle course selection and specializations
-  useEffect(() => {
-    const handleCourseSelection = async () => {
-      if (!selectedCourse) {
-        setCourseSpecializations([]);
-        return;
-      }
-
-      const courseObj = courses?.find((c) => c.name === selectedCourse);
-      if (!courseObj) return;
-
-      // Check if we already have the specializations in cache
-      if (specializationsCache[courseObj.id]) {
-        setCourseSpecializations(specializationsCache[courseObj.id]);
-        return;
-      }
-
-      // If not in cache, try to find in pre-fetched specializations first
-      const preFetchedSpecs = specializations?.filter(
-        (spec) => spec.course_id === courseObj.id
-      );
-
-      if (preFetchedSpecs?.length > 0) {
-        setCourseSpecializations(preFetchedSpecs);
-        // Update cache
-        setSpecializationsCache(prev => ({
-          ...prev,
-          [courseObj.id]: preFetchedSpecs
-        }));
-        return;
-      }
-
-      // If not found in pre-fetched data, fetch from API
-      setLoadingSpecializations(true);
-      try {
-        const token = localStorage.getItem("token");
-        const specs = await educationApi.getSpecializationsByCourseId(
-          courseObj.id,
-          token
-        );
-        
-        setCourseSpecializations(specs);
-        // Update cache
-        setSpecializationsCache(prev => ({
-          ...prev,
-          [courseObj.id]: specs
-        }));
-      } catch (error) {
-        console.error("Error fetching specializations:", error);
-      } finally {
-        setLoadingSpecializations(false);
-      }
-    };
-
-    handleCourseSelection();
-  }, [selectedCourse, courses, specializations, specializationsCache]);
+  const courseSpecializations = useMemo(() => {
+    if (!selectedCourse) return [];
+    const course = courses?.find(c => c.name === selectedCourse);
+    return course ? getSpecializationsForCourse(course.id) : [];
+  }, [selectedCourse, courses, getSpecializationsForCourse]);
 
   // State for showing all courses or limited courses
   const [showAll, setShowAll] = useState(false);
@@ -125,11 +68,10 @@ export default function EducationInfo() {
         <Label>Type</Label>
         <div className="flex gap-1 sm:gap-2 flex-wrap">
           <label
-            className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${
-              watch("type") === "School Student"
-                ? "bg-blue-500 text-white border-blue-500"
-                : "bg-gray-100 border-gray-300 hover:border-gray-400"
-            }`}
+            className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${watch("type") === "School Student"
+              ? "bg-blue-500 text-white border-blue-500"
+              : "bg-gray-100 border-gray-300 hover:border-gray-400"
+              }`}
           >
             <input
               type="radio"
@@ -140,11 +82,10 @@ export default function EducationInfo() {
             School Student
           </label>
           <label
-            className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${
-              watch("type") === "College Student"
-                ? "bg-blue-500 text-white border-blue-500"
-                : "bg-gray-100 border-gray-300 hover:border-gray-400"
-            }`}
+            className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${watch("type") === "College Student"
+              ? "bg-blue-500 text-white border-blue-500"
+              : "bg-gray-100 border-gray-300 hover:border-gray-400"
+              }`}
           >
             <input
               type="radio"
@@ -155,11 +96,10 @@ export default function EducationInfo() {
             College Student
           </label>
           <label
-            className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${
-              watch("type") === "Fresher"
-                ? "bg-blue-500 text-white border-blue-500"
-                : "bg-gray-100 border-gray-300 hover:border-gray-400"
-            }`}
+            className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${watch("type") === "Fresher"
+              ? "bg-blue-500 text-white border-blue-500"
+              : "bg-gray-100 border-gray-300 hover:border-gray-400"
+              }`}
           >
             <input
               type="radio"
@@ -170,11 +110,10 @@ export default function EducationInfo() {
             Fresher
           </label>
           <label
-            className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${
-              watch("type") === "Working Professional"
-                ? "bg-blue-500 text-white border-blue-500"
-                : "bg-gray-100 border-gray-300 hover:border-gray-400"
-            }`}
+            className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${watch("type") === "Working Professional"
+              ? "bg-blue-500 text-white border-blue-500"
+              : "bg-gray-100 border-gray-300 hover:border-gray-400"
+              }`}
           >
             <input
               type="radio"
@@ -192,11 +131,10 @@ export default function EducationInfo() {
           <Label>Standard</Label>
           <div className="flex gap-1 sm:gap-2 flex-wrap">
             <label
-              className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${
-                watch("standard") === "Class XII"
-                  ? "bg-blue-500 text-white border-blue-500"
-                  : "bg-gray-100 border-gray-300 hover:border-gray-400"
-              }`}
+              className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${watch("standard") === "Class XII"
+                ? "bg-blue-500 text-white border-blue-500"
+                : "bg-gray-100 border-gray-300 hover:border-gray-400"
+                }`}
             >
               <input
                 type="radio"
@@ -207,11 +145,10 @@ export default function EducationInfo() {
               Class XII
             </label>
             <label
-              className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${
-                watch("standard") === "Class XI"
-                  ? "bg-blue-500 text-white border-blue-500"
-                  : "bg-gray-100 border-gray-300 hover:border-gray-400"
-              }`}
+              className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${watch("standard") === "Class XI"
+                ? "bg-blue-500 text-white border-blue-500"
+                : "bg-gray-100 border-gray-300 hover:border-gray-400"
+                }`}
             >
               <input
                 type="radio"
@@ -222,11 +159,10 @@ export default function EducationInfo() {
               Class XI
             </label>
             <label
-              className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${
-                watch("standard") === "Class X or below"
-                  ? "bg-blue-500 text-white border-blue-500"
-                  : "bg-gray-100 border-gray-300 hover:border-gray-400"
-              }`}
+              className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${watch("standard") === "Class X or below"
+                ? "bg-blue-500 text-white border-blue-500"
+                : "bg-gray-100 border-gray-300 hover:border-gray-400"
+                }`}
             >
               <input
                 type="radio"
@@ -257,11 +193,10 @@ export default function EducationInfo() {
                     visibleCourses.map((course, index) => (
                       <label
                         key={index}
-                        className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${
-                          watch("course") === course.name
-                            ? "bg-blue-500 text-white border-blue-500"
-                            : "bg-gray-100 border-gray-300 hover:border-gray-400"
-                        }`}
+                        className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${watch("course") === course.name
+                          ? "bg-blue-500 text-white border-blue-500"
+                          : "bg-gray-100 border-gray-300 hover:border-gray-400"
+                          }`}
                       >
                         <input
                           type="radio"
@@ -275,7 +210,7 @@ export default function EducationInfo() {
                       </label>
                     ))}
 
-                
+
                 </div>
 
                 {/* Toggle Button */}
@@ -296,36 +231,33 @@ export default function EducationInfo() {
           </div>
 
           <Select
-            label="College Name"
+            label="College/University"
             error={errors.college?.message}
             isLoading={loading}
             options={
-              colleges?.map((college) => ({
+              schoolColleges?.map((college) => ({
                 value: college.name,
                 label: college.name,
               })) || []
             }
-            placeholder="Select a college"
+            placeholder="Select your college/university"
+            value={watch("college") || ""}
             {...register("college", {
-              required: "College Name is required",
+              required: "College/University is required",
             })}
           />
           <Select
             label="Specialization"
             error={errors.specialization?.message}
-            isLoading={loadingSpecializations}
+            isLoading={false}
             options={
               courseSpecializations.map((specialization) => ({
                 value: specialization.name,
                 label: specialization.name,
               })) || []
             }
-            placeholder={
-              loadingSpecializations
-                ? "Loading specializations..."
-                : "Select a specialization"
-            }
-            disabled={!selectedCourse || loadingSpecializations}
+            placeholder="Select a specialization"
+            disabled={!selectedCourse}
             {...register("specialization", {
               required: "Specialization is required",
             })}

@@ -1,177 +1,136 @@
-import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
-import { FaTimes, FaInfoCircle } from "react-icons/fa";
-import { useDomainsApi } from "../../../hooks/useDomainsApi";
-import { useSkillApi } from "../../../hooks/useSkillApi";
-import {
-  Input,
-  Label,
-  Button,
-  ErrorMessage,
-  Loader,
-} from "../../../components/ui";
-import useUploadImageApi from "../../../hooks/useUploadImageApi";
+import React, { useState } from "react";
+import { Input, Label, Button, ErrorMessage, Loader } from "../../../components/ui";
+import useUploadImageApi from '../../../hooks/useUploadImageApi';
+import { useMasterData } from '../../../hooks/master/useMasterData';
+import { FaTimes } from "react-icons/fa";
 
 const initialDomains = [];
 
-export default function DomainsForm() {
+export default function SkillsForm({ onNext, onBack }) {
   const [domains, setDomains] = useState(initialDomains);
-  const [input, setInput] = useState("");
-  const [searchInput, setSearchInput] = useState(""); // New state for search
-  const [domainSkills, setDomainSkills] = useState({}); // Store skills for each domain
-  const [selectedSkills, setSelectedSkills] = useState({}); // Store selected skills for each domain
-  const [showMoreSkills, setShowMoreSkills] = useState({}); // Track show more state for each domain
+  const [searchInput, setSearchInput] = useState("");
+  const [domainSkills, setDomainSkills] = useState({});
+  const [selectedSkills, setSelectedSkills] = useState({});
+  const [showMoreSkills, setShowMoreSkills] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [domainId, setDomainId] = useState(1);
 
-  // Use custom hook for skills API with Web Development as default domain
+  // Use master data hook
   const {
-    allDomains,
-    skillsByDomain,
-    loading: domainsLoading,
-    error: domainsError,
-    refreshDomains,
-    fetchSkillsByDomain,
-  } = useDomainsApi(domainId);
-  console.log("SkillsByDomain ", skillsByDomain);
-  // Use custom hook for skill uploads
-  const {
-    loading: skillUploadLoading,
-    error: skillUploadError,
-    uploadSkills,
-  } = useSkillApi();
+    domains: allDomains,
+    getSkillsForDomain,
+    isLoading: isMasterDataLoading,
+    error: masterDataError
+  } = useMasterData();
 
   // Add the image upload hook
-  const { uploadImage, batchUploadImages } = useUploadImageApi();
-
-  // Get user_id from Redux state
-  const user_id = useSelector((state) => state.auth.user?.id);
+  const { uploadImage } = useUploadImageApi();
 
   // Filter domains based on search input
   const filteredDomains = allDomains.filter((domain) => {
-    const domainName = typeof domain === "string" ? domain : domain.name || "";
-    return (
-      domainName &&
-      domainName.toString().toLowerCase().includes(searchInput.toLowerCase())
-    );
+    const domainName = domain.domain_name || domain.name || domain;
+    return domainName.toLowerCase().includes(searchInput.toLowerCase());
   });
 
   const handleAddDomain = async (domain) => {
-    if (!domains.find((d) => d.id === domain.id)) {
-      // Fetch skills for this specific domain
+    const domainName = domain.domain_name || domain.name || domain;
+    const domainId = domain.id || domain.domain_id;
+
+    if (!domains.find(d => (d.domain_name || d.name) === domainName)) {
       try {
-        const skills = await fetchSkillsByDomain(domain.id);
+        const skills = getSkillsForDomain(domainId) || [];
         setDomainSkills((prev) => ({
           ...prev,
-          [domain.id]: skills,
+          [domainName]: skills,
         }));
-        // Initialize selected skills for this domain
         setSelectedSkills((prev) => ({
           ...prev,
-          [domain.id]: [],
+          [domainName]: [],
         }));
-        // Initialize show more state for this domain
         setShowMoreSkills((prev) => ({
           ...prev,
-          [domain.id]: false,
+          [domainName]: false,
         }));
+
+        setDomains([
+          ...domains,
+          { id: domainId, name: domainName, certificate: null, company: "" },
+        ]);
       } catch (err) {
-        console.error("Error fetching skills for domain:", domain, err);
+        console.error("Error fetching skills for domain:", domainName, err);
         setDomainSkills((prev) => ({
           ...prev,
-          [domain.id]: [],
+          [domainName]: [],
         }));
       }
-
-      setDomains([
-        ...domains,
-        { id: domain.id, name: domain.name, certificate: null, company: "" },
-      ]);
+      setSearchInput("");
     }
-    setInput("");
-    setSearchInput(""); // Clear search input after adding domain
   };
 
-  const handleRemoveDomain = (domainId) => {
-    const domainToRemove = domains.find((domain) => domain.id === domainId);
-    setDomains(domains.filter((domain) => domain.id !== domainId));
+  const handleRemoveDomain = (idx) => {
+    const domainToRemove = domains[idx];
+    setDomains(domains.filter((_, i) => i !== idx));
 
-    // Remove skills for this domain from state
     setDomainSkills((prev) => {
       const newSkills = { ...prev };
-      delete newSkills[domainId];
+      delete newSkills[domainToRemove.name];
       return newSkills;
     });
 
-    // Remove selected skills for this domain
     setSelectedSkills((prev) => {
       const newSelectedSkills = { ...prev };
-      delete newSelectedSkills[domainId];
+      delete newSelectedSkills[domainToRemove.name];
       return newSelectedSkills;
     });
 
-    // Remove show more state for this domain
     setShowMoreSkills((prev) => {
       const newShowMoreSkills = { ...prev };
-      delete newShowMoreSkills[domainId];
+      delete newShowMoreSkills[domainToRemove.name];
       return newShowMoreSkills;
     });
   };
 
-  const handleCompanyChange = (domainId, value) => {
+  const handleCompanyChange = (idx, value) => {
     setDomains(
-      domains.map((domain) =>
-        domain.id === domainId ? { ...domain, company: value } : domain
-      )
+      domains.map((d, i) => (i === idx ? { ...d, company: value } : d))
     );
   };
 
-  const handleCertificateChange = (domainId, file) => {
+  const handleCertificateChange = (idx, file) => {
     setDomains(
-      domains.map((domain) =>
-        domain.id === domainId ? { ...domain, certificate: file } : domain
-      )
+      domains.map((d, i) => (i === idx ? { ...d, certificate: file } : d))
     );
   };
 
-  const handleRetry = async () => {
-    setDomainsError("");
-    try {
-      await refreshDomains();
-    } catch (err) {
-      console.error("Retry failed:", err);
-    }
-  };
-
-  const handleSkillToggle = (domainId, skill) => {
+  const handleSkillToggle = (domainName, skill) => {
     setSelectedSkills((prev) => {
-      const currentSelected = prev[domainId] || [];
-      const isSelected = currentSelected.some((s) => s.id === skill.id);
+      const currentSelected = prev[domainName] || [];
+      const isSelected = currentSelected.some(s => s.skill_id === skill.skill_id);
 
       if (isSelected) {
-        // Remove skill
         return {
           ...prev,
-          [domainId]: currentSelected.filter((s) => s.id !== skill.id),
+          [domainName]: currentSelected.filter((s) => s.skill_id !== skill.skill_id),
         };
       } else {
-        // Add skill
         return {
           ...prev,
-          [domainId]: [...currentSelected, skill],
+          [domainName]: [...currentSelected, skill],
         };
       }
     });
   };
 
-  const toggleShowMoreSkills = (domainId) => {
+  const toggleShowMoreSkills = (domainName) => {
     setShowMoreSkills((prev) => ({
       ...prev,
-      [domainId]: !prev[domainId],
+      [domainName]: !prev[domainName],
     }));
   };
 
-  const handleSubmitSkills = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
     try {
       // Filter domains that have certificates
       const domainsWithCertificates = domains.filter(
@@ -185,85 +144,92 @@ export default function DomainsForm() {
 
       // Prepare skills data for API - only include selected skills
       const skills = [];
-      domainsWithCertificates.forEach((domain) => {
-        const selectedSkillsForDomain = selectedSkills[domain.id] || [];
+      const certificatePromises = [];
+
+      // First, upload all certificates in parallel
+      for (const domain of domainsWithCertificates) {
+        if (domain.certificate) {
+          certificatePromises.push(
+            uploadImage(domain.certificate, 'certificates')
+              .then(url => ({
+                domain: domain.name,
+                url
+              }))
+          );
+        }
+      }
+
+      // Wait for all certificate uploads to complete
+      const uploadedCertificates = await Promise.all(certificatePromises);
+      const certificateMap = {};
+      uploadedCertificates.forEach(item => {
+        certificateMap[item.domain] = item.url;
+      });
+
+      // Now process skills with certificate URLs
+      for (const domain of domainsWithCertificates) {
+        const selectedSkillsForDomain = selectedSkills[domain.name] || [];
+        const certificateUrl = certificateMap[domain.name];
 
         if (selectedSkillsForDomain.length > 0) {
           // Add selected skills for this domain
           selectedSkillsForDomain.forEach((skill) => {
             skills.push({
-              skill_id: skill.id,
-              skill: skill.name,
+              skill: skill.skill_name,
+              domain: domain.name,
               authority: domain.company || "Self",
+              certificate_image: certificateUrl,
             });
           });
-        } else {
+        } else if (certificateUrl) {
           // If no skills selected, add the domain itself
           skills.push({
-            skill_id: domain.id,
             skill: domain.name,
+            domain: domain.name,
             authority: domain.company || "Self",
+            certificate_image: certificateUrl,
           });
         }
-      });
+      }
 
       if (skills.length === 0) {
         alert("Please select at least one skill to submit.");
         return;
       }
 
-      // Get certificate files (in the same order as domainsWithCertificates)
-      const certificateFiles = domainsWithCertificates.map(
-        (domain) => domain.certificate
-      );
-      console.log("Step 1: Certificate files to upload:", certificateFiles);
+      // Upload skills using the API
+      const userId = localStorage.getItem("userId");
 
-      // 1. Upload all certificate files and get URLs (Promise.all)
-      const certificateUrls = await Promise.all(
-        certificateFiles.map((file) => uploadImage(file, "certificateImage"))
-      );
-      console.log("Step 2: Certificate URLs after upload:", certificateUrls);
-
-      // Check for failed uploads
-      if (certificateUrls.some((url) => !url)) {
-        alert("One or more certificate uploads failed. Please try again.");
-        return;
-      }
-
-      // 2. Clean up skills array - remove certificate_image property as it will be sent separately
-      skills.forEach((skill) => {
-        delete skill.certificate_image;
-      });
-      console.log("Step 3: Final skills array (cleaned):", skills);
-
-      // 3. Upload skills using custom hook - pass certificate URLs separately
-      console.log("Step 4: Certificate URLs to pass to API:", certificateUrls);
-      const response = await uploadSkills(user_id, skills, certificateUrls);
-
-      console.log("Skills uploaded successfully:", response);
+      console.log("Skills to be uploaded:", skills);
       alert("Skills uploaded successfully!");
 
-      // Clear form after successful upload
+      // Clear form and move to next step
       setDomains([]);
       setDomainSkills({});
       setSelectedSkills({});
       setShowMoreSkills({});
+
+      // Call onNext if provided
+      if (onNext) {
+        onNext();
+      }
     } catch (error) {
       console.error("Error uploading skills:", error);
-      // Error message is already set in the hook, so we don't need to show alert here
-      // The error will be displayed in the UI below the form
+      alert("Failed to upload skills. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  if (domainsLoading && domains.length === 0) {
-    return <Loader message="Loading domains..." />;
+  if (isMasterDataLoading && domains.length === 0) {
+    return <Loader message="Loading master data..." />;
   }
 
-  if (domainsError && domains.length === 0) {
+  if (masterDataError && domains.length === 0) {
     return (
       <ErrorMessage>
-        {domainsError}
-        <button onClick={handleRetry} className="ml-2 text-blue-500 underline">
+        {masterDataError}
+        <button onClick={() => window.location.reload()} className="ml-2 text-blue-500 underline">
           Retry
         </button>
       </ErrorMessage>
@@ -271,30 +237,18 @@ export default function DomainsForm() {
   }
 
   return (
-    <div
-      onKeyDown={(e) => {
-        if (e.key === "Enter") {
-          e.preventDefault();
-          e.stopPropagation();
-          if (searchInput.trim() && filteredDomains.length > 0) {
-            handleAddDomain(filteredDomains[0]);
-          }
-        }
-      }}
-    >
-      <div className="mb-2 sm:mb-3">
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="mb-4">
         <Label>Areas of Interest</Label>
-        <div className="flex items-center border rounded-md px-1.5 sm:px-2 py-1.5 sm:py-2 mb-1 sm:mb-2 focus-within:ring-1 focus-within:ring-blue-400 focus-within:border-transparent transition-all duration-200 border-gray-300 hover:border-gray-400">
+        <div className="flex items-center border rounded-md px-3 py-2 mb-2 focus-within:ring-2 focus-within:ring-blue-400 focus:border-transparent text-sm transition-all duration-200 border-gray-300 hover:border-gray-400">
           <input
-            type="text"
-            className="flex-1 outline-none text-xs"
+            className="flex-1 outline-none text-sm"
             placeholder="Search and add domains..."
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 e.preventDefault();
-                e.stopPropagation();
                 if (searchInput.trim() && filteredDomains.length > 0) {
                   handleAddDomain(filteredDomains[0]);
                 }
@@ -305,19 +259,17 @@ export default function DomainsForm() {
 
         {/* Show matched domains when searching */}
         {searchInput.trim() && filteredDomains.length > 0 && (
-          <div className="mb-2 sm:mb-3">
-            <div className="text-xs mb-1 sm:mb-2 text-gray-500">
-              Matched domains
-            </div>
-            <div className="flex flex-wrap gap-1 sm:gap-2">
-              {filteredDomains.slice(0, 8).map((domain) => (
+          <div className="mb-3">
+            <div className="text-xs mb-2 text-gray-500 font-medium">Matched domains</div>
+            <div className="flex flex-wrap gap-2">
+              {filteredDomains.slice(0, 8).map((domain, idx) => (
                 <button
-                  key={domain.id}
+                  key={idx}
                   type="button"
-                  className="bg-blue-100 text-blue-800 rounded-md px-1.5 sm:px-2 py-1.5 sm:py-2 text-xs border border-blue-300 hover:border-blue-400 transition-all duration-200"
+                  className="bg-blue-50 text-blue-700 rounded-md px-3 py-1.5 text-sm font-medium border border-blue-100 hover:bg-blue-100 hover:border-blue-200 transition-colors duration-200"
                   onClick={() => handleAddDomain(domain)}
                 >
-                  {domain.name} +
+                  {domain.domain_name || domain.name || domain} +
                 </button>
               ))}
             </div>
@@ -326,61 +278,63 @@ export default function DomainsForm() {
 
         {/* Show "No matches found" message */}
         {searchInput.trim() && filteredDomains.length === 0 && (
-          <div className="mb-2 sm:mb-3">
-            <div className="text-xs text-gray-500">
-              No domains found matching "{searchInput}"
-            </div>
+          <div className="text-sm text-gray-500 py-2">
+            No domains found matching "{searchInput}"
           </div>
         )}
+      </div>
 
-        {/* Display added domains with their related skills */}
-        {domains.map((domain) => (
+      {/* Display added domains with their related skills */}
+      <div className="space-y-4">
+        {domains.map((domain, idx) => (
           <div
-            key={domain.id}
-            className="border rounded-md p-2 sm:p-3 mb-2 sm:mb-3 flex flex-col gap-1 sm:gap-2 relative"
+            key={`${domain.name}-${idx}`}
+            className="border rounded-lg p-4 bg-white hover:shadow-sm transition-shadow duration-200"
           >
-            <div className="flex items-center gap-1 sm:gap-2">
-              <span className="bg-blue-600 text-white px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md text-xs font-medium">
-                {domain.name}
-              </span>
-              <button
-                className="ml-1 sm:ml-2 text-gray-400"
-                onClick={() => handleRemoveDomain(domain.id)}
-                type="button"
-              >
-                <FaTimes className="text-xs" />
-              </button>
-              <button
-                className="ml-1 sm:ml-2 text-blue-500 text-xs underline"
-                type="button"
-                onClick={() =>
-                  document.getElementById(`cert-${domain.id}`).click()
-                }
-              >
-                Upload Certificate
-              </button>
-              <input
-                id={`cert-${domain.id}`}
-                type="file"
-                className="hidden"
-                accept="image/*,.pdf"
-                onChange={(e) =>
-                  handleCertificateChange(domain.id, e.target.files[0])
-                }
-              />
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center">
+                <span className="bg-blue-100 text-blue-800 px-3 py-1.5 rounded-full text-sm font-medium">
+                  {domain.name}
+                </span>
+                <button
+                  type="button"
+                  className="ml-2 text-gray-400 hover:text-red-500 transition-colors"
+                  onClick={() => handleRemoveDomain(idx)}
+                >
+                  <FaTimes className="h-3 w-3" />
+                </button>
+              </div>
+
+              <div>
+                <input
+                  id={`cert-${idx}`}
+                  type="file"
+                  className="hidden"
+                  accept="image/*,.pdf"
+                  onChange={(e) => handleCertificateChange(idx, e.target.files[0])}
+                />
+                <label
+                  htmlFor={`cert-${idx}`}
+                  className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-blue-700 bg-blue-50 hover:bg-blue-100 cursor-pointer transition-colors"
+                >
+                   {domain.certificate ? 'Change Certificate' : 'Upload Certificate'}
+                </label>
+              </div>
             </div>
 
             {/* Display uploaded certificate name */}
             {domain.certificate && (
-              <div className="flex items-center gap-1 sm:gap-2 mt-1 sm:mt-2">
-                <span className="text-xs text-gray-600">Certificate:</span>
-                <span className="text-xs font-medium text-green-600">
-                  {domain.certificate.name}
-                </span>
+              <div className="flex items-center justify-between bg-gray-50 p-2 rounded-md mb-3">
+                <div className="flex items-center">
+                  <span className="text-xs text-gray-600 mr-2">Certificate:</span>
+                  <span className="text-xs font-medium text-green-600 truncate max-w-xs">
+                    {domain.certificate.name}
+                  </span>
+                </div>
                 <button
                   type="button"
-                  onClick={() => handleCertificateChange(domain.id, null)}
-                  className="text-red-500 text-xs hover:text-red-700"
+                  onClick={() => handleCertificateChange(idx, null)}
+                  className="text-red-500 hover:text-red-700 text-xs"
                 >
                   Remove
                 </button>
@@ -388,99 +342,81 @@ export default function DomainsForm() {
             )}
 
             {/* Display related skills for this specific domain */}
-            {domainSkills[domain.id] && domainSkills[domain.id].length > 0 && (
-              <div className="mt-1 sm:mt-2">
-                <div className="text-xs mb-1 sm:mb-2 text-gray-500">
-                  Select related skills for {domain.name}:
+            {domainSkills[domain.name]?.length > 0 && (
+              <div className="mt-4">
+                <div className="text-sm font-small text-gray-700 mb-2">
+                  Select related skills for {domain.name} :
                 </div>
-                <div className="flex flex-wrap gap-1 sm:gap-2">
-                  {(showMoreSkills[domain.id]
-                    ? domainSkills[domain.id]
-                    : domainSkills[domain.id].slice(0, 6)
-                  ).map((skill) => {
-                    const isSelected = (selectedSkills[domain.id] || []).some(
-                      (s) => s.id === skill.id
-                    );
+                <div className="flex flex-wrap gap-2 mb-2">
+                  {(showMoreSkills[domain.name]
+                    ? domainSkills[domain.name]
+                    : domainSkills[domain.name].slice(0, 6)
+                  ).map((skill, skillIdx) => {
+                    const isSelected = (selectedSkills[domain.name] || []).some(s => s.skill_id === skill.skill_id);
                     return (
                       <button
-                        key={skill.id}
+                        key={skill.skill_id || skillIdx}
                         type="button"
-                        onClick={() => handleSkillToggle(domain.id, skill)}
-                        className={`rounded-md px-1.5 sm:px-2 py-1.5 sm:py-2 text-xs border transition-all duration-200 ${
-                          isSelected
-                            ? "bg-blue-600 text-white border-blue-600"
-                            : "bg-gray-100 text-gray-800 border-gray-300 hover:border-gray-400"
-                        }`}
+                        onClick={() => handleSkillToggle(domain.name, skill)}
+                        className={`px-3 py-1.5 rounded-full text-sm border transition-all duration-200 ${isSelected
+                            ? "bg-blue-100 text-blue-800 border-blue-200 font-medium"
+                            : "bg-white text-gray-700 border-gray-200 hover:border-blue-300 hover:bg-blue-50"
+                          }`}
                       >
-                        {skill.name}
+                        {skill.skill_name}
                       </button>
                     );
                   })}
                 </div>
 
                 {/* Show more/less button for skills */}
-                {domainSkills[domain.id].length > 6 && (
+                {domainSkills[domain.name].length > 6 && (
                   <button
                     type="button"
-                    className="text-blue-500 underline text-xs mt-1 sm:mt-2"
-                    onClick={() => toggleShowMoreSkills(domain.id)}
+                    className="text-blue-600 hover:text-blue-800 text-xs font-medium mt-1 focus:outline-none"
+                    onClick={() => toggleShowMoreSkills(domain.name)}
                   >
-                    {showMoreSkills[domain.id]
-                      ? "Show less skills"
-                      : "Show more skills"}
+                    {showMoreSkills[domain.name] ? "Show less" : `+${domainSkills[domain.name].length - 6} more`}
                   </button>
                 )}
 
                 {/* Show selected skills count */}
-                {(selectedSkills[domain.id] || []).length > 0 && (
-                  <div className="text-xs text-green-600 mt-1 sm:mt-2">
-                    Selected: {(selectedSkills[domain.id] || []).length}{" "}
-                    skill(s)
+                {(selectedSkills[domain.name] || []).length > 0 && (
+                  <div className="text-xs text-green-600 mt-2">
+                    Selected: <span className="font-medium">{(selectedSkills[domain.name] || []).length}</span> skill(s)
                   </div>
                 )}
               </div>
             )}
 
-            <div className="mb-2 sm:mb-3">
+            <div className="mt-4">
               <Label>Where did you learn this skill?</Label>
               <input
-                type="text"
-                className="w-full px-1.5 sm:px-2 py-1.5 sm:py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-transparent text-xs transition-all duration-200 border-gray-300 hover:border-gray-400"
-                placeholder="College/ Company name"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent text-sm transition-all duration-200 border-gray-300 hover:border-gray-400"
+                placeholder="College/Company name"
                 value={domain.company}
-                onChange={(e) => handleCompanyChange(domain.id, e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    e.stopPropagation();
-                  }
-                }}
+                onChange={(e) => handleCompanyChange(idx, e.target.value)}
               />
             </div>
           </div>
         ))}
       </div>
 
-      {/* Submit button for skills */}
-      <div className="mt-2 sm:mt-3">
-        <Button
-          type="button"
-          variant="secondary"
-          loading={skillUploadLoading}
-          disabled={skillUploadLoading}
-          className="w-full"
-          onClick={handleSubmitSkills}
-        >
-          {skillUploadLoading ? "Uploading Skills..." : "Upload Skills"}
-        </Button>
+      {/* Form actions */}
+      <div className="mt-8 flex justify-center">
+        
+          <Button
+            variant="secondary"
+            loading={isSubmitting}
+            disabled={isSubmitting || domains.length === 0}
+            size="small"
+            className="w-full"
+            type="submit"
+          >
+            {isSubmitting ? "Uploading Skills..." : "Upload Skills"}
+          </Button>
+      
       </div>
-
-      {/* Show skill upload error if any */}
-      {skillUploadError && (
-        <ErrorMessage className="mt-2 sm:mt-3 text-center">
-          {skillUploadError}
-        </ErrorMessage>
-      )}
-    </div>
+    </form>
   );
 }

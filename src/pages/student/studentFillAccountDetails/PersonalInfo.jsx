@@ -1,15 +1,13 @@
 import React, { useEffect } from "react";
 import { useFormContext } from "react-hook-form";
-import { useLocations } from "../../../hooks/useLocations";
+import { useSelector } from "react-redux";
+import { useMasterData } from "../../../hooks/master/useMasterData";
 import {
   Loader,
   Input,
   Select,
-  Label,
-  ErrorMessage,
   PhoneInput,
 } from "../../../components/ui";
-import { useSelector } from "react-redux";
 
 export default function PersonalInfo() {
   const {
@@ -17,8 +15,19 @@ export default function PersonalInfo() {
     formState: { errors },
     setValue,
   } = useFormContext();
+
   const { user } = useSelector((state) => state.auth);
 
+  // Get master data with proper destructuring
+  const {
+    locations = [],
+    isLoading,
+    isError,
+    error,
+    refetch
+  } = useMasterData();
+  console.log("locations", locations)
+  // Pre-fill user data into form if available
   useEffect(() => {
     if (user) {
       if (user.first_name) setValue("first_name", user.first_name);
@@ -27,20 +36,14 @@ export default function PersonalInfo() {
       if (user.phone) setValue("phone", user.phone);
     }
   }, [user, setValue]);
-  const {
-    data: locationData,
-    loading: locationLoading,
-    error: locationError,
-    refetch: refetchLocations,
-  } = useLocations();
-  const locations = Array.isArray(locationData?.data) ? locationData.data : [];
 
-  const CustomErrorMessage = ({ message }) => (
+  // Reusable error message with retry button
+  const CustomErrorMessage = ({ message, onRetry }) => (
     <div className="w-full p-3 border rounded bg-red-50 text-red-500 text-xs">
       <div className="flex items-center justify-between">
         <span>{message}</span>
         <button
-          onClick={refetchLocations}
+          onClick={onRetry}
           className="ml-2 px-2 py-1 bg-red-500 text-white rounded text-xs hover:bg-red-600 transition-colors"
         >
           Retry
@@ -49,8 +52,22 @@ export default function PersonalInfo() {
     </div>
   );
 
+  if (isLoading) {
+    return <Loader className="mx-auto my-8" />;
+  }
+
+  if (isError) {
+    return (
+      <CustomErrorMessage
+        message={error?.message || 'Failed to load required data'}
+        onRetry={refetch}
+      />
+    );
+  }
+
   return (
     <div className="space-y-2 sm:space-y-3">
+      {/* First + Last Name */}
       <div className="flex gap-1 sm:gap-2">
         <div className="flex-1">
           <Input
@@ -69,6 +86,8 @@ export default function PersonalInfo() {
           />
         </div>
       </div>
+
+      {/* Email */}
       <Input
         label="Email ID"
         type="email"
@@ -78,6 +97,8 @@ export default function PersonalInfo() {
         readOnly
         {...register("email")}
       />
+
+      {/* Phone */}
       <PhoneInput
         label="Phone Number"
         type="tel"
@@ -85,6 +106,8 @@ export default function PersonalInfo() {
         error={errors.phone?.message}
         {...register("phone")}
       />
+
+      {/* Date of Birth */}
       <Input
         label="Date of Birth"
         type="date"
@@ -92,32 +115,43 @@ export default function PersonalInfo() {
         error={errors.dob?.message}
         {...register("dob")}
       />
-      {locationLoading ? (
-        <Loader message="Loading locations..." />
-      ) : locationError ? (
-        <CustomErrorMessage message={locationError} />
-      ) : (
-        <Select
-          label="City"
-          options={locations.map((location) => ({
-            value: location.name || location.id,
-            label: location.name || location.id,
-          }))}
-          placeholder="Select your current city"
-          error={errors.city?.message}
-          {...register("city")}
-        />
-      )}
+
+      {/* Location Dropdown - Example of using locations from master data */}
+      <div className="w-full">
+        {isLoading ? (
+          <div className="py-2">
+            <Loader message="Loading locations..." />
+          </div>
+        ) : isError ? (
+          <CustomErrorMessage message={error?.message || 'Failed to load locations'} onRetry={refetch} />
+        ) : (
+          <Select
+            label="City"
+            id="city"
+            placeholder="Select your city"
+            options={locations.map((location) => ({
+              value: location.id,
+              label: location.name,
+            }))}
+            defaultValue=""
+            {...register("city", {
+              required: "Please select your city",
+            })}
+            error={errors.city?.message}
+          />
+        )}
+      </div>
+      {/* Gender */}
       <Select
         label="Gender"
+        {...register("gender", { required: "Gender is required" })}
         options={[
           { value: "Male", label: "Male" },
           { value: "Female", label: "Female" },
-          { value: "Other", label: "Other" },
+          { value: "Other", label: "Other" }
         ]}
-        placeholder="Select your gender"
+        placeholder="Select gender"
         error={errors.gender?.message}
-        {...register("gender", { required: "Gender is required" })}
       />
     </div>
   );
