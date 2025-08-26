@@ -65,7 +65,7 @@ export const educationApi = {
       throw error;
     }
   },
-
+  
   // Fetch specializations by course ID
   getSpecializationsByCourseId: async (course_id, token) => {
     try {
@@ -93,6 +93,7 @@ export const educationApi = {
           Authorization: `Bearer ${token}`,
         },
       });
+      console.log("Colleges fetched:", response.data);
       return response.data.data || [];
     } catch (error) {
       console.error("Error fetching colleges:", error);
@@ -102,24 +103,34 @@ export const educationApi = {
 
   // Fetch all education data at once
   getAllEducationData: async (token) => {
+    console.log("Fetching all education data...");
+    
     try {
+      // Fetch all data in parallel
       const [
         locations,
         courses,
         specializations,
-        specializationsByCourseId,
         colleges,
       ] = await Promise.all([
-        // educationApi.getJobRoles(token),
         educationApi.getLocations(token),
         educationApi.getCourses(token),
         educationApi.getSpecializations(token),
-        educationApi.getSpecializationsByCourseId(courses[0].id, token),
         educationApi.getColleges(token),
       ]);
 
+      // Only try to get specializations by course if we have courses
+      let specializationsByCourseId = [];
+      if (courses.length > 0) {
+        try {
+          specializationsByCourseId = await educationApi.getSpecializationsByCourseId(courses[0].id, token);
+        } catch (error) {
+          console.warn("Could not fetch specializations for first course:", error.message);
+          // Continue with empty specializationsByCourseId
+        }
+      }
+
       return {
-        // jobRoles,
         locations,
         courses,
         specializations,
@@ -128,7 +139,6 @@ export const educationApi = {
       };
     } catch (error) {
       console.error("Error fetching education data:", error);
-
       throw error;
     }
   },

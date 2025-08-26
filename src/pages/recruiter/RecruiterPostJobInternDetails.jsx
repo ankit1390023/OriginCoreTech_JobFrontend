@@ -315,23 +315,12 @@ export default function RecruiterPostJobInternDetails() {
   const [domainError, setDomainError] = useState("");
   const [skillsLoading, setSkillsLoading] = useState(false);
   const [showAllDomains, setShowAllDomains] = useState(false);
-  // Add state to track if device is small
-  const [isSmallDevice, setIsSmallDevice] = useState(false);
   const { user, token } = useSelector((state) => state.auth);
 
   // Debug token state
   useEffect(() => {
     console.log("Auth state - user:", !!user, "token:", !!token);
   }, [user, token]);
-
-  useEffect(() => {
-    const checkDeviceSize = () => {
-      setIsSmallDevice(window.innerWidth < 1024); // lg breakpoint
-    };
-    checkDeviceSize();
-    window.addEventListener("resize", checkDeviceSize);
-    return () => window.removeEventListener("resize", checkDeviceSize);
-  }, []);
 
   // Education data hook for cities
   const {

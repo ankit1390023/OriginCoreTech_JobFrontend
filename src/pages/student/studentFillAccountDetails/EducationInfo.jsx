@@ -34,38 +34,70 @@ export default function EducationInfo() {
     refetch,
   } = useEducationData();
 
-  // Add state for course-specific specializations
+  // Add state for course-specific specializations and cache
   const [courseSpecializations, setCourseSpecializations] = useState([]);
   const [loadingSpecializations, setLoadingSpecializations] = useState(false);
+  const [specializationsCache, setSpecializationsCache] = useState({});
 
   // Watch the selected course
   const selectedCourse = watch("course");
 
-  // Effect to fetch specializations when course changes
+  // Effect to handle course selection and specializations
   useEffect(() => {
-    const fetchSpecializations = async () => {
-      if (selectedCourse) {
-        setLoadingSpecializations(true);
-        try {
-          const courseObj = courses.find((c) => c.name === selectedCourse);
-          if (courseObj) {
-            const token = localStorage.getItem("token"); // Get token from storage
-            const specs = await educationApi.getSpecializationsByCourseId(
-              courseObj.id,
-              token
-            );
-            setCourseSpecializations(specs);
-          }
-        } catch (error) {
-          console.error("Error fetching specializations:", error);
-        } finally {
-          setLoadingSpecializations(false);
-        }
+    const handleCourseSelection = async () => {
+      if (!selectedCourse) {
+        setCourseSpecializations([]);
+        return;
+      }
+
+      const courseObj = courses?.find((c) => c.name === selectedCourse);
+      if (!courseObj) return;
+
+      // Check if we already have the specializations in cache
+      if (specializationsCache[courseObj.id]) {
+        setCourseSpecializations(specializationsCache[courseObj.id]);
+        return;
+      }
+
+      // If not in cache, try to find in pre-fetched specializations first
+      const preFetchedSpecs = specializations?.filter(
+        (spec) => spec.course_id === courseObj.id
+      );
+
+      if (preFetchedSpecs?.length > 0) {
+        setCourseSpecializations(preFetchedSpecs);
+        // Update cache
+        setSpecializationsCache(prev => ({
+          ...prev,
+          [courseObj.id]: preFetchedSpecs
+        }));
+        return;
+      }
+
+      // If not found in pre-fetched data, fetch from API
+      setLoadingSpecializations(true);
+      try {
+        const token = localStorage.getItem("token");
+        const specs = await educationApi.getSpecializationsByCourseId(
+          courseObj.id,
+          token
+        );
+        
+        setCourseSpecializations(specs);
+        // Update cache
+        setSpecializationsCache(prev => ({
+          ...prev,
+          [courseObj.id]: specs
+        }));
+      } catch (error) {
+        console.error("Error fetching specializations:", error);
+      } finally {
+        setLoadingSpecializations(false);
       }
     };
 
-    fetchSpecializations();
-  }, [selectedCourse, courses]);
+    handleCourseSelection();
+  }, [selectedCourse, courses, specializations, specializationsCache]);
 
   // State for showing all courses or limited courses
   const [showAll, setShowAll] = useState(false);
