@@ -1,11 +1,11 @@
 import React, { useEffect } from "react";
-import { useFormContext } from "react-hook-form";
+import { useFormContext, Controller } from "react-hook-form";
 import { useSelector } from "react-redux";
+import Select from 'react-select';
 import { useMasterData } from "../../../hooks/master/useMasterData";
 import {
   Loader,
   Input,
-  Select,
   PhoneInput,
 } from "../../../components/ui";
 
@@ -14,6 +14,7 @@ export default function PersonalInfo() {
     register,
     formState: { errors },
     setValue,
+    control
   } = useFormContext();
 
   const { user } = useSelector((state) => state.auth);
@@ -116,43 +117,69 @@ export default function PersonalInfo() {
         {...register("dob")}
       />
 
-      {/* Location Dropdown - Example of using locations from master data */}
+      {/* Location Dropdown */}
       <div className="w-full">
-        {isLoading ? (
-          <div className="py-2">
-            <Loader message="Loading locations..." />
-          </div>
-        ) : isError ? (
-          <CustomErrorMessage message={error?.message || 'Failed to load locations'} onRetry={refetch} />
-        ) : (
-          <Select
-            label="City"
-            id="city"
-            placeholder="Select your city"
-            options={locations.map((location) => ({
-              value: location.id,
-              label: location.name,
-            }))}
-            defaultValue=""
-            {...register("city", {
-              required: "Please select your city",
-            })}
-            error={errors.city?.message}
-          />
+        <label className="block text-sm font-medium text-gray-700 mb-1">City</label>
+        <Controller
+          name="current_location_id"
+          control={control}
+          rules={{ required: "Please select your city" }}
+          render={({ field: { onChange, onBlur, value, ref } }) => (
+            <Select
+              ref={ref}
+              value={value ? {
+                value: String(value),
+                label: locations.find(l => l.id === value || l.id === Number(value))?.name
+              } : null}
+              onChange={(option) => {
+                onChange(option ? String(option.value) : null);
+              }}
+              onBlur={onBlur}
+              options={locations.map((location) => ({
+                value: String(location.id),
+                label: location.name,
+              }))}
+              placeholder="Select your city"
+              className="text-sm"
+              classNamePrefix="select"
+              isClearable
+              isSearchable
+            />
+          )}
+        />
+        {errors.current_location_id && (
+          <p className="mt-1 text-xs text-red-500">{errors.current_location_id.message}</p>
         )}
       </div>
+
       {/* Gender */}
-      <Select
-        label="Gender"
-        {...register("gender", { required: "Gender is required" })}
-        options={[
-          { value: "Male", label: "Male" },
-          { value: "Female", label: "Female" },
-          { value: "Other", label: "Other" }
-        ]}
-        placeholder="Select gender"
-        error={errors.gender?.message}
-      />
+      <div className="w-full">
+        <label className="block text-sm font-medium text-gray-700 mb-1">Gender</label>
+        <Controller
+          name="gender"
+          control={control}
+          rules={{ required: "Gender is required" }}
+          render={({ field }) => (
+            <Select
+              {...field}
+              value={field.value ? { value: field.value, label: field.value } : null}
+              onChange={(option) => field.onChange(option?.value || '')}
+              options={[
+                { value: "Male", label: "Male" },
+                { value: "Female", label: "Female" },
+                { value: "Other", label: "Other" }
+              ]}
+              placeholder="Select gender"
+              className="text-sm"
+              classNamePrefix="select"
+              isClearable
+            />
+          )}
+        />
+        {errors.gender && (
+          <p className="mt-1 text-xs text-red-500">{errors.gender.message}</p>
+        )}
+      </div>
     </div>
   );
 }

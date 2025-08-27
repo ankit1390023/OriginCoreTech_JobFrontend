@@ -18,28 +18,26 @@ export const useMasterData = () => {
         cacheTime: 1000 * 60 * 60 * 24 * 7, // 7 days
     });
 
-
+    
     // 🔹 Selectors (industry style)
-    const durations = masterDataQuery?.duration || [];
-
-   
-    const locations = masterDataQuery.data?.locations || [];
-    const courses = masterDataQuery.data?.courses || [];
-    const schoolColleges = masterDataQuery.data?.schoolColleges || [];
-    const jobRoles = masterDataQuery.data?.jobRoles || [];
-    const specializations = masterDataQuery.data?.specializations || [];
-    const domains = masterDataQuery.data?.domains || [];
-    const skillsByDomain = masterDataQuery.data?.skillsByDomain || [];
-    const specializationByCourse = masterDataQuery.data?.specializationByCourse || [];
+    const durations = masterDataQuery?.data?.duration || [];
+    const locations = masterDataQuery?.data?.locations || [];
+    const courses = masterDataQuery?.data?.courses || [];
+    const schoolColleges = masterDataQuery?.data?.schoolColleges || [];
+    const jobRoles = masterDataQuery?.data?.jobRoles || [];
+    const specializations = masterDataQuery?.data?.specializations || [];
+    const domains = masterDataQuery?.data?.domains || [];
+    const skillsByDomain = masterDataQuery?.data?.skillsByDomain || [];
+    const specializationByCourse = masterDataQuery?.data?.specializationByCourse || [];
 
     // 🔹 Helper functions for relationships
     const getSkillsForDomain = (domainId) => {
-        const domain = skillsByDomain.find((d) => d.domain_id === domainId);
+        const domain = skillsByDomain?.find((d) => d.domain_id === domainId);
         return domain ? domain.skills : [];
     };
 
     const getSpecializationsForCourse = (courseId) => {
-        const course = specializationByCourse.find((c) => c.id === courseId);
+        const course = specializationByCourse?.find((c) => c.id === courseId);
         return course ? course.specializations : [];
     };
 

@@ -139,6 +139,7 @@ export default function SkillsForm({ onNext, onBack }) {
 
       if (domainsWithCertificates.length === 0) {
         alert("Please upload at least one certificate to submit skills.");
+        setIsSubmitting(false);
         return;
       }
 
@@ -194,22 +195,25 @@ export default function SkillsForm({ onNext, onBack }) {
 
       if (skills.length === 0) {
         alert("Please select at least one skill to submit.");
+        setIsSubmitting(false);
         return;
       }
 
       // Upload skills using the API
       const userId = localStorage.getItem("userId");
+      // TODO: Uncomment and implement actual API call
+      // await uploadSkillsApi(userId, skills);
 
       console.log("Skills to be uploaded:", skills);
       alert("Skills uploaded successfully!");
 
-      // Clear form and move to next step
+      // Clear form
       setDomains([]);
       setDomainSkills({});
       setSelectedSkills({});
       setShowMoreSkills({});
 
-      // Call onNext if provided
+      // Call onNext to proceed to next step
       if (onNext) {
         onNext();
       }
@@ -237,7 +241,7 @@ export default function SkillsForm({ onNext, onBack }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
       <div className="mb-4">
         <Label>Areas of Interest</Label>
         <div className="flex items-center border rounded-md px-3 py-2 mb-2 focus-within:ring-2 focus-within:ring-blue-400 focus:border-transparent text-sm transition-all duration-200 border-gray-300 hover:border-gray-400">
@@ -275,7 +279,7 @@ export default function SkillsForm({ onNext, onBack }) {
             </div>
           </div>
         )}
-
+         
         {/* Show "No matches found" message */}
         {searchInput.trim() && filteredDomains.length === 0 && (
           <div className="text-sm text-gray-500 py-2">
@@ -317,7 +321,7 @@ export default function SkillsForm({ onNext, onBack }) {
                   htmlFor={`cert-${idx}`}
                   className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-blue-700 bg-blue-50 hover:bg-blue-100 cursor-pointer transition-colors"
                 >
-                   {domain.certificate ? 'Change Certificate' : 'Upload Certificate'}
+                  {domain.certificate ? 'Change Certificate' : 'Upload Certificate'}
                 </label>
               </div>
             </div>
@@ -359,8 +363,8 @@ export default function SkillsForm({ onNext, onBack }) {
                         type="button"
                         onClick={() => handleSkillToggle(domain.name, skill)}
                         className={`px-3 py-1.5 rounded-full text-sm border transition-all duration-200 ${isSelected
-                            ? "bg-blue-100 text-blue-800 border-blue-200 font-medium"
-                            : "bg-white text-gray-700 border-gray-200 hover:border-blue-300 hover:bg-blue-50"
+                          ? "bg-blue-100 text-blue-800 border-blue-200 font-medium"
+                          : "bg-white text-gray-700 border-gray-200 hover:border-blue-300 hover:bg-blue-50"
                           }`}
                       >
                         {skill.skill_name}
@@ -404,18 +408,17 @@ export default function SkillsForm({ onNext, onBack }) {
 
       {/* Form actions */}
       <div className="mt-8 flex justify-center">
-        
-          <Button
-            variant="secondary"
-            loading={isSubmitting}
-            disabled={isSubmitting || domains.length === 0}
-            size="small"
-            className="w-full"
-            type="submit"
-          >
-            {isSubmitting ? "Uploading Skills..." : "Upload Skills"}
-          </Button>
-      
+        <Button
+          variant="secondary"
+          loading={isSubmitting}
+          disabled={isSubmitting || domains.length === 0}
+          size="small"
+          className="w-full"
+          type="button"
+          onClick={handleSubmit}
+        >
+          {isSubmitting ? "Uploading Skills..." : "Upload Skills"}
+        </Button>
       </div>
     </form>
   );

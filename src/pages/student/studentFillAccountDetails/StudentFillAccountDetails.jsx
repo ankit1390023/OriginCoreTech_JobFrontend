@@ -42,7 +42,7 @@ const personalInfoSchema = z.object({
       },
       { message: "Age must be between 16 and 100 years" }
     ),
-  city: z.string().min(1, { message: "Current city is required" }),
+  current_location_id: z.string().min(1, { message: "Current city is required" }),
   gender: z.string().min(1, { message: "Gender is required" }),
 });
 
@@ -82,7 +82,7 @@ export default function StudentFillAccountDetails() {
     mode: "onTouched",
     resolver: zodResolver(formSchema),
     defaultValues: {
-      city: "",
+      current_location_id: "",
       gender: "",
       type: "",
       currently_looking_for: [],
@@ -113,7 +113,7 @@ export default function StudentFillAccountDetails() {
 
     // Define fields to validate for each step
     const stepFields = {
-      0: ["first_name", "last_name", "email", "phone", "dob", "city", "gender"],
+      0: ["first_name", "last_name", "email", "phone", "dob", "current_location_id", "gender"],
       1: ["type"], // Basic validation for type, other fields are conditional
       3: ["currently_looking_for", "work_mode"],
     };
@@ -151,11 +151,11 @@ export default function StudentFillAccountDetails() {
         !formData.email ||
         !formData.phone ||
         !formData.dob ||
-        !formData.city ||
+        !formData.current_location_id ||
         !formData.gender
       ) {
         alert(
-          "Please fill in all required fields: First Name, Last Name, Email, Phone, Date of Birth, City, and Gender."
+          "Please fill in all required fields: First Name, Last Name, Email, Phone, Date of Birth, Current Location, and Gender."
         );
         setIsSubmitting(false);
         return;
@@ -184,7 +184,7 @@ export default function StudentFillAccountDetails() {
         email: formData.email.trim().toLowerCase(),
         phone: formData.phone.trim(),
         dob: formData.dob,
-        city: formData.city.trim(),
+        current_location_id: formData.current_location_id,
         gender: formData.gender,
         user_type: formData.type || "Working Professional",
         experiences: [],
@@ -265,7 +265,7 @@ export default function StudentFillAccountDetails() {
         userData.end_year = formData.end_year || "";
       } else if (formData.type === "Working Professional") {
         // Add working professional specific fields
-        userData.jobLocation = formData.city; // Using city as job location
+        userData.jobLocation = formData.current_location_id; // Using current_location_id as job location
         userData.salary_details = formData.salary || "";
 
         // Handle array fields from PreferencesForm properly
@@ -330,7 +330,7 @@ export default function StudentFillAccountDetails() {
         "email",
         "phone",
         "dob",
-        "city",
+        "current_location_id",
         "gender",
         "user_type",
       ];
