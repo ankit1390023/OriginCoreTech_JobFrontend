@@ -10,17 +10,17 @@ import ProgressBar from "./ProgressBar";
 import SkillsForm from "./SkillsForm";
 import PreferencesForm from "./PreferencesForm";
 import { userDetailsApi } from "../../../api/userDetailsApi";
-import { useEducationData } from "../../../hooks/useEducationData";
+import { useMasterData } from "../../../hooks/master/useMasterData";
 import { Button } from "../../../components/ui";
 import SignUpLayoutForLarge from "../../../components/layout/SignUpLayoutForLarge";
-
+ 
 const steps = [
   "Personal Info",
   "Education Info",
   "Your Skills",
   "Your Preferences",
 ];
-
+ 
 // Validation schema for PersonalInfo step
 const personalInfoSchema = z.object({
   first_name: z.string().min(1, { message: "First Name is required" }),
@@ -42,10 +42,10 @@ const personalInfoSchema = z.object({
       },
       { message: "Age must be between 16 and 100 years" }
     ),
-  city: z.string().min(1, { message: "Current city is required" }),
+  current_location_id: z.string().min(1, { message: "Current city is required" }),
   gender: z.string().min(1, { message: "Gender is required" }),
 });
-
+ 
 // Validation schema for EducationInfo step
 const educationInfoSchema = z.object({
   type: z.string().min(1, { message: "Type is required" }),
@@ -60,73 +60,74 @@ const educationInfoSchema = z.object({
   company: z.string().optional(),
   salary: z.string().optional(),
 });
-
+ 
 // Validation schema for Preferences step
 const preferencesSchema = z.object({
   currently_looking_for: z.array(z.string()).optional(),
   work_mode: z.array(z.string()).optional(),
 });
-
+ 
 // Combined schema for all steps
 const formSchema = z.object({
   ...personalInfoSchema.shape,
   ...educationInfoSchema.shape,
   ...preferencesSchema.shape,
 });
-
+ 
 export default function StudentFillAccountDetails() {
   const { user, token } = useSelector((state) => state.auth);
-  const { data: educationData } = useEducationData();
+  const { schoolColleges, courses, specializations } = useMasterData();
+  const educationData = { schoolColleges, courses, specializations };
   const methods = useForm({
     mode: "onTouched",
     resolver: zodResolver(formSchema),
     defaultValues: {
-      city: "",
+      current_location_id: "",
       gender: "",
       type: "",
       currently_looking_for: [],
       work_mode: [],
     },
   });
-
+ 
   const [step, setStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
-
+ 
   // Get user_id from Redux state
   const user_id = user?.id;
-
+ 
   // Redirect if user is not authenticated
   useEffect(() => {
     if (!user || !token) {
       navigate("/login");
     }
   }, [user, token, navigate]);
-
+ 
   const onNext = async () => {
     // Skip validation on Skills step (step 2) since it doesn't have registered fields
     if (step === 2) {
       setStep((s) => s + 1);
       return;
     }
-
+ 
     // Define fields to validate for each step
     const stepFields = {
-      0: ["first_name", "last_name", "email", "phone", "dob", "city", "gender"],
+      0: ["first_name", "last_name", "email", "phone", "dob", "current_location_id", "gender"],
       1: ["type"], // Basic validation for type, other fields are conditional
       3: ["currently_looking_for", "work_mode"],
     };
-
+ 
     const fieldsToValidate = stepFields[step] || [];
     const valid = await methods.trigger(fieldsToValidate);
-
+ 
     if (valid && step < steps.length - 1) {
       setStep((s) => s + 1);
     }
   };
-
+ 
   const onBack = () => setStep((s) => s - 1);
-
+ 
   const handleSubmitClick = async () => {
     console.log("=== FORM SUBMISSION STARTED ===");
     if (!user_id || !token) {
@@ -134,15 +135,15 @@ export default function StudentFillAccountDetails() {
       navigate("/login");
       return;
     }
-
+ 
     setIsSubmitting(true);
     console.log("Setting isSubmitting to true");
-
+ 
     try {
       console.log("Getting form values...");
       const formData = methods.getValues();
       console.log("Raw form data:", formData);
-
+ 
       // Validate required fields before proceeding
       if (
         !formData.first_name ||
@@ -150,16 +151,16 @@ export default function StudentFillAccountDetails() {
         !formData.email ||
         !formData.phone ||
         !formData.dob ||
-        !formData.city ||
+        !formData.current_location_id ||
         !formData.gender
       ) {
         alert(
-          "Please fill in all required fields: First Name, Last Name, Email, Phone, Date of Birth, City, and Gender."
+          "Please fill in all required fields: First Name, Last Name, Email, Phone, Date of Birth, Current Location, and Gender."
         );
         setIsSubmitting(false);
         return;
       }
-
+ 
       // Validate email format
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(formData.email)) {
@@ -167,7 +168,7 @@ export default function StudentFillAccountDetails() {
         setIsSubmitting(false);
         return;
       }
-
+ 
       // Validate phone format (basic validation)
       const phoneRegex = /^[+]?[\d\s\-()]{10,}$/;
       if (!phoneRegex.test(formData.phone)) {
@@ -175,7 +176,7 @@ export default function StudentFillAccountDetails() {
         setIsSubmitting(false);
         return;
       }
-
+ 
       // Prepare the data structure for the API based on original backend structure
       const userData = {
         first_name: formData.first_name.trim(),
@@ -183,7 +184,7 @@ export default function StudentFillAccountDetails() {
         email: formData.email.trim().toLowerCase(),
         phone: formData.phone.trim(),
         dob: formData.dob,
-        city: formData.city.trim(),
+        current_location_id: formData.current_location_id,
         gender: formData.gender,
         user_type: formData.type || "Working Professional",
         experiences: [],
@@ -201,7 +202,7 @@ export default function StudentFillAccountDetails() {
         aadhaarCardFile: "",
         isAadhaarVerified: false,
       };
-
+ 
       // Add education fields based on user type
       if (formData.type === "School Student") {
         userData.educationStandard = formData.standard || "";
@@ -221,7 +222,7 @@ export default function StudentFillAccountDetails() {
           setIsSubmitting(false);
           return;
         }
-
+ 
         // Find course ID by name
         const selectedCourse = educationData?.courses?.find(
           (course) => course.name === formData.course
@@ -231,17 +232,17 @@ export default function StudentFillAccountDetails() {
           (spec) => spec.name === formData.specialization
         );
         // Find college ID by name
-        const selectedCollege = educationData?.colleges?.find(
+        const selectedCollege = educationData?.schoolColleges?.find(
           (college) => college.name === formData.college
         );
-
+ 
         // Only set IDs if they exist to avoid sending null/undefined values
         if (selectedCourse?.id) {
           userData.course_id = selectedCourse.id;
         } else {
           console.warn("Course ID not found for:", formData.course);
         }
-
+ 
         if (selectedSpecialization?.id) {
           userData.specialization_id = selectedSpecialization.id;
         } else if (formData.specialization) {
@@ -250,13 +251,13 @@ export default function StudentFillAccountDetails() {
             formData.specialization
           );
         }
-
+ 
         if (selectedCollege?.id) {
           userData.college_id = selectedCollege.id;
         } else if (formData.college) {
           console.warn("College ID not found for:", formData.college);
         }
-
+ 
         userData.course = formData.course || ""; // Keep name for backward compatibility
         userData.specialization = formData.specialization || ""; // Keep name for backward compatibility
         userData.college_name = formData.college || "";
@@ -264,9 +265,9 @@ export default function StudentFillAccountDetails() {
         userData.end_year = formData.end_year || "";
       } else if (formData.type === "Working Professional") {
         // Add working professional specific fields
-        userData.jobLocation = formData.city; // Using city as job location
+        userData.jobLocation = formData.current_location_id; // Using current_location_id as job location
         userData.salary_details = formData.salary || "";
-
+ 
         // Handle array fields from PreferencesForm properly
         if (
           Array.isArray(formData.currently_looking_for) &&
@@ -277,7 +278,7 @@ export default function StudentFillAccountDetails() {
         } else {
           userData.currently_looking_for = "";
         }
-
+ 
         if (
           Array.isArray(formData.work_mode) &&
           formData.work_mode.length > 0
@@ -286,7 +287,7 @@ export default function StudentFillAccountDetails() {
         } else {
           userData.work_mode = "";
         }
-
+ 
         // Add experience data if available
         if (formData.company && formData.jobRole) {
           userData.experiences.push({
@@ -296,7 +297,7 @@ export default function StudentFillAccountDetails() {
           });
         }
       }
-
+ 
       // Handle preferences for all user types
       if (
         Array.isArray(formData.currently_looking_for) &&
@@ -307,13 +308,13 @@ export default function StudentFillAccountDetails() {
       } else if (!userData.currently_looking_for) {
         userData.currently_looking_for = "";
       }
-
+ 
       if (Array.isArray(formData.work_mode) && formData.work_mode.length > 0) {
         userData.work_mode = formData.work_mode.join(", ");
       } else if (!userData.work_mode) {
         userData.work_mode = "";
       }
-
+ 
       // Remove any undefined or null values from userData
       const cleanUserData = Object.fromEntries(
         Object.entries(userData).filter(
@@ -321,7 +322,7 @@ export default function StudentFillAccountDetails() {
             value !== undefined && value !== null && value !== ""
         )
       );
-
+ 
       // Ensure required fields are present
       const requiredFields = [
         "first_name",
@@ -329,20 +330,20 @@ export default function StudentFillAccountDetails() {
         "email",
         "phone",
         "dob",
-        "city",
+        "current_location_id",
         "gender",
         "user_type",
       ];
       const missingFields = requiredFields.filter(
         (field) => !cleanUserData[field]
       );
-
+ 
       if (missingFields.length > 0) {
         alert(`Missing required fields: ${missingFields.join(", ")}`);
         setIsSubmitting(false);
         return;
       }
-
+ 
       // Log the userData being sent for debugging
       console.log(
         "Form Data being sent:",
@@ -351,12 +352,12 @@ export default function StudentFillAccountDetails() {
       console.log("Education Data available:", educationData);
       console.log("User ID:", user_id);
       console.log("Token available:", !!token);
-
+ 
       // Check if user details already exist
       console.log("Checking if user details exist...");
       const { exists } = await userDetailsApi.checkUserDetailsExist(user_id);
       console.log("User details exist:", exists);
-
+ 
       let response;
       if (exists) {
         // Update existing user details
@@ -372,7 +373,7 @@ export default function StudentFillAccountDetails() {
         response = await userDetailsApi.createUserDetails(cleanUserData, token);
       }
       console.log("API response:", response);
-
+ 
       alert("Form submitted successfully!");
       // Redirect to feed page after successful submission
       navigate("/feed");
@@ -386,7 +387,7 @@ export default function StudentFillAccountDetails() {
       console.error("Error status:", error.response?.status);
       console.error("Error message:", error.message);
       console.error("Full error response:", error.response);
-
+ 
       // Show specific error message from backend
       let errorMessage = "Error submitting form. Please try again.";
       if (
@@ -400,13 +401,13 @@ export default function StudentFillAccountDetails() {
       } else if (error.response?.data) {
         errorMessage = `Server Error: ${JSON.stringify(error.response.data)}`;
       }
-
+ 
       alert(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
   };
-
+ 
   const FormContent = () => (
     <div className="flex-1 w-full flex justify-center">
       <div className="bg-white rounded-xl shadow-none sm:shadow-xl w-full mt-4 max-w-full sm:max-w-2xl p-6 sm:p-8">
@@ -417,7 +418,7 @@ export default function StudentFillAccountDetails() {
           <form onSubmit={methods.handleSubmit(handleSubmitClick)}>
             {step === 0 && <PersonalInfo />}
             {step === 1 && <EducationInfo />}
-            {step === 2 && <SkillsForm />}
+            {step === 2 && <SkillsForm onBack={onBack} onNext={onNext} />}
             {step === 3 && <PreferencesForm />}
             <div className="flex justify-between mt-8">
               {step > 0 ? (
@@ -447,7 +448,7 @@ export default function StudentFillAccountDetails() {
       </div>
     </div>
   );
-
+ 
   // Show loading if user data is not available
   if (!user || !token) {
     return (
@@ -464,7 +465,7 @@ export default function StudentFillAccountDetails() {
       </SignUpLayoutForLarge>
     );
   }
-
+ 
   // Render different layouts based on device size
   return (
     <SignUpLayoutForLarge
