@@ -142,4 +142,5 @@ export const educationApi = {
       throw error;
     }
   },
+  
 };

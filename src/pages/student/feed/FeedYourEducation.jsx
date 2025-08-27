@@ -27,98 +27,74 @@ const FeedYourEducation = () => {
 
   // Fetch education data from API
   const fetchEducationData = async () => {
+    if (!isAuthenticated || !token) {
+      setError("User not authenticated. Please login to continue.");
+      setIsLoading(false);
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+
     try {
-      setIsLoading(true);
-      setError(null);
+      // Fetch all data in parallel
+      const [courses, specializations, colleges] = await Promise.all([
+        educationApi.getCourses(token),
+        educationApi.getSpecializations(token),
+        educationApi.getColleges(token)
+      ]);
 
-      // Check if user is authenticated and has token from Redux
-      if (!isAuthenticated || !token) {
-        throw new Error("User not authenticated. Please login to continue.");
-      }
+      // Map API responses to expected format
+      const formattedCourses = Array.isArray(courses)
+        ? courses.map(course => ({
+          id: course.id?.toString(),
+          name: course.name || course.course_name || 'Unknown Course',
+          value: course.id?.toString(),
+          label: course.name || course.course_name || 'Unknown Course'
+        }))
+        : [];
 
-      const data = await educationApi.getAllEducationData(token);
-      setEducationData(data);
+      const formattedSpecializations = Array.isArray(specializations)
+        ? specializations.map(spec => ({
+          id: spec.id?.toString(),
+          name: spec.name || spec.specialization_name || 'Unknown Specialization',
+          courseId: spec.course_id?.toString(),
+          courseName: spec.Course?.name || 'Unknown Course',
+          value: spec.id?.toString(),
+          label: `${spec.name || spec.specialization_name || 'Unknown Specialization'} (${spec.Course?.name || 'Unknown Course'})`
+        }))
+        : [];
+
+      const formattedColleges = Array.isArray(colleges)
+        ? colleges.map(college => ({
+          id: college.id?.toString(),
+          name: college.name || college.college_name || 'Unknown College',
+          value: college.id?.toString(),
+          label: college.name || college.college_name || 'Unknown College'
+        }))
+        : [];
+
+      setEducationData({
+        courses: formattedCourses,
+        specializations: formattedSpecializations,
+        colleges: formattedColleges,
+        jobRoles: [],
+        locations: []
+      });
+
       setIsUsingFallbackData(false);
-    } catch (err) {
-      console.error("Error fetching education data:", err);
-      setError(err.message || "Failed to fetch education data");
+    } catch (error) {
+      console.error("Error fetching education data:", error);
+      setError(error.message || "Failed to fetch education data. Using sample data instead.");
       setIsUsingFallbackData(true);
 
-      // Fallback to dummy data if API fails
+      // Fallback to sample data if API fails
       setEducationData({
-        courses: [
-          "B.Tech",
-          "M.Tech",
-          "MBA",
-          "B.Sc",
-          "M.Sc",
-          "BCA",
-          "MCA",
-          "BBA",
-          "PhD",
-          "Diploma",
-          "PGDM",
-          "B.Des",
-          "M.Des",
-          "B.Com",
-          "M.Com",
-          "LLB",
-          "LLM",
-          "MBBS",
-          "B.Pharm",
-          "M.Pharm",
-        ],
-        specializations: [
-          "Computer Science Engineering",
-          "Information Technology",
-          "Electronics and Communication Engineering",
-          "Electrical Engineering",
-          "Mechanical Engineering",
-          "Civil Engineering",
-          "Chemical Engineering",
-          "Biotechnology",
-          "Aerospace Engineering",
-          "Automobile Engineering",
-          "Industrial Engineering",
-          "Textile Engineering",
-          "Agricultural Engineering",
-          "Mining Engineering",
-          "Metallurgical Engineering",
-          "Petroleum Engineering",
-          "Environmental Engineering",
-          "Biomedical Engineering",
-          "Robotics Engineering",
-          "Artificial Intelligence and Machine Learning",
-          "Data Science",
-          "Cybersecurity",
-          "Cloud Computing",
-          "Software Engineering",
-          "Network Engineering",
-        ],
-        colleges: [
-          "Indian Institute of Technology (IIT) Delhi",
-          "Indian Institute of Technology (IIT) Bombay",
-          "Indian Institute of Technology (IIT) Madras",
-          "Indian Institute of Technology (IIT) Kanpur",
-          "Indian Institute of Technology (IIT) Kharagpur",
-          "National Institute of Technology (NIT) Trichy",
-          "National Institute of Technology (NIT) Surathkal",
-          "Delhi Technological University (DTU)",
-          "Netaji Subhas University of Technology (NSUT)",
-          "Vellore Institute of Technology (VIT)",
-          "SRM Institute of Science and Technology",
-          "Manipal Institute of Technology",
-          "BITS Pilani",
-          "Amrita School of Engineering",
-          "PES University",
-          "RV College of Engineering",
-          "MS Ramaiah Institute of Technology",
-          "JSS Academy of Technical Education",
-          "Dayananda Sagar College of Engineering",
-          "Bangalore Institute of Technology",
-        ],
+        courses: [],
+        specializations: [],
+        colleges: [],
         jobRoles: [],
-        locations: [],
+        locations: []
       });
     } finally {
       setIsLoading(false);
@@ -140,56 +116,60 @@ const FeedYourEducation = () => {
   }, [isAuthenticated, token]);
 
   // Education entries state
-  const [educationEntries, setEducationEntries] = useState([
-    {
-      id: 1,
-      course: "B.Tech",
-      college_name: "",
-      specialization: "",
-      start_year: "",
-      end_year: "",
-      certificate: null,
-      certificateFile: null,
-      certificateName: "",
-      bgColor: "bg-white",
-    },
-    {
-      id: 2,
-      course: "Design",
-      college_name: "",
-      specialization: "",
-      start_year: "",
-      end_year: "",
-      certificate: "uploaded",
-      certificateFile: null,
-      certificateName: "design_certificate.pdf",
-      bgColor: "bg-orange-50",
-    },
-    {
-      id: 3,
-      course: "Design",
-      college_name: "",
-      specialization: "",
-      start_year: "",
-      end_year: "",
-      certificate: "uploaded",
-      certificateFile: null,
-      certificateName: "advanced_design_cert.pdf",
-      bgColor: "bg-green-50",
-    },
-    {
-      id: 4,
-      course: "Design",
-      college_name: "",
-      specialization: "",
-      start_year: "",
-      end_year: "",
-      certificate: "uploaded",
-      certificateFile: null,
-      certificateName: "ui_ux_certificate.pdf",
-      bgColor: "bg-red-50",
-    },
-  ]);
+  // Education entries state
+  const [educationEntries, setEducationEntries] = useState(() => {
+    const defaultCourse = "B.Tech"; // take the first one
+    return [
+      {
+        id: 1,
+        course: defaultCourse,
+        college_name: "",
+        specialization: "",
+        start_year: "",
+        end_year: "",
+        certificate: null,
+        certificateFile: null,
+        certificateName: "",
+        bgColor: "bg-white",
+      },
+      {
+        id: 2,
+        course: defaultCourse,
+        college_name: "",
+        specialization: "",
+        start_year: "",
+        end_year: "",
+        certificate: "uploaded",
+        certificateFile: null,
+        certificateName: "design_certificate.pdf",
+        bgColor: "bg-orange-50",
+      },
+      {
+        id: 3,
+        course: defaultCourse,
+        college_name: "",
+        specialization: "",
+        start_year: "",
+        end_year: "",
+        certificate: "uploaded",
+        certificateFile: null,
+        certificateName: "advanced_design_cert.pdf",
+        bgColor: "bg-green-50",
+      },
+      {
+        id: 4,
+        course: defaultCourse,
+        college_name: "",
+        specialization: "",
+        start_year: "",
+        end_year: "",
+        certificate: "uploaded",
+        certificateFile: null,
+        certificateName: "ui_ux_certificate.pdf",
+        bgColor: "bg-red-50",
+      },
+    ];
+  });
 
   const [searchQuery, setSearchQuery] = useState("");
   const [showCollegeDropdown, setShowCollegeDropdown] = useState({});
@@ -264,148 +244,6 @@ const FeedYourEducation = () => {
     return { value: year.toString(), label: year.toString() };
   });
 
-  const handleRemoveCourse = (id) => {
-    setEducationEntries((entries) =>
-      entries.filter((entry) => entry.id !== id)
-    );
-  };
-
-  const handleInputChange = (id, field, value) => {
-    setEducationEntries((entries) =>
-      entries.map((entry) =>
-        entry.id === id ? { ...entry, [field]: value } : entry
-      )
-    );
-  };
-
-  const handleSaveChanges = () => {
-    console.log("Saving education data:", educationEntries);
-    console.log("User ID:", user?._id || user?.id);
-    console.log("User authenticated:", isAuthenticated);
-
-    // Add your save logic here with user ID
-    const educationDataToSave = {
-      user_id: user?._id || user?.id,
-      userEmail: user?.email,
-      educationEntries: educationEntries,
-      timestamp: new Date().toISOString(),
-    };
-
-    console.log("Education data to save:", educationDataToSave);
-
-    // TODO: Implement API call to save education data
-    // Example: await saveEducationData(educationDataToSave, token);
-
-    // Navigate back to feed view after saving
-    navigate("/feed-view");
-  };
-
-  const handleGoBack = () => {
-    navigate("/feed-view");
-  };
-
-  const filteredColleges = (query, id) => {
-    const searchTerm = collegeSearchQuery[id] || "";
-    return educationData.colleges.filter((college) =>
-      college.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  };
-
-  const filteredSpecializations = (query, id) => {
-    const searchTerm = specializationSearchQuery[id] || "";
-    return educationData.specializations.filter((specialization) =>
-      specialization.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  };
-
-  const handleCollegeSelect = (id, college) => {
-    handleInputChange(id, "college_name", college);
-    setShowCollegeDropdown((prev) => ({ ...prev, [id]: false }));
-    setCollegeSearchQuery((prev) => ({ ...prev, [id]: "" }));
-  };
-
-  const handleSpecializationSelect = (id, specialization) => {
-    handleInputChange(id, "specialization", specialization);
-    setShowSpecializationDropdown((prev) => ({ ...prev, [id]: false }));
-    setSpecializationSearchQuery((prev) => ({ ...prev, [id]: "" }));
-  };
-
-  // Certificate handling functions
-  const handleFileUpload = (id, event) => {
-    const file = event.target.files[0];
-    if (file) {
-      // Validate file type
-      const allowedTypes = [
-        "application/pdf",
-        "image/jpeg",
-        "image/png",
-        "image/jpg",
-      ];
-      if (!allowedTypes.includes(file.type)) {
-        alert("Please upload only PDF, JPEG, or PNG files.");
-        return;
-      }
-
-      // Validate file size (5MB limit)
-      if (file.size > 5 * 1024 * 1024) {
-        alert("File size should be less than 5MB.");
-        return;
-      }
-
-      // Simulate upload progress
-      setUploadProgress((prev) => ({ ...prev, [id]: 0 }));
-
-      const interval = setInterval(() => {
-        setUploadProgress((prev) => {
-          const newProgress = prev[id] + 10;
-          if (newProgress >= 100) {
-            clearInterval(interval);
-            // Update education entry with certificate info
-            setEducationEntries((entries) =>
-              entries.map((entry) =>
-                entry.id === id
-                  ? {
-                      ...entry,
-                      certificate: "uploaded",
-                      certificateFile: file,
-                      certificateName: file.name,
-                    }
-                  : entry
-              )
-            );
-            return { ...prev, [id]: 100 };
-          }
-          return { ...prev, [id]: newProgress };
-        });
-      }, 100);
-    }
-  };
-
-  const handleViewCertificate = (entry) => {
-    setSelectedCertificate(entry);
-    setShowCertificateModal(true);
-  };
-
-  const handleDeleteCertificate = (id) => {
-    setEducationEntries((entries) =>
-      entries.map((entry) =>
-        entry.id === id
-          ? {
-              ...entry,
-              certificate: null,
-              certificateFile: null,
-              certificateName: "",
-            }
-          : entry
-      )
-    );
-    setUploadProgress((prev) => {
-      const newProgress = { ...prev };
-      delete newProgress[id];
-      return newProgress;
-    });
-  };
-
   const formatFileSize = (bytes) => {
     if (bytes === 0) return "0 Bytes";
     const k = 1024;
@@ -416,25 +254,150 @@ const FeedYourEducation = () => {
 
   const handleAddCourse = (course) => {
     // Prevent duplicate courses
-    if (educationEntries.some((entry) => entry.course === course)) return;
-    setEducationEntries((entries) => [
+    if (educationEntries.some((entry) => entry.courseId === course.id)) return;
+
+    const newEntry = {
+      id: Date.now(),
+      course: course.name,
+      courseId: course.id,
+      college_name: "",
+      collegeId: "",
+      specialization: "",
+      specializationId: "",
+      start_year: "",
+      end_year: "",
+      certificate: null,
+      certificateFile: null,
+      certificateName: "",
+      bgColor: "bg-white",
+    };
+
+    setEducationEntries(entries => [
       entries[0],
-      {
-        id: Date.now(),
-        course,
-        college_name: "",
-        specialization: "",
-        start_year: "",
-        end_year: "",
-        certificate: null,
-        certificateFile: null,
-        certificateName: "",
-        bgColor: "bg-white",
-      },
-      ...entries.slice(1),
+      newEntry,
+      ...entries.slice(1)
     ]);
+
     setSearchQuery("");
     setShowCourseDropdown(false);
+  };
+
+  const handleSpecializationSelect = (id, specialization) => {
+    setEducationEntries(entries =>
+      entries.map(entry =>
+        entry.id === id
+          ? {
+            ...entry,
+            specialization: specialization.name || specialization,
+            specializationId: specialization.id || ''
+          }
+          : entry
+      )
+    );
+    setShowSpecializationDropdown(prev => ({ ...prev, [id]: false }));
+  };
+
+  const handleSaveChanges = async () => {
+    if (!isAuthenticated || !token) {
+      setError("User not authenticated. Please login to continue.");
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+
+      // Prepare education data for API
+      const educationDataToSave = educationEntries.map(entry => ({
+        course_id: entry.courseId,
+        course: entry.course,
+        specialization_id: entry.specializationId,
+        specialization: entry.specialization,
+        college_id: entry.collegeId,
+        college_name: entry.college_name,
+        start_year: entry.start_year,
+        end_year: entry.end_year,
+        // Include certificate data if available
+        ...(entry.certificate && {
+          certificate: entry.certificate,
+          certificate_name: entry.certificateName
+        })
+      }));
+
+      console.log("Saving education data:", educationDataToSave);
+
+      // Example: await educationApi.saveEducation(educationDataToSave, token);
+
+      // Show success message
+      alert('Education details saved successfully!');
+
+      // Navigate back to feed view after saving
+      navigate("/feed-view");
+
+    } catch (error) {
+      console.error("Error saving education data:", error);
+      setError(error.message || "Failed to save education data. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleCollegeSelect = (id, college) => {
+    setEducationEntries(entries =>
+      entries.map(entry =>
+        entry.id === id
+          ? {
+            ...entry,
+            college_name: college.name || college,
+            collegeId: college.id || ''
+          }
+          : entry
+      )
+    );
+    setShowCollegeDropdown(prev => ({ ...prev, [id]: false }));
+  };
+
+  const handleCourseSelect = async (id, selectedCourse) => {
+    try {
+      setIsLoading(true);
+
+      // Update the course in the education entry
+      setEducationEntries(entries =>
+        entries.map(entry =>
+          entry.id === id
+            ? {
+              ...entry,
+              course: selectedCourse.name || selectedCourse,
+              courseId: selectedCourse.id || '',
+              specialization: '', // Reset specialization when course changes
+              specializationId: ''
+            }
+            : entry
+        )
+      );
+
+      // If we have a course ID, fetch specializations for this course
+      if (selectedCourse.id) {
+        const specializations = await educationApi.getSpecializationsByCourseId(selectedCourse.id, token);
+
+        // Update specializations in education data
+        setEducationData(prev => ({
+          ...prev,
+          specializations: specializations.map(spec => ({
+            id: spec.id?.toString(),
+            name: spec.name || spec.specialization_name || 'Unknown Specialization',
+            courseId: spec.course_id?.toString(),
+            courseName: spec.Course?.name || 'Unknown Course',
+            value: spec.id?.toString(),
+            label: `${spec.name || spec.specialization_name || 'Unknown Specialization'} (${spec.Course?.name || 'Unknown Course'})`
+          }))
+        }));
+      }
+    } catch (error) {
+      console.error('Error fetching specializations:', error);
+      setError('Failed to load specializations for the selected course');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -444,15 +407,13 @@ const FeedYourEducation = () => {
 
         {/* Responsive Main Card */}
         <section className="w-full max-w-[95vw] sm:max-w-[600px] md:max-w-[700px] lg:max-w-[800px] h-auto p-3 sm:p-4 md:p-5 lg:p-6 rounded-[5px] bg-white flex flex-col shadow-lg gap-3 sm:gap-4 mt-2 mx-auto">
-        
-        
+
+
           <div className="bg-white rounded  w-full flex flex-col">
             {/* Header */}
             <div className="mb-4 sm:mb-6 px-4 sm:px-6 pt-4 sm:pt-6">
               <div className="flex items-center gap-3 mb-3 sm:mb-4">
                 <button
-                  onClick={handleGoBack}
-                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
                 >
                   <IoIosArrowBack className="w-5 h-5 text-gray-600" />
                 </button>
@@ -460,7 +421,7 @@ const FeedYourEducation = () => {
                   <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-black">
                     Your Education
                   </h1>
-                 
+
                 </div>
               </div>
               {/* Search Bar */}
@@ -496,36 +457,32 @@ const FeedYourEducation = () => {
                     {educationData.courses
                       .filter(
                         (course) =>
-                          course
-                            .toLowerCase()
-                            .includes(searchQuery.toLowerCase()) &&
+                          course.name?.toLowerCase().includes(searchQuery.toLowerCase()) &&
                           !educationEntries.some(
-                            (entry) => entry.course === course
+                            (entry) => entry.courseId === course.id
                           )
                       )
                       .map((course, idx) => (
                         <div
-                          key={idx}
+                          key={course.id || idx}
                           className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
                           onClick={() => handleAddCourse(course)}
                         >
-                          {course}
+                          {course.name}
                         </div>
                       ))}
                     {/* Show message if no results */}
                     {educationData.courses.filter(
                       (course) =>
-                        course
-                          .toLowerCase()
-                          .includes(searchQuery.toLowerCase()) &&
+                        course.name?.toLowerCase().includes(searchQuery.toLowerCase()) &&
                         !educationEntries.some(
-                          (entry) => entry.course === course
+                          (entry) => entry.courseId === course.id
                         )
                     ).length === 0 && (
-                      <div className="px-3 py-2 text-gray-400 text-sm">
-                        No courses found
-                      </div>
-                    )}
+                        <div className="px-3 py-2 text-gray-400 text-sm">
+                          No courses found
+                        </div>
+                      )}
                   </div>
                 )}
               </div>
@@ -592,10 +549,10 @@ const FeedYourEducation = () => {
                           </svg>
                         </button>
                       ) : (
+
+
                         <label className="flex items-center gap-1 sm:gap-2 hover:text-blue-600 transition-colors cursor-pointer">
-                          <span className="hidden sm:inline">
-                            Upload Certificate
-                          </span>
+                          <span className="hidden sm:inline">Upload Certificate</span>
                           <span className="sm:hidden">Upload</span>
                           <svg
                             className="w-3 h-3 sm:w-4 sm:h-4"
@@ -617,6 +574,7 @@ const FeedYourEducation = () => {
                             className="hidden"
                           />
                         </label>
+
                       )}
                     </div>
                   </div>
@@ -682,8 +640,14 @@ const FeedYourEducation = () => {
                               className="w-full px-3 py-2 border-b border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
                               autoFocus
                             />
-                            {filteredColleges("", entry.id).map(
-                              (college, index) => (
+                            {educationData.colleges
+                              .filter((college) => {
+                                const searchTerm = collegeSearchQuery[entry.id] || '';
+                                return college.name?.toLowerCase().includes(
+                                  searchTerm.toLowerCase()
+                                );
+                              })
+                              .map((college, index) => (
                                 <div
                                   key={index}
                                   className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
@@ -691,10 +655,9 @@ const FeedYourEducation = () => {
                                     handleCollegeSelect(entry.id, college)
                                   }
                                 >
-                                  {college}
+                                  {college.name}
                                 </div>
-                              )
-                            )}
+                              ))}
                           </div>
                         )}
                       </div>
@@ -738,22 +701,27 @@ const FeedYourEducation = () => {
                               className="w-full px-3 py-2 border-b border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
                               autoFocus
                             />
-                            {filteredSpecializations("", entry.id).map(
-                              (specialization, index) => (
+                            {educationData.specializations
+                              .filter(spec =>
+                                spec.courseId === entry.courseId &&
+                                spec.name?.toLowerCase().includes(
+                                  (specializationSearchQuery[entry.id] || '').toLowerCase()
+                                )
+                              )
+                              .map((spec, index) => (
                                 <div
-                                  key={index}
+                                  key={spec.id || index}
                                   className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
                                   onClick={() =>
                                     handleSpecializationSelect(
                                       entry.id,
-                                      specialization
+                                      spec
                                     )
                                   }
                                 >
-                                  {specialization}
+                                  {spec.name}
                                 </div>
-                              )
-                            )}
+                              ))}
                           </div>
                         )}
                       </div>
@@ -767,16 +735,12 @@ const FeedYourEducation = () => {
                           <Select
                             placeholder="Choose year"
                             options={yearOptions}
-                            value={entry.start_year}
-                            onChange={(e) =>
-                              handleInputChange(
-                                entry.id,
-                                "start_year",
-                                e.target.value
-                              )
+                            value={yearOptions.find(option => option.value === entry.start_year)}
+                            onChange={(selectedOption) =>
+                              handleInputChange(entry.id, "start_year", selectedOption?.value)
                             }
-                            className="w-full h-12 rounded-lg px-4 border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
                           />
+
                           <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
                             <svg
                               className="w-4 h-4 text-gray-400"
@@ -802,16 +766,12 @@ const FeedYourEducation = () => {
                           <Select
                             placeholder="Choose year"
                             options={yearOptions}
-                            value={entry.end_year}
-                            onChange={(e) =>
-                              handleInputChange(
-                                entry.id,
-                                "end_year",
-                                e.target.value
-                              )
+                            value={yearOptions.find(option => option.value === entry.end_year)}
+                            onChange={(selectedOption) =>
+                              handleInputChange(entry.id, "end_year", selectedOption?.value)
                             }
-                            className="w-full h-12 rounded-lg px-4 border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
                           />
+
                           <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
                             <svg
                               className="w-4 h-4 text-gray-400"
@@ -921,8 +881,8 @@ const FeedYourEducation = () => {
                         const link = document.createElement("a");
                         link.href = selectedCertificate.certificateFile
                           ? URL.createObjectURL(
-                              selectedCertificate.certificateFile
-                            )
+                            selectedCertificate.certificateFile
+                          )
                           : "#";
                         link.download = selectedCertificate.certificateName;
                         link.click();

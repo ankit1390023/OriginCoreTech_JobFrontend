@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Search } from "lucide-react";
 import MainLayout from "../../../components/layout/MainLayout";
-import { jobPostApi } from "../../../api/jobPostApi"; // Import your API service
+import { jobPostApi } from "../../../api/jobPostApi"; 
 import { useSelector } from "react-redux";
 import RecruiterRightProfile from "./RecruiterRightProfile";
 import { useNavigate } from "react-router-dom";
@@ -34,78 +34,72 @@ const RecruiterDashboard = () => {
       description: "Track and manage all your open roles in one place.",
       button: `Manage postings (${totalJobPosts})`,
       buttonAction: () => navigate("/recruiter-total-job-post"),
-      link: "#",
     },
     {
       title: "Pipeline Candidates",
       description: "Monitor every candidate’s journey through your hiring funnel.",
       button: "Manage pipelines",
       buttonAction: () => navigate("/recruiter-pipeline-candidates"),
-      link: "#",
     },
     {
       title: "Upcoming Interviews",
       description: "You have 3 interviews scheduled for today.",
       button: "View details (3)",
       buttonAction: () => navigate("/recruiter-upcoming-interview"),
-      link: "#",
     },
     {
       title: "Pending Tasks",
       description: "You have 5 tasks waiting for your attention.",
       button: "Review tasks (5)",
       buttonAction: () => navigate("/recruiter-pending-task"),
-      link: "#",
     },
     {
       title: "Analytics and Reports",
       description: "Track hiring progress and performance in real time.",
       button: "View details",
       buttonAction: () => navigate("/recruiter-view-analytics"),
-      link: "#",
     },
     {
       title: "Settings and Access Panel",
       description: "Manage your personal information and app preferences.",
       button: "View details",
       buttonAction: () => navigate("/recruiter-view-settings"),
-      link: "#",
     },
   ];
 
   return (
     <MainLayout>
-      <div className="flex justify-center bg-gray-100 min-h-screen px-2 lg:px-3 items-start">
-        {/* Left Spacer */}
+      <div className="flex justify-center bg-gray-100 min-h-screen px-3 sm:px-5 lg:px-8 items-start">
+        {/* Left Spacer for large screens */}
         <div className="hidden lg:block flex-grow"></div>
 
-        {/* Main content + right profile with horizontal gap */}
-        <div className="flex gap-2 mt-5">
+        {/* Main content + right profile */}
+        <div className="flex flex-col lg:flex-row gap-4 mt-5 w-full max-w-[1280px]">
           {/* Left Section */}
-          <section className="w-[729px] h-[754px] rounded-[10px] p-[20px] pr-[24px] pb-[20px] pl-[24px] gap-[20px] bg-white shadow-md">
+          <section className="w-full lg:w-[720px] rounded-[10px] p-5 bg-white shadow-md">
             {/* Header */}
-            <h1 className="text-3xl font-bold">Dashboard</h1>
-            <p className="text-gray-500">Lorem Ipsum</p>
+            <h1 className="text-2xl sm:text-3xl font-bold">Dashboard</h1>
+            <p className="text-gray-500 text-sm sm:text-base">Lorem Ipsum</p>
 
             {/* Search bar */}
             <div className="relative mt-4">
               <input
                 type="text"
                 placeholder="Search"
-                className="w-full rounded-full py-2 pl-4 pr-10 border border-gray-300 shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="w-full rounded-full py-2 pl-4 pr-10 border border-gray-300 shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm sm:text-base"
               />
               <Search className="absolute right-3 top-2.5 text-gray-400" size={20} />
             </div>
 
             {/* Cards */}
-            <div className="grid grid-cols-2 gap-4 mt-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-5">
               {data.map((item, index) => (
                 <div
                   key={index}
                   className="border border-gray-200 rounded-lg p-4 flex flex-col justify-between shadow-sm"
                 >
                   <div>
-                    <h2 className="font-semibold text-lg">{item.title}</h2>
+                    <h2 className="font-semibold text-base sm:text-lg">{item.title}</h2>
                     <p className="text-blue-600 text-sm mt-1">{item.description}</p>
                   </div>
                   <button
@@ -120,8 +114,9 @@ const RecruiterDashboard = () => {
           </section>
 
           {/* Right Section */}
-           <RecruiterRightProfile />
-         
+          <div className="w-full lg:w-[350px]">
+            <RecruiterRightProfile />
+          </div>
         </div>
 
         {/* Right Spacer */}
@@ -129,8 +124,6 @@ const RecruiterDashboard = () => {
       </div>
     </MainLayout>
   );
-
-
 };
 
 export default RecruiterDashboard;

@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { Button, Input, Label } from "../../../components/ui";
 import MainLayout from "../../../components/layout/MainLayout";
 import FeedRightSide1 from "../feed/FeedRightSide1";
+import { sendOtp, verifyOtp, updateAadhaarDetails } from "../../../api/authenticationApi"; // <-- import your api file
+//import { updateEmail } from "../../../api/authenticationApi";
+import { useSelector } from "react-redux";
 
 const FeedAuthentication = () => {
   const [phoneNumber, setPhoneNumber] = useState("+91 XXXXXXXXXX");
@@ -10,45 +13,92 @@ const FeedAuthentication = () => {
   const [dateOfBirth, setDateOfBirth] = useState("");
   const [linkedPhoneNumber, setLinkedPhoneNumber] = useState("+91 XXXXXXXXXX");
   const [aadharOtp, setAadharOtp] = useState("");
+  const [aadhaarFile, setAadhaarFile] = useState(null);
   const [email, setEmail] = useState("Amangupta@gmail.com");
   const [phoneResendTime, setPhoneResendTime] = useState(15);
   const [aadharResendTime, setAadharResendTime] = useState(15);
 
-  const handleSendPhoneOtp = () => {
-    // Handle phone OTP sending logic
-    console.log("Sending phone OTP...");
+  // get token from redux (assuming auth slice has it)
+  const token = useSelector((state) => state.auth?.token);
+
+  // ================= PHONE =================
+  const handleSendPhoneOtp = async () => {
+    try {
+      const res = await sendOtp(phoneNumber, token);
+      alert(res.message || "OTP sent!");
+    } catch (error) {
+      alert("Failed to send OTP");
+    }
   };
 
-  const handleVerifyPhone = () => {
-    // Handle phone verification logic
-    console.log("Verifying phone number...");
+  const handleVerifyPhone = async () => {
+    try {
+      const res = await verifyOtp(phoneNumber, phoneOtp, token);
+      alert(res.message || "Phone verified!");
+    } catch (error) {
+      alert("Failed to verify phone");
+    }
   };
 
-  const handleSendAadharOtp = () => {
-    // Handle Aadhar OTP sending logic
-    console.log("Sending Aadhar OTP...");
-  };
-
-  const handleVerifyAadhar = () => {
-    // Handle Aadhar verification logic
-    console.log("Verifying Aadhar card...");
-  };
-
-  const handleSaveChanges = () => {
-    // Handle save changes logic
-    console.log("Saving changes...");
-  };
-
-  const handleEditEmail = () => {
-    // Handle email editing logic
-    console.log("Editing email...");
-  };
-
+  // ================= AADHAAR =================
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
+      setAadhaarFile(file);
       console.log("File uploaded:", file.name);
     }
+  };
+
+  const handleSendAadharOtp = async () => {
+    try {
+      const res = await sendOtp(linkedPhoneNumber, token); // reuse sendOtp API
+      alert(res.message || "Aadhaar OTP sent!");
+    } catch (error) {
+      alert("Failed to send Aadhaar OTP");
+    }
+  };
+
+  const handleVerifyAadhar = async () => {
+    try {
+      const res = await verifyOtp(linkedPhoneNumber, aadharOtp, token); // reuse verifyOtp API
+      alert(res.message || "Aadhaar phone verified!");
+    } catch (error) {
+      alert("Failed to verify Aadhaar");
+    }
+  };
+
+  const handleSaveChanges = async () => {
+    try {
+      const res = await updateAadhaarDetails(aadhar_number, aadhaarFile, token);
+      alert(res.message || "Aadhaar details updated!");
+    } catch (error) {
+      alert("Failed to update Aadhaar details");
+    }
+  };
+
+  // ================= EMAIL ============= ====
+  // const handleEditEmail = () => {
+  //   setIsEditingEmail(true);
+  // };
+  
+  const handleSaveEmail = async () => {
+    try {
+      const res = await updateEmail(newEmail, token);
+      if (res.message) {
+        setEmail(newEmail);
+        setIsEditingEmail(false);
+        alert(res.message);
+      } else {
+        alert("Failed to update email");
+      }
+    } catch (error) {
+      alert("Error while updating email");
+    }
+  };
+  
+  const handleCancelEmail = () => {
+    setNewEmail(email);
+    setIsEditingEmail(false);
   };
 
   return (
@@ -63,10 +113,7 @@ const FeedAuthentication = () => {
           {/* Phone Number Verification Section */}
           <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 mb-4">
             <div className="flex items-center gap-2 mb-3">
-              <Label
-                htmlFor="phoneNumber"
-                className="text-sm font-semibold text-gray-700"
-              >
+              <Label htmlFor="phoneNumber" className="text-sm font-semibold text-gray-700">
                 Phone Number
               </Label>
             </div>
@@ -76,7 +123,7 @@ const FeedAuthentication = () => {
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
                 className="flex-1"
-                placeholder="+91 XXXXXXXXXX"
+                placeholder="+91 "
               />
               <Button
                 variant="secondary"
@@ -89,10 +136,7 @@ const FeedAuthentication = () => {
             </div>
 
             <div className="mb-3">
-              <Label
-                htmlFor="phoneOtp"
-                className="text-sm font-semibold text-gray-700"
-              >
+              <Label htmlFor="phoneOtp" className="text-sm font-semibold text-gray-700">
                 OTP
               </Label>
               <Input
@@ -121,10 +165,7 @@ const FeedAuthentication = () => {
           {/* Aadhar Card Verification Section */}
           <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 mb-4">
             <div className="mb-3">
-              <Label
-                htmlFor="aadhar_number"
-                className="text-sm font-semibold text-gray-700"
-              >
+              <Label htmlFor="aadhar_number" className="text-sm font-semibold text-gray-700">
                 Aadhar Card
               </Label>
               <Input
@@ -137,10 +178,7 @@ const FeedAuthentication = () => {
             </div>
 
             <div className="mb-3">
-              <Label
-                htmlFor="dateOfBirth"
-                className="text-sm font-semibold text-gray-700"
-              >
+              <Label htmlFor="dateOfBirth" className="text-sm font-semibold text-gray-700">
                 Date of Birth
               </Label>
               <Input
@@ -153,10 +191,7 @@ const FeedAuthentication = () => {
             </div>
 
             <div className="mb-3">
-              <Label
-                htmlFor="fileUpload"
-                className="text-sm font-semibold text-gray-700"
-              >
+              <Label htmlFor="fileUpload" className="text-sm font-semibold text-gray-700">
                 Upload file
               </Label>
               <div className="border-2 border-dashed border-gray-300 rounded-md p-4 text-center hover:border-gray-400 transition-colors">
@@ -188,10 +223,7 @@ const FeedAuthentication = () => {
             </div>
 
             <div className="flex items-center gap-2 mb-3">
-              <Label
-                htmlFor="linkedPhoneNumber"
-                className="text-sm font-semibold text-gray-700"
-              >
+              <Label htmlFor="linkedPhoneNumber" className="text-sm font-semibold text-gray-700">
                 Linked Phone Number
               </Label>
             </div>
@@ -214,10 +246,7 @@ const FeedAuthentication = () => {
             </div>
 
             <div className="mb-3">
-              <Label
-                htmlFor="aadharOtp"
-                className="text-sm font-semibold text-gray-700"
-              >
+              <Label htmlFor="aadharOtp" className="text-sm font-semibold text-gray-700">
                 OTP
               </Label>
               <Input
@@ -243,19 +272,50 @@ const FeedAuthentication = () => {
             </p>
           </div>
 
-          {/* Email ID Display Section */}
-          <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
-            <Label className="text-sm font-semibold text-gray-700">
-              Email ID
-            </Label>
-            <p className="text-sm text-gray-800 mt-1 mb-2">{email}</p>
-            <button
-              onClick={handleEditEmail}
-              className="text-blue-600 text-sm hover:text-blue-800 underline"
-            >
-              Edit/Change
-            </button>
-          </div>
+        {/* Email ID Display Section */}
+<div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+  <Label className="text-sm font-semibold text-gray-700">Email ID</Label>
+
+  {isEditingEmail ? (
+    <div className="mt-2 flex flex-col gap-2">
+      <Input
+        type="email"
+        value={newEmail}
+        onChange={(e) => setNewEmail(e.target.value)}
+        className="w-full"
+      />
+      <div className="flex gap-2">
+        <Button
+          variant="secondary"
+          size="sm"
+          className="bg-green-500 text-white hover:bg-green-600"
+          onClick={handleSaveEmail}
+        >
+          Save
+        </Button>
+        <Button
+          variant="secondary"
+          size="sm"
+          className="bg-gray-400 text-white hover:bg-gray-500"
+          onClick={handleCancelEmail}
+        >
+          Cancel
+        </Button>
+      </div>
+    </div>
+  ) : (
+    <div className="mt-1">
+      <p className="text-sm text-gray-800 mb-2">{email}</p>
+      <button
+        onClick={handleEditEmail}
+        className="text-blue-600 text-sm hover:text-blue-800 underline"
+      >
+        Edit/Change
+      </button>
+    </div>
+  )}
+</div>
+
 
           {/* Save Changes Button */}
           <div className="text-center">

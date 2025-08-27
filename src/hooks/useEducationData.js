@@ -7,6 +7,7 @@ export const useEducationData = () => {
         jobRoles: [],
         locations: [],
         courses: [],
+        degrees: [],
         specializations: [],
         colleges: []
     });

@@ -1,64 +1,70 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { Input, Select, Button, Badge } from "../../../components/ui";
 import MainLayout from "../../../components/layout/MainLayout";
 import FeedRightSide1 from "../feed/FeedRightSide1";
 import { IoIosArrowBack } from "react-icons/io";
+import { jobGetApi } from "../../../api/jobGetApi";
 
 const FeedYourExprience = () => {
   const navigate = useNavigate();
-  // Dummy data for companies and roles
+  const { token } = useSelector((state) => state.auth);
+
+  // Fetch job roles on component mount
+  useEffect(() => {
+    const fetchJobRoles = async () => {
+      if (!token) return;
+
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        const response = await jobGetApi.getJobRoles();
+        if (response.success && response.data) {
+          // Map the job roles from the API response
+          const roles = response.data.map(role => role.name || role.roleName || role.title);
+          setJobRoles(roles);
+        } else {
+          throw new Error(response.message || 'Failed to load job roles');
+        }
+      } catch (err) {
+        console.error("Failed to fetch job roles:", err);
+        setError("Failed to load job roles. Using default roles instead.");
+        // Fallback to default roles if API fails
+        setJobRoles([
+          "Software Engineer",
+          "Frontend Developer",
+          "Backend Developer",
+          "Full Stack Developer",
+          "Data Scientist",
+          "Product Manager",
+          "UI/UX Designer",
+          "DevOps Engineer"
+        ]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchJobRoles();
+  }, [token]);
+
+  // Dummy data for companies
   const dummyCompanies = [
-    "Google",
-    "Microsoft",
-    "Amazon",
-    "Apple",
-    "Meta",
-    "Netflix",
-    "Uber",
-    "Airbnb",
-    "Spotify",
-    "Twitter",
-    "LinkedIn",
-    "Salesforce",
-    "Adobe",
-    "Oracle",
-    "IBM",
-    "Intel",
-    "Cisco",
-    "Dell",
-    "HP",
-    "Samsung",
+     "Amazon",
+    
   ];
 
-  const dummyRoles = [
-    "Software Engineer",
-    "Frontend Developer",
-    "Backend Developer",
-    "Full Stack Developer",
-    "Data Scientist",
-    "Product Manager",
-    "UI/UX Designer",
-    "DevOps Engineer",
-    "QA Engineer",
-    "System Administrator",
-    "Network Engineer",
-    "Database Administrator",
-    "Business Analyst",
-    "Project Manager",
-    "Marketing Manager",
-    "Sales Representative",
-    "Customer Success Manager",
-    "Content Writer",
-    "Digital Marketing Specialist",
-    "Human Resources Manager",
-  ];
+  const [jobRoles, setJobRoles] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const [experienceEntries, setExperienceEntries] = useState([
     {
       id: 1,
       company: "Company Name",
-      role: "Digital Marketing",
+      role: "",
       start_year: "",
       end_year: "",
       ctc: "",
@@ -70,7 +76,7 @@ const FeedYourExprience = () => {
     {
       id: 2,
       company: "Company Name",
-      role: "Digital Marketing",
+      role: "",
       start_year: "",
       end_year: "",
       ctc: "",
@@ -82,7 +88,7 @@ const FeedYourExprience = () => {
     {
       id: 3,
       company: "Company Name",
-      role: "Digital Marketing",
+      role: "",
       start_year: "",
       end_year: "",
       ctc: "",
@@ -94,7 +100,7 @@ const FeedYourExprience = () => {
     {
       id: 4,
       company: "Company Name",
-      role: "Digital Marketing",
+      role: "",
       start_year: "",
       end_year: "",
       ctc: "",
@@ -241,8 +247,8 @@ const FeedYourExprience = () => {
 
   const filteredRoles = (query, id) => {
     const searchTerm = roleSearchQuery[id] || "";
-    return dummyRoles.filter((role) =>
-      role.toLowerCase().includes(searchTerm.toLowerCase())
+    return jobRoles.filter((role) =>
+      role && role.toLowerCase().includes(searchTerm.toLowerCase())
     );
   };
 
@@ -299,11 +305,11 @@ const FeedYourExprience = () => {
               entries.map((entry) =>
                 entry.id === id
                   ? {
-                      ...entry,
-                      certificate: "uploaded",
-                      certificateFile: file,
-                      certificateName: file.name,
-                    }
+                    ...entry,
+                    certificate: "uploaded",
+                    certificateFile: file,
+                    certificateName: file.name,
+                  }
                   : entry
               )
             );
@@ -325,11 +331,11 @@ const FeedYourExprience = () => {
       entries.map((entry) =>
         entry.id === id
           ? {
-              ...entry,
-              certificate: null,
-              certificateFile: null,
-              certificateName: "",
-            }
+            ...entry,
+            certificate: null,
+            certificateFile: null,
+            certificateName: "",
+          }
           : entry
       )
     );
@@ -591,15 +597,22 @@ const FeedYourExprience = () => {
                             className="w-full px-3 py-2 border-b border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
                             autoFocus
                           />
-                          {filteredRoles("", entry.id).map((role, index) => (
-                            <div
-                              key={index}
-                              className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
-                              onClick={() => handleRoleSelect(entry.id, role)}
-                            >
-                              {role}
-                            </div>
-                          ))}
+                          {isLoading ? (
+                            <div className="px-3 py-2 text-sm text-gray-500">Loading roles...</div>
+                          ) : error ? (
+                            <div className="px-3 py-2 text-sm text-red-500">{error}</div>
+                          ) : filteredRoles("", entry.id).length === 0 ? (
+                            <div className="px-3 py-2 text-sm text-gray-500">No roles found</div>
+                          ) : (
+                            filteredRoles("", entry.id).map((role, index) => (
+                              <div
+                                key={index}
+                                className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
+                                onClick={() => handleRoleSelect(entry.id, role)}
+                              >
+                                {role}
+                              </div>
+                            )))}
                         </div>
                       )}
                     </div>
@@ -801,8 +814,8 @@ const FeedYourExprience = () => {
                         const link = document.createElement("a");
                         link.href = selectedCertificate.certificateFile
                           ? URL.createObjectURL(
-                              selectedCertificate.certificateFile
-                            )
+                            selectedCertificate.certificateFile
+                          )
                           : "#";
                         link.download = selectedCertificate.certificateName;
                         link.click();

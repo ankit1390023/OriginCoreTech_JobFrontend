@@ -20,6 +20,7 @@ export const jobGetApi = {
     }
   },
 
+
   //Get Job By ID
   getJobById: async (job_id, token) => {
     try {
@@ -34,4 +35,30 @@ export const jobGetApi = {
       throw error;
     }
   },
+
+  getJobRoles: async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/master/job-roles`);
+      return response.data; // full response { message, success, data }
+    } catch (error) {
+      console.error("Error fetching job roles:", error);
+      throw error;
+    }
+  } ,
+
+  getJobgetUserExperiences: async (userId, token) => {
+    try {
+      const response = await axios.get(`${BASE_URL}/user-details/detail/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`, // attach JWT
+        },
+      });
+  
+      return response.data.experiences || [];
+    } catch (error) {
+      console.error("Error fetching user experiences:", error);
+      throw error;
+    }
+  },
+
 };

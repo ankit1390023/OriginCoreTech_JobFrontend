@@ -67,7 +67,7 @@ export const skillApi = {
   getUserSkills: async (user_id, token) => {
     try {
       const response = await axios.get(
-        `${BASE_URL}/api/user-skills/${user_id}`,
+        `${BASE_URL}/user-skills/${user_id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
