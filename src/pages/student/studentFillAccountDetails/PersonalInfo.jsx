@@ -135,7 +135,7 @@ export default function PersonalInfo() {
                 onChange(option ? String(option.value) : null);
               }}
               onBlur={onBlur}
-              options={locations.map((location) => ({
+              options={(Array.isArray(locations) ? locations : []).map((location) => ({
                 value: String(location.id),
                 label: location.name,
               }))}

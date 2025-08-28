@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { useFormContext } from "react-hook-form";
+import { useFormContext, Controller } from "react-hook-form";
+import Select from 'react-select';
 import { useMasterData } from "../../../hooks/master/useMasterData";
 import {
   Loader,
   Input,
-  Select,
   Label,
   ErrorMessage,
 } from "../../../components/ui";
@@ -23,6 +23,8 @@ export default function EducationInfo() {
   const {
     register,
     formState: { errors },
+    setValue,
+    control,
     watch,
   } = useFormContext();
 
@@ -230,61 +232,146 @@ export default function EducationInfo() {
             )}
           </div>
 
-          <Select
-            label="College/University"
-            error={errors.college?.message}
-            isLoading={loading}
-            options={
-              schoolColleges?.map((college) => ({
-                value: college.name,
-                label: college.name,
-              })) || []
-            }
-            placeholder="Select your college/university"
-            value={watch("college") || ""}
-            {...register("college", {
-              required: "College/University is required",
-            })}
-          />
-          <Select
-            label="Specialization"
-            error={errors.specialization?.message}
-            isLoading={false}
-            options={
-              courseSpecializations.map((specialization) => ({
-                value: specialization.name,
-                label: specialization.name,
-              })) || []
-            }
-            placeholder="Select a specialization"
-            disabled={!selectedCourse}
-            {...register("specialization", {
-              required: "Specialization is required",
-            })}
-          />
-          <div className="flex gap-1 sm:gap-2 mb-2 sm:mb-3">
+          <div className="w-full">
+            <label className="block text-sm font-medium text-gray-700 mb-1">College/University</label>
+            <Controller
+              name="college_id"
+              control={control}
+              rules={{ required: "Please select your college/university" }}
+              render={({ field: { onChange, onBlur, value, ref } }) => (
+                <Select
+                  ref={ref}
+                  value={schoolColleges?.find(option =>
+                    option.id === value || option.id === Number(value)
+                  )}
+                  onChange={(selectedOption) => {
+                    onChange(selectedOption ? selectedOption.id : null);
+                  }}
+                  onBlur={onBlur}
+                  options={schoolColleges}
+                  getOptionLabel={(option) => option.name}
+                  getOptionValue={(option) => option.id}
+                  placeholder="Select College/University"
+                  className="w-full text-sm"
+                  classNamePrefix="select"
+                  isClearable
+                  isSearchable
+                />
+              )}
+            />
+            {errors.college_id && (
+              <ErrorMessage>{errors.college_id.message}</ErrorMessage>
+            )}
+          </div>
+
+       
+          {/* Specialization */}
+          <div className="w-full mt-2">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Specialization
+            </label>
+            <Controller
+              name="specialization"
+              control={control}
+              rules={{ required: "Specialization is required" }}
+              render={({ field: { onChange, value, ref } }) => (
+                <Select
+                  ref={ref}
+                  value={
+                    courseSpecializations?.find(
+                      (spec) => spec.name === value
+                    ) || null
+                  }
+                  onChange={(selectedOption) =>
+                    onChange(selectedOption ? selectedOption.name : null)
+                  }
+                  options={courseSpecializations.map((spec) => ({
+                    value: spec.name,
+                    label: spec.name,
+                  }))}
+                  placeholder="Select a specialization"
+                  isDisabled={!selectedCourse}
+                  isClearable
+                  isSearchable
+                  className="w-full text-sm"
+                  classNamePrefix="select"
+                />
+              )}
+            />
+            {errors.specialization && (
+              <ErrorMessage>{errors.specialization.message}</ErrorMessage>
+            )}
+          </div>
+
+          <div className="flex gap-2 mt-2">
+            {/* Start Year */}
             <div className="flex-1">
-              <Select
-                label="Start Year"
-                placeholder="Choose year"
-                error={errors.start_year?.message}
-                options={generateYearOptions()}
-                {...register("start_year", {
-                  required: "Start Year is required",
-                })}
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Start Year
+              </label>
+              <Controller
+                name="start_year"
+                control={control}
+                rules={{ required: "Start Year is required" }}
+                render={({ field: { onChange, value, ref } }) => (
+                  <Select
+                    ref={ref}
+                    value={
+                      generateYearOptions().find((y) => y.value === value) || null
+                    }
+                    onChange={(selectedOption) =>
+                      onChange(selectedOption ? selectedOption.value : null)
+                    }
+                    options={generateYearOptions()}
+                    placeholder="Choose year"
+                    isClearable
+                    isSearchable
+                    className="w-full text-sm"
+                    classNamePrefix="select"
+                  />
+                )}
               />
+              {errors.start_year && (
+                <ErrorMessage>{errors.start_year.message}</ErrorMessage>
+              )}
             </div>
+
+            {/* End Year */}
             <div className="flex-1">
-              <Select
-                label="End Year"
-                placeholder="Choose year"
-                error={errors.end_year?.message}
-                options={generateYearOptions()}
-                {...register("end_year", { required: "End Year is required" })}
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                End Year
+              </label>
+              <Controller
+                name="end_year"
+                control={control}
+                rules={{ required: "End Year is required" }}
+                render={({ field: { onChange, value, ref } }) => (
+                  <Select
+                    ref={ref}
+                    value={
+                      generateYearOptions().find((y) => y.value === value) || null
+                    }
+                    onChange={(selectedOption) =>
+                      onChange(selectedOption ? selectedOption.value : null)
+                    }
+                    options={generateYearOptions()}
+                    placeholder="Choose year"
+                    isClearable
+                    isSearchable
+                    className="w-full text-sm"
+                    classNamePrefix="select"
+                  />
+                )}
               />
+              {errors.end_year && (
+                <ErrorMessage>{errors.end_year.message}</ErrorMessage>
+              )}
             </div>
           </div>
+
         </>
+
+      
       )}
       {watch("type") === "Working Professional" && (
         <>

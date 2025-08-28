@@ -171,42 +171,22 @@ export default function SignUpVerifyOtpEmail() {
                           : "border-gray-300 hover:border-gray-400"
                         }`}
                       placeholder="0"
-                      value={watch(`otp${index + 1}`) || ""}
+                      {...register(`otp${index + 1}`)}
                       onChange={(e) => {
-                        const value = e.target.value.replace(/[^0-9]/g, '').slice(-1);
-                        if (value) {
-                          setValue(`otp${index + 1}`, value);
-                          // Move focus to next input if value is entered and not the last box
-                          if (index < 3) {
-                            setTimeout(() => {
-                              inputRefs[index + 1].current?.focus();
-                            }, 0);
-                          }
+                        const value = e.target.value;
+                        setValue(`otp${index + 1}`, value);
+
+                        if (value && index < 3) {
+                          // ✅ Move to next input
+                          inputRefs[index + 1]?.current?.focus();
                         }
                       }}
                       onKeyDown={(e) => {
-                        // Handle backspace
-                        if (e.key === "Backspace") {
-                          if (!watch(`otp${index + 1}`) && index > 0) {
-                            e.preventDefault();
-                            setValue(`otp${index + 1}`, "");
-                            inputRefs[index - 1].current?.focus();
-                          } else {
-                            setValue(`otp${index + 1}`, "");
-                          }
-                        }
-                        // Handle left arrow
-                        if (e.key === "ArrowLeft" && index > 0) {
-                          e.preventDefault();
-                          inputRefs[index - 1].current?.focus();
-                        }
-                        // Handle right arrow
-                        if (e.key === "ArrowRight" && index < 3) {
-                          e.preventDefault();
-                          inputRefs[index + 1].current?.focus();
+                        if (e.key === "Backspace" && !e.target.value && index > 0) {
+                          // ✅ Move back on Backspace
+                          inputRefs[index - 1]?.current?.focus();
                         }
                       }}
-                      onFocus={(e) => e.target.select()}
                       onPaste={handlePaste}
                     />
                   </div>
@@ -224,6 +204,8 @@ export default function SignUpVerifyOtpEmail() {
                 </span>
               )}
             </div>
+
+
           </div>
           {/* Submit Button - Using new UI component */}
           <Button
@@ -265,4 +247,3 @@ export default function SignUpVerifyOtpEmail() {
     </SignUpLayoutForLarge>
   );
 }
-
