@@ -1,4 +1,5 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
+import { useSelector } from 'react-redux';
 import Home from "../pages/Home";
 import Login from "../pages/auth/Login";
 import ForgotPassword from "../pages/auth/ForgotPassword";
@@ -40,7 +41,6 @@ import Myapplication5 from "../pages/student/application/Myapplication5";
 import Myapplication4 from "../pages/student/application/Myapplication4";
 import Myapplication2 from "../pages/student/application/Myapplication2";
 import RecruiterDashboard from "../pages/recruiter/dashboard/RecruiterDashboard";
-import RecruiterRightProfile from "../pages/recruiter/dashboard/RecruiterRightProfile";
 import RecruiterTotalJobPost from "../pages/recruiter/dashboard/RecruiterTotalJobPost";
 import RecruiterApplication from "../pages/recruiter/dashboard/RecruiterApplication";
 import RecruiterApplicationDetails from "../pages/recruiter/dashboard/RecruiterApplicationDetails";
@@ -79,15 +79,27 @@ import AiProfile1 from "../pages/aiprediction/AiProfile1";
 import AllJObsPart from "../pages/aiprediction/AlljobsPart";
 import AllCoursesPart from "../pages/aiprediction/CoursePart";
 import FeedRightSide3 from "../pages/student/feed/FeedRightSide3";
-// import Sidebar from "../components/shared/Sidebar";
-// import Header1 from "../components/shared/Header1";
-// import Footer1 from "../components/shared/Footer1";
-// import FinanceLayout from "../components/layout/FinanceLayout";
+import RecruiterRightProfile from "../pages/recruiter/dashboard/RecruiterRightProfile";
+
+// Protected Route Wrapper Component
+const ProtectedRoute = ({ children }) => {
+  const { isAuthenticated, loading } = useSelector((state) => state.auth);
+
+  if (loading) {
+    return <div>Loading...</div>; // Show loading state
+  }
+
+  return isAuthenticated ? children : <Navigate to="/login" replace />;
+};
 
 export const appRouter = createBrowserRouter([
   {
     path: "/",
     element: <Home />,
+  },
+  {
+    path: "/login",
+    element: <Login />,
   },
   {
     path: "/login",
@@ -138,7 +150,7 @@ export const appRouter = createBrowserRouter([
 
   {
     path: "/recruiter-profile",
-    element: <CompanyRecruiterProfile />,
+    element: <RecruiterRightProfile />,
   },
 
   {
@@ -323,37 +335,69 @@ export const appRouter = createBrowserRouter([
     element: <FeedTicket />,
   },
   {
-    path: "/feed-profile",
-    element: <Feedprofile />,
+    path: "feed-profile",
+    element: (
+      <ProtectedRoute>
+        <Feedprofile />
+      </ProtectedRoute>
+    ),
   },
   {
-    path: "/feed-change-email",
-    element: <FeedChangeEmail />,
+    path: "feed-change-email",
+    element: (
+      <ProtectedRoute>
+        <FeedChangeEmail />
+      </ProtectedRoute>
+    ),
   },
   {
-    path: "/feed-change-password",
-    element: <FeedChangePassword />,
+    path: "feed-change-password",
+    element: (
+      <ProtectedRoute>
+        <FeedChangePassword />
+      </ProtectedRoute>
+    ),
   },
   {
-    path: "/feed-your-skills",
-    element: <FeedYourSkills />,
+    path: "feed-your-skills",
+    element: (
+      <ProtectedRoute>
+        <FeedYourSkills />
+      </ProtectedRoute>
+    ),
   },
   {
-    path: "/feed-your-education",
-    element: <FeedYourEducation />,
+    path: "feed-your-education",
+    element: (
+      <ProtectedRoute>
+        <FeedYourEducation />
+      </ProtectedRoute>
+    ),
   },
   {
-    path: "/feed-your-exprience",
-    element: <FeedYourExprience />,
+    path: "feed-your-experience",
+    element: (
+      <ProtectedRoute>
+        <FeedYourExprience />
+      </ProtectedRoute>
+    ),
   },
 
   {
     path: "feed-dashboard",
-    element: <FeedDashBoard />,
+    element: (
+      <ProtectedRoute>
+        <FeedDashBoard />
+      </ProtectedRoute>
+    ),
   },
   {
-    path: "/feed-authentication",
-    element: <FeedAuthentication />,
+    path: "feed-authentication",
+    element: (
+      <ProtectedRoute>
+        <FeedAuthentication />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/feed-faq",
@@ -430,21 +474,4 @@ export const appRouter = createBrowserRouter([
     path: "/all-courses-part",
     element: <AllCoursesPart />,
   },
-  // {
-  //     path: "/sidebar",
-  //     element: <Sidebar />
-  // },
-  // {
-  //     path: "/header1",
-  //     element: <Header1 />
-  // },
-  // {
-  //     path: "/footer1",
-  //     element: <Footer1 />
-  // },
-
-  // {
-  //     path: "/finance-layout",
-  //     element: <FinanceLayout />
-  // },
 ]);
