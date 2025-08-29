@@ -44,8 +44,8 @@ export const login = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message ||
-          error.response?.statusText ||
-          'Login failed. Please check your credentials.'
+        error.response?.statusText ||
+        'Login failed. Please check your credentials.'
       );
     }
   }
@@ -69,15 +69,15 @@ export const signup = createAsyncThunk(
       }
 
       // ✅ Persist token + user
-      localStorage.setItem('authToken', token);
-      localStorage.setItem('user', JSON.stringify(user));
+      // localStorage.setItem('authToken', token);
+      // localStorage.setItem('user', JSON.stringify(user));
 
       return { user, token };
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message ||
-          error.response?.statusText ||
-          'Signup failed. Please try again.'
+        error.response?.statusText ||
+        'Signup failed. Please try again.'
       );
     }
   }
@@ -137,9 +137,9 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(signup.fulfilled, (state, action) => {
-        state.user = action.payload.user;
-        state.token = action.payload.token;
-        state.isAuthenticated = true;
+        // state.user = action.payload.user;
+        // state.token = action.payload.token;
+        // state.isAuthenticated = true;
         state.loading = false;
         state.error = null;
       })
