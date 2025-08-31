@@ -1,4 +1,5 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate, useLocation } from "react-router-dom";
+import { useSelector } from 'react-redux';
 import Home from "../pages/Home";
 import Login from "../pages/auth/Login";
 import ForgotPassword from "../pages/auth/ForgotPassword";
@@ -29,18 +30,9 @@ import FeedYourExprience from "../pages/student/feed/FeedYourExprience";
 import FeedDashBoard from "../pages/student/feed/FeedDashBoard";
 import FeedAuthentication from "../pages/student/feed/FeedAuthentication";
 import FeedFaq from "../pages/student/feed/FeedFaq";
-import FeedRightSide1 from "../pages/student/feed/FeedRightSide1";
-import FeedRightSide2 from "../pages/student/feed/FeedRightSide2";
-import Myapplication1 from "../pages/student/application/Myapplication1";
-import Myapplication3 from "../pages/student/application/Myapplication3";
 import MyMassage from "../pages/student/application/MyMassage";
 import MyNotification from "../pages/student/application/MyNotification";
-import Myapplication6 from "../pages/student/application/Myapplication6";
-import Myapplication5 from "../pages/student/application/Myapplication5";
-import Myapplication4 from "../pages/student/application/Myapplication4";
-import Myapplication2 from "../pages/student/application/Myapplication2";
 import RecruiterDashboard from "../pages/recruiter/dashboard/RecruiterDashboard";
-import RecruiterRightProfile from "../pages/recruiter/dashboard/RecruiterRightProfile";
 import RecruiterTotalJobPost from "../pages/recruiter/dashboard/RecruiterTotalJobPost";
 import RecruiterApplication from "../pages/recruiter/dashboard/RecruiterApplication";
 import RecruiterApplicationDetails from "../pages/recruiter/dashboard/RecruiterApplicationDetails";
@@ -52,12 +44,8 @@ import RecruitePipeline from "../pages/recruiter/dashboard/RecruiterPipeline";
 import RecruiterUpcommingInterview from "../pages/recruiter/dashboard/RecruiterUpcommingInterview";
 import RecruiterPendingTask from "../pages/recruiter/dashboard/RecruiterPendingTask";
 import RecruiterProfile from "../pages/recruiter/profile/RecruiterVisitores";
-import RecruiterRightSide1 from "../pages/recruiter/profile/RecruiterRightSide1";
-import RecruiterRightSide2 from "../pages/recruiter/profile/RecruiterRightSide2";
-import RecruiterRightSide3 from "../pages/recruiter/profile/RecruiterRightSide3";
 import RecruiterTerms from "../pages/recruiter/profile/RecruiterTerms";
 import RecruiterView from "../pages/recruiter/profile/RecruiterView";
-import UniversityRightSide1 from "../pages/university/universityProfile/UniversityRightSide1";
 import UniversityProfile from "../pages/university/universityProfile/UniversityProfile";
 import UniversityChangeEmail from "../pages/university/universityProfile/UniversityChangeEmail";
 import UniversityChangePassword from "../pages/university/universityProfile/UniversityChangePassword";
@@ -77,73 +65,283 @@ import UniversityApproval from "../pages/university/universityProfile/University
 import AiProfile from "../pages/aiprediction/AiProfile";
 import AiProfile1 from "../pages/aiprediction/AiProfile1";
 import AllJObsPart from "../pages/aiprediction/AlljobsPart";
-import AllCoursesPart from "../pages/aiprediction/CoursePart";
-import FeedRightSide3 from "../pages/student/feed/FeedRightSide3";
-import Rprofile from "../pages/recruiter/dashboard/Rprofile";
-// import Sidebar from "../components/shared/Sidebar";
-// import Header1 from "../components/shared/Header1";
-// import Footer1 from "../components/shared/Footer1";
-// import FinanceLayout from "../components/layout/FinanceLayout";
+import RecruiterRightProfile from "../pages/recruiter/dashboard/RecruiterRightProfile";
+
+// Protected Route Wrapper Component
+const ProtectedRoute = ({ children, allowedRoles }) => {
+  const { isAuthenticated, loading, userRole } = useSelector((state) => state.auth);
+  const location = useLocation();
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  if (allowedRoles && !allowedRoles.includes(userRole)) {
+    return <Navigate to="/unauthorized" replace />;
+  }
+
+  return children;
+};
+
+// Public Route Wrapper Component
+const PublicRoute = ({ children }) => {
+  const { isAuthenticated } = useSelector((state) => state.auth);
+  const location = useLocation();
+
+  // Don't redirect if it's the OTP verification page
+  if (location.pathname === '/signup-verify-otp-email') {
+    return children;
+  }
+
+  // For all other public routes, redirect to student-fill-account-details if authenticated
+  if (isAuthenticated) {
+    return <Navigate to="/student-fill-account-details" replace />;
+  }
+
+  return children;
+};
 
 export const appRouter = createBrowserRouter([
   {
     path: "/",
-    element: <Home />,
-  },
-  {
-    path: "/rprofile",
-    element: <Rprofile />,
+    element: (
+      <ProtectedRoute>
+        <Home />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/login",
-    element: <Login />,
+    element: (
+      <PublicRoute>
+        <Login />
+      </PublicRoute>
+    ),
   },
   {
     path: "/forgot-password",
-    element: <ForgotPassword />,
+    element: (
+      <PublicRoute>
+        <ForgotPassword />,
+      </PublicRoute>
+    )
   },
   {
     path: "/login-send-otp-email",
-    element: <LoginSendOtpEmail />,
+    element: (
+      <PublicRoute>
+        <LoginSendOtpEmail />
+      </PublicRoute>
+    )
   },
   {
     path: "/login-verify-otp-email",
-    element: <LoginVerifyOtpEmail />,
+    element: (
+      <PublicRoute>
+        <LoginVerifyOtpEmail />,
+      </PublicRoute>
+    )
   },
   {
     path: "/signup-choose-role",
-    element: <SignUpChooseRole />,
+    element: (
+      <PublicRoute>
+        <SignUpChooseRole />
+      </PublicRoute>
+    ),
   },
   {
     path: "/signup",
-    element: <SignUp />,
+    element: (
+      <PublicRoute>
+        <SignUp />,
+      </PublicRoute>
+    )
   },
   {
     path: "/signup-verify-otp-email",
-    element: <SignUpVerifyOtpEmail />,
+    element: (
+      <PublicRoute>
+        <SignUpVerifyOtpEmail />,
+      </PublicRoute>
+    )
   },
   {
     path: "/student-fill-account-details",
-    element: <StudentFillAccountDetails />,
+    element: (
+      <ProtectedRoute>
+        <StudentFillAccountDetails />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/recruiter-post-job-intern-details",
-    element: <RecruiterPostJobInternDetails />,
+    element: (
+      <ProtectedRoute>
+        <RecruiterPostJobInternDetails />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/all-jobs",
-    element: <AllJObs />,
+    element: (
+      <ProtectedRoute>
+        <AllJObs />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/jobs/:job_id",
-    element: <JobDetailsPage />,
+    element: (
+      <ProtectedRoute>
+        <JobDetailsPage />
+      </ProtectedRoute>
+    ),
   },
+  {
+    path: "/feed",
+    element: (
+      <ProtectedRoute>
+        <FeedPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/feed-my-profile",
+    element: (
+      <ProtectedRoute>
+        <FeedMyProfile />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/feed-view",
+    element: (
+      <ProtectedRoute>
+        <FeedView />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/feed-application",
+    element: (
+      <ProtectedRoute>
+        <FeedApplication />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/feed-terms",
+    element: (
+      <ProtectedRoute>
+        <FeedTerms />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/feed-resume",
+    element: (
+      <ProtectedRoute>
+        <FeedResume />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/feed-ticket",
+    element: (
+      <ProtectedRoute allowedRoles={['STUDENT', 'RECRUITER', 'UNIVERSITY']}>
+        <FeedTicket />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "feed-profile",
+    element: (
+      <ProtectedRoute allowedRoles={['STUDENT', 'RECRUITER', 'UNIVERSITY']}>
+        <Feedprofile />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "feed-change-email",
+    element: (
+      <ProtectedRoute allowedRoles={['STUDENT', 'RECRUITER', 'UNIVERSITY']}>
+        <FeedChangeEmail />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "feed-change-password",
+    element: (
+      <ProtectedRoute allowedRoles={['STUDENT', 'RECRUITER', 'UNIVERSITY']}>
+        <FeedChangePassword />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "feed-your-skills",
+    element: (
+      <ProtectedRoute>
+        <FeedYourSkills />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "feed-your-education",
+    element: (
+      <ProtectedRoute>
+        <FeedYourEducation />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "feed-your-experience",
+    element: (
+      <ProtectedRoute>
+        <FeedYourExprience />
+      </ProtectedRoute>
+    ),
+  },
+
+  {
+    path: "feed-dashboard",
+    element: (
+      <ProtectedRoute>
+        <FeedDashBoard />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "feed-authentication",
+    element: (
+      <ProtectedRoute>
+        <FeedAuthentication />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/feed-faq",
+    element: <FeedFaq />,
+  },
+  {
+    path: "/application-mymassage",
+    element: <MyMassage />,
+  },
+  {
+    path: "/application-mynotification",
+    element: <MyNotification />,
+  },
+  {
+    path: "/feed-dashboard",
+    element: <FeedDashBoard />,
+  },
+
 
   // Recruiter related routes
 
   {
     path: "/recruiter-profile",
-    element: <CompanyRecruiterProfile />,
+    element: <RecruiterRightProfile />,
   },
 
   {
@@ -151,33 +349,24 @@ export const appRouter = createBrowserRouter([
     element: <RecruiterDashboard />,
   },
   {
-    path: "/recruiter-right-profile",
-    element: <RecruiterRightProfile />,
-  },
-  {
     path: "/recruiter-total-job-post",
     element: <RecruiterTotalJobPost />,
   },
   {
-    path: "/recruiter-view-applications/:job_id",
+    path: "/recruiter-application",
     element: <RecruiterApplication />,
   },
 
   {
-    path: "/recruiter-application-details/:job_id/:application_id",
+    path: "/recruiter-application-details",
     element: <RecruiterApplicationDetails />,
   },
-
   {
-    path: "/recruiter-application-data",
-    element: <RecruiterApplicationData />,
-  },
-  {
-    path: "/recruiter-send-assignment/:application_id",
+    path: "/recruiter-send-assignment",
     element: <RecruiterSendAssignment />,
   },
   {
-    path: "/recruiter-schedule-interview/:application_id",
+    path: "/recruiter-interview",
     element: <RecruiterInterview />,
   },
   {
@@ -200,18 +389,6 @@ export const appRouter = createBrowserRouter([
   {
     path: "/recruiter-visiter",
     element: <RecruiterProfile />,
-  },
-  {
-    path: "/recruiter-right-side1",
-    element: <RecruiterRightSide1 />,
-  },
-  {
-    path: "/recruiter-right-side2",
-    element: <RecruiterRightSide2 />,
-  },
-  {
-    path: "/recruiter-right-side3",
-    element: <RecruiterRightSide3 />,
   },
   {
     path: "/recruiter-terms",
@@ -251,10 +428,6 @@ export const appRouter = createBrowserRouter([
   {
     path: "/university-profile",
     element: <UniversityProfile />,
-  },
-  {
-    path: "/university-right-side1",
-    element: <UniversityRightSide1 />,
   },
   {
     path: "/university-change-email",
@@ -298,125 +471,6 @@ export const appRouter = createBrowserRouter([
     element: <UniversityApproval />,
   },
 
-  // Feed related routes
-  {
-    path: "/feed",
-    element: <FeedPage />,
-  },
-  {
-    path: "/feed-my-profile",
-    element: <FeedMyProfile />,
-  },
-  {
-    path: "/feed-view",
-    element: <FeedView />,
-  },
-  {
-    path: "/feed-application",
-    element: <FeedApplication />,
-  },
-  {
-    path: "/feed-terms",
-    element: <FeedTerms />,
-  },
-  {
-    path: "/feed-resume",
-    element: <FeedResume />,
-  },
-  {
-    path: "/feed-ticket",
-    element: <FeedTicket />,
-  },
-  {
-    path: "/feed-profile",
-    element: <Feedprofile />,
-  },
-  {
-    path: "/feed-change-email",
-    element: <FeedChangeEmail />,
-  },
-  {
-    path: "/feed-change-password",
-    element: <FeedChangePassword />,
-  },
-  {
-    path: "/feed-your-skills",
-    element: <FeedYourSkills />,
-  },
-  {
-    path: "/feed-your-education",
-    element: <FeedYourEducation />,
-  },
-  {
-    path: "/feed-your-exprience",
-    element: <FeedYourExprience />,
-  },
-
-  {
-    path: "feed-dashboard",
-    element: <FeedDashBoard />,
-  },
-  {
-    path: "/feed-authentication",
-    element: <FeedAuthentication />,
-  },
-  {
-    path: "/feed-faq",
-    element: <FeedFaq />,
-  },
-
-  {
-    path: "/application-myapplication1",
-    element: <Myapplication1 />,
-  },
-
-  {
-    path: "/application-myapplication2",
-    element: <Myapplication2 />,
-  },
-
-  {
-    path: "/application-myapplication3",
-    element: <Myapplication3 />,
-  },
-  {
-    path: "/application-mymassage",
-    element: <MyMassage />,
-  },
-  {
-    path: "/application-mynotification",
-    element: <MyNotification />,
-  },
-  {
-    path: "/application-myapplication6",
-    element: <Myapplication6 />,
-  },
-  {
-    path: "/application-myapplication5",
-    element: <Myapplication5 />,
-  },
-  {
-    path: "/application-myapplication4",
-    element: <Myapplication4 />,
-  },
-
-  {
-    path: "/feed-dashboard",
-    element: <FeedDashBoard />,
-  },
-  {
-    path: "/feed-right-side1",
-    element: <FeedRightSide1 />,
-  },
-  {
-    path: "/feed-right-side2",
-    element: <FeedRightSide2 />,
-  },
-  {
-    path: "/feed-right-side3",
-    element: <FeedRightSide3 />,
-  },
-
   // Ai prediction related routes
 
   {
@@ -431,25 +485,4 @@ export const appRouter = createBrowserRouter([
     path: "/all-jobs-part",
     element: <AllJObsPart />,
   },
-  {
-    path: "/all-courses-part",
-    element: <AllCoursesPart />,
-  },
-  // {
-  //     path: "/sidebar",
-  //     element: <Sidebar />
-  // },
-  // {
-  //     path: "/header1",
-  //     element: <Header1 />
-  // },
-  // {
-  //     path: "/footer1",
-  //     element: <Footer1 />
-  // },
-
-  // {
-  //     path: "/finance-layout",
-  //     element: <FinanceLayout />
-  // },
 ]);
