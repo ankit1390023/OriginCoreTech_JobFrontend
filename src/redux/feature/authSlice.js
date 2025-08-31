@@ -27,6 +27,7 @@ export const login = createAsyncThunk(
           headers: { 'Content-Type': 'application/json' },
         }
       );
+      console.log("Login API raw response:", response.data);
 
       const data = response.data;
       const user = data.user || data.data?.user;

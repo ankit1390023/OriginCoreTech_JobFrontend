@@ -2,10 +2,12 @@ import React, { useState, useEffect } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useNavigate } from "react-router-dom";
 
 import { jobPostApi } from "../../api/jobPostApi";
-import { domainApi } from "../../api/domainApi";
-import { useEducationData } from "../../hooks/useEducationData";
+
+
+import { useMasterData } from "../../hooks/master/useMasterData";
 import {
   Input,
   Button,
@@ -19,46 +21,663 @@ import SignUpLayout from "../../components/layout/SignUpLayout";
 import SignUpIllustration from "../../assets/SignUp_Illustration.png";
 import { useSelector } from "react-redux";
 
+// Searchable Job Role Select Component
+const JobRoleSearchableSelect = ({ jobRoles, value, onChange, placeholder, error }) => {
+  const [searchInput, setSearchInput] = useState("");
+  const [showDropdown, setShowDropdown] = useState(false);
+  
+  const filteredRoles = jobRoles.filter(role =>
+    role.title.toLowerCase().includes(searchInput.toLowerCase())
+  );
+  
+  const selectedRole = jobRoles.find(role => role.id === value);
+  
+  return (
+    <div className="relative">
+      <div className="flex items-center border rounded-md px-2 py-2 focus-within:ring-1 focus-within:ring-blue-400 focus-within:border-transparent transition-all duration-200 border-gray-300 hover:border-gray-400">
+        <input
+          type="text"
+          className="flex-1 outline-none text-sm"
+          placeholder={selectedRole ? selectedRole.title : placeholder}
+          value={searchInput}
+          onChange={(e) => {
+            setSearchInput(e.target.value);
+            setShowDropdown(true);
+          }}
+          onFocus={() => setShowDropdown(true)}
+          // onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
+        />
+      </div>
+      
+      {showDropdown && searchInput.trim() && filteredRoles.length > 0 && (
+        <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-48 overflow-y-auto">
+          {filteredRoles.slice(0, 8).map((role) => (
+            <button
+              key={role.id}
+              type="button"
+              className="w-full text-left px-3 py-2 text-sm hover:bg-blue-50 hover:text-blue-800 transition-colors"
+              onClick={() => {
+                onChange(role.id);
+                setSearchInput("");
+                setShowDropdown(false);
+              }}
+            >
+              <div>
+                {role.title}
+                {/* {role.description && (
+                  <div className="text-xs text-gray-500 mt-0.5 font-light">{role.description}</div>
+                )} */}
+              </div>
+            </button>
+          ))}
+        </div>
+      )}
+      
+      {selectedRole && (
+        <div className="mt-1 text-sm text-gray-600">
+          Selected: <span className="font-medium">{selectedRole.title}</span>
+          <button
+            type="button"
+            className="ml-2 text-red-500 hover:text-red-700 text-xs"
+            onClick={() => {
+              onChange("");
+              setSearchInput("");
+            }}
+          >
+            Remove
+          </button>
+        </div>
+      )}
+      
+      {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
+    </div>
+  );
+};
+
+// Domain-based Skills Selector Component
+const DomainSkillsSelector = ({ 
+  domains, 
+  getSkillsForDomain, 
+  onSkillsChange, 
+  error,
+  // Props from parent for state management
+  selectedDomains,
+  setSelectedDomains,
+  domainSkillsMap,
+  setDomainSkillsMap,
+  selectedSkillsByDomain,
+  setSelectedSkillsByDomain,
+  showMoreSkillsMap,
+  setShowMoreSkillsMap
+}) => {
+  const [searchInput, setSearchInput] = useState("");
+
+  // Debounce search input
+  const [debouncedSearchInput, setDebouncedSearchInput] = useState("");
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearchInput(searchInput), 200);
+    return () => clearTimeout(timer);
+  }, [searchInput]);
+
+  // Filter domains based on search
+  const filteredDomains = domains.filter(domain =>
+    domain.domain_name.toLowerCase().includes(debouncedSearchInput.toLowerCase())
+  );
+
+  const handleAddDomain = (domain) => {
+    if (!selectedDomains.find(d => d.domain_id === domain.domain_id)) {
+      const skills = getSkillsForDomain(domain.domain_id);
+      setDomainSkillsMap(prev => ({ ...prev, [domain.domain_id]: skills }));
+      setSelectedSkillsByDomain(prev => ({ ...prev, [domain.domain_id]: [] }));
+      setShowMoreSkillsMap(prev => ({ ...prev, [domain.domain_id]: false }));
+      setSelectedDomains([...selectedDomains, domain]);
+    }
+    setSearchInput("");
+  };
+
+  const handleRemoveDomain = (domainId) => {
+    setSelectedDomains(selectedDomains.filter(d => d.domain_id !== domainId));
+    setDomainSkillsMap(prev => { const copy = { ...prev }; delete copy[domainId]; return copy; });
+    setSelectedSkillsByDomain(prev => { const copy = { ...prev }; delete copy[domainId]; return copy; });
+    setShowMoreSkillsMap(prev => { const copy = { ...prev }; delete copy[domainId]; return copy; });
+    
+    // Update parent component with remaining skill IDs
+    setTimeout(() => {
+      const remainingSkillIds = Object.values(selectedSkillsByDomain).flat().filter(id => {
+        // Remove skills from deleted domain
+        const domainSkills = domainSkillsMap[domainId] || [];
+        return !domainSkills.some(skill => skill.skill_id === id);
+      });
+      onSkillsChange(remainingSkillIds);
+    }, 0);
+  };
+
+  const toggleSkill = (domainId, skillId) => {
+    setSelectedSkillsByDomain(prev => {
+      const current = prev[domainId] || [];
+      const newSelection = {
+        ...prev,
+        [domainId]: current.includes(skillId)
+          ? current.filter(id => id !== skillId)
+          : [...current, skillId],
+      };
+      
+      // Update parent component with all selected skill IDs
+      const allSelectedSkillIds = Object.values(newSelection).flat();
+      onSkillsChange(allSelectedSkillIds);
+      
+      return newSelection;
+    });
+  };
+
+  const toggleShowMoreSkills = (domainId) => {
+    setShowMoreSkillsMap(prev => ({ ...prev, [domainId]: !prev[domainId] }));
+  };
+
+  return (
+    <div>
+      <Label htmlFor="skills">Skills Required</Label>
+      
+      {/* Domain Search */}
+      <div className="flex items-center border rounded-md px-2 py-2 mb-2 focus-within:ring-1 focus-within:ring-blue-400 focus-within:border-transparent transition-all duration-200 border-gray-300 hover:border-gray-400">
+        <input
+          type="text"
+          className="flex-1 outline-none text-sm"
+          placeholder="Search and add domains..."
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
+        />
+      </div>
+
+      {/* Matched Domains */}
+      {searchInput.trim() && filteredDomains.length > 0 && (
+        <div className="mb-3">
+          <div className="text-xs mb-2 text-gray-500">Matched domains</div>
+          <div className="flex flex-wrap gap-2">
+            {filteredDomains.slice(0, 8).map((domain) => (
+              <button
+                key={domain.domain_id}
+                type="button"
+                onClick={() => handleAddDomain(domain)}
+                className="bg-blue-100 text-blue-800 rounded-md px-2 py-1 text-xs border border-blue-300 hover:border-blue-400 transition-all duration-200"
+              >
+                {domain.domain_name} +
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* No matches found */}
+      {searchInput.trim() && filteredDomains.length === 0 && (
+        <div className="mb-3">
+          <div className="text-xs text-gray-500">
+            No domains found matching "{searchInput}"
+          </div>
+        </div>
+      )}
+
+      {/* Selected Domains + Skills */}
+      <div className="space-y-3">
+        {selectedDomains.map((domain) => (
+          <div key={domain.domain_id} className="border rounded-md p-3 flex flex-col gap-2">
+            <div className="flex items-center justify-between">
+              <span className="bg-blue-600 text-white px-2 py-1 rounded-md text-xs font-medium">
+                {domain.domain_name}
+              </span>
+              <button
+                type="button"
+                className="text-red-500 hover:text-red-700 text-xs"
+                onClick={() => handleRemoveDomain(domain.domain_id)}
+              >
+                Remove
+              </button>
+            </div>
+
+            {/* Skills for this domain */}
+            {domainSkillsMap[domain.domain_id] && (
+              <div>
+                <div className="text-xs mb-2 text-gray-500">
+                  Select skills for {domain.domain_name}:
+                </div>
+                <div className="flex flex-wrap gap-1">
+                  {(showMoreSkillsMap[domain.domain_id]
+                    ? domainSkillsMap[domain.domain_id]
+                    : domainSkillsMap[domain.domain_id].slice(0, 6)
+                  ).map((skill) => (
+                    <button
+                      key={skill.skill_id}
+                      type="button"
+                      onClick={() => toggleSkill(domain.domain_id, skill.skill_id)}
+                      className={`rounded-md px-2 py-1 text-xs border transition-all duration-200 ${
+                        (selectedSkillsByDomain[domain.domain_id] || []).includes(skill.skill_id)
+                          ? "bg-blue-600 text-white border-blue-600"
+                          : "bg-gray-100 text-gray-800 border-gray-300 hover:border-gray-400"
+                      }`}
+                    >
+                      {skill.skill_name}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Show more/less button */}
+                {domainSkillsMap[domain.domain_id].length > 6 && (
+                  <button
+                    type="button"
+                    onClick={() => toggleShowMoreSkills(domain.domain_id)}
+                    className="text-blue-500 underline text-xs mt-2"
+                  >
+                    {showMoreSkillsMap[domain.domain_id] ? "Show less" : "Show more"}
+                  </button>
+                )}
+
+                {/* Selected skills count */}
+                {(selectedSkillsByDomain[domain.domain_id] || []).length > 0 && (
+                  <div className="text-xs text-green-600 mt-2">
+                    Selected: {(selectedSkillsByDomain[domain.domain_id] || []).length} skill(s)
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
+    </div>
+  );
+};
+
+// Searchable Duration Select Component
+const DurationSearchableSelect = ({ durations, value, onChange, placeholder, error }) => {
+  const [searchInput, setSearchInput] = useState("");
+  const [showDropdown, setShowDropdown] = useState(false);
+  
+  const filteredDurations = durations.filter(duration =>
+    duration.value.toLowerCase().includes(searchInput.toLowerCase())
+  );
+  
+  const selectedDuration = durations.find(duration => duration.id === value);
+  
+  return (
+    <div className="relative">
+      <div className="flex items-center border rounded-md px-2 py-2 focus-within:ring-1 focus-within:ring-blue-400 focus-within:border-transparent transition-all duration-200 border-gray-300 hover:border-gray-400">
+        <input
+          type="text"
+          className="flex-1 outline-none text-sm"
+          placeholder={selectedDuration ? selectedDuration.value : placeholder}
+          value={searchInput}
+          onChange={(e) => {
+            setSearchInput(e.target.value);
+            setShowDropdown(true);
+          }}
+          onFocus={() => setShowDropdown(true)}
+          // onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
+        />
+      </div>
+      
+      {showDropdown && searchInput.trim() && filteredDurations.length > 0 && (
+        <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-48 overflow-y-auto">
+          {filteredDurations.slice(0, 8).map((duration) => (
+            <button
+              key={duration.id}
+              type="button"
+              className="w-full text-left px-3 py-2 text-sm hover:bg-blue-50 hover:text-blue-800 transition-colors"
+              onClick={() => {
+                onChange(duration.id);
+                setSearchInput("");
+                setShowDropdown(false);
+              }}
+            >
+              {duration.value}
+            </button>
+          ))}
+        </div>
+      )}
+      
+      {/* Show no matches found */}
+      {showDropdown && searchInput.trim() && filteredDurations.length === 0 && (
+        <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg px-3 py-2">
+          <div className="text-sm text-gray-500">
+            No durations found matching "{searchInput}"
+          </div>
+        </div>
+      )}
+      
+      {selectedDuration && (
+        <div className="mt-1 text-sm text-gray-600">
+          Selected: <span className="font-medium">{selectedDuration.value}</span>
+          <button
+            type="button"
+            className="ml-2 text-red-500 hover:text-red-700 text-xs"
+            onClick={() => {
+              onChange("");
+              setSearchInput("");
+            }}
+          >
+            Remove
+          </button>
+        </div>
+      )}
+      
+      {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
+    </div>
+  );
+};
+
+// Multi-select Location Component  
+const LocationMultiSelect = ({ locations, value = [], onChange, placeholder, error }) => {
+  const [searchInput, setSearchInput] = useState("");
+  const [showDropdown, setShowDropdown] = useState(false);
+  
+  const filteredLocations = locations.filter(location =>
+    location.name.toLowerCase().includes(searchInput.toLowerCase()) &&
+    !value.includes(location.id)
+  );
+  
+  const selectedLocations = locations.filter(location => value.includes(location.id));
+  
+  const addLocation = (locationId) => {
+    if (!value.includes(locationId)) {
+      onChange([...value, locationId]);
+    }
+    setSearchInput("");
+  };
+  
+  const removeLocation = (locationId) => {
+    onChange(value.filter(id => id !== locationId));
+  };
+  
+  return (
+    <div className="relative">
+      <div className="flex items-center border rounded-md px-2 py-2 focus-within:ring-1 focus-within:ring-blue-400 focus-within:border-transparent transition-all duration-200 border-gray-300 hover:border-gray-400">
+        <input
+          type="text"
+          className="flex-1 outline-none text-sm"
+          placeholder={selectedLocations.length > 0 ? "Add more cities..." : placeholder}
+          value={searchInput}
+          onChange={(e) => {
+            setSearchInput(e.target.value);
+            setShowDropdown(true);
+          }}
+          onFocus={() => setShowDropdown(true)}
+          // onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
+        />
+      </div>
+      
+      {showDropdown && searchInput.trim() && filteredLocations.length > 0 && (
+        <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-48 overflow-y-auto">
+          {filteredLocations.slice(0, 10).map((location) => (
+            <button
+              key={location.id}
+              type="button"
+              className="w-full text-left px-3 py-2 text-sm hover:bg-blue-50 hover:text-blue-800 transition-colors"
+              onClick={() => {
+                addLocation(location.id);
+                setShowDropdown(false);
+              }}
+            >
+              {location.name}
+            </button>
+          ))}
+        </div>
+      )}
+      
+      {/* Show no matches found */}
+      {showDropdown && searchInput.trim() && filteredLocations.length === 0 && (
+        <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg px-3 py-2">
+          <div className="text-sm text-gray-500">
+            No cities found matching "{searchInput}"
+          </div>
+        </div>
+      )}
+      
+      {/* Selected locations */}
+      {selectedLocations.length > 0 && (
+        <div className="mt-1 text-sm text-gray-600">
+          Selected: {selectedLocations.map((location, index) => (
+            <span key={location.id}>
+              <span className="font-medium">{location.name}</span>
+              <button
+                type="button"
+                className="ml-1 text-red-500 hover:text-red-700 text-xs"
+                onClick={() => removeLocation(location.id)}
+              >
+                Remove
+              </button>
+              {index < selectedLocations.length - 1 && <span className="mx-2">•</span>}
+            </span>
+          ))}
+        </div>
+      )}
+      
+      {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
+    </div>
+  );
+};
+
+// Multi-select College Component
+const CollegeMultiSelect = ({ colleges, value = [], onChange, placeholder, error }) => {
+  const [searchInput, setSearchInput] = useState("");
+  const [showDropdown, setShowDropdown] = useState(false);
+  
+  const filteredColleges = colleges.filter(college =>
+    college.name.toLowerCase().includes(searchInput.toLowerCase()) &&
+    !value.includes(college.id)
+  );
+  
+  const selectedColleges = colleges.filter(college => value.includes(college.id));
+  
+  const addCollege = (collegeId) => {
+    if (!value.includes(collegeId)) {
+      onChange([...value, collegeId]);
+    }
+    setSearchInput("");
+  };
+  
+  const removeCollege = (collegeId) => {
+    onChange(value.filter(id => id !== collegeId));
+  };
+  
+  return (
+    <div className="relative">
+      <div className="flex items-center border rounded-md px-2 py-2 focus-within:ring-1 focus-within:ring-blue-400 focus-within:border-transparent transition-all duration-200 border-gray-300 hover:border-gray-400">
+        <input
+          type="text"
+          className="flex-1 outline-none text-sm"
+          placeholder={selectedColleges.length > 0 ? "Add more colleges..." : placeholder}
+          value={searchInput}
+          onChange={(e) => {
+            setSearchInput(e.target.value);
+            setShowDropdown(true);
+          }}
+          onFocus={() => setShowDropdown(true)}
+          // onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
+        />
+      </div>
+      
+      {showDropdown && searchInput.trim() && filteredColleges.length > 0 && (
+        <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-48 overflow-y-auto">
+          {filteredColleges.slice(0, 10).map((college) => (
+            <button
+              key={college.id}
+              type="button"
+              className="w-full text-left px-3 py-2 text-sm hover:bg-blue-50 hover:text-blue-800 transition-colors"
+              onClick={() => {
+                addCollege(college.id);
+                setShowDropdown(false);
+              }}
+            >
+              {college.name}
+            </button>
+          ))}
+        </div>
+      )}
+      
+      {/* Show no matches found */}
+      {showDropdown && searchInput.trim() && filteredColleges.length === 0 && (
+        <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg px-3 py-2">
+          <div className="text-sm text-gray-500">
+            No colleges found matching "{searchInput}"
+          </div>
+        </div>
+      )}
+      
+      {/* Selected colleges */}
+      {selectedColleges.length > 0 && (
+        <div className="mt-1 text-sm text-gray-600">
+          Selected: {selectedColleges.map((college, index) => (
+            <span key={college.id}>
+              <span className="font-medium">{college.name}</span>
+              <button
+                type="button"
+                className="ml-1 text-red-500 hover:text-red-700 text-xs"
+                onClick={() => removeCollege(college.id)}
+              >
+                Remove
+              </button>
+              {index < selectedColleges.length - 1 && <span className="mx-2">•</span>}
+            </span>
+          ))}
+        </div>
+      )}
+      
+      {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
+    </div>
+  );
+};
+
+// Multi-select Course Component
+const CourseMultiSelect = ({ courses, value = [], onChange, placeholder, error }) => {
+  const [searchInput, setSearchInput] = useState("");
+  const [showDropdown, setShowDropdown] = useState(false);
+  
+  const filteredCourses = courses.filter(course =>
+    course.name.toLowerCase().includes(searchInput.toLowerCase()) &&
+    !value.includes(course.id)
+  );
+  
+  const selectedCourses = courses.filter(course => value.includes(course.id));
+  
+  const addCourse = (courseId) => {
+    if (!value.includes(courseId)) {
+      onChange([...value, courseId]);
+    }
+    setSearchInput("");
+  };
+  
+  const removeCourse = (courseId) => {
+    onChange(value.filter(id => id !== courseId));
+  };
+  
+  return (
+    <div className="relative">
+      <div className="flex items-center border rounded-md px-2 py-2 focus-within:ring-1 focus-within:ring-blue-400 focus-within:border-transparent transition-all duration-200 border-gray-300 hover:border-gray-400">
+        <input
+          type="text"
+          className="flex-1 outline-none text-sm"
+          placeholder={selectedCourses.length > 0 ? "Add more courses..." : placeholder}
+          value={searchInput}
+          onChange={(e) => {
+            setSearchInput(e.target.value);
+            setShowDropdown(true);
+          }}
+          onFocus={() => setShowDropdown(true)}
+          // onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
+        />
+      </div>
+      
+      {showDropdown && searchInput.trim() && filteredCourses.length > 0 && (
+        <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-48 overflow-y-auto">
+          {filteredCourses.slice(0, 10).map((course) => (
+            <button
+              key={course.id}
+              type="button"
+              className="w-full text-left px-3 py-2 text-sm hover:bg-blue-50 hover:text-blue-800 transition-colors"
+              onClick={() => {
+                addCourse(course.id);
+                setShowDropdown(false);
+              }}
+            >
+              {course.name}
+            </button>
+          ))}
+        </div>
+      )}
+      
+      {/* Show no matches found */}
+      {showDropdown && searchInput.trim() && filteredCourses.length === 0 && (
+        <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg px-3 py-2">
+          <div className="text-sm text-gray-500">
+            No courses found matching "{searchInput}"
+          </div>
+        </div>
+      )}
+      
+      {/* Selected courses */}
+      {selectedCourses.length > 0 && (
+        <div className="mt-1 text-sm text-gray-600">
+          Selected: {selectedCourses.map((course, index) => (
+            <span key={course.id}>
+              <span className="font-medium">{course.name}</span>
+              <button
+                type="button"
+                className="ml-1 text-red-500 hover:text-red-700 text-xs"
+                onClick={() => removeCourse(course.id)}
+              >
+                Remove
+              </button>
+              {index < selectedCourses.length - 1 && <span className="mx-2">•</span>}
+            </span>
+          ))}
+        </div>
+      )}
+      
+      {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
+    </div>
+  );
+};
+
 const formSchema = z
   .object({
     opportunity_type: z.enum(["Internship", "Job", "Project"]),
-    profile: z.string().optional(),
-    skills: z.string().min(1, { message: "Skills are required" }),
-    internshipType: z.enum(["In office", "Hybrid", "Remote"]).optional(),
+    profile: z.union([z.string(), z.number()]).optional(),
+    skills: z.array(z.number()).min(1, { message: "Skills are required" }),
+    internshipType: z.string().optional(),
     job_type: z.enum(["In office", "Hybrid", "Remote"]).optional(),
-    partFullTime: z.enum(["Part-time", "Full-time"]),
-    city: z.string().min(1, { message: "City is required" }),
+    job_time: z.enum(["Day Shift", "Night Shift", "Part-time"]),
+    city: z.array(z.number()).min(1, { message: "At least one city is required" }),
     onlyThisCity: z.boolean().optional(),
-    openings: z.string().optional(),
-    startDateType: z.enum(["Immediately", "Custom"]).optional(),
+    openings: z.union([z.string(), z.number()]).optional(),
+    startDateType: z.string().optional(),
     startDateFrom: z.string().optional(),
     startDateTo: z.string().optional(),
     inOfficeDays: z.string().optional(),
-    jobTitle: z.string().optional(),
-    duration: z.string().optional(),
+    jobTitle: z.union([z.string(), z.number()]).optional(),
+    duration: z.union([z.string(), z.number()]).optional(),
     responsibilities: z
       .string()
       .min(1, { message: "Responsibilities required" }),
     preferences: z.string().optional(),
     womenOnly: z.boolean().optional(),
-    stipend_type: z.enum(["Paid", "Unpaid", "Fixed"]),
-    stipend_min: z.string().optional(),
-    stipend_max: z.string().optional(),
-    stipendMode: z.enum(["Month", "Lump sum"]).optional(),
-    incentivesMin: z.string().optional(),
-    incentivesMax: z.string().optional(),
-    incentivesMode: z.enum(["Month", "Lump sum"]).optional(),
+    stipend_type: z.string().optional(),
+    stipend_min: z.union([z.string(), z.number()]).optional(),
+    stipend_max: z.union([z.string(), z.number()]).optional(),
+    stipendMode: z.string().optional(),
+    incentivesMin: z.union([z.string(), z.number()]).optional(),
+    incentivesMax: z.union([z.string(), z.number()]).optional(),
+    incentivesMode: z.string().optional(),
     perks: z.array(z.string()).optional(),
     ppo: z.string().optional(),
-    screening_questions: z.string().optional(),
+    screening_questions: z.union([z.string(), z.array(z.string())]).optional(),
     alternatePhone: z.string().optional(),
     phone_contact: z.string().optional(),
-    college_name: z.string().optional(),
-    course: z.string().optional(),
+    college_name: z.array(z.number()).optional(),
+    course: z.array(z.number()).optional(),
   })
   .superRefine((data, ctx) => {
     // Common validation for all opportunity types
-    if (!data.skills || data.skills.trim() === "") {
+    if (!data.skills || !Array.isArray(data.skills) || data.skills.length === 0) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: "Skills are required",
@@ -66,10 +685,10 @@ const formSchema = z
       });
     }
 
-    if (!data.city || data.city.trim() === "") {
+    if (!data.city || !Array.isArray(data.city) || data.city.length === 0) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: "City is required",
+        message: "At least one city is required",
         path: ["city"],
       });
     }
@@ -82,17 +701,17 @@ const formSchema = z
       });
     }
 
-    if (!data.partFullTime) {
+    if (!data.job_time) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: "Please select Part-time or Full-time",
-        path: ["partFullTime"],
+        message: "Please select work schedule",
+        path: ["job_time"],
       });
     }
 
     // Conditional validation for internship fields
     if (data.opportunity_type === "Internship") {
-      if (!data.profile || data.profile.trim() === "") {
+      if (!data.profile || (typeof data.profile === 'string' && data.profile.trim() === "")) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Internship profile is required",
@@ -113,14 +732,14 @@ const formSchema = z
           path: ["startDateType"],
         });
       }
-      if (!data.duration || data.duration.trim() === "") {
+      if (!data.duration || (typeof data.duration === 'string' && data.duration.trim() === "")) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Internship duration is required",
           path: ["duration"],
         });
       }
-      if (!data.openings || data.openings.trim() === "") {
+      if (!data.openings || (typeof data.openings === 'string' && data.openings.trim() === "")) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Number of openings is required",
@@ -151,8 +770,8 @@ const formSchema = z
         if (
           !data.stipend_min ||
           !data.stipend_max ||
-          data.stipend_min.trim() === "" ||
-          data.stipend_max.trim() === ""
+          (typeof data.stipend_min === 'string' && data.stipend_min.trim() === "") ||
+          (typeof data.stipend_max === 'string' && data.stipend_max.trim() === "")
         ) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
@@ -160,7 +779,7 @@ const formSchema = z
             path: ["stipend_min"],
           });
         }
-        if (parseInt(data.stipend_min) > parseInt(data.stipend_max)) {
+        if (Number(data.stipend_min) > Number(data.stipend_max)) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
             message: "Maximum stipend must be greater than minimum",
@@ -172,7 +791,7 @@ const formSchema = z
 
     // Conditional validation for job fields
     if (data.opportunity_type === "Job") {
-      if (!data.jobTitle || data.jobTitle.trim() === "") {
+      if (!data.jobTitle || (typeof data.jobTitle === 'string' && data.jobTitle.trim() === "")) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Job title is required",
@@ -191,8 +810,8 @@ const formSchema = z
       if (
         !data.stipend_min ||
         !data.stipend_max ||
-        data.stipend_min.trim() === "" ||
-        data.stipend_max.trim() === ""
+        (typeof data.stipend_min === 'string' && data.stipend_min.trim() === "") ||
+        (typeof data.stipend_max === 'string' && data.stipend_max.trim() === "")
       ) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
@@ -200,7 +819,7 @@ const formSchema = z
           path: ["stipend_min"],
         });
       }
-      if (parseInt(data.stipend_min) > parseInt(data.stipend_max)) {
+      if (Number(data.stipend_min) > Number(data.stipend_max)) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Maximum pay must be greater than minimum",
@@ -211,7 +830,7 @@ const formSchema = z
 
     // Conditional validation for project fields
     if (data.opportunity_type === "Project") {
-      if (!data.jobTitle || data.jobTitle.trim() === "") {
+      if (!data.jobTitle || (typeof data.jobTitle === 'string' && data.jobTitle.trim() === "")) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Project title is required",
@@ -225,14 +844,14 @@ const formSchema = z
           path: ["job_type"],
         });
       }
-      if (!data.openings || data.openings.trim() === "") {
+      if (!data.openings || (typeof data.openings === 'string' && data.openings.trim() === "")) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Number of openings is required",
           path: ["openings"],
         });
       }
-      if (!data.phone_contact || data.phone_contact.trim() === "") {
+      if (!data.phone_contact || (typeof data.phone_contact === 'string' && data.phone_contact.trim() === "")) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Phone contact is required",
@@ -244,8 +863,8 @@ const formSchema = z
       if (
         !data.stipend_min ||
         !data.stipend_max ||
-        data.stipend_min.trim() === "" ||
-        data.stipend_max.trim() === ""
+        (typeof data.stipend_min === 'string' && data.stipend_min.trim() === "") ||
+        (typeof data.stipend_max === 'string' && data.stipend_max.trim() === "")
       ) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
@@ -253,7 +872,7 @@ const formSchema = z
           path: ["stipend_min"],
         });
       }
-      if (parseInt(data.stipend_min) > parseInt(data.stipend_max)) {
+      if (Number(data.stipend_min) > Number(data.stipend_max)) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Maximum budget must be greater than minimum",
@@ -264,6 +883,9 @@ const formSchema = z
   });
 
 export default function RecruiterPostJobInternDetails() {
+  console.log('RecruiterPostJobInternDetails: Component rendered');
+  
+  const navigate = useNavigate();
   const methods = useForm({
     mode: "onSubmit",
     resolver: zodResolver(formSchema),
@@ -271,7 +893,7 @@ export default function RecruiterPostJobInternDetails() {
       opportunity_type: "Internship",
       internshipType: "In office",
       job_type: "In office",
-      partFullTime: "Part-time",
+      job_time: "Day Shift",
       startDateType: "Immediately",
       stipend_type: "Paid",
       stipend_min: "",
@@ -280,21 +902,21 @@ export default function RecruiterPostJobInternDetails() {
       incentivesMin: "",
       incentivesMax: "",
       incentivesMode: "Month",
-      city: "",
+      city: [],
       onlyThisCity: false,
       startDateFrom: "",
       startDateTo: "",
       inOfficeDays: "",
       jobTitle: "",
       profile: "",
-      skills: "",
+      skills: [],
       duration: "",
       responsibilities: "",
       openings: "",
       phone_contact: "",
       alternatePhone: "",
-      college_name: "",
-      course: "",
+      college_name: [],
+      course: [],
       preferences: "",
       womenOnly: false,
       perks: [],
@@ -319,10 +941,34 @@ export default function RecruiterPostJobInternDetails() {
   const [isSmallDevice, setIsSmallDevice] = useState(false);
   const { user, token } = useSelector((state) => state.auth);
 
-  // Debug token state
-  useEffect(() => {
-    console.log("Auth state - user:", !!user, "token:", !!token);
-  }, [user, token]);
+  // Skills selection state management (moved from child component)
+  const [selectedDomains, setSelectedDomains] = useState([]);
+  const [domainSkillsMap, setDomainSkillsMap] = useState({});
+  const [selectedSkillsByDomain, setSelectedSkillsByDomain] = useState({});
+  const [showMoreSkillsMap, setShowMoreSkillsMap] = useState({});
+
+  
+
+  // Master data hook for all master data (mock data)
+  const {
+    masterData,
+    durations,
+    locations,
+    courses,
+    jobRoles,
+    specializations,
+    domains,
+    skillsByDomain,
+    specializationByCourse,
+    schoolColleges,
+    getSkillsForDomain,
+    getSpecializationsForCourse,
+    isLoading: masterDataLoading,
+    isError: masterDataError,
+    error: masterDataErrorMsg,
+    refetch: refetchMasterData,
+  } = useMasterData();
+
 
   useEffect(() => {
     const checkDeviceSize = () => {
@@ -332,13 +978,6 @@ export default function RecruiterPostJobInternDetails() {
     window.addEventListener("resize", checkDeviceSize);
     return () => window.removeEventListener("resize", checkDeviceSize);
   }, []);
-
-  // Education data hook for cities
-  const {
-    data: educationData,
-    loading: educationLoading,
-    error: educationError,
-  } = useEducationData();
 
   // Fetch all domains on component mount
   useEffect(() => {
@@ -425,15 +1064,23 @@ export default function RecruiterPostJobInternDetails() {
   };
 
   const onSubmit = async (data) => {
-    console.log("data received onSubmit", data);
+    console.log("=== FORM SUBMISSION STARTED ===");
+    console.log("Opportunity type:", data.opportunity_type);
+    console.log("Form data:", data);
+    
+    console.log("=== RUNNING VALIDATION ===");
     const isValid = await methods.trigger();
+    console.log("Validation result:", isValid);
 
     if (!isValid) {
       // Get specific error messages
+      console.log("=== VALIDATION FAILED ===");
+      console.log("Form errors:", methods.formState.errors);
       const errorMessages = Object.values(methods.formState.errors)
         .map((error) => error?.message)
         .filter(Boolean);
-
+      console.log("Error messages:", errorMessages);
+      
       setErrorMessage(
         errorMessages.length > 0
           ? errorMessages.join(", ")
@@ -442,56 +1089,51 @@ export default function RecruiterPostJobInternDetails() {
       return;
     }
 
+    console.log("=== VALIDATION PASSED ===");
+    console.log("Proceeding to API call...");
+
     setIsSubmitting(true);
 
     // Transform form data to match the exact backend API structure
     const jobPostData = {
+      company_recruiter_profile_id: user?.id || user?.company_recruiter_profile_id, // Get from user data
       opportunity_type: data.opportunity_type,
-      jobProfile:
-        data.opportunity_type === "Internship" ? data.profile : data.jobTitle,
-      skillsRequired: data.skills.id,
-      skill_required_note: data.skills.id ? null : data.skills, // Use the skills field directly
-      job_type:
-        data.opportunity_type === "Internship"
-          ? data.internshipType
-          : data.job_type,
-      days_in_office: data.inOfficeDays ? parseInt(data.inOfficeDays) : null,
-      job_time: data.partFullTime,
-      cityChoice: data.city,
-      number_of_openings: data.openings ? parseInt(data.openings) : null,
+      job_role_id: data.opportunity_type === "Internship" ? parseInt(data.profile) : parseInt(data.jobTitle), // Backend expects job_role_id (number)
+      skill_ids: Array.isArray(data.skills) ? data.skills.map(id => parseInt(id)) : [], // Backend expects skill_ids (array of numbers)
+      skill_required_note: Array.isArray(data.skills) ? null : data.skills,
+      job_type: data.opportunity_type === "Internship" ? data.internshipType : data.job_type,
+      job_time: data.job_time, // Direct mapping from form
+      days_in_office: data.inOfficeDays ? parseInt(data.inOfficeDays) : null, // Integer
+      number_of_openings: data.openings ? parseInt(data.openings) : null, // Integer
       job_description: data.responsibilities,
       candidate_preferences: data.preferences || null,
-      women_preferred: data.womenOnly || false,
-      stipend_type:
-        data.opportunity_type === "Job" ? "Fixed" : data.stipend_type,
-      stipend_min: data.stipend_min ? parseInt(data.stipend_min) : null,
-      stipend_max: data.stipend_max ? parseInt(data.stipend_max) : null,
-      incentive_per_year:
-        data.incentivesMin && data.incentivesMax
-          ? `${data.incentivesMin}-${data.incentivesMax} ${
-              data.incentivesMode || "Month"
-            }`
-          : null,
-      perks: data.perks
-        ? Array.isArray(data.perks)
-          ? data.perks.join(", ")
-          : data.perks
-        : null,
-      screening_questions: data.screening_questions || null,
+      women_preferred: data.womenOnly || false, // Boolean
+      stipend_type: data.opportunity_type === "Job" ? "Fixed" : data.stipend_type,
+      stipend_min: data.stipend_min ? parseInt(data.stipend_min) : null, // Integer
+      stipend_max: data.stipend_max ? parseInt(data.stipend_max) : null, // Integer
+      incentive_per_year: data.incentivesMin && data.incentivesMax
+        ? `${data.incentivesMin}-${data.incentivesMax} ${data.incentivesMode || "Month"}`
+        : "Performance based",
+      perks: data.perks && Array.isArray(data.perks) ? data.perks : [], // Array of strings
+      screening_questions: data.screening_questions 
+        ? data.screening_questions.split('\n').filter(q => q.trim() !== '')
+        : [], // Array of strings
       phone_contact: data.phone_contact || null,
       alternate_phone_number: data.alternatePhone || null,
+      eligible_city_ids: Array.isArray(data.city) ? data.city : [], // Already array of numbers
+      
+      // TODO: REMOVE THIS - Backend incorrectly expects internship_start_date for all opportunity types
+      // This field should only be required for Internship type, but backend currently validates it for Job/Project too
+      internship_start_date: data.opportunity_type === "Internship" 
+        ? (data.startDateType === "Immediately" ? new Date().toISOString().split('T')[0] : (data.startDateFrom || null))
+        : new Date().toISOString().split('T')[0], // Send current date for Job/Project as workaround
+      
       // Only include internship-specific fields for Internship opportunity type
       ...(data.opportunity_type === "Internship" && {
-        internshipDuration: data.duration,
-        internship_start_date:
-          data.startDateType === "Immediately" ? "Immediately" : null,
-        internship_from_date:
-          data.startDateType === "Custom" ? data.startDateFrom : null,
-        internship_to_date:
-          data.startDateType === "Custom" ? data.startDateTo : null,
-        is_custom_internship_date: data.startDateType === "Custom",
-        college_name: data.college_name || null,
-        course: data.course || null,
+        duration_id: parseInt(data.duration), // Backend expects duration_id (number)
+        is_custom_internship_date: data.startDateType === "Custom", // Boolean
+        eligible_college_ids: Array.isArray(data.college_name) ? data.college_name : [], // Already array of numbers
+        eligible_course_ids: Array.isArray(data.course) ? data.course : [], // Already array of numbers
       }),
     };
 
@@ -501,25 +1143,35 @@ export default function RecruiterPostJobInternDetails() {
       setErrorMessage("Authentication token not found. Please log in again.");
       return;
     }
+    console.log("=== SENDING API REQUEST ===");
+    console.log("Job post data:", jobPostData);
 
-    // Call the API
-    const response = await jobPostApi.createJobPost(jobPostData, token);
-    console.log(
-      "rersponse in recruiterPostJonInternzdetails page is",
-      response
-    );
-    setSuccessMessage(`${data.opportunity_type} posted successfully!`);
+    try {
+      // Call the API
+      const response = await jobPostApi.createJobPost(jobPostData, token);
+      console.log("=== API SUCCESS ===");
+      console.log("Response:", response);
+      setSuccessMessage(`${data.opportunity_type} posted successfully!`);
 
-    // Reset form after successful submission
-    methods.reset();
-    setSelectedDomain(null);
-    setDomainSkills({});
-    setShowAllDomains(false);
-
-    // Clear success message after 5 seconds
-    setTimeout(() => {
-      setSuccessMessage("");
-    }, 5000);
+      // Reset form after successful submission
+      methods.reset();
+      setSelectedDomain(null);
+      setDomainSkills({});
+      setShowAllDomains(false);
+alert("Your post has been submitted successfully! You will be redirected to the dashboard shortly.");
+      clearMessages();
+      // Redirect to recruiter dashboard after successful posting
+      setTimeout(() => {
+        navigate('/recruiter-dashboard');
+      }, 2000); // 2 second delay to show success message
+    } catch (error) {
+      console.log("=== API ERROR ===");
+      console.log("Error:", error);
+      console.log("Error response:", error.response);
+      setErrorMessage("Failed to post. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // Common input styles
@@ -544,7 +1196,42 @@ export default function RecruiterPostJobInternDetails() {
   // Clear validation errors when opportunity type changes
   const handleOpportunityTypeChange = (e) => {
     const newType = e.target.value;
-    methods.setValue("opportunity_type", newType);
+
+    // Reset entire form to empty values but keep the new opportunity type
+    methods.reset({
+      opportunity_type: newType,
+      internshipType: "",
+      job_type: "",
+      job_time: "",
+      startDateType: "",
+      stipend_type: "",
+      stipend_min: "",
+      stipend_max: "",
+      stipendMode: "",
+      incentivesMin: "",
+      incentivesMax: "",
+      incentivesMode: "",
+      city: [],
+      onlyThisCity: false,
+      startDateFrom: "",
+      startDateTo: "",
+      inOfficeDays: "",
+      jobTitle: "",
+      profile: "",
+      skills: [],
+      duration: "",
+      responsibilities: "",
+      openings: "",
+      phone_contact: "",
+      alternatePhone: "",
+      college_name: [],
+      course: [],
+      preferences: "",
+      womenOnly: false,
+      perks: [],
+      screening_questions: "",
+      ppo: "",
+    });
 
     // Clear any existing validation errors
     methods.clearErrors();
@@ -553,15 +1240,21 @@ export default function RecruiterPostJobInternDetails() {
     setSuccessMessage("");
     setErrorMessage("");
 
-    // Clear domain-related state
+    // Clear domain-related state (legacy)
     setSelectedDomain(null);
     setDomainError("");
     setShowAllDomains(false);
+
+    // Clear skills selection state
+    setSelectedDomains([]);
+    setDomainSkillsMap({});
+    setSelectedSkillsByDomain({});
+    setShowMoreSkillsMap({});
   };
 
   const FormContent = () => {
     return (
-      <div className="bg-white rounded-xl shadow-none sm:shadow-xl w-full mt-4 max-w-full sm:max-w-2xl p-6 sm:p-8">
+      <div className="w-full max-w-full p-6 mt-4 bg-white shadow-none rounded-xl sm:shadow-xl sm:max-w-2xl sm:p-8">
         <FormProvider {...methods}>
           <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-4">
             {/* Success Message */}
@@ -571,10 +1264,10 @@ export default function RecruiterPostJobInternDetails() {
                 <button
                   type="button"
                   onClick={() => setSuccessMessage("")}
-                  className="absolute top-2 right-2 text-green-600 hover:text-green-800 focus:outline-none"
+                  className="absolute text-green-600 top-2 right-2 hover:text-green-800 focus:outline-none"
                 >
                   <svg
-                    className="h-4 w-4"
+                    className="w-4 h-4"
                     viewBox="0 0 20 20"
                     fill="currentColor"
                   >
@@ -595,10 +1288,10 @@ export default function RecruiterPostJobInternDetails() {
                 <button
                   type="button"
                   onClick={() => setErrorMessage("")}
-                  className="absolute top-2 right-2 text-red-600 hover:text-red-800 focus:outline-none"
+                  className="absolute text-red-600 top-2 right-2 hover:text-red-800 focus:outline-none"
                 >
                   <svg
-                    className="h-4 w-4"
+                    className="w-4 h-4"
                     viewBox="0 0 20 20"
                     fill="currentColor"
                   >
@@ -649,137 +1342,55 @@ export default function RecruiterPostJobInternDetails() {
               </div>
             </div>
 
-            {/* Job title (only for Job and Project) */}
+            {/* Job title (only for Job and Project) - Searchable */}
             {(opportunity_type === "Job" || opportunity_type === "Project") && (
-              <Input
-                label={
-                  opportunity_type === "Job" ? "Job title" : "Project title"
-                }
-                type="text"
-                placeholder={
-                  opportunity_type === "Job"
-                    ? "e.g. Digital Marketing"
-                    : "e.g. Web Development Project"
-                }
-                error={methods.formState.errors.jobTitle?.message}
-                {...methods.register("jobTitle")}
-              />
+              <div>
+                <Label htmlFor="jobTitle">
+                  {opportunity_type === "Job" ? "Job title" : "Project title"}
+                </Label>
+                <JobRoleSearchableSelect
+                  jobRoles={jobRoles}
+                  value={methods.watch("jobTitle")}
+                  onChange={(value) => methods.setValue("jobTitle", value)}
+                  placeholder={
+                    opportunity_type === "Job"
+                      ? "Search job titles..."
+                      : "Search project titles..."
+                  }
+                  error={methods.formState.errors.jobTitle?.message}
+                />
+              </div>
             )}
 
-            {/* Internship Profile (only for Internship) */}
+            {/* Internship Profile (only for Internship) - Searchable */}
             {opportunity_type === "Internship" && (
-              <Input
-                label="Internship profile"
-                type="text"
-                placeholder="e.g. Digital Marketing"
-                error={methods.formState.errors.profile?.message}
-                {...methods.register("profile")}
-              />
+              <div>
+                <Label htmlFor="profile">Internship profile</Label>
+                <JobRoleSearchableSelect
+                  jobRoles={jobRoles}
+                  value={methods.watch("profile")}
+                  onChange={(value) => methods.setValue("profile", value)}
+                  placeholder="Search internship profiles..."
+                  error={methods.formState.errors.profile?.message}
+                />
+              </div>
             )}
-
-            {/* Skills Required */}
-            <Input
-              label="Skills required"
-              type="text"
-              placeholder="e.g. SEO, Social Media Marketing, Content Writing"
-              error={methods.formState.errors.skills?.message}
-              {...methods.register("skills")}
-            />
 
             {/* Domain-based Skill Selection */}
-            <div>
-              <Label htmlFor="domainSkills">Select skills by domain</Label>
-
-              {domainError && (
-                <div className="p-2 bg-red-50 border border-red-200 rounded-lg mb-2">
-                  <p className="text-xs text-red-800">{domainError}</p>
-                  <button
-                    type="button"
-                    onClick={() => fetchAllDomains(token)}
-                    className="text-xs text-red-600 hover:text-red-800 underline mt-1"
-                  >
-                    Retry
-                  </button>
-                </div>
-              )}
-
-              {domainsLoading ? (
-                <div className="p-3 bg-gray-50 rounded-lg">
-                  <p className="text-xs text-gray-600">Loading domains...</p>
-                </div>
-              ) : allDomains.length === 0 ? (
-                <div className="p-3 bg-gray-50 rounded-lg">
-                  <p className="text-xs text-gray-600">
-                    No domains available at the moment.
-                  </p>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {/* Domain Selection */}
-                  <div>
-                    <p className="text-xs text-gray-600 mb-1">
-                      Click on a domain to see related skills:
-                    </p>
-
-                    {/* Display domains as rounded badges */}
-                    <div className="flex flex-wrap gap-1 sm:gap-2 mb-2">
-                      {(showAllDomains
-                        ? allDomains
-                        : allDomains.slice(0, 4)
-                      ).map((domain) => {
-                        const domainName =
-                          typeof domain === "string" ? domain : domain.name;
-                        const domainKey =
-                          typeof domain === "string"
-                            ? domain
-                            : domain.id || domain.name;
-                        return (
-                          <button
-                            key={domainKey}
-                            type="button"
-                            onClick={() => handleDomainClick(domainName)}
-                            className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium transition-colors ${
-                              selectedDomain === domainName
-                                ? "bg-blue-100 text-blue-800 border border-blue-300"
-                                : "bg-gray-100 text-gray-700 border border-gray-300 hover:bg-gray-200 hover:text-gray-800"
-                            }`}
-                          >
-                            {domainName}
-                          </button>
-                        );
-                      })}
-
-                      {/* Show More/Less button */}
-                      {allDomains.length > 4 && (
-                        <button
-                          type="button"
-                          onClick={() => setShowAllDomains(!showAllDomains)}
-                          className="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 text-blue-800 rounded-full text-xs font-medium hover:bg-gray-200 hover:text-gray-800 transition-colors"
-                        >
-                          <span>
-                            {showAllDomains ? "Show Less" : "Show More"}
-                          </span>
-                        </button>
-                      )}
-                    </div>
-
-                    {/* Select All button for selected domain */}
-                    {selectedDomain && domainSkills[selectedDomain] && (
-                      <div className="mt-2">
-                        <button
-                          type="button"
-                          onClick={handleSelectAllSkills}
-                          className="inline-flex items-center gap-1 px-3 py-1 bg-green-600 text-white rounded-lg text-xs font-medium hover:bg-green-700 transition-colors"
-                        >
-                          <span className="text-sm">+</span>
-                          Add All Skills from {selectedDomain}
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
+            <DomainSkillsSelector
+              domains={domains}
+              getSkillsForDomain={getSkillsForDomain}
+              onSkillsChange={(skillIds) => methods.setValue("skills", skillIds)}
+              error={methods.formState.errors.skills?.message}
+              selectedDomains={selectedDomains}
+              setSelectedDomains={setSelectedDomains}
+              domainSkillsMap={domainSkillsMap}
+              setDomainSkillsMap={setDomainSkillsMap}
+              selectedSkillsByDomain={selectedSkillsByDomain}
+              setSelectedSkillsByDomain={setSelectedSkillsByDomain}
+              showMoreSkillsMap={showMoreSkillsMap}
+              setShowMoreSkillsMap={setShowMoreSkillsMap}
+            />
 
             {/* Internship Type */}
             {opportunity_type === "Internship" && (
@@ -877,7 +1488,7 @@ export default function RecruiterPostJobInternDetails() {
 
                 {/* Show date pickers if Custom is selected */}
                 {startDateType === "Custom" && (
-                  <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mb-3">
+                  <div className="flex flex-col gap-2 mb-3 sm:flex-row sm:gap-3">
                     <div className="flex-1">
                       <Input
                         label="From"
@@ -895,14 +1506,24 @@ export default function RecruiterPostJobInternDetails() {
                   </div>
                 )}
 
-                {/* Internship duration (only for Internship) */}
-                <Input
-                  label="Internship duration"
-                  type="text"
-                  placeholder="e.g. 6 months"
-                  error={methods.formState.errors.duration?.message}
-                  {...methods.register("duration")}
-                />
+                {/* Internship duration (only for Internship) - Select Dropdown */}
+                <div>
+                  <Label htmlFor="duration">Internship duration</Label>
+                  <select
+                    className="w-full px-2 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-transparent transition-all duration-200 bg-white hover:border-gray-400 cursor-pointer"
+                    {...methods.register("duration")}
+                  >
+                    <option value="">Select duration</option>
+                    {durations.map((duration) => (
+                      <option key={duration.id} value={duration.id}>
+                        {duration.value}
+                      </option>
+                    ))}
+                  </select>
+                  {methods.formState.errors.duration?.message && (
+                    <p className="mt-1 text-sm text-red-600">{methods.formState.errors.duration?.message}</p>
+                  )}
+                </div>
 
                 {/* Intern's responsibility (only for Internship) */}
                 <Textarea
@@ -969,7 +1590,7 @@ export default function RecruiterPostJobInternDetails() {
                 />
 
                 {/* Women only checkbox */}
-                <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center gap-2 p-3 rounded-lg bg-gray-50">
                   <input
                     type="checkbox"
                     className={checkboxStyles}
@@ -984,7 +1605,7 @@ export default function RecruiterPostJobInternDetails() {
                 {/* Fixed pay (per year) */}
                 <div>
                   <Label htmlFor="stipend_min">Fixed pay (per year)</Label>
-                  <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                  <div className="flex flex-col gap-2 sm:flex-row sm:gap-3">
                     <Input
                       type="number"
                       placeholder="₹ Min"
@@ -1005,7 +1626,7 @@ export default function RecruiterPostJobInternDetails() {
                   <Label htmlFor="incentivesMin">
                     Variables/ Incentives (per year)
                   </Label>
-                  <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                  <div className="flex flex-col gap-2 sm:flex-row sm:gap-3">
                     <Input
                       type="number"
                       placeholder="₹ Min"
@@ -1024,7 +1645,7 @@ export default function RecruiterPostJobInternDetails() {
                 {/* Perks (Job-specific) */}
                 <div>
                   <Label htmlFor="perks">Perks: (Select all that apply)</Label>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2 p-3 bg-gray-50 rounded-lg">
+                  <div className="grid grid-cols-1 gap-2 p-3 rounded-lg md:grid-cols-2 bg-gray-50">
                     {[
                       "5 days a week",
                       "Health Insurance",
@@ -1052,24 +1673,20 @@ export default function RecruiterPostJobInternDetails() {
                     Screening Questions
                   </Label>
                   <Textarea
-                    rows={3}
-                    placeholder="Add screening questions (optional)"
-                    defaultValue={
-                      "Please confirm your availability for this job. If not available immediately, how early would you be able to join?"
-                    }
+                    rows={4}
+                    placeholder="Add screening questions (one per line):&#10;1. Please confirm your availability for this job&#10;2. How early would you be able to join?&#10;3. Add your own questions..."
                     {...methods.register("screening_questions")}
                   />
-                  {/* Add more questions (Optional) - UI only, not functional */}
-                  <button type="button" className="text-blue-600 mt-2 text-xs">
-                    + Add more questions (Optional)
-                  </button>
+                  <p className="mt-1 text-xs text-gray-500">
+                    Enter each question on a new line. Each line will be treated as a separate question.
+                  </p>
                 </div>
 
                 {/* Primary phone number */}
                 <div>
                   <Label htmlFor="phone_contact">Primary phone number</Label>
                   <div className="flex">
-                    <span className="inline-flex items-center px-2 py-2 border border-r-0 border-gray-300 bg-gray-50 rounded-l-lg text-gray-600 text-sm">
+                    <span className="inline-flex items-center px-2 py-2 text-sm text-gray-600 border border-r-0 border-gray-300 rounded-l-lg bg-gray-50">
                       <img
                         src="https://flagcdn.com/in.svg"
                         alt="IN"
@@ -1077,13 +1694,16 @@ export default function RecruiterPostJobInternDetails() {
                       />
                       +91
                     </span>
-                    <Input
+                    <input
                       type="tel"
                       placeholder="9812345678"
-                      error={methods.formState.errors.phone_contact?.message}
+                      className="flex-1 px-3 py-2 text-sm border border-l-0 border-gray-300 rounded-r-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       {...methods.register("phone_contact")}
                     />
                   </div>
+                  {methods.formState.errors.phone_contact?.message && (
+                    <p className="mt-1 text-sm text-red-600">{methods.formState.errors.phone_contact?.message}</p>
+                  )}
                 </div>
 
                 {/* Alternate phone number */}
@@ -1092,7 +1712,7 @@ export default function RecruiterPostJobInternDetails() {
                     Alternate phone number for this listing (Optional)
                   </Label>
                   <div className="flex">
-                    <span className="inline-flex items-center px-2 py-2 border border-r-0 border-gray-300 bg-gray-50 rounded-l-lg text-gray-600 text-sm">
+                    <span className="inline-flex items-center px-2 py-2 text-sm text-gray-600 border border-r-0 border-gray-300 rounded-l-lg bg-gray-50">
                       <img
                         src="https://flagcdn.com/in.svg"
                         alt="IN"
@@ -1100,9 +1720,10 @@ export default function RecruiterPostJobInternDetails() {
                       />
                       +91
                     </span>
-                    <Input
+                    <input
                       type="tel"
                       placeholder="9876543210"
+                      className="flex-1 px-3 py-2 text-sm border border-l-0 border-gray-300 rounded-r-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       {...methods.register("alternatePhone")}
                     />
                   </div>
@@ -1164,7 +1785,7 @@ export default function RecruiterPostJobInternDetails() {
                 />
 
                 {/* Women only checkbox */}
-                <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center gap-2 p-3 rounded-lg bg-gray-50">
                   <input
                     type="checkbox"
                     className={checkboxStyles}
@@ -1179,7 +1800,7 @@ export default function RecruiterPostJobInternDetails() {
                 {/* Project budget */}
                 <div>
                   <Label htmlFor="stipend_min">Project budget</Label>
-                  <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                  <div className="flex flex-col gap-2 sm:flex-row sm:gap-3">
                     <Input
                       type="number"
                       placeholder="₹ Min"
@@ -1201,23 +1822,20 @@ export default function RecruiterPostJobInternDetails() {
                     Screening Questions
                   </Label>
                   <Textarea
-                    rows={3}
-                    placeholder="Add screening questions (optional)"
-                    defaultValue={
-                      "Please confirm your availability for this project. Share your relevant project experience."
-                    }
+                    rows={4}
+                    placeholder="Add screening questions (one per line):&#10;1. Please confirm your availability for this project&#10;2. Share your relevant project experience&#10;3. Add your own questions..."
                     {...methods.register("screening_questions")}
                   />
-                  <button type="button" className="text-blue-600 mt-2 text-xs">
-                    + Add more questions (Optional)
-                  </button>
+                  <p className="mt-1 text-xs text-gray-500">
+                    Enter each question on a new line. Each line will be treated as a separate question.
+                  </p>
                 </div>
 
                 {/* Primary phone number */}
                 <div>
                   <Label htmlFor="phone_contact">Primary phone number</Label>
                   <div className="flex">
-                    <span className="inline-flex items-center px-2 py-2 border border-r-0 border-gray-300 bg-gray-50 rounded-l-lg text-gray-600 text-sm">
+                    <span className="inline-flex items-center px-2 py-2 text-sm text-gray-600 border border-r-0 border-gray-300 rounded-l-lg bg-gray-50">
                       <img
                         src="https://flagcdn.com/in.svg"
                         alt="IN"
@@ -1225,13 +1843,16 @@ export default function RecruiterPostJobInternDetails() {
                       />
                       +91
                     </span>
-                    <Input
+                    <input
                       type="tel"
                       placeholder="9812345678"
-                      error={methods.formState.errors.phone_contact?.message}
+                      className="flex-1 px-3 py-2 text-sm border border-l-0 border-gray-300 rounded-r-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       {...methods.register("phone_contact")}
                     />
                   </div>
+                  {methods.formState.errors.phone_contact?.message && (
+                    <p className="mt-1 text-sm text-red-600">{methods.formState.errors.phone_contact?.message}</p>
+                  )}
                 </div>
 
                 {/* Alternate phone number */}
@@ -1240,7 +1861,7 @@ export default function RecruiterPostJobInternDetails() {
                     Alternate phone number for this listing (Optional)
                   </Label>
                   <div className="flex">
-                    <span className="inline-flex items-center px-2 py-2 border border-r-0 border-gray-300 bg-gray-50 rounded-l-lg text-gray-600 text-sm">
+                    <span className="inline-flex items-center px-2 py-2 text-sm text-gray-600 border border-r-0 border-gray-300 rounded-l-lg bg-gray-50">
                       <img
                         src="https://flagcdn.com/in.svg"
                         alt="IN"
@@ -1248,9 +1869,10 @@ export default function RecruiterPostJobInternDetails() {
                       />
                       +91
                     </span>
-                    <Input
+                    <input
                       type="tel"
                       placeholder="9876543210"
+                      className="flex-1 px-3 py-2 text-sm border border-l-0 border-gray-300 rounded-r-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       {...methods.register("alternatePhone")}
                     />
                   </div>
@@ -1268,37 +1890,34 @@ export default function RecruiterPostJobInternDetails() {
               </>
             )}
 
-            {/* City/Cities */}
-            {educationLoading ? (
-              <div className="p-2 bg-gray-50 rounded-lg">
-                <p className="text-xs text-gray-600">Loading cities...</p>
-              </div>
-            ) : educationError ? (
-              <div className="p-2 bg-red-50 border border-red-200 rounded-lg">
-                <p className="text-red-800 text-xs">{educationError}</p>
-              </div>
-            ) : (
-              <Select
-                label="City/Cities"
-                placeholder="Select a city"
-                error={methods.formState.errors.city?.message}
-                options={
-                  educationData.locations
-                    ? educationData.locations.map((location) => ({
-                        value:
-                          typeof location === "string"
-                            ? location
-                            : location.name,
-                        label:
-                          typeof location === "string"
-                            ? location
-                            : location.name,
-                      }))
-                    : []
-                }
-                {...methods.register("city")}
-              />
-            )}
+            {/* City/Cities - Searchable */}
+            <div>
+              <Label htmlFor="city">City/Cities</Label>
+              {masterDataLoading ? (
+                <div className="p-2 rounded-lg bg-gray-50">
+                  <p className="text-xs text-gray-600">Loading cities...</p>
+                </div>
+              ) : masterDataError ? (
+                <div className="p-2 border border-red-200 rounded-lg bg-red-50">
+                  <p className="text-xs text-red-800">{masterDataErrorMsg}</p>
+                  <button
+                    type="button"
+                    onClick={() => refetchMasterData()}
+                    className="mt-1 text-xs text-red-600 underline hover:text-red-800"
+                  >
+                    Retry
+                  </button>
+                </div>
+              ) : (
+                <LocationMultiSelect
+                  locations={locations}
+                  value={methods.watch("city")}
+                  onChange={(value) => methods.setValue("city", value)}
+                  placeholder="Search and select cities..."
+                  error={methods.formState.errors.city?.message}
+                />
+              )}
+            </div>
 
             {/* Only this city checkbox */}
             <div className="flex items-center gap-3 p-2 mt-[10px] rounded-lg">
@@ -1308,31 +1927,40 @@ export default function RecruiterPostJobInternDetails() {
                 {...methods.register("onlyThisCity")}
               />
               <span className="text-sm text-gray-700">
-                Candidates from ONLY the above city should be allowed to apply.
+                Candidates from ONLY the above cities should be allowed to apply.
               </span>
             </div>
 
-            {/* Part-time/Full-time (Common for all opportunity types) */}
+            {/* Job Time (Common for all opportunity types) */}
             <div>
-              <Label htmlFor="partFullTime">Part-time/ Full-time</Label>
+              <Label htmlFor="job_time">Work Schedule</Label>
               <div className={radioContainerStyles}>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    value="Day Shift"
+                    className={radioStyles}
+                    {...methods.register("job_time")}
+                  />
+                  <span className="text-sm text-gray-700">Day Shift</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    value="Night Shift"
+                    className={radioStyles}
+                    {...methods.register("job_time")}
+                  />
+                  <span className="text-sm text-gray-700">Night Shift</span>
+                </label>
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="radio"
                     value="Part-time"
                     className={radioStyles}
-                    {...methods.register("partFullTime")}
+                    {...methods.register("job_time")}
                   />
                   <span className="text-sm text-gray-700">Part-time</span>
-                </label>
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="radio"
-                    value="Full-time"
-                    className={radioStyles}
-                    {...methods.register("partFullTime")}
-                  />
-                  <span className="text-sm text-gray-700">Full-time</span>
                 </label>
               </div>
             </div>
@@ -1383,7 +2011,7 @@ export default function RecruiterPostJobInternDetails() {
                   </label>
                 </div>
                 {stipend_type === "Paid" && (
-                  <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                  <div className="flex flex-col gap-2 sm:flex-row sm:gap-3">
                     <Input
                       type="number"
                       placeholder="₹ Min"
@@ -1397,7 +2025,7 @@ export default function RecruiterPostJobInternDetails() {
                       {...methods.register("stipend_max")}
                     />
                     <select
-                      className="w-full sm:w-32 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white"
+                      className="w-full px-3 py-2 text-sm transition-all duration-200 bg-white border border-gray-300 rounded-lg sm:w-32 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       {...methods.register("stipendMode")}
                     >
                       <option value="Month" className="text-sm">
@@ -1421,32 +2049,28 @@ export default function RecruiterPostJobInternDetails() {
                     PRO Plan
                   </span>
                 </div>
-                {educationLoading ? (
-                  <div className="p-3 bg-gray-50 rounded-lg">
+                {masterDataLoading ? (
+                  <div className="p-3 rounded-lg bg-gray-50">
                     <p className="text-gray-600">Loading colleges...</p>
                   </div>
-                ) : educationError ? (
-                  <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-                    <p className="text-red-800 text-sm">{educationError}</p>
+                ) : masterDataError ? (
+                  <div className="p-3 border border-red-200 rounded-lg bg-red-50">
+                    <p className="text-sm text-red-800">{masterDataErrorMsg}</p>
+                    <button
+                      type="button"
+                      onClick={() => refetchMasterData()}
+                      className="mt-1 text-xs text-red-600 underline hover:text-red-800"
+                    >
+                      Retry
+                    </button>
                   </div>
                 ) : (
-                  <Select
-                    placeholder="Select a college"
-                    options={
-                      educationData.colleges
-                        ? educationData.colleges.map((college) => ({
-                            value:
-                              typeof college === "string"
-                                ? college
-                                : college.name,
-                            label:
-                              typeof college === "string"
-                                ? college
-                                : college.name,
-                          }))
-                        : []
-                    }
-                    {...methods.register("college_name")}
+                  <CollegeMultiSelect
+                    colleges={schoolColleges}
+                    value={methods.watch("college_name")}
+                    onChange={(value) => methods.setValue("college_name", value)}
+                    placeholder="Search and select colleges..."
+                    error={methods.formState.errors.college_name?.message}
                   />
                 )}
                 <div className="flex items-center mt-2 mb-4">
@@ -1457,38 +2081,40 @@ export default function RecruiterPostJobInternDetails() {
                   />
                   <label
                     htmlFor="onlyThisCollege"
-                    className="ml-2 text-gray-500 text-sm"
+                    className="ml-2 text-sm text-gray-500"
                   >
-                    Candidates from ONLY the above college should be allowed to
+                    Candidates from ONLY the above colleges should be allowed to
                     apply.
                   </label>
                 </div>
 
-                {educationLoading ? (
-                  <div className="p-3 bg-gray-50 rounded-lg">
-                    <p className="text-gray-600">Loading courses...</p>
-                  </div>
-                ) : educationError ? (
-                  <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-                    <p className="text-red-800 text-sm">{educationError}</p>
-                  </div>
-                ) : (
-                  <Select
-                    label="Course"
-                    placeholder="Select a course"
-                    options={
-                      educationData.courses
-                        ? educationData.courses.map((course) => ({
-                            value:
-                              typeof course === "string" ? course : course.name,
-                            label:
-                              typeof course === "string" ? course : course.name,
-                          }))
-                        : []
-                    }
-                    {...methods.register("course")}
-                  />
-                )}
+                <div>
+                  <Label htmlFor="course">Course</Label>
+                  {masterDataLoading ? (
+                    <div className="p-3 rounded-lg bg-gray-50">
+                      <p className="text-gray-600">Loading courses...</p>
+                    </div>
+                  ) : masterDataError ? (
+                    <div className="p-3 border border-red-200 rounded-lg bg-red-50">
+                      <p className="text-sm text-red-800">{masterDataErrorMsg}</p>
+                      <button
+                        type="button"
+                        onClick={() => refetchMasterData()}
+                        className="mt-1 text-xs text-red-600 underline hover:text-red-800"
+                      >
+                        Retry
+                      </button>
+                    </div>
+                  ) : (
+                    <CourseMultiSelect
+                      courses={courses}
+                      value={methods.watch("course")}
+                      onChange={(value) => methods.setValue("course", value)}
+                      placeholder="Search and select courses..."
+                      error={methods.formState.errors.course?.message}
+                    />
+                  )}
+                </div>
               </div>
             )}
 
@@ -1498,7 +2124,7 @@ export default function RecruiterPostJobInternDetails() {
               stipend_type === "Paid" && (
                 <div>
                   <Label htmlFor="incentivesMin">Incentives</Label>
-                  <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                  <div className="flex flex-col gap-2 sm:flex-row sm:gap-3">
                     <Input
                       type="number"
                       placeholder="₹ Min"
@@ -1512,7 +2138,7 @@ export default function RecruiterPostJobInternDetails() {
                       {...methods.register("incentivesMax")}
                     />
                     <select
-                      className="w-full sm:w-32 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white"
+                      className="w-full px-3 py-2 text-sm transition-all duration-200 bg-white border border-gray-300 rounded-lg sm:w-32 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       {...methods.register("incentivesMode")}
                     >
                       <option value="Month" className="text-sm">
@@ -1530,7 +2156,7 @@ export default function RecruiterPostJobInternDetails() {
             {opportunity_type !== "Job" && opportunity_type !== "Project" && (
               <div>
                 <Label htmlFor="perks">Perks (Select all that apply)</Label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 p-3 bg-gray-50 rounded-lg">
+                <div className="grid grid-cols-1 gap-2 p-3 rounded-lg sm:grid-cols-2 sm:gap-3 bg-gray-50">
                   {[
                     "Certificate of completion",
                     "Letter of recommendation",
@@ -1559,7 +2185,7 @@ export default function RecruiterPostJobInternDetails() {
 
             {/* PPO Question */}
             {opportunity_type === "Internship" && (
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 p-3 bg-gray-50 rounded-lg">
+              <div className="flex flex-col items-start gap-2 p-3 rounded-lg sm:flex-row sm:items-center sm:gap-3 bg-gray-50">
                 <input
                   type="radio"
                   value="Yes"
@@ -1573,7 +2199,7 @@ export default function RecruiterPostJobInternDetails() {
             )}
 
             {/* Submit Buttons */}
-            <div className="flex flex-row justify-between gap-2 sm:gap-4 mt-6 pt-4 border-t border-gray-200">
+            <div className="flex flex-row justify-between gap-2 pt-4 mt-6 border-t border-gray-200 sm:gap-4">
               <Button
                 type="button"
                 variant="outline"
@@ -1598,9 +2224,9 @@ export default function RecruiterPostJobInternDetails() {
       subheading="Post your internship/job to attract the best candidates."
       hideMobileIllustration={true}
     >
-      <div className="w-full min-h-screen flex md:items-center md:justify-center overflow-hidden relative">
+      <div className="relative flex w-full min-h-screen overflow-hidden md:items-center md:justify-center">
         {/* Form */}
-        <div className="flex-1 w-full flex justify-center mt-6 md:mt-0">
+        <div className="flex justify-center flex-1 w-full mt-6 md:mt-0">
           <FormContent />
         </div>
       </div>

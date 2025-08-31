@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import MainLayout from "../../../components/layout/MainLayout";
 import RecruiterRightProfile from "./RecruiterRightProfile";
+import { CiSearch } from "react-icons/ci";
 
 const Approvals = () => {
   const [activeTab, setActiveTab] = useState("All");
@@ -65,8 +66,7 @@ const Approvals = () => {
     <div className="w-[729px] h-[627px] rounded-[10px] p-6 bg-white shadow-md mx-auto mt-6 flex flex-col gap-5">
       {/* Header */}
       <h2 className="text-3xl font-bold text-gray-900">Approvals</h2>
-      <p className="text-gray-500">Lorem Ipsum</p>
-
+      
       {/* Search */}
       <div className="relative">
         <input
@@ -76,7 +76,7 @@ const Approvals = () => {
           onChange={(e) => setSearchTerm(e.target.value)}
           className="w-full border rounded-full pl-4 pr-10 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
-        <span className="absolute right-3 top-2.5 text-gray-400">🔍</span>
+        <span className="absolute right-3 top-2.5 text-gray-400"><CiSearch size={20} /></span>
       </div>
 
       {/* Tabs */}

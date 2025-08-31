@@ -58,7 +58,7 @@ export default function Login() {
           navigate("/student-fill-account-details");
           break;
         case "COMPANY":
-          navigate("/recruiter-post-job-intern-details");
+          navigate("/recruiter-dashboard");
           break;
         case "UNIVERSITY":
           navigate("/university-fill-details");

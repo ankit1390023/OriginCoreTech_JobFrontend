@@ -79,6 +79,7 @@ import AiProfile1 from "../pages/aiprediction/AiProfile1";
 import AllJObsPart from "../pages/aiprediction/AlljobsPart";
 import AllCoursesPart from "../pages/aiprediction/CoursePart";
 import FeedRightSide3 from "../pages/student/feed/FeedRightSide3";
+import Rprofile from "../pages/recruiter/dashboard/Rprofile";
 // import Sidebar from "../components/shared/Sidebar";
 // import Header1 from "../components/shared/Header1";
 // import Footer1 from "../components/shared/Footer1";
@@ -88,6 +89,10 @@ export const appRouter = createBrowserRouter([
   {
     path: "/",
     element: <Home />,
+  },
+  {
+    path: "/rprofile",
+    element: <Rprofile />,
   },
   {
     path: "/login",
@@ -154,12 +159,12 @@ export const appRouter = createBrowserRouter([
     element: <RecruiterTotalJobPost />,
   },
   {
-    path: "/recruiter-application",
+    path: "/recruiter-view-applications/:job_id",
     element: <RecruiterApplication />,
   },
 
   {
-    path: "/recruiter-application-details",
+    path: "/recruiter-application-details/:job_id/:application_id",
     element: <RecruiterApplicationDetails />,
   },
 
@@ -168,11 +173,11 @@ export const appRouter = createBrowserRouter([
     element: <RecruiterApplicationData />,
   },
   {
-    path: "/recruiter-send-assignment",
+    path: "/recruiter-send-assignment/:application_id",
     element: <RecruiterSendAssignment />,
   },
   {
-    path: "/recruiter-interview",
+    path: "/recruiter-schedule-interview/:application_id",
     element: <RecruiterInterview />,
   },
   {

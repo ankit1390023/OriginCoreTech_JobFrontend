@@ -8,7 +8,7 @@ export const userDetailsApi = {
   createUserDetails: async (userData, token) => {
     try {
       const response = await axios.post(
-        `${BASE_URL}/user-details/detail`,
+        `${BASE_URL}/user-details/saveUserDetails`,
         userData,
         {
           headers: {
@@ -24,36 +24,6 @@ export const userDetailsApi = {
     }
   },
 
-  // Check if user details exist
-  checkUserDetailsExist: async (user_id, token) => {
-    if (!user_id) {
-      return { exists: false, error: "User ID is required." };
-    }
-    try {
-      const response = await axios.get(
-        `${BASE_URL}/user-details/detail/${user_id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      return { exists: true, data: response.data };
-    } catch (error) {
-      if (error.response && error.response.status === 404) {
-        return { exists: false };
-      }
-      console.error("Error checking user details:", error);
-      return {
-        exists: false,
-        error:
-          error?.response?.data?.message ||
-          error.message ||
-          "Unknown error occurred",
-      };
-    }
-  },
 
   getUserDetails: async (user_id) => {
     if (!user_id) {
@@ -101,7 +71,6 @@ export const userDetailsApi = {
     if (!user_id) {
       return { success: false, error: "User ID is required." };
     }
-
     try {
       const headers = token ? { Authorization: `Bearer ${token}` } : {};
       const response = await axios.get(

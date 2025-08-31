@@ -5,15 +5,24 @@ import { Input, Select, Button, Badge } from "../../../components/ui";
 import MainLayout from "../../../components/layout/MainLayout";
 import FeedRightSide1 from "../feed/FeedRightSide1";
 import { IoIosArrowBack } from "react-icons/io";
-import { educationApi } from "../../../api/educationApi";
+import { useMasterData } from "../../../hooks/master/useMasterData"; // Add this import
 
 const FeedYourEducation = () => {
   const navigate = useNavigate();
-
-  // Redux state for authentication
   const { user, token, isAuthenticated } = useSelector((state) => state.auth);
+  
+  // Replace with the correct data from useMasterData
+  const { 
+    courses,
+    specializations,
+    schoolColleges, // Changed from colleges to schoolColleges
+    specializationByCourse,
+    getSpecializationsForCourse,
+    isLoading: isMasterDataLoading,
+    error: masterDataError 
+  } = useMasterData();
 
-  // State for API data
+  // Update educationData state to use master data
   const [educationData, setEducationData] = useState({
     courses: [],
     specializations: [],
@@ -21,85 +30,36 @@ const FeedYourEducation = () => {
     jobRoles: [],
     locations: [],
   });
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [isUsingFallbackData, setIsUsingFallbackData] = useState(false);
 
-  // Fetch education data from API
-  const fetchEducationData = async () => {
-    if (!isAuthenticated || !token) {
-      setError("User not authenticated. Please login to continue.");
-      setIsLoading(false);
-      return;
-    }
-
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      // Fetch all data in parallel
-      const [courses, specializations, colleges] = await Promise.all([
-        educationApi.getCourses(token),
-        educationApi.getSpecializations(token),
-        educationApi.getColleges(token)
-      ]);
-
-      // Map API responses to expected format
-      const formattedCourses = Array.isArray(courses)
-        ? courses.map(course => ({
-          id: course.id?.toString(),
-          name: course.name || course.course_name || 'Unknown Course',
-          value: course.id?.toString(),
-          label: course.name || course.course_name || 'Unknown Course'
-        }))
-        : [];
-
-      const formattedSpecializations = Array.isArray(specializations)
-        ? specializations.map(spec => ({
-          id: spec.id?.toString(),
-          name: spec.name || spec.specialization_name || 'Unknown Specialization',
-          courseId: spec.course_id?.toString(),
-          courseName: spec.Course?.name || 'Unknown Course',
-          value: spec.id?.toString(),
-          label: `${spec.name || spec.specialization_name || 'Unknown Specialization'} (${spec.Course?.name || 'Unknown Course'})`
-        }))
-        : [];
-
-      const formattedColleges = Array.isArray(colleges)
-        ? colleges.map(college => ({
-          id: college.id?.toString(),
-          name: college.name || college.college_name || 'Unknown College',
-          value: college.id?.toString(),
-          label: college.name || college.college_name || 'Unknown College'
-        }))
-        : [];
-
+  // Update the data fetching logic with proper mapping
+  useEffect(() => {
+    if (courses && specializationByCourse && schoolColleges) {
       setEducationData({
-        courses: formattedCourses,
-        specializations: formattedSpecializations,
-        colleges: formattedColleges,
+        courses: courses.map(course => ({
+          id: course.id,
+          name: course.name || course.course_name,
+          value: course.id,
+          label: course.name || course.course_name
+        })),
+        specializations: specializations?.map(spec => ({
+          id: spec.id,
+          name: spec.name || spec.specialization_name,
+          courseId: spec.course_id,
+          courseName: courses.find(c => c.id === spec.course_id)?.name || 'Unknown Course',
+          value: spec.id,
+          label: spec.name || spec.specialization_name
+        })) || [],
+        colleges: schoolColleges?.map(college => ({
+          id: college.id,
+          name: college.name || college.college_name,
+          value: college.id,
+          label: college.name || college.college_name
+        })) || [],
         jobRoles: [],
         locations: []
       });
-
-      setIsUsingFallbackData(false);
-    } catch (error) {
-      console.error("Error fetching education data:", error);
-      setError(error.message || "Failed to fetch education data. Using sample data instead.");
-      setIsUsingFallbackData(true);
-
-      // Fallback to sample data if API fails
-      setEducationData({
-        courses: [],
-        specializations: [],
-        colleges: [],
-        jobRoles: [],
-        locations: []
-      });
-    } finally {
-      setIsLoading(false);
     }
-  };
+  }, [courses, specializationByCourse, schoolColleges, specializations]);
 
   // Redirect to login if not authenticated
   useEffect(() => {
@@ -109,13 +69,6 @@ const FeedYourEducation = () => {
     }
   }, [isAuthenticated, navigate]);
 
-  useEffect(() => {
-    if (isAuthenticated && token) {
-      fetchEducationData();
-    }
-  }, [isAuthenticated, token]);
-
-  // Education entries state
   // Education entries state
   const [educationEntries, setEducationEntries] = useState(() => {
     const defaultCourse = "B.Tech"; // take the first one
@@ -358,9 +311,6 @@ const FeedYourEducation = () => {
 
   const handleCourseSelect = async (id, selectedCourse) => {
     try {
-      setIsLoading(true);
-
-      // Update the course in the education entry
       setEducationEntries(entries =>
         entries.map(entry =>
           entry.id === id
@@ -368,37 +318,57 @@ const FeedYourEducation = () => {
               ...entry,
               course: selectedCourse.name || selectedCourse,
               courseId: selectedCourse.id || '',
-              specialization: '', // Reset specialization when course changes
+              specialization: '',
               specializationId: ''
             }
             : entry
         )
       );
 
-      // If we have a course ID, fetch specializations for this course
+      // Use getSpecializationsForCourse to get course-specific specializations
       if (selectedCourse.id) {
-        const specializations = await educationApi.getSpecializationsByCourseId(selectedCourse.id, token);
-
-        // Update specializations in education data
+        const courseSpecializations = getSpecializationsForCourse(selectedCourse.id);
+        
         setEducationData(prev => ({
           ...prev,
-          specializations: specializations.map(spec => ({
-            id: spec.id?.toString(),
-            name: spec.name || spec.specialization_name || 'Unknown Specialization',
-            courseId: spec.course_id?.toString(),
-            courseName: spec.Course?.name || 'Unknown Course',
-            value: spec.id?.toString(),
-            label: `${spec.name || spec.specialization_name || 'Unknown Specialization'} (${spec.Course?.name || 'Unknown Course'})`
+          specializations: courseSpecializations.map(spec => ({
+            id: spec.id,
+            name: spec.name || spec.specialization_name,
+            courseId: selectedCourse.id,
+            courseName: selectedCourse.name,
+            value: spec.id,
+            label: spec.name || spec.specialization_name
           }))
         }));
       }
     } catch (error) {
-      console.error('Error fetching specializations:', error);
-      setError('Failed to load specializations for the selected course');
-    } finally {
-      setIsLoading(false);
+      console.error('Error updating course:', error);
     }
   };
+
+  // Update loading state to properly reflect data loading
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    if (!isMasterDataLoading && courses && specializationByCourse && schoolColleges) {
+      setIsLoading(false);
+    }
+    if (masterDataError) {
+      setError(masterDataError);
+    }
+  }, [isMasterDataLoading, masterDataError, courses, specializationByCourse, schoolColleges]);
+
+  // Add loading indicator
+  if (isLoading) {
+    return (
+      <MainLayout>
+        <div className="flex justify-center items-center h-screen">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-500"></div>
+        </div>
+      </MainLayout>
+    );
+  }
 
   return (
     <MainLayout>

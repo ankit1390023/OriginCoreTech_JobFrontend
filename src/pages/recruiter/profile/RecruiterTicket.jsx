@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useState } from "react";
+import { useSelector } from "react-redux";
 import { Input, RadioGroup, Textarea, Button } from "../../../components/ui";
 import MainLayout from "../../../components/layout/MainLayout";
 import RecruiterRightSide2 from "./RecruiterRightSide2";
-import { raiseTicket } from "../../../redux/feature/ticketSlice";
+import { ticketApi } from "../../../api/ticketApi";
 
 const PRIORITY_OPTIONS = [
   { label: "High", value: "high" },
@@ -12,11 +12,7 @@ const PRIORITY_OPTIONS = [
 ];
 
 const FeedTicket = () => {
-  const dispatch = useDispatch();
-  const { loading, error, success } = useSelector((state) => state.ticket);
-  const { token, user } = useSelector((state) => state.auth);
-
-  // Get user email from Redux state
+  const { user } = useSelector((state) => state.auth);
   const userEmail = user?.email || "";
 
   const [priority, setPriority] = useState("medium");
@@ -41,13 +37,13 @@ const FeedTicket = () => {
     const ticketData = {
       issue_title: issue_title.trim(),
       issue_detail: body.trim(),
-      role: "student", // Default role for student users
+      role: "recruiter", // Default role for student users
       email: userEmail,
       priority, // Keep priority for additional context
     };
 
     try {
-      await dispatch(raiseTicket({ ticketData, token })).unwrap();
+      await ticketApi.raiseTicket(ticketData);
       // Reset form on success
       setIssueTitle("");
       setBody("");
@@ -70,15 +66,15 @@ const FeedTicket = () => {
 
   return (
     <MainLayout>
-      <div className="flex justify-center bg-gray-100 min-h-screen px-2 lg:px-8">
+      <div className="flex justify-center min-h-screen px-2 bg-gray-100 lg:px-8">
         {/* Left Spacer */}
-        <div className="hidden lg:block flex-grow "></div>
+        <div className="flex-grow hidden lg:block "></div>
 
         <section className="bg-white rounded-[10px] p-5 shadow-lg mt-2 w-[780px] h-[1000px] opacity-100 gap-[5px]">
-          <h2 className="text-2xl sm:text-3xl font-bold mb-1">
+          <h2 className="mb-1 text-2xl font-bold sm:text-3xl">
             Create Quick Ticket
           </h2>
-          <p className="text-gray-500 text-sm sm:text-base mb-4">
+          <p className="mb-4 text-sm text-gray-500 sm:text-base">
             Write and address new queries and issues
           </p>
           <form
@@ -115,7 +111,7 @@ const FeedTicket = () => {
               />
             </div>
             {(localError || error) && (
-              <div className="text-red-500 text-sm">
+              <div className="text-sm text-red-500">
                 {localError ||
                   (typeof error === "string"
                     ? error
@@ -123,7 +119,7 @@ const FeedTicket = () => {
               </div>
             )}
             {success && (
-              <div className="text-green-600 text-sm">
+              <div className="text-sm text-green-600">
                 Ticket submitted successfully!
               </div>
             )}
@@ -141,7 +137,7 @@ const FeedTicket = () => {
           <RecruiterRightSide2 />
         </aside>
         {/* Right Spacer */}
-        <div className="hidden lg:block flex-grow"></div>
+        <div className="flex-grow hidden lg:block"></div>
       </div>
     </MainLayout>
   );

@@ -8,7 +8,7 @@ import {
   Input,
   PhoneInput,
 } from "../../../components/ui";
- 
+
 export default function PersonalInfo() {
   const {
     register,
@@ -16,9 +16,9 @@ export default function PersonalInfo() {
     setValue,
     control
   } = useFormContext();
- 
+
   const { user } = useSelector((state) => state.auth);
- 
+
   // Get master data with proper destructuring
   const {
     locations = [],
@@ -37,7 +37,7 @@ export default function PersonalInfo() {
       if (user.phone) setValue("phone", user.phone);
     }
   }, [user, setValue]);
- 
+
   // Reusable error message with retry button
   const CustomErrorMessage = ({ message, onRetry }) => (
     <div className="w-full p-3 border rounded bg-red-50 text-red-500 text-xs">
@@ -52,11 +52,11 @@ export default function PersonalInfo() {
       </div>
     </div>
   );
- 
+
   if (isLoading) {
     return <Loader className="mx-auto my-8" />;
   }
- 
+
   if (isError) {
     return (
       <CustomErrorMessage
@@ -65,7 +65,7 @@ export default function PersonalInfo() {
       />
     );
   }
- 
+
   return (
     <div className="space-y-2 sm:space-y-3">
       {/* First + Last Name */}
@@ -87,7 +87,7 @@ export default function PersonalInfo() {
           />
         </div>
       </div>
- 
+
       {/* Email */}
       <Input
         label="Email ID"
@@ -98,7 +98,7 @@ export default function PersonalInfo() {
         readOnly
         {...register("email")}
       />
- 
+
       {/* Phone */}
       <PhoneInput
         label="Phone Number"
@@ -107,7 +107,7 @@ export default function PersonalInfo() {
         error={errors.phone?.message}
         {...register("phone")}
       />
- 
+
       {/* Date of Birth */}
       <Input
         label="Date of Birth"
@@ -116,7 +116,7 @@ export default function PersonalInfo() {
         error={errors.dob?.message}
         {...register("dob")}
       />
- 
+
       {/* Location Dropdown */}
       <div className="w-full">
         <label className="block text-sm font-medium text-gray-700 mb-1">City</label>
@@ -135,7 +135,7 @@ export default function PersonalInfo() {
                 onChange(option ? String(option.value) : null);
               }}
               onBlur={onBlur}
-              options={locations.map((location) => ({
+              options={(Array.isArray(locations) ? locations : []).map((location) => ({
                 value: String(location.id),
                 label: location.name,
               }))}
@@ -151,7 +151,7 @@ export default function PersonalInfo() {
           <p className="mt-1 text-xs text-red-500">{errors.current_location_id.message}</p>
         )}
       </div>
- 
+
       {/* Gender */}
       <div className="w-full">
         <label className="block text-sm font-medium text-gray-700 mb-1">Gender</label>
@@ -183,4 +183,3 @@ export default function PersonalInfo() {
     </div>
   );
 }
- 

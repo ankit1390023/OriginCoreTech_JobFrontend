@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { Input, RadioGroup, Textarea, Button } from "../../../components/ui";
 import MainLayout from "../../../components/layout/MainLayout";
 import UniversityRightSide1 from "./UniversityRightSide1";
-import { raiseTicket } from "../../../redux/feature/ticketSlice";
 
 const PRIORITY_OPTIONS = [
   { label: "High", value: "high" },
@@ -70,15 +69,15 @@ const UniversityTicket = () => {
 
   return (
     <MainLayout>
-      <div className="flex justify-center bg-gray-100 min-h-screen px-2 lg:px-8">
+      <div className="flex justify-center min-h-screen px-2 bg-gray-100 lg:px-8">
         {/* Left Spacer */}
-        <div className="hidden lg:block flex-grow "></div>
+        <div className="flex-grow hidden lg:block "></div>
 
         <section className="bg-white rounded-[10px] p-5 shadow-lg mt-2 w-[780px] h-[1000px] opacity-100 gap-[5px]">
-          <h2 className="text-2xl sm:text-3xl font-bold mb-1">
+          <h2 className="mb-1 text-2xl font-bold sm:text-3xl">
             Create Quick Ticket
           </h2>
-          <p className="text-gray-500 text-sm sm:text-base mb-4">
+          <p className="mb-4 text-sm text-gray-500 sm:text-base">
             Write and address new queries and issues
           </p>
           <form
@@ -115,7 +114,7 @@ const UniversityTicket = () => {
               />
             </div>
             {(localError || error) && (
-              <div className="text-red-500 text-sm">
+              <div className="text-sm text-red-500">
                 {localError ||
                   (typeof error === "string"
                     ? error
@@ -123,7 +122,7 @@ const UniversityTicket = () => {
               </div>
             )}
             {success && (
-              <div className="text-green-600 text-sm">
+              <div className="text-sm text-green-600">
                 Ticket submitted successfully!
               </div>
             )}
@@ -141,7 +140,7 @@ const UniversityTicket = () => {
           <UniversityRightSide1 />
         </aside>
         {/* Right Spacer */}
-        <div className="hidden lg:block flex-grow"></div>
+        <div className="flex-grow hidden lg:block"></div>
       </div>
     </MainLayout>
   );

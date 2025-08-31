@@ -46,23 +46,24 @@ const TotalJobPosts = () => {
 
     fetchJobPosts();
   }, []);
-
+  console.log("Job Posts:", jobPosts);
   // Filter jobs by search
   const filteredJobs = jobPosts.filter(
     (job) =>
-      job.JobRole?.toLowerCase().includes(search.toLowerCase()) ||
+      job.JobRole?. title.toLowerCase().includes(search.toLowerCase()) ||
       job.skill_required_note?.toLowerCase().includes(search.toLowerCase())
   );
 
+
   return (
     <MainLayout>
-      <div className="flex justify-center bg-gray-100 min-h-screen px-2 lg:px-8 items-start">
-        <div className="hidden lg:block flex-grow"></div>
+      <div className="flex items-start justify-center min-h-screen px-2 bg-gray-100 lg:px-8">
+        <div className="flex-grow hidden lg:block"></div>
 
         <div className="bg-white rounded-lg shadow-md w-[729px] h-[800px] py-5 px-6 mt-6 overflow-y-auto">
           {/* Title */}
           <h1 className="text-2xl font-bold">Total Job Posts</h1>
-          <p className="text-gray-500 mb-4">
+          <p className="mb-4 text-gray-500">
             {loading
               ? "Loading job posts..."
               : `You have ${jobPosts.length} job post(s).`}
@@ -73,18 +74,18 @@ const TotalJobPosts = () => {
             <input
               type="text"
               placeholder="Search by role or skills..."
-              className="w-full rounded-full border border-gray-300 py-2 pl-4 pr-10 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full py-2 pl-4 pr-10 border border-gray-300 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
             <Search
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
+              className="absolute text-gray-400 -translate-y-1/2 right-3 top-1/2"
               size={20}
             />
           </div>
 
           {/* Error */}
-          {error && <p className="text-red-500 mb-4">{error}</p>}
+          {error && <p className="mb-4 text-red-500">{error}</p>}
 
           {/* Job List */}
           <div className="flex flex-col gap-5">
@@ -96,14 +97,14 @@ const TotalJobPosts = () => {
               filteredJobs.map((job) => (
                 <div
                   key={job.job_id}
-                  className="flex flex-col gap-3 bg-white rounded-lg border border-gray-200 p-4 shadow-sm"
+                  className="flex flex-col gap-3 p-4 bg-white border border-gray-200 rounded-lg shadow-sm"
                 >
                   {/* Top Section */}
-                  <div className="flex justify-between items-start">
+                  <div className="flex items-start justify-between">
                     {/* Job Info */}
                     <div>
                       <h2 className="font-semibold">
-                        {job.JobRole || "Untitled Job"}
+                        {job.JobRole?.title || "Untitled Job"}
                       </h2>
                       {job.internship_start_date ? (
                         <p className="text-sm text-blue-500">
@@ -113,12 +114,15 @@ const TotalJobPosts = () => {
                         <p className="text-sm text-gray-400">No start date</p>
                       )}
                       <button
-                        className="mt-2 bg-red-500 text-white px-4 py-1 rounded-md text-sm hover:bg-red-600 transition"
+                        className="px-4 py-1 mt-2 text-sm text-white transition bg-red-500 rounded-md hover:bg-red-600"
                         onClick={() =>
-                          navigate(`/recruiter-view-applications/${job.job_id}`)
+                          navigate(
+                            `/recruiter-view-applications/${job.job_id}`,
+                            { state: { job } }
+                          )
                         }
                       >
-                        View applications (0)
+                        View applications ({job.job_id})
                       </button>
                     </div>
 
@@ -133,7 +137,7 @@ const TotalJobPosts = () => {
                       >
                         {job.number_of_openings > 0 ? "Active" : "Closed"}
                       </span>
-                      <div className="flex items-center text-gray-500 text-sm gap-1">
+                      <div className="flex items-center gap-1 text-sm text-gray-500">
                         <Eye size={16} /> {job.views?.toLocaleString() || 0}{" "}
                         views
                       </div>
@@ -143,14 +147,14 @@ const TotalJobPosts = () => {
                   {/* Skills */}
                   {job.skills?.length > 0 && (
                     <div>
-                      <p className="text-sm font-medium text-gray-600 mb-1">
+                      <p className="mb-1 text-sm font-medium text-gray-600">
                         Skills Required:
                       </p>
                       <div className="flex flex-wrap gap-2">
                         {job.skills.map((skill) => (
                           <span
                             key={skill.skill_id}
-                            className="bg-blue-100 text-blue-600 px-2 py-1 text-xs rounded-md"
+                            className="px-2 py-1 text-xs text-blue-600 bg-blue-100 rounded-md"
                           >
                             {skill.skill_name}
                           </span>
@@ -162,14 +166,14 @@ const TotalJobPosts = () => {
                   {/* Perks */}
                   {job.perks?.length > 0 && (
                     <div>
-                      <p className="text-sm font-medium text-gray-600 mb-1">
+                      <p className="mb-1 text-sm font-medium text-gray-600">
                         Perks:
                       </p>
                       <div className="flex flex-wrap gap-2">
                         {job.perks.map((perk, index) => (
                           <span
                             key={index}
-                            className="bg-green-100 text-green-600 px-2 py-1 text-xs rounded-md"
+                            className="px-2 py-1 text-xs text-green-600 bg-green-100 rounded-md"
                           >
                             {perk}
                           </span>
@@ -188,7 +192,7 @@ const TotalJobPosts = () => {
         </aside>
 
         {/* Right Spacer */}
-        <div className="hidden lg:block flex-grow "></div>
+        <div className="flex-grow hidden lg:block "></div>
       </div>
     </MainLayout>
   );

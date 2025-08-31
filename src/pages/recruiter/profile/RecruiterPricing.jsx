@@ -30,9 +30,10 @@ const PremiumJobs = () => {
       className="bg-white shadow-md"
       style={{
         width: "729px",
-        height: "322px",
+        height: "500px",
         borderRadius: "10px",
         padding: "20px",
+        marginTop: "40px",
       }}
     >
       {/* Heading */}

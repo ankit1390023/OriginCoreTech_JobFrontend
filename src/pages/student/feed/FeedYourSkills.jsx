@@ -1,4 +1,3 @@
- 
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Input, Button, Badge } from "../../../components/ui";
@@ -9,17 +8,14 @@ import { IoIosSearch } from "react-icons/io";
 import { IoIosArrowBack } from "react-icons/io";
 import { HiOutlineEye } from "react-icons/hi";
 import { RxCross2 } from "react-icons/rx";
-import { useDomainsApi } from "../../../hooks/useDomainsApi";
-import { useEducationData } from "../../../hooks/useEducationData";
-import { skillApi } from "../../../api/skillApi";
+import { useMasterData } from "../../../hooks/master/useMasterData";
+import { useSkillApi } from "../../../hooks/useSkillApi";
 import { useSelector } from "react-redux";
 import useUploadImageApi from "../../../hooks/useUploadImageApi";
-import { useSkillApi } from "../../../hooks/useSkillApi";
- 
 
 const FeedYourSkills = () => {
   const navigate = useNavigate();
-  const { token} = useSelector((state) => state.auth);
+  const { token } = useSelector((state) => state.auth);
   const [searchTerm, setSearchTerm] = useState("");
   const [showMoreSkills, setShowMoreSkills] = useState({});
   const [showCollegeDropdown, setShowCollegeDropdown] = useState({});
@@ -33,6 +29,8 @@ const FeedYourSkills = () => {
   const [firstCardLearningSource, setFirstCardLearningSource] = useState("");
   const [currentMainSkill, setCurrentMainSkill] = useState("");
   const [showFirstCard, setShowFirstCard] = useState(true);
+  // Add this new state near the top with other state declarations
+const [synchronizedLearningSource, setSynchronizedLearningSource] = useState("");
 
   // State for other cards' selected skills
   const [otherCardsSelectedSkills, setOtherCardsSelectedSkills] = useState({});
@@ -53,40 +51,84 @@ const FeedYourSkills = () => {
   const [skills, setSkills] = useState([
     {
       id: 1,
-      name: "",
-      learningSource: "Delhi University",
+      name: "Web Development",
+      learningSource: "",
       hasCertificate: false,
       borderColor: "border-gray-200",
       bgColor: "bg-white",
       domainId: null,
       skills: []
     }
+    ,
+     {
+      id: 3,    
+     
+      learningSource: "",
+      hasCertificate: true,
+      certificateName: "UI/UX Design Certificate",
+      certificateUrl: "https://example.com/certificates/design-cert-1.pdf",
+      borderColor: "border-orange-300",
+      bgColor: "bg-orange-50",
+    },
+    {
+      id: 4,
+      
+      learningSource: "",
+      hasCertificate: true,
+      certificateName: "Graphic Design Certificate",
+      certificateUrl: "https://example.com/certificates/design-cert-2.jpg",
+      borderColor: "border-green-300",
+      bgColor: "bg-green-50",
+    },
+    {
+      id: 5,
+     
+      learningSource: "",
+      hasCertificate: true,
+      certificateName: "Digital Design Certificate",
+      certificateUrl: "https://example.com/certificates/design-cert-3.pdf",
+      borderColor: "border-red-300",
+      bgColor: "bg-red-50",
+    },
+
   ]);
 
-  // Use the domains API hook with enhanced functionality
+  // Get the required methods from useMasterData hook
   const {
-    allDomains,
-    skillsByDomain,
-    loading,
-    error,
-    fetchAllDomains,
-    fetchSkillsByDomain,
-    refreshDomains,
-  } = useDomainsApi("Web Development");
-  
-  // Use the skill API hook
+    domains: allDomains,
+    getSkillsForDomain,
+    isLoading: isMasterDataLoading,
+    error: masterDataError,
+    schoolColleges,
+  } = useMasterData();
+
+  // Get the methods from useSkillApi hook
   const {
     loading: skillUploadLoading,
     error: skillUploadError,
     uploadSkills,
   } = useSkillApi();
 
-  // Use the education data hook to get colleges
-  const {
-    data: educationData,
-    loading: collegesLoading,
-    error: collegesError,
-  } = useEducationData();
+  // Define fetchSkillsByDomain function
+  const fetchSkillsByDomain = async (domainName) => {
+    try {
+      if (!domainName) return [];
+      
+      // Use the getSkillsForDomain function from useMasterData hook
+      const skills = getSkillsForDomain(domainName);
+      
+      // Update domain skills state
+      setDomainSkills(prev => ({
+        ...prev,
+        [domainName]: skills
+      }));
+      
+      return skills;
+    } catch (error) {
+      console.error("Error fetching skills for domain:", domainName, error);
+      return [];
+    }
+  };
 
   // Fallback dummy colleges in case API fails or returns empty data
   const fallbackColleges = [
@@ -112,33 +154,30 @@ const FeedYourSkills = () => {
     "IBM India",
   ];
 
-  const colleges =
-    educationData.colleges && educationData.colleges.length > 0
-      ? educationData.colleges
-      : fallbackColleges;
+  const colleges = schoolColleges && schoolColleges.length > 0 
+    ? schoolColleges 
+    : fallbackColleges;
 
   // Set initial main skill when domains are loaded
   useEffect(() => {
-    if (allDomains.length > 0 && !currentMainSkill) {
-      // Ensure we're setting just the name if it's an object
+    if (allDomains?.length > 0 && !currentMainSkill) {
       const firstDomain = allDomains[0];
       setCurrentMainSkill(typeof firstDomain === 'object' ? firstDomain.name : firstDomain);
+      setDomains(allDomains); // Set the domains from master data
     }
   }, [allDomains, currentMainSkill]);
 
   // Fetch skills for current main skill
   useEffect(() => {
     if (currentMainSkill) {
-      // Ensure we're passing just the name if it's an object
       const domainName = typeof currentMainSkill === 'object' ? currentMainSkill.name : currentMainSkill;
       fetchSkillsByDomain(domainName);
     }
   }, [currentMainSkill, fetchSkillsByDomain]);
 
-  // Get related skills for a domain
-  const getSkillsForDomain = (domainId) => {
+  // Rename local getSkillsForDomain function
+  const getSkillsForDomainLocal = (domainId) => {
     if (!domainId) return [];
-    
     const skills = domainSkills[domainId] || [];
     return skills.map(skill => ({
       id: skill.id || skill.skill_id,
@@ -183,14 +222,15 @@ const FeedYourSkills = () => {
     });
   };
 
-  // Get all available domains for search
+  // Update the getMainDomainSkills function
   const getMainDomainSkills = () => {
-    if (!Array.isArray(allDomains)) return [];
+    if (!allDomains || !Array.isArray(allDomains)) return [];
+    
     return allDomains.map(domain => {
-      if (typeof domain === 'object') {
-        return domain.name || JSON.stringify(domain);
-      }
-      return domain;
+      // Extract only the domain name
+      return typeof domain === 'object' 
+        ? domain.domain_name || domain.name 
+        : domain;
     });
   };
 
@@ -435,105 +475,42 @@ const FeedYourSkills = () => {
     }));
   };
 
+  // Update the handleSaveChanges function
   const handleSaveChanges = async () => {
     try {
       setSaving(true);
       
-      // Prepare skills data for API
-      const skillsData = [];
-      
-      // Process each domain and its selected skills
-      for (const domain of domains) {
-        const domainId = domain.id;
-        const selectedDomainSkills = selectedSkills[domainId] || [];
-        const certificate = domainCertificates[domainId];
-        const company = domainCompanies[domainId] || '';
-        
-        if (selectedDomainSkills.length > 0) {
-          // Add selected skills for this domain
-          skillsData.push({
-            domain: domain.name,
-            domainId: domain.id,
-            skills: selectedDomainSkills,
-            authority: company || 'Self',
-            has_certificate: !!certificate,
-            certificate_file: certificate?.file || null
-          });
-        }
+      // Prepare data to save
+      const skillsToSave = skills.map(skill => ({
+        domain: skill.name,
+        learningSource: skill.learningSource || '',
+        hasCertificate: skill.hasCertificate || false,
+        certificateName: skill.certificateName || '',
+        certificateUrl: skill.certificateUrl || '',
+        selectedSkills: otherCardsSelectedSkills[skill.id] || []
+      })).filter(skill => skill.domain); // Filter out empty skills
+
+      // Validate if there are skills to save
+      if (skillsToSave.length === 0) {
+        alert('Please add at least one skill before saving.');
+        return;
       }
-      
-      // Upload certificates and get their URLs
-      const uploadPromises = skillsData
-        .filter(skill => skill.certificate_file)
-        .map(async (skill) => {
-          try {
-            const formData = new FormData();
-            formData.append('file', skill.certificate_file);
-            
-            const response = await uploadImage(formData);
-            if (response && response.url) {
-              return { ...skill, certificate_url: response.url };
-            }
-          } catch (error) {
-            console.error('Error uploading certificate:', error);
-            return { ...skill, uploadError: true };
-          }
-          return skill;
-        });
-      
-      // Wait for all certificate uploads to complete
-      const uploadedSkills = await Promise.all(uploadPromises);
-      
-      // Prepare final data for submission
-      const finalSkillsData = uploadedSkills.map(skill => ({
-        domain: skill.domain,
-        domainId: skill.domainId,
-        skills: skill.skills.map(s => ({
-          skill_id: s.id,
-          skill: s.name,
-          authority: skill.authority,
-        })),
-        has_certificate: skill.has_certificate,
-        certificate_url: skill.certificate_url,
-      }));
-      
+
       // Call the API to save skills
-      const response = await skillApi.saveSkills({
-        user_id,
-        skills: finalSkillsData,
+      const response = await uploadSkills({
+        skills: skillsToSave
       }, token);
-      
+
       if (response.success) {
-        // Update UI with the saved data
-        const updatedSkills = finalSkillsData.map((skill, index) => ({
-          id: index + 1,
-          name: skill.domain,
-          learningSource: skill.skills[0]?.authority || 'Self',
-          hasCertificate: skill.has_certificate,
-          certificateName: skill.has_certificate ? `${skill.domain} Certificate` : null,
-          certificateUrl: skill.certificate_url,
-          borderColor: `border-${['blue', 'green', 'purple', 'yellow'][index % 4]}-300`,
-          bgColor: `bg-${['blue', 'green', 'purple', 'yellow'][index % 4]}-50`,
-          domainId: skill.domainId,
-          skills: skill.skills
-        }));
-        
-        setSkills(updatedSkills);
-        
-        // Show success message
         alert('Skills saved successfully!');
+        navigate("/feed-view");
       } else {
         throw new Error(response.message || 'Failed to save skills');
       }
-      // Call the API to save skills
-      await skillApi.uploadSkills(user_id, skillsData, [], token);
 
-      console.log("Skills saved successfully:", skillsData);
-      navigate("/feed-view");
     } catch (error) {
       console.error("Error saving skills:", error);
-      // You can add error handling UI here
-      alert("Failed to save skills. Please try again.");
+      alert(error.message || "Failed to save skills. Please try again.");
     } finally {
       setSaving(false);
     }
@@ -564,17 +541,11 @@ const FeedYourSkills = () => {
   const getRelatedSkillsForMainDomain = (domainName) => {
     if (!domainName) return commonSkills;
     
-    // Try to find the domain in the domains list
     const domain = domains.find(d => d.name === domainName);
     if (!domain) return commonSkills;
     
-    // Return skills for this domain if we have them
-    if (domainSkills[domain.id]?.length > 0) {
-      return domainSkills[domain.id];
-    }
-    
-    // If no domain-specific skills found, return common skills
-    return commonSkills;
+    const domainSkills = getSkillsForDomainLocal(domain.id);
+    return domainSkills.length > 0 ? domainSkills : commonSkills;
   };
 
   // Filter colleges based on search query
@@ -640,7 +611,7 @@ const FeedYourSkills = () => {
   // Function to get related skills for any domain
   const getRelatedSkillsForDomain = async (domainName) => {
     try {
-      const skills = await fetchSkillsByDomain(domainName);
+      const skills = await SkillsByDomain(domainName);
       return skills;
     } catch (error) {
       console.error("Error fetching skills for domain:", domainName, error);
@@ -648,27 +619,16 @@ const FeedYourSkills = () => {
     }
   };
 
-  // Handle college selection
-  const handleCollegeSelect = (id, college) => {
-    // Extract college name from the college object or string
-    const college_name =
-      typeof college === "string"
-        ? college
-        : college.name || college.college_name || "";
-
-    const updatedSkills = skills.map((s) =>
-      s.id === id ? { ...s, learningSource: college_name } : s
-    );
-    setSkills(updatedSkills);
-    setShowCollegeDropdown((prev) => ({ ...prev, [id]: false }));
-    setCollegeSearchQuery((prev) => ({ ...prev, [id]: "" }));
-  };
-
   useEffect(() => {
     if (currentMainSkill) {
       setShowFirstCard(true);
     }
   }, [currentMainSkill]);
+
+  // Add this function to handle input changes
+  const handleLearningSourceChange = (e) => {
+    setFirstCardLearningSource(e.target.value);
+  };
 
   return (
     <MainLayout>
@@ -696,10 +656,14 @@ const FeedYourSkills = () => {
   className="relative w-full max-w-full sm:max-w-[500px] md:max-w-[600px] lg:max-w-[750px]"
   data-skills-dropdown
 >
-  {loading ? (
+  {isMasterDataLoading ? (
     <div className="px-3 py-4 text-center text-gray-500">
       <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500 mx-auto mb-2"></div>
       Loading domains...
+    </div>
+  ) : masterDataError ? (
+    <div className="px-3 py-2 text-red-600 text-sm">
+      Error loading domains: {masterDataError.message}
     </div>
   ) : (
     <div className="relative">
@@ -719,29 +683,29 @@ const FeedYourSkills = () => {
           <div className="max-h-60 overflow-y-auto">
             {getMainDomainSkills()
               .filter(
-                (skill) =>
-                  skill.toLowerCase().includes(domainSearchQuery.toLowerCase()) &&
-                  !domains.some((d) => d.name === skill)
+                (domainName) =>
+                  domainName.toLowerCase().includes(domainSearchQuery.toLowerCase()) &&
+                  !domains.some((d) => d === domainName)
               )
-              .map((skill, index) => (
+              .map((domainName, index) => (
                 <div
                   key={index}
                   className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm flex items-center justify-between"
                   onClick={() => {
-                    handleSkillSelect(skill);
-                    setShowDomainDropdown(false); // close after selecting
+                    handleSkillSelect(domainName);
+                    setShowDomainDropdown(false);
                   }}
                 >
-                  <span>{skill}</span>
+                  <span>{domainName}</span>
                   <span className="text-gray-400 text-xs">Click to select</span>
                 </div>
               ))}
 
-            {/* No results */}
+            {/* No results message */}
             {getMainDomainSkills().filter(
-              (skill) =>
-                skill.toLowerCase().includes(domainSearchQuery.toLowerCase()) &&
-                !domains.some((d) => d.name === skill)
+              (domainName) =>
+                domainName.toLowerCase().includes(domainSearchQuery.toLowerCase()) &&
+                !domains.some((d) => d === domainName)
             ).length === 0 && (
               <div className="px-3 py-2 text-gray-500 text-sm">
                 {domainSearchQuery
@@ -838,9 +802,9 @@ const FeedYourSkills = () => {
                   {/* Skills Selection */}
                   <div className="mb-4">
                     <p className="text-sm text-gray-700 mb-2">
-                      Select related skills for {currentMainSkill}:
+                      Select related skills for 
                     </p>
-                    {loading ? (
+                    {isMasterDataLoading ? (
                       <div className="flex items-center justify-center py-4">
                         <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500 mr-2"></div>
                         <span className="text-gray-500 text-sm">
@@ -907,7 +871,7 @@ const FeedYourSkills = () => {
                             Selected: {firstCardSelectedSkills.length} skill(s)
                           </p>
                         )}
-                        {commonSkills.length === 0 && !loading && (
+                        {commonSkills.length === 0 && !isMasterDataLoading && (
                           <p className="text-gray-500 text-sm">
                             No skills available to display.
                           </p>
@@ -915,128 +879,85 @@ const FeedYourSkills = () => {
                       </>
                     )}
                   </div>
-                  {/* Learning Source */}
-                  <div className="mb-4 relative" data-college-dropdown>
-                    <p className="text-sm text-gray-700 mb-2">
-                      Where did you learn this skill?
-                    </p>
-                    <div className="relative">
-                      <Input
-                        type="text"
-                        placeholder="College/ Company name"
-                        value={firstCardLearningSource}
-                        onChange={(e) => {
-                          setFirstCardLearningSource(e.target.value);
-                          setCollegeSearchQuery((prev) => ({
-                            ...prev,
-                            firstCard: e.target.value,
-                          }));
-                        }}
-                        onFocus={() =>
-                          setShowCollegeDropdown((prev) => ({
-                            ...prev,
-                            firstCard: true,
-                          }))
-                        }
-                        className="w-full h-12 rounded-lg px-4 border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
-                      />
-                      <button
-                        onClick={() => {
-                          setFirstCardLearningSource("");
-                          setCollegeSearchQuery((prev) => ({
-                            ...prev,
-                            firstCard: "",
-                          }));
-                        }}
-                        className="absolute bg-white right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                      >
-                        <svg
-                          className="w-4 h-4 "
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      </button>
-                    </div>
-                    {/* College Dropdown */}
-                    {showCollegeDropdown["firstCard"] && (
-                      <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
-                        <input
-                          type="text"
-                          placeholder="Search colleges..."
-                          value={collegeSearchQuery["firstCard"] || ""}
-                          onChange={(e) =>
-                            setCollegeSearchQuery((prev) => ({
-                              ...prev,
-                              firstCard: e.target.value,
-                            }))
-                          }
-                          className="w-full px-3 py-2 border-b border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          autoFocus
-                        />
-                        {collegesLoading ? (
-                          <div className="px-3 py-4 text-center text-gray-500">
-                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500 mx-auto mb-2"></div>
-                            Loading colleges...
-                          </div>
-                        ) : collegesError ? (
-                          <div className="px-3 py-2 text-red-600 text-sm">
-                            Error loading colleges. Please try again.
-                          </div>
-                        ) : filteredColleges("", "firstCard").length === 0 ? (
-                          <div className="px-3 py-2 text-gray-500 text-sm">
-                            {collegeSearchQuery["firstCard"]
-                              ? "No colleges found matching your search."
-                              : "No colleges available."}
-                          </div>
-                        ) : (
-                          <>
-                            {filteredColleges("", "firstCard").map(
-                              (college, collegeIndex) => {
-                                const college_name =
-                                  typeof college === "string"
-                                    ? college
-                                    : college.name ||
-                                      college.college_name ||
-                                      "";
-                                return (
-                                  <div
-                                    key={collegeIndex}
-                                    className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
-                                    onClick={() => {
-                                      setFirstCardLearningSource(college_name);
-                                      setShowCollegeDropdown((prev) => ({
-                                        ...prev,
-                                        firstCard: false,
-                                      }));
-                                      setCollegeSearchQuery((prev) => ({
-                                        ...prev,
-                                        firstCard: "",
-                                      }));
-                                    }}
-                                  >
-                                    {college_name}
-                                  </div>
-                                );
-                              }
-                            )}
-                          </>
-                        )}
-                      </div>
-                    )}
-                  </div>
+                  
+                {/* Learning Source */}
+<div className="mb-4">
+  <p className="text-sm text-gray-700 mb-2">
+    Where did you learn this skill?
+  </p>
+  <div className="relative">
+    <Input
+      type="text"
+      placeholder="College/Company name"
+      value={synchronizedLearningSource}
+      onChange={(e) => {
+        setSynchronizedLearningSource(e.target.value);
+        // Update all skills with the same learning source
+        setSkills(skills.map(skill => ({
+          ...skill,
+          learningSource: e.target.value
+        })));
+      }}
+      className="w-full h-12 rounded-lg px-4 border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+    />
+    
+    {/* Character counter */}
+    <div className="absolute right-2 bottom-2 text-xs text-gray-400">
+      {synchronizedLearningSource.length}/100
+    </div>
+    
+    {/* Suggestions dropdown */}
+    {synchronizedLearningSource.length > 0 && (
+      <div className="absolute w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg z-10 max-h-48 overflow-y-auto">
+        {colleges
+          .filter(college => {
+            // Handle both string and object formats
+            const collegeName = typeof college === 'object' 
+              ? (college.name || college.college_name || '')
+              : String(college || '');
+            return collegeName.toLowerCase().includes(synchronizedLearningSource.toLowerCase());
+          })
+          .map((suggestion, index) => (
+            <div
+              key={index}
+              className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm"
+              onClick={() => {
+                // Handle both string and object formats
+                const selectedCollegeName = typeof suggestion === 'object'
+                  ? (suggestion.name || suggestion.college_name || '')
+                  : suggestion;
+              
+                setSynchronizedLearningSource(selectedCollegeName);
+                setSkills(skills.map(skill => ({
+                  ...skill,
+                  learningSource: selectedCollegeName
+                })));
+                setShowCollegeDropdown(false);
+              }}
+            >
+              {typeof suggestion === 'object' 
+                ? (suggestion.name || suggestion.college_name || '')
+                : suggestion}
+            </div>
+          ))}
+      </div>
+    )}
+  </div>
+  
+  {/* Validation message */}
+  {synchronizedLearningSource.length > 100 && (
+    <p className="text-red-500 text-xs mt-1">
+      Maximum 100 characters allowed
+    </p>
+  )}
+</div>
                 </div>
               </div>
             )}
 
             {/* Other Skills Cards */}
             {skills.slice(1).map((skill, index) => (
-              <div key={skill.id}>
+              <div>
                 <div
                   className={`${skill.bgColor} border-2 ${skill.borderColor} rounded-lg p-4 sm:p-6`}
                 >
@@ -1080,7 +1001,7 @@ const FeedYourSkills = () => {
                   <div className="mb-4">
                     {![3, 4, 5].includes(skill.id) && (
                       <p className="text-sm text-gray-700 mb-2">
-                        Select related skills for {skill.name}:
+                        Select related skills for 
                       </p>
                     )}
                     {![3, 4, 5].includes(skill.id) && (
@@ -1137,130 +1058,34 @@ const FeedYourSkills = () => {
                     )}
                     {![3, 4, 5].includes(skill.id) &&
                       getRelatedSkillsForMainDomain(skill.name).length === 0 &&
-                      !loading && (
+                      !isMasterDataLoading && (
                         <p className="text-gray-500 text-sm">
                           No related skills available for this domain.
                         </p>
                       )}
                   </div>
 
-                  {/* Learning Source */}
-                  <div className="mb-4 relative" data-college-dropdown>
-                    <p className="text-sm text-gray-600 mb-2 text-start">
-                      Where did you learn this skill?
-                    </p>
-
-                    <div className="relative">
-                      <Input
-                        type="text"
-                        placeholder="College/Company name"
-                        value={skill.learningSource}
-                        onChange={(e) => {
-                          const updatedSkills = skills.map((s) =>
-                            s.id === skill.id
-                              ? { ...s, learningSource: e.target.value }
-                              : s
-                          );
-                          setSkills(updatedSkills);
-                          setCollegeSearchQuery((prev) => ({
-                            ...prev,
-                            [skill.id]: e.target.value,
-                          }));
-                        }}
-                        onFocus={() =>
-                          setShowCollegeDropdown((prev) => ({
-                            ...prev,
-                            [skill.id]: true,
-                          }))
-                        }
-                        className="w-full h-12 rounded-lg px-4 border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
-                      />
-                      <button
-                        onClick={() => {
-                          const updatedSkills = skills.map((s) =>
-                            s.id === skill.id ? { ...s, learningSource: "" } : s
-                          );
-                          setSkills(updatedSkills);
-                          setCollegeSearchQuery((prev) => ({
-                            ...prev,
-                            [skill.id]: "",
-                          }));
-                        }}
-                        className="absolute bg-white right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                      >
-                        <svg
-                          className="w-4 h-4"
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      </button>
-                    </div>
-
-                    {/* College Dropdown */}
-                    {showCollegeDropdown[skill.id] && (
-                      <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
-                        <input
-                          type="text"
-                          placeholder="Search colleges..."
-                          value={collegeSearchQuery[skill.id] || ""}
-                          onChange={(e) =>
-                            setCollegeSearchQuery((prev) => ({
-                              ...prev,
-                              [skill.id]: e.target.value,
-                            }))
-                          }
-                          className="w-full px-3 py-2 border-b border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          autoFocus
-                        />
-                        {collegesLoading ? (
-                          <div className="px-3 py-4 text-center text-gray-500">
-                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500 mx-auto mb-2"></div>
-                            Loading colleges...
-                          </div>
-                        ) : collegesError ? (
-                          <div className="px-3 py-2 text-red-600 text-sm">
-                            Error loading colleges. Please try again.
-                          </div>
-                        ) : filteredColleges("", skill.id).length === 0 ? (
-                          <div className="px-3 py-2 text-gray-500 text-sm">
-                            {collegeSearchQuery[skill.id]
-                              ? "No colleges found matching your search."
-                              : "No colleges available."}
-                          </div>
-                        ) : (
-                          <>
-                            {filteredColleges("", skill.id).map(
-                              (college, collegeIndex) => {
-                                const college_name =
-                                  typeof college === "string"
-                                    ? college
-                                    : college.name ||
-                                      college.college_name ||
-                                      "";
-                                return (
-                                  <div
-                                    key={collegeIndex}
-                                    className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
-                                    onClick={() =>
-                                      handleCollegeSelect(skill.id, college)
-                                    }
-                                  >
-                                    {college_name}
-                                  </div>
-                                );
-                              }
-                            )}
-                          </>
-                        )}
-                      </div>
-                    )}
-                  </div>
+                 {/* Learning Source in other cards */}
+<div className="mb-4">
+  <p className="text-sm text-gray-600 mb-2 text-start">
+    Where did you learn this skill?
+  </p>
+  <div className="relative">
+    <Input
+      type="text"
+      placeholder="College/Company name"
+      value={synchronizedLearningSource}
+      onChange={(e) => {
+        setSynchronizedLearningSource(e.target.value);
+        setSkills(skills.map(skill => ({
+          ...skill,
+          learningSource: e.target.value
+        })));
+      }}
+      className="w-full h-12 rounded-lg px-4 border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+    />
+  </div>
+</div>
                 </div>
               </div>
             ))}
@@ -1269,14 +1094,12 @@ const FeedYourSkills = () => {
           {/* Footer - Save Changes Button */}
           <div className="mt-6 sm:mt-8 flex justify-center">
             <Button
-              variant="primary"
-              size="large"
               onClick={handleSaveChanges}
-              disabled={saving || loading}
-              className="w-full sm:w-auto px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg bg-red-500 hover:bg-red-600 text-white font-semibold text-sm sm:text-base transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={saving}
+              className="w-full sm:w-auto px-6 py-2.5 rounded-lg bg-red-500 hover:bg-red-600 text-white font-semibold text-sm transition-colors duration-200 disabled:opacity-50"
             >
               {saving ? (
-                <div className="flex items-center">
+                <div className="flex items-center justify-center">
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
                   Saving...
                 </div>

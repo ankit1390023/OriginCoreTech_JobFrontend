@@ -4,7 +4,7 @@ import { z } from "zod";
 import axios from "axios";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { recruiterApi } from "../../api/recuiterApi";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { Input, Textarea, Label, Button, Checkbox } from "../../components/ui";
 import SignUpLayout from "../../components/layout/SignUpLayout";
 import { useSelector } from "react-redux";
@@ -79,6 +79,7 @@ export default function CompanyRecruiterProfile() {
             (error.response.data?.message ||
               JSON.stringify(error.response.data))
         );
+        useNavigate("/recruiter-dashboard");
       } else {
         alert("An error occurred while creating the profile");
         console.error(error);
