@@ -29,7 +29,7 @@ export default function EducationInfo() {
   } = useFormContext();
 
   const {
-    data: { jobRoles, courses, specializationByCourse, schoolColleges },
+    data: { jobRoles, courses, specializationByCourse, schoolColleges, companies },
     loading,
     error,
     refetch,
@@ -54,12 +54,12 @@ export default function EducationInfo() {
   const visibleCourses = showAll ? courses : courses?.slice(0, 5);
 
   const CustomErrorMessage = ({ message }) => (
-    <div className="w-full p-3 border rounded bg-red-50 text-red-500 text-xs">
+    <div className="w-full p-3 text-xs text-red-500 border rounded bg-red-50">
       <div className="flex items-center justify-between">
         <span>{message}</span>
         <button
           onClick={refetch}
-          className="ml-2 px-2 py-1 bg-red-500 text-white rounded text-xs hover:bg-red-600 transition-colors"
+          className="px-2 py-1 ml-2 text-xs text-white transition-colors bg-red-500 rounded hover:bg-red-600"
         >
           Retry
         </button>
@@ -71,12 +71,13 @@ export default function EducationInfo() {
     <div className="space-y-2 sm:space-y-3">
       <div className="mb-2 sm:mb-3">
         <Label>Type</Label>
-        <div className="flex gap-1 sm:gap-2 flex-wrap">
+        <div className="flex flex-wrap gap-1 sm:gap-2">
           <label
-            className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${watch("type") === "School Student"
-              ? "bg-blue-500 text-white border-blue-500"
-              : "bg-gray-100 border-gray-300 hover:border-gray-400"
-              }`}
+            className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${
+              watch("type") === "School Student"
+                ? "bg-blue-500 text-white border-blue-500"
+                : "bg-gray-100 border-gray-300 hover:border-gray-400"
+            }`}
           >
             <input
               type="radio"
@@ -87,10 +88,11 @@ export default function EducationInfo() {
             School Student
           </label>
           <label
-            className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${watch("type") === "College Student"
-              ? "bg-blue-500 text-white border-blue-500"
-              : "bg-gray-100 border-gray-300 hover:border-gray-400"
-              }`}
+            className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${
+              watch("type") === "College Student"
+                ? "bg-blue-500 text-white border-blue-500"
+                : "bg-gray-100 border-gray-300 hover:border-gray-400"
+            }`}
           >
             <input
               type="radio"
@@ -101,10 +103,11 @@ export default function EducationInfo() {
             College Student
           </label>
           <label
-            className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${watch("type") === "Fresher"
-              ? "bg-blue-500 text-white border-blue-500"
-              : "bg-gray-100 border-gray-300 hover:border-gray-400"
-              }`}
+            className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${
+              watch("type") === "Fresher"
+                ? "bg-blue-500 text-white border-blue-500"
+                : "bg-gray-100 border-gray-300 hover:border-gray-400"
+            }`}
           >
             <input
               type="radio"
@@ -115,10 +118,11 @@ export default function EducationInfo() {
             Fresher
           </label>
           <label
-            className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${watch("type") === "Working Professional"
-              ? "bg-blue-500 text-white border-blue-500"
-              : "bg-gray-100 border-gray-300 hover:border-gray-400"
-              }`}
+            className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${
+              watch("type") === "Working Professional"
+                ? "bg-blue-500 text-white border-blue-500"
+                : "bg-gray-100 border-gray-300 hover:border-gray-400"
+            }`}
           >
             <input
               type="radio"
@@ -134,12 +138,13 @@ export default function EducationInfo() {
       {watch("type") === "School Student" && (
         <div className="mb-2 sm:mb-3">
           <Label>Standard</Label>
-          <div className="flex gap-1 sm:gap-2 flex-wrap">
+          <div className="flex flex-wrap gap-1 sm:gap-2">
             <label
-              className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${watch("standard") === "Class XII"
-                ? "bg-blue-500 text-white border-blue-500"
-                : "bg-gray-100 border-gray-300 hover:border-gray-400"
-                }`}
+              className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${
+                watch("standard") === "Class XII"
+                  ? "bg-blue-500 text-white border-blue-500"
+                  : "bg-gray-100 border-gray-300 hover:border-gray-400"
+              }`}
             >
               <input
                 type="radio"
@@ -150,10 +155,11 @@ export default function EducationInfo() {
               Class XII
             </label>
             <label
-              className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${watch("standard") === "Class XI"
-                ? "bg-blue-500 text-white border-blue-500"
-                : "bg-gray-100 border-gray-300 hover:border-gray-400"
-                }`}
+              className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${
+                watch("standard") === "Class XI"
+                  ? "bg-blue-500 text-white border-blue-500"
+                  : "bg-gray-100 border-gray-300 hover:border-gray-400"
+              }`}
             >
               <input
                 type="radio"
@@ -164,10 +170,11 @@ export default function EducationInfo() {
               Class XI
             </label>
             <label
-              className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${watch("standard") === "Class X or below"
-                ? "bg-blue-500 text-white border-blue-500"
-                : "bg-gray-100 border-gray-300 hover:border-gray-400"
-                }`}
+              className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${
+                watch("standard") === "Class X or below"
+                  ? "bg-blue-500 text-white border-blue-500"
+                  : "bg-gray-100 border-gray-300 hover:border-gray-400"
+              }`}
             >
               <input
                 type="radio"
@@ -193,15 +200,16 @@ export default function EducationInfo() {
               <CustomErrorMessage message={error} />
             ) : (
               <>
-                <div className="flex gap-1 sm:gap-2 flex-wrap">
+                <div className="flex flex-wrap gap-1 sm:gap-2">
                   {visibleCourses &&
                     visibleCourses.map((course, index) => (
                       <label
                         key={index}
-                        className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${watch("course") == course.id
-                          ? "bg-blue-500 text-white border-blue-500"
-                          : "bg-gray-100 border-gray-300 hover:border-gray-400"
-                          }`}
+                        className={`px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-md border cursor-pointer text-xs transition-all duration-200 ${
+                          watch("course") == course.id
+                            ? "bg-blue-500 text-white border-blue-500"
+                            : "bg-gray-100 border-gray-300 hover:border-gray-400"
+                        }`}
                       >
                         <input
                           type="radio"
@@ -214,8 +222,6 @@ export default function EducationInfo() {
                         {course.name}
                       </label>
                     ))}
-
-
                 </div>
 
                 {/* Toggle Button */}
@@ -236,7 +242,9 @@ export default function EducationInfo() {
           </div>
 
           <div className="w-full">
-            <label className="block text-sm font-medium text-gray-700 mb-1">College/University</label>
+            <label className="block mb-1 text-sm font-medium text-gray-700">
+              College/University
+            </label>
             <Controller
               name="college_id"
               control={control}
@@ -244,8 +252,9 @@ export default function EducationInfo() {
               render={({ field: { onChange, onBlur, value, ref } }) => (
                 <Select
                   ref={ref}
-                  value={schoolColleges?.find(option =>
-                    option.id === value || option.id === Number(value)
+                  value={schoolColleges?.find(
+                    (option) =>
+                      option.id === value || option.id === Number(value)
                   )}
                   onChange={(selectedOption) => {
                     onChange(selectedOption ? selectedOption.id : null);
@@ -267,10 +276,9 @@ export default function EducationInfo() {
             )}
           </div>
 
-
           {/* Specialization */}
           <div className="w-full mt-2">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block mb-1 text-sm font-medium text-gray-700">
               Specialization
             </label>
             <Controller
@@ -280,13 +288,15 @@ export default function EducationInfo() {
               render={({ field: { onChange, value, ref } }) => (
                 <Select
                   ref={ref}
-                  value={courseSpecializations?.find(
-                    (spec) => spec.id === Number(value)   // ✅ match id not name
-                  ) || null}
-                  onChange={(selectedOption) =>
-                    onChange(selectedOption ? selectedOption.id : null) // ✅ save id
+                  value={
+                    courseSpecializations?.find(
+                      (spec) => spec.id === Number(value) // ✅ match id not name
+                    ) || null
                   }
-
+                  onChange={
+                    (selectedOption) =>
+                      onChange(selectedOption ? selectedOption.id : null) // ✅ save id
+                  }
                   options={courseSpecializations}
                   getOptionLabel={(option) => option.name}
                   getOptionValue={(option) => option.id}
@@ -307,7 +317,7 @@ export default function EducationInfo() {
           <div className="flex gap-2 mt-2">
             {/* Start Year */}
             <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block mb-1 text-sm font-medium text-gray-700">
                 Start Year
               </label>
               <Controller
@@ -318,7 +328,8 @@ export default function EducationInfo() {
                   <Select
                     ref={ref}
                     value={
-                      generateYearOptions().find((y) => y.value === value) || null
+                      generateYearOptions().find((y) => y.value === value) ||
+                      null
                     }
                     onChange={(selectedOption) =>
                       onChange(selectedOption ? selectedOption.value : null)
@@ -339,7 +350,7 @@ export default function EducationInfo() {
 
             {/* End Year */}
             <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block mb-1 text-sm font-medium text-gray-700">
                 End Year
               </label>
               <Controller
@@ -350,7 +361,8 @@ export default function EducationInfo() {
                   <Select
                     ref={ref}
                     value={
-                      generateYearOptions().find((y) => y.value === value) || null
+                      generateYearOptions().find((y) => y.value === value) ||
+                      null
                     }
                     onChange={(selectedOption) =>
                       onChange(selectedOption ? selectedOption.value : null)
@@ -369,15 +381,12 @@ export default function EducationInfo() {
               )}
             </div>
           </div>
-
         </>
-
-
       )}
       {watch("type") === "Working Professional" && (
         <>
           <div className="w-full mb-2">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block mb-1 text-sm font-medium text-gray-700">
               Years of Experience
             </label>
             <Controller
@@ -389,7 +398,7 @@ export default function EducationInfo() {
                   {...field}
                   options={Array.from({ length: 41 }, (_, i) => ({
                     value: i,
-                    label: `${i} ${i === 1 ? "year" : "years"}`
+                    label: `${i} ${i === 1 ? "year" : "years"}`,
                   }))}
                   placeholder="Select experience"
                   isClearable
@@ -404,9 +413,10 @@ export default function EducationInfo() {
             )}
           </div>
 
-
           <div className="w-full">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Job Title/Designation</label>
+            <label className="block mb-1 text-sm font-medium text-gray-700">
+              Job Title/Designation
+            </label>
             <Controller
               name="job_id"
               control={control}
@@ -414,9 +424,12 @@ export default function EducationInfo() {
               render={({ field: { onChange, onBlur, value, ref } }) => (
                 <Select
                   ref={ref}
-                  value={jobRoles?.find(option =>
-                    option.id === value || option.id === Number(value)
-                  ) || null}
+                  value={
+                    jobRoles?.find(
+                      (option) =>
+                        option.id === value || option.id === Number(value)
+                    ) || null
+                  }
                   onChange={(selectedOption) => {
                     console.log("Selected option:", selectedOption);
                     onChange(selectedOption ? selectedOption.id : null);
@@ -443,7 +456,7 @@ export default function EducationInfo() {
 
           {/* Company Name */}
           <div className="w-full mb-2">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block mb-1 text-sm font-medium text-gray-700">
               Company Name
             </label>
             <Controller
@@ -455,18 +468,43 @@ export default function EducationInfo() {
                   type="text"
                   {...field}
                   placeholder="Enter company name"
-                  className="w-full border rounded-md px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-2 py-2 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
+                //to make searchable seclt of company name
+                // <Select
+                //   ref={ref}
+                //   value={
+                //     companies?.find(
+                //       (option) =>
+                //         option.id === value || option.id === Number(value)
+                //     ) || null
+                //   }
+                //   onChange={(selectedOption) => {
+                //     console.log("Selected option:", selectedOption);
+                //     onChange(selectedOption ? selectedOption.id : null);
+                //   }}
+                //   onBlur={onBlur}
+                //   options={companies}
+                //   getOptionLabel={(option) => option.company_name}
+                //   getOptionValue={(option) => option.id}
+                //   placeholder="Select Company Name"
+                //   className="w-full text-sm"
+                //   classNamePrefix="select"
+                //   isClearable
+                //   isSearchable
+                //   isLoading={loading}
+                //   loadingMessage={() => "Loading job roles..."}
+                //   noOptionsMessage={() => "No job roles found"}
+                // />
               )}
             />
             {errors.company_name && (
               <ErrorMessage>{errors.company_name.message}</ErrorMessage>
             )}
           </div>
-          <div className="flex gap-1 sm:gap-2 mb-2 sm:mb-3">
-
+          <div className="flex gap-1 mb-2 sm:gap-2 sm:mb-3">
             <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block mb-1 text-sm font-medium text-gray-700">
                 Start Year
               </label>
               <Controller
@@ -477,7 +515,8 @@ export default function EducationInfo() {
                   <Select
                     ref={ref}
                     value={
-                      generateYearOptions().find((y) => y.value === value) || null
+                      generateYearOptions().find((y) => y.value === value) ||
+                      null
                     }
                     onChange={(selectedOption) =>
                       onChange(selectedOption ? selectedOption.value : null)
@@ -498,7 +537,7 @@ export default function EducationInfo() {
 
             {/* End Year */}
             <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block mb-1 text-sm font-medium text-gray-700">
                 End Year
               </label>
               <Controller
@@ -509,7 +548,8 @@ export default function EducationInfo() {
                   <Select
                     ref={ref}
                     value={
-                      generateYearOptions().find((y) => y.value === value) || null
+                      generateYearOptions().find((y) => y.value === value) ||
+                      null
                     }
                     onChange={(selectedOption) =>
                       onChange(selectedOption ? selectedOption.value : null)
@@ -527,11 +567,10 @@ export default function EducationInfo() {
                 <ErrorMessage>{errors.end_year.message}</ErrorMessage>
               )}
             </div>
-
           </div>
           <div className="mb-2 sm:mb-3">
             <Label>Current or latest annual salary/CTC</Label>
-            <span className="block text-xs text-gray-500 mb-1">
+            <span className="block mb-1 text-xs text-gray-500">
               We will use this to find jobs matching/ exceeding your current
               salary range.
               <br />

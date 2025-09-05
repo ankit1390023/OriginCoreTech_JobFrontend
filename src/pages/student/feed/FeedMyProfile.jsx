@@ -44,7 +44,7 @@ const FeedMyProfile = () => {
   const displayedEducation = showAllEducation
     ? educationData
     : educationData.slice(0, 1);
-
+// console.log("education logo", displayedEducation);
   const displayedSkills = showAllSkills ? skillsData : skillsData.slice(0, 1);
 
   const displayedActivity = showAllActivity
@@ -61,6 +61,7 @@ const FeedMyProfile = () => {
         if (user_id) {
           await getUserPublicProfile(user_id, token);
         }
+        console.log("Fetched profile data:", profile);
       } catch (err) {
         console.error("Error fetching profile data:", err);
       }
@@ -87,13 +88,14 @@ const FeedMyProfile = () => {
 
   return (
     <MainLayout>
-      <div className="flex justify-center bg-gray-100 min-h-screen px-2 lg:px-8">
+      <div className="flex justify-center min-h-screen px-2 bg-gray-100 lg:px-8">
         {/* Left Spacer */}
-        <div className="hidden lg:block flex-grow "></div>
+        <div className="flex-grow hidden lg:block "></div>
         <section className="w-[800px] max-w-[800px] p-2 mt-2 mx-auto bg-white">
           {/* Profile Header */}
-          <div className="text-center space-y-4 mb-6">
+          <div className="mb-6 space-y-4 text-center">
             <div className="relative inline-block">
+            
               <img
                 src={
                   profile?.user_profile_pic || "/src/assets/dummyProfile1.jpg"
@@ -103,7 +105,7 @@ const FeedMyProfile = () => {
                     ? `${profile.first_name} ${profile.last_name}`
                     : "User Profile"
                 }
-                className="w-24 h-24 rounded-full object-cover border-4 border-blue-50"
+                className="object-cover w-24 h-24 border-4 rounded-full border-blue-50"
                 onError={(e) => {
                   e.target.src = "/src/assets/dummyProfile1.jpg";
                 }}
@@ -114,43 +116,43 @@ const FeedMyProfile = () => {
               {loading ? (
                 <div>Loading profile...</div>
               ) : error ? (
-                <div className="text-red-500 text-xs mt-1">{error}</div>
+                <div className="mt-1 text-xs text-red-500">{error}</div>
               ) : profile ? (
                 <>
                   <h2 className="text-lg font-bold text-gray-800">
                     {profile.first_name} {profile.last_name}
                   </h2>
                   <p className="text-sm text-gray-500">{profile.email}</p>
-                  <p className="text-sm text-gray-700 font-semibold mt-1">
+                  <p className="mt-1 text-sm font-semibold text-gray-700">
                     {profile.user_type}
                   </p>
-                  <p className="text-sm text-gray-600 mt-2">
+                  <p className="mt-2 text-sm text-gray-600">
                     {profile.about_us}
                   </p>
                 </>
               ) : null}
             </div>
 
-            <div className="flex flex-wrap items-center gap-2 mt-4 justify-center">
-              <span className="bg-gray-100 text-blue-600 text-sm px-3 py-1 rounded">
+            <div className="flex flex-wrap items-center justify-center gap-2 mt-4">
+              <span className="px-3 py-1 text-sm text-blue-600 bg-gray-100 rounded">
                 {followersCount} followers
               </span>
-              <span className="bg-gray-100 text-blue-600 text-sm px-3 py-1 rounded">
+              <span className="px-3 py-1 text-sm text-blue-600 bg-gray-100 rounded">
                 {followingCount} following
               </span>
             </div>
           </div>
 
           {/* Activity Section */}
-          <h2 className="text-xl font-bold text-gray-900 mb-2">
+          <h2 className="mb-2 text-xl font-bold text-gray-900">
             Your Activity
           </h2>
           <hr className="border-gray-400" />
-          <div className="border-t pt-6 mb-6 text-gray-400">
-            <p className="text-gray-600 text-sm mb-4">Your recent posts</p>
+          <div className="pt-6 mb-6 text-gray-400 border-t">
+            <p className="mb-4 text-sm text-gray-600">Your recent posts</p>
 
             {userActivity.length === 0 ? (
-              <div className="text-center py-8">
+              <div className="py-8 text-center">
                 <div className="text-gray-500">No activity found</div>
               </div>
             ) : (
@@ -158,17 +160,18 @@ const FeedMyProfile = () => {
                 {displayedActivity.map((activity) => (
                   <div
                     key={activity.id}
-                    className="bg-gray-50 rounded-lg p-4 space-y-3"
+                    className="p-4 space-y-3 rounded-lg bg-gray-50"
                   >
                     <div className="flex items-start gap-3">
                       <img
                         src={
-                          activity.user?.profileImage ||
+                          
                           profile?.user_profile_pic ||
+                          activity.user?.profileImage ||
                           "/src/assets/profile1.png"
                         }
                         alt={activity.user?.first_name || "User"}
-                        className="w-10 h-10 rounded-full object-cover"
+                        className="object-cover w-10 h-10 rounded-full"
                         onError={(e) => {
                           e.target.src = "/src/assets/profile1.png";
                         }}
@@ -179,14 +182,14 @@ const FeedMyProfile = () => {
                             {activity.user?.first_name}{" "}
                             {activity.user?.last_name}
                           </span>
-                          <span className="text-gray-500 text-sm">
+                          <span className="text-sm text-gray-500">
                             {formatTimeAgo(activity.created_at)}
                           </span>
                         </div>
-                        <p className="text-gray-600 text-sm">
+                        <p className="text-sm text-gray-600">
                           {activity.user?.user_type || "User"}
                         </p>
-                        <p className="text-gray-700 text-sm mt-2">
+                        <p className="mt-2 text-sm text-gray-700">
                           {activity.content}{" "}
                           {activity.content &&
                             activity.content.length > 100 && (
@@ -200,7 +203,7 @@ const FeedMyProfile = () => {
                             <img
                               src={activity.image}
                               alt="Post content"
-                              className="w-full max-w-md rounded-lg object-cover"
+                              className="object-cover w-full max-w-md rounded-lg"
                               onError={(e) => {
                                 e.target.style.display = "none";
                               }}
@@ -208,16 +211,16 @@ const FeedMyProfile = () => {
                           </div>
                         )}
                         {/* Action Bar */}
-                        <div className="flex justify-between items-center py-2 px-4 mt-6">
+                        <div className="flex items-center justify-between px-4 py-2 mt-6">
                           <div className="flex items-center gap-2 text-gray-500">
                             <FiHeart className="w-5 h-5" />
-                            <span className="font-medium text-base">
+                            <span className="text-base font-medium">
                               {formatNumber(activity.like_count || 0)}
                             </span>
                           </div>
                           <div className="flex items-center gap-2 text-gray-500">
                             <FiMessageSquare className="w-5 h-5" />
-                            <span className="font-medium text-base">
+                            <span className="text-base font-medium">
                               {formatNumber(activity.comment_count || 0)}
                             </span>
                           </div>
@@ -234,11 +237,11 @@ const FeedMyProfile = () => {
               </div>
             )}
 
-            <div className="text-center mt-4">
+            <div className="mt-4 text-center">
               {userActivity.length > 0 && (
                 <span
                   onClick={() => setShowAllActivity(!showAllActivity)}
-                  className="text-blue-500 px-6 py-2 rounded-lg hover:bg-blue-50 transition-colors cursor-pointer"
+                  className="px-6 py-2 text-blue-500 transition-colors rounded-lg cursor-pointer hover:bg-blue-50"
                 >
                   {showAllActivity ? "See less" : "See more"}
                 </span>
@@ -248,16 +251,16 @@ const FeedMyProfile = () => {
 
           {/* Work Experience */}
           <hr className="border-gray-400" />
-          <div className="border-t pt-6 mb-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">
+          <div className="pt-6 mb-6 border-t">
+            <h2 className="mb-4 text-xl font-bold text-gray-900">
               Work Experience
             </h2>
             {loading ? (
-              <div className="text-center py-8">
+              <div className="py-8 text-center">
                 <div className="text-gray-500">Loading work experience...</div>
               </div>
             ) : workExperiences.length === 0 ? (
-              <div className="text-center py-8">
+              <div className="py-8 text-center">
                 <div className="text-gray-500">
                   No work experience added yet
                 </div>
@@ -268,13 +271,13 @@ const FeedMyProfile = () => {
                   {displayedExperiences.map((experience) => (
                     <div
                       key={experience.id}
-                      className="bg-white border rounded-lg shadow-sm p-4 space-y-2"
+                      className="p-4 space-y-2 bg-white border rounded-lg shadow-sm"
                     >
                       <div className="flex items-start gap-3">
                         <img
                           src={experience.logo || "/src/assets/WebsiteLogo.svg"}
                           alt={experience.company}
-                          className="w-12 h-12 object-contain"
+                          className="object-contain w-12 h-12"
                           onError={(e) => {
                             e.target.src = "/src/assets/WebsiteLogo.svg";
                           }}
@@ -289,14 +292,14 @@ const FeedMyProfile = () => {
                                 {experience.company}
                               </p>
                             </div>
-                            <FaEllipsisH className="text-gray-400 mt-2 sm:mt-0 cursor-pointer" />
+                            <FaEllipsisH className="mt-2 text-gray-400 cursor-pointer sm:mt-0" />
                           </div>
                           <div className="items-start gap-3">
                             <div className="flex items-center gap-4 mt-1">
-                              <p className="text-gray-500 text-sm">
+                              <p className="text-sm text-gray-500">
                                 {experience.duration}
                               </p>
-                              <p className="text-gray-500 text-sm">
+                              <p className="text-sm text-gray-500">
                                 {experience.timeSpan}
                               </p>
                             </div>
@@ -307,12 +310,12 @@ const FeedMyProfile = () => {
                   ))}
                 </div>
                 {workExperiences.length > 1 && (
-                  <div className="text-center mt-4">
+                  <div className="mt-4 text-center">
                     <span
                       onClick={() =>
                         setShowAllWorkExperience(!showAllWorkExperience)
                       }
-                      className="text-blue-500 px-6 py-2 rounded-lg hover:bg-blue-50 transition-colors cursor-pointer"
+                      className="px-6 py-2 text-blue-500 transition-colors rounded-lg cursor-pointer hover:bg-blue-50"
                     >
                       {showAllWorkExperience ? "See less" : "See more"}
                     </span>
@@ -321,17 +324,17 @@ const FeedMyProfile = () => {
               </>
             )}
           </div>
-
+     
           {/* Education */}
           <hr className="border-gray-400" />
-          <div className="border-t pt-6 mb-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Education</h2>
+          <div className="pt-6 mb-6 border-t">
+            <h2 className="mb-4 text-xl font-bold text-gray-900">Education</h2>
             {loading ? (
-              <div className="text-center py-8">
+              <div className="py-8 text-center">
                 <div className="text-gray-500">Loading education...</div>
               </div>
             ) : educationData.length === 0 ? (
-              <div className="text-center py-8">
+              <div className="py-8 text-center">
                 <div className="text-gray-500">
                   No education details added yet
                 </div>
@@ -342,13 +345,13 @@ const FeedMyProfile = () => {
                   {displayedEducation.map((education) => (
                     <div
                       key={education.id}
-                      className="bg-white border rounded-lg p-4"
+                      className="p-4 bg-white border rounded-lg"
                     >
                       <div className="flex items-start gap-3">
                         <img
                           src={education.logo || "/src/assets/WebsiteLogo.svg"}
                           alt={education.institution}
-                          className="w-10 h-10 rounded-full object-cover"
+                          className="object-cover w-10 h-10 rounded-full"
                           onError={(e) => {
                             e.target.src = "/src/assets/WebsiteLogo.svg";
                           }}
@@ -362,13 +365,13 @@ const FeedMyProfile = () => {
                               <p className="text-gray-600">
                                 {education.degree}
                               </p>
-                              <p className="text-gray-500 text-sm">
+                              <p className="text-sm text-gray-500">
                                 {education.duration}
                               </p>
                             </div>
-                            <FaEllipsisH className="text-gray-400 mt-2 sm:mt-0 cursor-pointer" />
+                            <FaEllipsisH className="mt-2 text-gray-400 cursor-pointer sm:mt-0" />
                           </div>
-                          <p className="text-gray-700 text-sm mt-2 leading-relaxed line-clamp-2">
+                          <p className="mt-2 text-sm leading-relaxed text-gray-700 line-clamp-2">
                             {education.description}
                           </p>
                         </div>
@@ -377,10 +380,10 @@ const FeedMyProfile = () => {
                   ))}
                 </div>
                 {educationData.length > 1 && (
-                  <div className="text-center mt-4">
+                  <div className="mt-4 text-center">
                     <span
                       onClick={() => setShowAllEducation(!showAllEducation)}
-                      className="text-blue-500 px-6 py-2 rounded-lg hover:bg-blue-50 transition-colors cursor-pointer"
+                      className="px-6 py-2 text-blue-500 transition-colors rounded-lg cursor-pointer hover:bg-blue-50"
                     >
                       {showAllEducation ? "See less" : "See more"}
                     </span>
@@ -392,14 +395,14 @@ const FeedMyProfile = () => {
 
           {/* Skills */}
           <hr className="border-gray-400" />
-          <div className="border-t pt-6 mb-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Skills</h2>
+          <div className="pt-6 mb-6 border-t">
+            <h2 className="mb-4 text-xl font-bold text-gray-900">Skills</h2>
             {loading ? (
-              <div className="text-center py-8">
+              <div className="py-8 text-center">
                 <div className="text-gray-500">Loading skills...</div>
               </div>
             ) : skillsData.length === 0 ? (
-              <div className="text-center py-8">
+              <div className="py-8 text-center">
                 <div className="text-gray-500">No skills added yet</div>
               </div>
             ) : (
@@ -435,13 +438,13 @@ const FeedMyProfile = () => {
                     return (
                       <div
                         key={skill.id}
-                        className="bg-white border rounded-lg p-4"
+                        className="p-4 bg-white border rounded-lg"
                       >
                         <div className="flex items-start gap-3">
                           <img
                             src={skill.authority.logo_url || "/src/assets/WebsiteLogo.svg"}
                             alt={skill.skill || skill.domain || "Skill"}
-                            className="w-10 h-10 rounded-full object-cover"
+                            className="object-cover w-10 h-10 rounded-full"
                             onError={(e) => {
                               e.target.src = "/src/assets/WebsiteLogo.svg";
                             }}
@@ -458,14 +461,14 @@ const FeedMyProfile = () => {
                                   {skill.category || "Technical Skills"}
                                 </p>
                                 {authorityText && (
-                                  <p className="text-gray-500 text-xs">
+                                  <p className="text-xs text-gray-500">
                                     Authority: {authorityText}
                                   </p>
                                 )}
                               </div>
-                              <FaEllipsisH className="text-gray-400 mt-2 sm:mt-0 cursor-pointer" />
+                              <FaEllipsisH className="mt-2 text-gray-400 cursor-pointer sm:mt-0" />
                             </div>
-                            <p className="text-gray-700 text-sm mt-2 leading-relaxed line-clamp-2">
+                            <p className="mt-2 text-sm leading-relaxed text-gray-700 line-clamp-2">
                               {skill.description ||
                                 `Proficient in ${
                                   skill.skill || skill.domain || "this skill"
@@ -478,10 +481,10 @@ const FeedMyProfile = () => {
                   })}
                 </div>
                 {skillsData.length > 1 && (
-                  <div className="text-center mt-4">
+                  <div className="mt-4 text-center">
                     <span
                       onClick={() => setShowAllSkills(!showAllSkills)}
-                      className="text-blue-500 px-6 py-2 rounded-lg hover:bg-blue-50 transition-colors cursor-pointer"
+                      className="px-6 py-2 text-blue-500 transition-colors rounded-lg cursor-pointer hover:bg-blue-50"
                     >
                       {showAllSkills ? "See less" : "See more"}
                     </span>
@@ -496,7 +499,7 @@ const FeedMyProfile = () => {
           <FeedRightProfile />
         </aside>
         {/* Right Spacer */}
-        <div className="hidden lg:block flex-grow"></div>
+        <div className="flex-grow hidden lg:block"></div>
       </div>
     </MainLayout>
   );

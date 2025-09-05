@@ -117,17 +117,17 @@ export const useUserDetailsApi = () => {
           // Format and set experiences data
           if (data.experiences?.length) {
             formattedExperiences = data.experiences.map((exp, index) => ({
-              id: index + 1,
-              logo: "/src/assets/WebsiteLogo.svg",
-              company: exp.current_company || "Unknown Company",
-              position: exp.current_job_role || "Unknown Position",
+              id: exp.id || index + 1,
+              logo: exp.company_logo || "/src/assets/WebsiteLogo.svg",
+              company: exp.company_name || "Unknown Company",
+              position: exp.job_role_title || "Unknown Position",
               duration: `${formatDate(exp.start_date)} - ${formatDate(
                 exp.end_date
               )}`,
               timeSpan: calculateTimeSpan(exp.start_date, exp.end_date),
               description: `Worked as ${
-                exp.current_job_role || "employee"
-              } at ${exp.current_company || "company"}. Status: ${
+                exp.job_role_title || "employee"
+              } at ${exp.company_name || "company"}. Status: ${
                 exp.status || "unknown"
               }`,
               status: exp.status,
@@ -141,8 +141,8 @@ export const useUserDetailsApi = () => {
           if (data.educations?.length) {
             formattedEducation = data.educations.map((edu, index) => ({
               id: edu.id || index + 1,
-              logo: "/src/assets/WebsiteLogo.svg",
-              institution: edu.schoolOrCollege || "Unknown Institution",
+              logo: edu.schoolCollegeEducations.logo_pic,
+              institution: edu.schoolCollegeEducations.name || "Unknown Institution",
               degree: `${edu.level || "Education"}${
                 edu.course ? `, ${edu.course}` : ""
               }${edu.specialization ? ` - ${edu.specialization}` : ""}`,
@@ -157,6 +157,7 @@ export const useUserDetailsApi = () => {
               percentage: edu.percentage_or_cgpa,
               board: edu.board_or_university,
             }));
+            console.log(formattedEducation);
             setEducationData(formattedEducation);
           } else {
             setEducationData([]);
@@ -184,14 +185,11 @@ export const useUserDetailsApi = () => {
                   skill.subSkills.length > 0
                     ? `Sub-skills: ${skill.subSkills.join(", ")}`
                     : `Proficient in ${skillName} with practical experience and knowledge.`;
-                const skillLogo =
-                  skill.certificate_image ||
-                  skill.logo ||
-                  "/src/assets/WebsiteLogo.svg";
-
+                  // const skillLogo = authority.map(item => item.logo_url)[0];
+  
                 return {
                   id: skill._id || skill.id || index + 1,
-                  logo: skillLogo,
+                  logo: skill.logo_url,
                   skill: skillName,
                   category: skill.category || "Technical Skills",
                   description: skillDescription,
