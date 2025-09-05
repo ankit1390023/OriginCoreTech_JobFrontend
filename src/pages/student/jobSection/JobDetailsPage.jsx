@@ -72,8 +72,8 @@ export default function JobDetailsPage() {
     return (
       <div className="bg-[#f5f6f7] min-h-screen">
         <Header />
-        <div className="max-w-7xl mx-auto pt-10 sm:pt-12 md:pt-14 pb-8 sm:pb-10 px-2 sm:px-4 md:px-6 lg:px-8">
-          <div className="bg-white rounded-2xl shadow border border-gray-100 p-6 sm:p-8">
+        <div className="px-2 pt-10 pb-8 mx-auto max-w-7xl sm:pt-12 md:pt-14 sm:pb-10 sm:px-4 md:px-6 lg:px-8">
+          <div className="p-6 bg-white border border-gray-100 shadow rounded-2xl sm:p-8">
             <Loader message="Loading jobs..." />
           </div>
         </div>
@@ -86,11 +86,11 @@ export default function JobDetailsPage() {
     return (
       <div className="bg-[#f5f6f7] min-h-screen">
         <Header />
-        <div className="max-w-7xl mx-auto pt-10 sm:pt-12 md:pt-14 pb-8 sm:pb-10 px-2 sm:px-4 md:px-6 lg:px-8">
-          <div className="bg-white rounded-2xl shadow border border-gray-100 p-6 sm:p-8">
+        <div className="px-2 pt-10 pb-8 mx-auto max-w-7xl sm:pt-12 md:pt-14 sm:pb-10 sm:px-4 md:px-6 lg:px-8">
+          <div className="p-6 bg-white border border-gray-100 shadow rounded-2xl sm:p-8">
             <div className="text-center text-red-600">
               <p className="text-lg font-semibold">Error loading jobs</p>
-              <p className="text-sm mt-2">{allJobsError}</p>
+              <p className="mt-2 text-sm">{allJobsError}</p>
               <Button
                 onClick={refetch}
                 variant="secondary"
@@ -111,7 +111,7 @@ export default function JobDetailsPage() {
       <Header />
 
       {/* Mobile Job List Toggle */}
-      <div className="lg:hidden mb-2 sm:mb-3 px-2 sm:px-3 md:px-4 lg:px-6">
+      <div className="px-2 mb-2 lg:hidden sm:mb-3 sm:px-3 md:px-4 lg:px-6">
         <Button
           onClick={toggleJobList}
           variant="outline"
@@ -120,13 +120,13 @@ export default function JobDetailsPage() {
         >
           {isJobListOpen ? (
             <>
-              <FaTimes className="text-gray-600 text-sm" />
-              <span className="font-medium text-sm">Close Job List</span>
+              <FaTimes className="text-sm text-gray-600" />
+              <span className="text-sm font-medium">Close Job List</span>
             </>
           ) : (
             <>
-              <FaBars className="text-gray-600 text-sm" />
-              <span className="font-medium text-sm">
+              <FaBars className="text-sm text-gray-600" />
+              <span className="text-sm font-medium">
                 Show Job List ({allJobs?.length || 0} jobs)
               </span>
             </>
@@ -135,7 +135,7 @@ export default function JobDetailsPage() {
       </div>
 
       {/* Desktop Job List */}
-      <div className="max-w-7xl mx-auto pt-1 sm:pt-2 md:pt-4 lg:pt-6 pb-2 sm:pb-3 px-2 sm:px-3 md:px-4 lg:px-6">
+      <div className="px-2 pt-1 pb-2 mx-auto max-w-7xl sm:pt-2 md:pt-4 lg:pt-6 sm:pb-3 sm:px-3 md:px-4 lg:px-6">
 
         <div className="grid grid-cols-1 lg:grid-cols-[380px_1fr] gap-2">
           {/* Left: Job List */}
@@ -144,10 +144,10 @@ export default function JobDetailsPage() {
               }`}
           >
             <div className="mb-2 sm:mb-3">
-              <h2 className="text-lg sm:text-xl lg:text-2xl font-extrabold mb-1">
+              <h2 className="mb-1 text-lg font-extrabold sm:text-xl lg:text-2xl">
                 Job List
               </h2>
-              <p className="text-gray-500 text-xs">Top Jobs Picks for you</p>
+              <p className="text-xs text-gray-500">Top Jobs Picks for you</p>
             </div>
             <div className="flex flex-col gap-1.5 sm:gap-2 md:gap-3 overflow-y-auto max-h-[70vh] sm:max-h-[80vh] lg:max-h-[100vh] border border-gray-100 rounded-lg p-2">
               <div className="flex flex-col gap-1.5 sm:gap-2 md:gap-3">
@@ -167,7 +167,7 @@ export default function JobDetailsPage() {
                           "https://via.placeholder.com/48x48?text=Logo"
                         }
                         alt="logo"
-                        className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg object-contain bg-gray-100 flex-shrink-0"
+                        className="flex-shrink-0 object-contain w-8 h-8 bg-gray-100 rounded-lg sm:w-10 sm:h-10 md:w-12 md:h-12"
                       />
                       <div className="flex-1 min-w-0">
                         <div className="font-semibold text-xs sm:text-sm truncate mb-0.5">
@@ -180,22 +180,22 @@ export default function JobDetailsPage() {
                           {
                             job.company_location && (
                               <Badge color="bg-gray-100 text-gray-700 hover:bg-gray-200">
-                                <span className="truncate text-xs">
+                                <span className="text-xs truncate">
                                   {job.company_location}
                                 </span>
                               </Badge>
                             )
                           }
                        
-                          {
+                          {/* {
                             job.experience && (
                               <Badge color="bg-gray-100 text-gray-700 hover:bg-gray-200">
-                                <span className="truncate text-xs">
+                                <span className="text-xs truncate">
                                   {job.experience}
                                 </span>
                               </Badge>
                             )
-                          }
+                          } */}
                         </div>
                       </div>
                       <div className="flex flex-col items-end gap-1 min-w-[60px] sm:min-w-[70px] md:min-w-[80px] lg:min-w-[90px]">
@@ -250,17 +250,17 @@ export default function JobDetailsPage() {
             ) : (
               <>
                 {/* Header Section */}
-                <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-3 md:gap-4 mb-3 sm:mb-4 relative">
+                <div className="relative flex flex-col gap-2 mb-3 sm:flex-row sm:items-start sm:gap-3 md:gap-4 sm:mb-4">
                   <img
                     src={selectedJobDetails.logo_url}
                     alt="Company Logo"
-                    className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-lg object-contain bg-gray-100  flex-shrink-0 self-start"
+                    className="self-start flex-shrink-0 object-contain w-12 h-12 bg-gray-100 rounded-lg sm:w-16 sm:h-16 md:w-20 md:h-20"
                   />
                   <div className="flex-1 min-w-0">
                     <div className="font-bold text-base sm:text-lg md:text-xl leading-tight mb-1.5 truncate">
                       {selectedJobDetails.job_role}
                     </div>
-                    <div className="text-gray-600 text-sm sm:text-base mb-2 truncate">
+                    <div className="mb-2 text-sm text-gray-600 truncate sm:text-base">
                       {selectedJobDetails.company_name}
                     </div>
 
@@ -268,8 +268,8 @@ export default function JobDetailsPage() {
                     <div className="flex flex-wrap gap-1 sm:gap-1.5 mb-3">
                       {selectedJobDetails.companyLocation && (
                         <Badge color="bg-purple-100 text-purple-700 hover:bg-purple-200">
-                          <FaMapMarkerAlt className="text-purple-500 text-xs" />
-                          <span className="truncate text-xs sm:text-sm">
+                          <FaMapMarkerAlt className="text-xs text-purple-500" />
+                          <span className="text-xs truncate sm:text-sm">
                             {selectedJobDetails.companyLocation}
                           </span>
                         </Badge>
@@ -277,38 +277,38 @@ export default function JobDetailsPage() {
 
                       {selectedJobDetails.opportunity_type && (
                         <Badge color="bg-orange-100 text-orange-700 hover:bg-orange-200">
-                          <FaUserTie className="text-orange-500 text-xs" />
-                          <span className="truncate text-xs sm:text-sm">
+                          <FaUserTie className="text-xs text-orange-500" />
+                          <span className="text-xs truncate sm:text-sm">
                             {selectedJobDetails.opportunity_type}
                           </span>
                         </Badge>
                       )}
                       {selectedJobDetails.salary && (
                         <Badge color="bg-emerald-100 text-emerald-600 hover:bg-emerald-200">
-                          <span className="truncate text-xs sm:text-sm">
+                          <span className="text-xs truncate sm:text-sm">
                             ₹{selectedJobDetails.salary}
                           </span>
                         </Badge>
                       )}
                       {selectedJobDetails.postedDaysAgo && (
                         <Badge color="bg-blue-100 text-blue-700 hover:bg-blue-200">
-                          <FaCalendarAlt className="text-blue-500 text-xs inline mr-1" />
-                          <span className="truncate text-xs sm:text-sm">
+                          <FaCalendarAlt className="inline mr-1 text-xs text-blue-500" />
+                          <span className="text-xs truncate sm:text-sm">
                             {selectedJobDetails.postedDaysAgo}
                           </span>
                         </Badge>
                       )}
                     
                       <Badge color="bg-teal-100 text-teal-700 hover:bg-teal-200">
-                        <FaUsers className="text-teal-500 text-xs inline mr-1" />
-                        <span className="truncate text-xs sm:text-sm">
+                        <FaUsers className="inline mr-1 text-xs text-teal-500" />
+                        <span className="text-xs truncate sm:text-sm">
                                 {selectedJobDetails.number_of_applicants} applicants
                         </span>
                       </Badge>
                       {selectedJobDetails.job_type && (
                         <Badge color="bg-indigo-100 text-indigo-700 hover:bg-indigo-200">
-                          <FaLaptop className="text-indigo-500 text-xs inline mr-1" />
-                          <span className="truncate text-xs sm:text-sm">
+                          <FaLaptop className="inline mr-1 text-xs text-indigo-500" />
+                          <span className="text-xs truncate sm:text-sm">
                             {selectedJobDetails.job_type}
                           </span>
                         </Badge>
@@ -331,11 +331,11 @@ export default function JobDetailsPage() {
                 {/* Job Description - Always visible */}
                 <div className="mb-4">
                   <h3 className="text-base sm:text-lg font-bold mb-2 sm:mb-3 flex items-center gap-1.5">
-                    <FaBriefcase className="text-blue-600 text-sm" />
+                    <FaBriefcase className="text-sm text-blue-600" />
                     Job Description
                   </h3>
                   <div className="prose prose-xs sm:prose-sm max-w-none">
-                    <p className="text-gray-700 leading-relaxed text-sm">
+                    <p className="text-sm leading-relaxed text-gray-700">
                       {selectedJobDetails.job_description ||
                         "No job description available."}
                     </p>
@@ -343,13 +343,13 @@ export default function JobDetailsPage() {
                 </div>
                 {/* About Company - Always visible */}
                 {selectedJobDetails.aboutCompany && (
-                  <div className="mb-4 bg-blue-50 rounded-lg p-4 border border-blue-100">
+                  <div className="p-4 mb-4 border border-blue-100 rounded-lg bg-blue-50">
                     <h3 className="text-base sm:text-lg font-bold mb-2 sm:mb-3 flex items-center gap-1.5">
-                      <FaBuilding className="text-blue-600 text-sm" />
+                      <FaBuilding className="text-sm text-blue-600" />
                       About {selectedJobDetails.company_name}
                     </h3>
                     <div className="prose prose-xs sm:prose-sm max-w-none">
-                      <p className="text-gray-700 leading-relaxed text-sm">
+                      <p className="text-sm leading-relaxed text-gray-700">
                         {selectedJobDetails.aboutCompany}
                       </p>
                     </div>
@@ -360,12 +360,12 @@ export default function JobDetailsPage() {
                 <div className="relative">
                   <div className={`transition-all duration-300 ${isExpanded ? 'max-h-none' : 'max-h-96 overflow-hidden'}`}>
                     {/* Job Details - Single Column */}
-                    <div className="space-y-3 sm:space-y-4 mb-4">
+                    <div className="mb-4 space-y-3 sm:space-y-4">
                       {/* Internship Details */}
                       {selectedJobDetails.opportunity_type === "Internship" && (
-                        <div className="bg-blue-50 rounded-lg p-3 border border-blue-200">
+                        <div className="p-3 border border-blue-200 rounded-lg bg-blue-50">
                           <h4 className="font-semibold text-blue-800 mb-2 flex items-center gap-1.5 text-sm">
-                            <FaCalendarAlt className="text-blue-600 text-xs" />
+                            <FaCalendarAlt className="text-xs text-blue-600" />
                             Internship Details
                           </h4>
                           <div className="space-y-1.5 text-xs">
@@ -408,9 +408,9 @@ export default function JobDetailsPage() {
                       )}
 
                       {/* Company Information */}
-                      <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
+                      <div className="p-3 border border-gray-200 rounded-lg bg-gray-50">
                         <h4 className="font-semibold text-gray-800 mb-2 flex items-center gap-1.5 text-sm">
-                          <FaBuilding className="text-gray-600 text-xs" />
+                          <FaBuilding className="text-xs text-gray-600" />
                           Company Information
                         </h4>
                         <div className="space-y-1.5 text-xs">
@@ -450,9 +450,9 @@ export default function JobDetailsPage() {
                       {/* Skills Required */}
                       {selectedJobDetails.skillsRequired &&
                         selectedJobDetails.skillsRequired.length > 0 && (
-                          <div className="bg-purple-50 rounded-lg p-3 border border-purple-200">
+                          <div className="p-3 border border-purple-200 rounded-lg bg-purple-50">
                             <h4 className="font-semibold text-purple-800 mb-2 flex items-center gap-1.5 text-sm">
-                              <FaStar className="text-purple-600 text-xs" />
+                              <FaStar className="text-xs text-purple-600" />
                               Skills Required
                             </h4>
                             <div className="flex flex-wrap gap-1.5">
@@ -468,7 +468,7 @@ export default function JobDetailsPage() {
                               )}
                             </div>
                             {selectedJobDetails.skill_required_note && (
-                              <p className="text-xs text-gray-600 mt-2 italic">
+                              <p className="mt-2 text-xs italic text-gray-600">
                                 {selectedJobDetails.skill_required_note}
                               </p>
                             )}
@@ -478,9 +478,9 @@ export default function JobDetailsPage() {
                       {/* Perks & Benefits */}
                       {selectedJobDetails.perks &&
                         selectedJobDetails.perks.length > 0 && (
-                          <div className="bg-yellow-50 rounded-lg p-3 border border-yellow-200">
+                          <div className="p-3 border border-yellow-200 rounded-lg bg-yellow-50">
                             <h4 className="font-semibold text-yellow-800 mb-2 flex items-center gap-1.5 text-sm">
-                              <FaGift className="text-yellow-600 text-xs" />
+                              <FaGift className="text-xs text-yellow-600" />
                               Perks & Benefits
                             </h4>
                             <div className="space-y-1.5">
@@ -489,7 +489,7 @@ export default function JobDetailsPage() {
                                   key={index}
                                   className="flex items-center gap-1.5 text-xs"
                                 >
-                                  <FaCheckCircle className="text-yellow-600 text-xs" />
+                                  <FaCheckCircle className="text-xs text-yellow-600" />
                                   <span>{perk}</span>
                                 </div>
                               ))}
@@ -499,9 +499,9 @@ export default function JobDetailsPage() {
 
                       {/* Eligible Cities */}
                       {selectedJobDetails.eligible_cities && selectedJobDetails.eligible_cities.length > 0 && (
-                        <div className="bg-blue-50 rounded-lg p-3 border border-blue-200">
+                        <div className="p-3 border border-blue-200 rounded-lg bg-blue-50">
                           <h4 className="font-semibold text-blue-800 mb-2 flex items-center gap-1.5 text-sm">
-                            <FaMapMarkerAlt className="text-blue-600 text-xs" />
+                            <FaMapMarkerAlt className="text-xs text-blue-600" />
                             Eligible Cities
                           </h4>
                           <div className="flex flex-wrap gap-1.5">
@@ -519,9 +519,9 @@ export default function JobDetailsPage() {
 
                       {/* Eligible Colleges */}
                       {selectedJobDetails.eligible_colleges && selectedJobDetails.eligible_colleges.length > 0 && (
-                        <div className="bg-purple-50 rounded-lg p-3 border border-purple-200">
+                        <div className="p-3 border border-purple-200 rounded-lg bg-purple-50">
                           <h4 className="font-semibold text-purple-800 mb-2 flex items-center gap-1.5 text-sm">
-                            <FaBuilding className="text-purple-600 text-xs" />
+                            <FaBuilding className="text-xs text-purple-600" />
                             Eligible Colleges
                           </h4>
                           <div className="flex flex-wrap gap-1.5">
@@ -539,9 +539,9 @@ export default function JobDetailsPage() {
 
                       {/* Eligible Courses */}
                       {selectedJobDetails.eligible_courses && selectedJobDetails.eligible_courses.length > 0 && (
-                        <div className="bg-green-50 rounded-lg p-3 border border-green-200">
+                        <div className="p-3 border border-green-200 rounded-lg bg-green-50">
                           <h4 className="font-semibold text-green-800 mb-2 flex items-center gap-1.5 text-sm">
-                            <FaGraduationCap className="text-green-600 text-xs" />
+                            <FaGraduationCap className="text-xs text-green-600" />
                             Eligible Courses
                           </h4>
                           <div className="flex flex-wrap gap-1.5">
@@ -557,9 +557,9 @@ export default function JobDetailsPage() {
                         </div>
                       )}
                       {/* Candidate Preferences */}
-                      <div className="bg-indigo-50 rounded-lg p-3 border border-indigo-200">
+                      <div className="p-3 border border-indigo-200 rounded-lg bg-indigo-50">
                         <h4 className="font-semibold text-indigo-800 mb-2 flex items-center gap-1.5 text-sm">
-                          <FaUserGraduate className="text-indigo-600 text-xs" />
+                          <FaUserGraduate className="text-xs text-indigo-600" />
                           Candidate Preferences
                         </h4>
                         <div className="space-y-1.5 text-xs">
@@ -582,8 +582,8 @@ export default function JobDetailsPage() {
                               <span className="text-gray-600">
                                 Women Preferred:
                               </span>
-                              <span className="font-medium text-green-600 flex items-center gap-1">
-                                <FaVenus className="text-pink-500 text-xs" />
+                              <span className="flex items-center gap-1 font-medium text-green-600">
+                                <FaVenus className="text-xs text-pink-500" />
                                 Yes
                               </span>
                             </div>
@@ -605,7 +605,7 @@ export default function JobDetailsPage() {
                       selectedJobDetails.screening_questions.length > 0 && (
                         <div className="mb-4">
                           <h3 className="text-base sm:text-lg font-bold mb-2 sm:mb-3 flex items-center gap-1.5">
-                            <FaQuestionCircle className="text-blue-600 text-sm" />
+                            <FaQuestionCircle className="text-sm text-blue-600" />
                             Screening Questions
                           </h3>
                           <div className="space-y-2">
@@ -613,13 +613,13 @@ export default function JobDetailsPage() {
                               (question, index) => (
                                 <div
                                   key={index}
-                                  className="bg-orange-50 rounded-lg p-3 border border-orange-200"
+                                  className="p-3 border border-orange-200 rounded-lg bg-orange-50"
                                 >
                                   <div className="flex items-start gap-2">
                                     <span className="bg-orange-100 text-orange-700 text-xs font-semibold rounded-full px-1.5 py-0.5 mt-0.5">
                                       Q{index + 1}
                                     </span>
-                                    <p className="text-gray-700 text-xs">
+                                    <p className="text-xs text-gray-700">
                                       {question}
                                     </p>
                                   </div>
@@ -633,19 +633,19 @@ export default function JobDetailsPage() {
                     {/* Recruiter Information */}
                     <div className="mb-4">
                       <h3 className="text-base sm:text-lg font-bold mb-2 sm:mb-3 flex items-center gap-1.5">
-                        <FaUserTie className="text-blue-600 text-sm" />
+                        <FaUserTie className="text-sm text-blue-600" />
                         Recruiter Information
                       </h3>
-                      <div className="bg-blue-50 rounded-lg p-3 sm:p-4 border border-blue-200">
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div className="p-3 border border-blue-200 rounded-lg bg-blue-50 sm:p-4">
+                        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                           <div className="flex items-center gap-2">
                             <img
                               src={selectedJobDetails.recruiter_profile_pic}
                               alt="Recruiter"
-                              className="w-10 h-10 rounded-full object-cover border border-gray-200"
+                              className="object-cover w-10 h-10 border border-gray-200 rounded-full"
                             />
                             <div>
-                              <h4 className="font-semibold text-gray-800 text-sm">
+                              <h4 className="text-sm font-semibold text-gray-800">
                                 {selectedJobDetails.recruiter_full_name}
                               </h4>
                               <p className="text-xs text-gray-600">
@@ -655,14 +655,14 @@ export default function JobDetailsPage() {
                           </div>
                           <div className="space-y-1.5 text-xs">
                             <div className="flex items-center gap-1.5">
-                              <FaEnvelope className="text-gray-400 text-xs" />
+                              <FaEnvelope className="text-xs text-gray-400" />
                               <span className="text-gray-700">
                                 {selectedJobDetails.recruiter_email}
                               </span>
                             </div>
                             {selectedJobDetails.phone_contact && (
                               <div className="flex items-center gap-1.5">
-                                <FaPhone className="text-gray-400 text-xs" />
+                                <FaPhone className="text-xs text-gray-400" />
                                 <span className="text-gray-700">
                                   {selectedJobDetails.phone_contact}
                                 </span>
@@ -670,7 +670,7 @@ export default function JobDetailsPage() {
                             )}
                             {selectedJobDetails.alternate_phone_number && (
                               <div className="flex items-center gap-1.5">
-                                <FaPhone className="text-gray-400 text-xs" />
+                                <FaPhone className="text-xs text-gray-400" />
                                 <span className="text-gray-700">
                                   {selectedJobDetails.alternate_phone_number}
                                 </span>
@@ -684,10 +684,10 @@ export default function JobDetailsPage() {
                     {/* Verification Status */}
                     <div className="mb-4">
                       <h3 className="text-base sm:text-lg font-bold mb-2 sm:mb-3 flex items-center gap-1.5">
-                        <FaCheckCircle className="text-blue-600 text-sm" />
+                        <FaCheckCircle className="text-sm text-blue-600" />
                         Verification Status
                       </h3>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
                         <div
                           className={`flex items-center gap-1.5 p-2 rounded-lg ${selectedJobDetails.is_email_verified
                             ? "bg-green-50 border border-green-200"
@@ -765,7 +765,7 @@ export default function JobDetailsPage() {
                   </div>
                   {/* Gradient Fade Effect - Only visible when content is collapsed */}
                   {!isExpanded && (
-                    <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-white via-white to-transparent pointer-events-none"></div>
+                    <div className="absolute bottom-0 left-0 right-0 h-20 pointer-events-none bg-gradient-to-t from-white via-white to-transparent"></div>
                   )}
                 </div>
                 {/* Show More/Less Button */}
@@ -774,7 +774,7 @@ export default function JobDetailsPage() {
                     onClick={toggleExpanded}
                     variant="outline"
                     size="default"
-                    className="flex items-center gap-2 bg-white hover:bg-gray-50 border-2 border-gray-200 hover:border-blue-300 transition-all duration-200 px-6 py-2 rounded-full font-medium text-gray-700 hover:text-blue-600"
+                    className="flex items-center gap-2 px-6 py-2 font-medium text-gray-700 transition-all duration-200 bg-white border-2 border-gray-200 rounded-full hover:bg-gray-50 hover:border-blue-300 hover:text-blue-600"
                   >
                     {isExpanded ? (
                       <>
@@ -798,11 +798,11 @@ export default function JobDetailsPage() {
 
       {/* Apply Form Popup */}
       {showApplyForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
           <div className="bg-white rounded-lg w-full max-w-2xl relative max-h-[90vh] overflow-y-auto">
             <button
               onClick={() => setShowApplyForm(false)}
-              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+              className="absolute text-gray-500 top-4 right-4 hover:text-gray-700"
             >
               <FaTimes className="w-5 h-5" />
             </button>
