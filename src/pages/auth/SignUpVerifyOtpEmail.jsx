@@ -96,7 +96,7 @@ export default function SignUpVerifyOtpEmail() {
           navigate("/student-fill-account-details");
           break;
         case "COMPANY":
-          navigate("/recruiter-profile");
+          navigate("/recruiter-company-profile");
           break;
         case "UNIVERSITY":
           navigate("/university-fill-details");
@@ -139,26 +139,26 @@ export default function SignUpVerifyOtpEmail() {
 
   // Form content component
   const FormContent = () => (
-    <div className="w-full min-h-screen flex md:items-center md:justify-center overflow-hidden relative sm:-mt-16">
+    <div className="relative flex w-full min-h-screen overflow-hidden md:items-center md:justify-center sm:-mt-16">
       {/* Form */}
-      <div className="flex-1 w-full flex justify-center mt-6 md:mt-0">
+      <div className="flex justify-center flex-1 w-full mt-6 md:mt-0">
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="bg-white rounded-lg shadow-sm sm:shadow-md p-4 sm:p-6 w-full max-w-full sm:max-w-sm md:max-w-md"
+          className="w-full max-w-full p-4 bg-white rounded-lg shadow-sm sm:shadow-md sm:p-6 sm:max-w-sm md:max-w-md"
         >
           <div className="mb-2 sm:mb-3">
-            <p className="text-gray-600 text-xs mb-2">
+            <p className="mb-2 text-xs text-gray-600">
               One Time Password (OTP) has been sent to your email on
-              <span className="font-bold text-blue-500 ml-1">
+              <span className="ml-1 font-bold text-blue-500">
                 {email ? email : "amangupta@gmail.com"}
               </span>
             </p>
             {/* OTP Input - 4 separate boxes */}
             <div className="mb-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block mb-2 text-sm font-medium text-gray-700">
                 Enter OTP to verify your email
               </label>
-              <div className="flex gap-2 justify-center">
+              <div className="flex justify-center gap-2">
                 {[0, 1, 2, 3].map((index) => (
                   <div key={index} className="flex-1">
                     <input
@@ -215,7 +215,7 @@ export default function SignUpVerifyOtpEmail() {
               </div>
 
               {(errors.otp1 || errors.otp2 || errors.otp3 || errors.otp4) && (
-                <p className="text-red-500 text-xs mt-1">
+                <p className="mt-1 text-xs text-red-500">
                   Please enter a valid 4-digit OTP
                 </p>
               )}
@@ -236,15 +236,15 @@ export default function SignUpVerifyOtpEmail() {
             {loading ? "Verifying..." : "Verify Email"}
           </Button>
           {/* Help Text */}
-          <div className="mt-2 p-2 bg-gray-50 rounded-md">
-            <p className="text-xs text-gray-600 text-center">
+          <div className="p-2 mt-2 rounded-md bg-gray-50">
+            <p className="text-xs text-center text-gray-600">
               <FaEnvelope className="inline mr-1 text-gray-400" />
               Can't find our email? Check spam folders or promotion tabs too!
             </p>
           </div>
           {/* Login Link - Using new UI component */}
-          <div className="text-center mt-2 pt-2 border-t border-gray-200">
-            <p className="text-gray-500 text-xs">
+          <div className="pt-2 mt-2 text-center border-t border-gray-200">
+            <p className="text-xs text-gray-500">
               Already have an account?{" "}
               <Link to="/login" variant="primary">
                 Login

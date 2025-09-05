@@ -13,7 +13,7 @@ import { Link } from "react-router-dom";
 import { useGetJobApi } from "../../../hooks/useGetJobApi";
 import { useState } from "react";
 import { Input, Button, Loader, Checkbox, Badge } from "../../../components/ui";
-import { getImageUrl } from "../../../../utils";
+
 
 export default function AllJObs() {
   const { allJobs, loading, error, refetch } = useGetJobApi();
@@ -92,7 +92,7 @@ export default function AllJObs() {
                     </span>
                   }
                   placeholder="Eg. Delhi"
-                  aria-label="Location"
+                  aria-label="company_location"
                   size="small"
                   className="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300"
                 />
@@ -211,7 +211,7 @@ export default function AllJObs() {
                 !error &&
                 allJobs &&
                 allJobs.length > 0 &&
-                allJobs.map((job, idx) => (
+                allJobs.map((job) => (
                   <Link
                     key={job.job_id}
                     to={`/jobs/${job.job_id}`}
@@ -220,14 +220,14 @@ export default function AllJObs() {
                     <article
                       className="relative flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 lg:gap-6 bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 lg:p-6 transition-all duration-200 hover:shadow-lg hover:border-blue-200 group cursor-pointer"
                       tabIndex={0}
-                      aria-label={`Job: ${job.jobProfile} at ${job.company_name}`}
+                      aria-label={`Job: ${job.jobRole} at ${job.company_name}`}
                     >
                       {/* Skills required badge */}
-                      {job.skillsRequired && job.skillsRequired.length > 0 && (
+                      {job.skill_missing && (
                         <div className="absolute -top-2 sm:-top-3 left-4 z-10">
                           <Badge
                             color="bg-blue-600 text-white hover:bg-blue-700"
-                            text={`${job.skillsRequired.length} skills required`}
+                            text={`skills required ?`}
                             className="text-xs font-semibold shadow-lg border border-blue-700"
                           />
                         </div>
@@ -236,7 +236,7 @@ export default function AllJObs() {
                       {/* Company Logo */}
                       <div className="flex-shrink-0">
                         <img
-                          src={getImageUrl(job.logo_url)}
+                          src={job.logo_url}
                           alt={`${job.company_name} logo`}
                           className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-lg object-contain bg-gray-100 border border-gray-200"
                         />
@@ -246,9 +246,9 @@ export default function AllJObs() {
                       <div className="flex-1 min-w-0 space-y-2 sm:space-y-3">
                         <div>
                           <h3 className="font-bold text-base sm:text-lg lg:text-xl leading-tight text-gray-900 group-hover:text-blue-600 transition-colors">
-                            {job.jobProfile}
+                            {job.jobRole}
                           </h3>
-                          <p className="text-gray-600 text-sm sm:text-base font-medium">
+                          <p className="text-sm font-semibold">
                             {job.company_name}
                           </p>
                         </div>
@@ -256,22 +256,24 @@ export default function AllJObs() {
                         <div className="flex flex-wrap gap-2 sm:gap-3">
                           <Badge
                             color="bg-gray-100 text-gray-700 hover:bg-gray-200"
-                            className="text-xs sm:text-sm"
+                            className="text-xs border border-gray-200"
                           >
                             <FaMapMarkerAlt className="text-gray-400 text-xs" />
-                            <span className="truncate">{job.location}</span>
+                            <span className="truncate">
+                              {job.company_location}
+                            </span>
                           </Badge>
-                          <Badge
+                          {/* <Badge
                             color="bg-gray-100 text-gray-700 hover:bg-gray-200"
-                            className="text-xs sm:text-sm"
+                            className="text-xs border border-gray-200"
                           >
                             <FaUserTie className="text-gray-400 text-xs" />
                             <span className="truncate">{job.experience}</span>
-                          </Badge>
+                          </Badge> */}
                           {job.salary && (
                             <Badge
                               color="bg-gray-100 text-gray-700 hover:bg-gray-200"
-                              className="text-xs sm:text-sm"
+                              className="text-xs border border-gray-200"
                             >
                               <span className="truncate">
                                 INR: {job.salary}
@@ -285,32 +287,28 @@ export default function AllJObs() {
                       <div className="flex flex-col items-start sm:items-end gap-2 sm:gap-3 min-w-[120px] sm:min-w-[140px] lg:min-w-[160px]">
                         <Badge
                           color={
-                            job.hiringStatus === "Actively Hiring"
+                            job.hiring_status === "Actively Hiring"
                               ? "bg-red-500 text-white hover:bg-red-600"
                               : "bg-green-500 text-white hover:bg-green-600"
                           }
-                          text={job.hiringStatus}
-                          className="text-xs sm:text-sm font-semibold shadow"
-                        />
-                        <Badge
-                          color={
-                            job.matchPercentage > 0
-                              ? "bg-green-100 text-green-700 hover:bg-green-200"
-                              : "bg-gray-100 text-gray-500 hover:bg-gray-200"
-                          }
-                          text={`${job.matchPercentage || 0}% match`}
-                          className="text-xs sm:text-sm border font-semibold"
+                          text={job.hiring_status}
+                          className="text-sm font-semibold shadow-lg border border-gray-200"
                         />
                         <Badge
                           color="bg-gray-100 text-gray-700 hover:bg-gray-200"
-                          className="text-xs sm:text-sm"
+                          className="text-sm font-semibold border border-gray-200"
                         >
-                          <span className="hidden sm:inline">Posted: </span>
-                          {job.postedDaysAgo === "Today" ||
-                          job.postedDaysAgo === 0
-                            ? "Today"
-                            : `${job.postedDaysAgo} days ago`}
+                          {job.posted_days_ago}
                         </Badge>
+                        <Badge
+                          color={
+                            job.matchPercentage > 70
+                              ? "bg-green-100 text-green-700 hover:bg-green-200"
+                              : "bg-yellow-400 text-white hover:bg-yellow-600"
+                          }
+                          text={`${job.matchPercentage || 0}% match`}
+                          className="text-sm border font-semibold shadow-lg"
+                        />
                       </div>
                     </article>
                   </Link>
@@ -318,7 +316,8 @@ export default function AllJObs() {
 
               {!loading && !error && (!allJobs || allJobs.length === 0) && (
                 <div className="text-center py-12 sm:py-16">
-                  <p className="text-gray-500 text-lg">No jobs found.</p>
+                  {/* <p className="text-gray-500 text-lg">No jobs found.</p> */}
+                  <Loader message="Loading jobs..." />
                 </div>
               )}
             </section>

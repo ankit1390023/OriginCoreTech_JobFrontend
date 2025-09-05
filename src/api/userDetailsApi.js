@@ -24,14 +24,13 @@ export const userDetailsApi = {
     }
   },
 
-
   getUserDetails: async (user_id) => {
     if (!user_id) {
       return { success: false, error: "User ID is required." };
     }
     try {
       const response = await axios.get(
-        `${BASE_URL}/user-details/public-profile/${user_id}`
+        `${BASE_URL}/user-details/detail/${user_id}`
       );
       return { success: true, data: response.data };
     } catch (error) {
@@ -78,6 +77,7 @@ export const userDetailsApi = {
         { headers }
       );
 
+      console.log("data from backend", response);
       if (!response.data) {
         return { success: true, data: null };
       }
@@ -127,4 +127,27 @@ export const userDetailsApi = {
     }
   },
 
+  getMiniUserDetails: async (user_id, token) => {
+    if (!user_id) {
+      return { success: false, error: "User ID is required." };
+    }
+    try {
+      const headers = token ? { Authorization: `Bearer ${token}` } : {};
+      const response = await axios.get(
+        `${BASE_URL}/users/getUserData`,
+        { headers }
+      );
+      return { success: true, data: response.data };
+    } catch (error) {
+      console.error("Error fetching user details:", error);
+      return {
+        success: false,
+        error:
+          error?.response?.data?.message ||
+          error.message ||
+          "Unknown error occurred",
+      };
+    }
+  },
 };
+

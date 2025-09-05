@@ -78,13 +78,13 @@ export default function ForgotPassword() {
     setOtpError("");
     setValue("otp", "");
     setOtpSent(false);
-
+    
     try {
-      const response = await axios.post(`${BASE_URL}/otp/send-otp`, {
+      const response = await axios.post(`${BASE_URL}/users/forgotPassword`, {
         email: email,
       });
 
-      if (response.data.message === "OTP sent successfully") {
+      if (response.data.message === "OTP sent to email") {
         alert("OTP sent successfully! Check your email.");
         setOtpSent(true);
         setOtpError("");

@@ -12,42 +12,34 @@ export const useGetJobApi = () => {
     const fetchAllJobs = async () => {
       if (!token) return;
 
-      try {
-        setLoading(true);
-        setError(null);
-        const response = await jobGetApi.getAllJobs(token);
-        setAllJobs(response.data || response);
-      } catch (error) {
-        console.log("error in fetchAllJobs", error);
-        setError("Failed to load jobs. Please try again later.");
-      } finally {
-        setLoading(false);
-      }
+      const response = await jobGetApi.getAllJobs(token);
+      console.log("response.data from fetchAllJobs", response);
+      setAllJobs(response.data || response);
     };
     fetchAllJobs();
   }, [token]);
 
-  const refetch = async () => {
-    if (!token) return;
+  // const refetch = async () => {
+  //   if (!token) return;
 
-    try {
-      setLoading(true);
-      setError(null);
-      const response = await jobGetApi.getAllJobs(token);
-      setAllJobs(response.data || response);
-    } catch (error) {
-      setError("Failed to reload jobs. Please try again later.");
-      console.log("Failed to reload jobs", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  //   try {
+  //     setLoading(true);
+  //     setError(null);
+  //     const response = await jobGetApi.getAllJobs(token);
+  //     setAllJobs(response.data || response);
+  //   } catch (error) {
+  //     setError("Failed to reload jobs. Please try again later.");
+  //     console.log("Failed to reload jobs", error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   return {
     allJobs,
     loading,
     error,
-    refetch,
+    // refetch,
   };
 };
 

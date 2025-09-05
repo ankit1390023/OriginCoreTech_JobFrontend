@@ -29,7 +29,10 @@ export const useMasterData = () => {
     const domains = masterDataQuery?.data?.domains || [];
     const skillsByDomain = masterDataQuery?.data?.skillsByDomain || [];
     const specializationByCourse = masterDataQuery?.data?.specializationByCourse || [];
- 
+    const industries = masterDataQuery?.data?.industries || [];
+    const languages = masterDataQuery?.data?.languages || [];
+    const companies= masterDataQuery?.data?.companies || [];
+
     // 🔹 Helper functions for relationships
     const getSkillsForDomain = (domainId) => {
         const domain = skillsByDomain?.find((d) => d.domain_id === domainId);
@@ -54,6 +57,9 @@ export const useMasterData = () => {
         getSkillsForDomain,
         specializationByCourse,
         getSpecializationsForCourse,
+        industries,
+        languages,
+        companies
     };
 };
  

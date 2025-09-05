@@ -7,8 +7,8 @@ import {
   FaBuilding,
   FaCalendarAlt,
   FaUsers,
-  FaClock,
   FaGraduationCap,
+  FaGift,
   FaPhone,
   FaEnvelope,
   FaStar,
@@ -16,22 +16,20 @@ import {
   FaTimes,
   FaBriefcase,
   FaLaptop,
-  FaCertificate,
-  FaGift,
   FaCheckCircle,
   FaQuestionCircle,
-  FaIndustry,
-  FaGlobe,
   FaUserGraduate,
-  FaLanguage,
   FaVenus,
+  FaChevronDown,
+  FaChevronUp,
+ 
 } from "react-icons/fa";
 import Header from "../../../components/shared/Header";
 import { useGetJobApi } from "../../../hooks/useGetJobApi";
 import { useGetJobById } from "../../../hooks/useGetJobApi";
 import { Button, Loader, Badge } from "../../../components/ui";
-import { getImageUrl } from "../../../../utils";
-import { useApplyToJob } from "../../../hooks/useApplyToJob";
+import ApplyForm from './applyForm';
+
 export default function JobDetailsPage() {
   const { job_id } = useParams();
   const navigate = useNavigate();
@@ -46,18 +44,13 @@ export default function JobDetailsPage() {
     loading: jobDetailsLoading,
     error: jobDetailsError,
   } = useGetJobById(job_id);
-  const {
-    applyToJob,
-    loading: applyLoading,
-    error: applyError,
-    success: applySuccess,
-    resetState,
-  } = useApplyToJob();
+
 
   const [selectedId, setSelectedId] = useState(job_id);
   const [isJobListOpen, setIsJobListOpen] = useState(false);
-  const [showFullDetails, setShowFullDetails] = useState(false);
-  const [applicationStatus, setApplicationStatus] = useState(null); // Track application status
+  const [isExpanded, setIsExpanded] = useState(false); // New state for show more/less
+  const [showApplyForm, setShowApplyForm] = useState(false); // State for ApplyForm popup
+  
 
   const handleSelect = (id) => {
     setSelectedId(id);
@@ -65,9 +58,13 @@ export default function JobDetailsPage() {
     // Close mobile job list after selection
     setIsJobListOpen(false);
   };
-
+  
   const toggleJobList = () => {
     setIsJobListOpen(!isJobListOpen);
+  };
+
+  const toggleExpanded = () => {
+    setIsExpanded(!isExpanded);
   };
 
   // Loading state for all jobs
@@ -137,13 +134,14 @@ export default function JobDetailsPage() {
         </Button>
       </div>
 
+      {/* Desktop Job List */}
       <div className="max-w-7xl mx-auto pt-1 sm:pt-2 md:pt-4 lg:pt-6 pb-2 sm:pb-3 px-2 sm:px-3 md:px-4 lg:px-6">
-        <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] sm:gap-4 lg:gap-6">
+
+        <div className="grid grid-cols-1 lg:grid-cols-[380px_1fr] gap-2">
           {/* Left: Job List */}
           <aside
-            className={`bg-white rounded-2xl shadow border border-gray-100 flex flex-col self-start min-h-[80vh] sm:min-h-[100vh] lg:min-h-[120vh] w-[365px] sm:p-3 md:p-4 lg:p-4 ${
-              isJobListOpen ? "block" : "hidden lg:flex"
-            }`}
+            className={`bg-white rounded-2xl shadow border border-gray-100 flex flex-col self-start min-h-[80vh] sm:min-h-[100vh] lg:min-h-[120vh] p-2 ${isJobListOpen ? "block" : "hidden lg:flex"
+              }`}
           >
             <div className="mb-2 sm:mb-3">
               <h2 className="text-lg sm:text-xl lg:text-2xl font-extrabold mb-1">
@@ -158,15 +156,14 @@ export default function JobDetailsPage() {
                     <button
                       key={job.job_id}
                       onClick={() => handleSelect(job.job_id)}
-                      className={`flex items-center gap-1.5 sm:gap-2 md:gap-3 rounded-lg px-1.5 sm:px-2 md:px-3 py-1.5 sm:py-2 md:py-3 text-left transition border-2 border-gray-200 hover:border-blue-200 hover:bg-blue-50 focus:outline-none relative ${
-                        selectedId === job.job_id.toString()
-                          ? "bg-blue-100 border-blue-400"
-                          : ""
-                      }`}
+                      className={`flex items-center gap-1.5 sm:gap-2 md:gap-3 rounded-lg px-1.5 sm:px-2 md:px-3 py-1.5 sm:py-2 md:py-3 text-left transition border-2 border-gray-200 hover:border-blue-200 hover:bg-blue-50 focus:outline-none relative ${selectedId === job.job_id.toString()
+                        ? "bg-blue-100 border-blue-400"
+                        : ""
+                        }`}
                     >
                       <img
                         src={
-                          getImageUrl(job.logo_url) ||
+                          job.logo_url ||
                           "https://via.placeholder.com/48x48?text=Logo"
                         }
                         alt="logo"
@@ -174,52 +171,56 @@ export default function JobDetailsPage() {
                       />
                       <div className="flex-1 min-w-0">
                         <div className="font-semibold text-xs sm:text-sm truncate mb-0.5">
-                          {job.jobProfile}
+                          {job.jobRole}
                         </div>
                         <div className="text-gray-500 text-xs truncate mb-1.5">
                           {job.company_name}
                         </div>
                         <div className="flex flex-wrap items-center gap-1">
-                          <Badge color="bg-gray-100 text-gray-700 hover:bg-gray-200">
-                            <span className="truncate text-xs">
-                              {job.location}
-                            </span>
-                          </Badge>
-                          {job.salary && (
-                            <Badge color="bg-emerald-100 text-emerald-600 hover:bg-emerald-200">
-                              <span className="truncate text-xs">
-                                ₹{job.salary}
-                              </span>
-                            </Badge>
-                          )}
+                          {
+                            job.company_location && (
+                              <Badge color="bg-gray-100 text-gray-700 hover:bg-gray-200">
+                                <span className="truncate text-xs">
+                                  {job.company_location}
+                                </span>
+                              </Badge>
+                            )
+                          }
+                       
+                          {
+                            job.experience && (
+                              <Badge color="bg-gray-100 text-gray-700 hover:bg-gray-200">
+                                <span className="truncate text-xs">
+                                  {job.experience}
+                                </span>
+                              </Badge>
+                            )
+                          }
                         </div>
                       </div>
                       <div className="flex flex-col items-end gap-1 min-w-[60px] sm:min-w-[70px] md:min-w-[80px] lg:min-w-[90px]">
                         <Badge
                           color={
-                            job.hiringStatus === "Actively Hiring"
+                            job.hiring_status === "Actively Hiring"
                               ? "bg-red-400 text-white hover:bg-red-500"
                               : "bg-green-400 text-white hover:bg-green-500"
                           }
-                          text={job.hiringStatus}
+                          text={job.hiring_status}
                           className="text-xs font-semibold shadow"
                         />
+                        <Badge color="bg-gray-100 text-gray-700 hover:bg-gray-200">
+                          {job.posted_days_ago}
+                        </Badge>
                         <Badge
                           color={
-                            job.matchPercentage > 0
+                            job.matchPercentage > 70
                               ? "bg-green-100 text-green-700 hover:bg-green-200"
-                              : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                              : "bg-yellow-400 text-gray-500 hover:bg-yellow-100"
                           }
                           text={`${job.matchPercentage || 0}% match`}
-                          className="text-xs border font-semibold"
+                          className="text-xs border border-gray-100"
                         />
-                        <Badge color="bg-gray-100 text-gray-700 hover:bg-gray-200">
-                          <span className="hidden sm:inline">Posted: </span>
-                          {job.postedDaysAgo === "Today" ||
-                          job.postedDaysAgo === 0
-                            ? "Today"
-                            : `${job.postedDaysAgo} days ago`}
-                        </Badge>
+
                       </div>
                     </button>
                   ))}
@@ -229,12 +230,7 @@ export default function JobDetailsPage() {
 
           {/* Right: Job Details */}
           <main
-            className={`bg-white rounded-2xl shadow border border-gray-100 p-2 sm:p-3 md:p-4 lg:p-6 flex flex-col relative w-full max-w-[760px] mx-auto 
-                          ${
-                            showFullDetails
-                              ? "min-h-auto"
-                              : "min-h-[80vh] sm:min-h-[100vh] lg:min-h-[120vh] max-h-[100vh] overflow-hidden"
-                          }`}
+            className={`bg-white rounded-2xl shadow border border-gray-100 p-4`}
           >
             {jobDetailsLoading ? (
               <Loader message="Loading job details..." />
@@ -256,13 +252,13 @@ export default function JobDetailsPage() {
                 {/* Header Section */}
                 <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-3 md:gap-4 mb-3 sm:mb-4 relative">
                   <img
-                    src={getImageUrl(selectedJobDetails.logo_url)}
+                    src={selectedJobDetails.logo_url}
                     alt="Company Logo"
-                    className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-lg object-contain bg-gray-100 border border-gray-200 flex-shrink-0 self-start"
+                    className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-lg object-contain bg-gray-100  flex-shrink-0 self-start"
                   />
                   <div className="flex-1 min-w-0">
                     <div className="font-bold text-base sm:text-lg md:text-xl leading-tight mb-1.5 truncate">
-                      {selectedJobDetails.jobProfile}
+                      {selectedJobDetails.job_role}
                     </div>
                     <div className="text-gray-600 text-sm sm:text-base mb-2 truncate">
                       {selectedJobDetails.company_name}
@@ -302,18 +298,11 @@ export default function JobDetailsPage() {
                           </span>
                         </Badge>
                       )}
-                      {selectedJobDetails.numberofApplicants && (
-                        <Badge color="bg-teal-100 text-teal-700 hover:bg-teal-200">
-                          <FaUsers className="text-teal-500 text-xs inline mr-1" />
-                          <span className="truncate text-xs sm:text-sm">
-                            {selectedJobDetails.numberOfApplicants} applicants
-                          </span>
-                        </Badge>
-                      )}
+                    
                       <Badge color="bg-teal-100 text-teal-700 hover:bg-teal-200">
                         <FaUsers className="text-teal-500 text-xs inline mr-1" />
                         <span className="truncate text-xs sm:text-sm">
-                          {selectedJobDetails.numberOfApplicants} applicants
+                                {selectedJobDetails.number_of_applicants} applicants
                         </span>
                       </Badge>
                       {selectedJobDetails.job_type && (
@@ -332,91 +321,14 @@ export default function JobDetailsPage() {
                     <Button
                       variant="secondary"
                       size="small"
-                      className={`font-semibold py-1.5 sm:py-2 px-2 sm:px-3 md:px-6 rounded-lg shadow-lg transition-colors duration-200 flex items-center gap-1.5 text-xs sm:text-sm ${
-                        applySuccess
-                          ? "bg-green-600 hover:bg-green-700 text-white"
-                          : "bg-blue-600 hover:bg-blue-700 text-white"
-                      }`}
-                      onClick={async () => {
-                        if (applySuccess) return; // Prevent multiple applications
-
-                        try {
-                          const result = await applyToJob(
-                            selectedJobDetails.job_id
-                          );
-                          if (result.success) {
-                            setApplicationStatus("success");
-                            // Auto-hide success message after 5 seconds
-                            setTimeout(() => {
-                              setApplicationStatus(null);
-                              resetState();
-                            }, 5000);
-                          } else {
-                            setApplicationStatus("error");
-                            // Auto-hide error message after 5 seconds
-                            setTimeout(() => {
-                              setApplicationStatus(null);
-                            }, 5000);
-                          }
-                        } catch (error) {
-                          console.error("Application failed:", error);
-                          setApplicationStatus("error");
-                          setTimeout(() => {
-                            setApplicationStatus(null);
-                          }, 5000);
-                        }
-                      }}
-                      loading={applyLoading}
-                      disabled={applyLoading || applySuccess}
+                      onClick={() => setShowApplyForm(true)}
+                      className={`font-semibold py-1.5 sm:py-2 px-2 sm:px-3 md:px-6 rounded-lg shadow-lg transition-colors duration-200 flex items-center gap-1.5 text-xs sm:text-sm`}
                     >
-                      {applyLoading ? (
-                        <span>Applying...</span>
-                      ) : applySuccess ? (
-                        <>
-                          <FaCheckCircle className="text-white text-xs" />
-                          <span className="hidden sm:inline">
-                            Applied Successfully
-                          </span>
-                          <span className="sm:hidden">Applied</span>
-                        </>
-                      ) : (
-                        <>
-                          <span className="hidden sm:inline">Apply Now</span>
-                          <span className="sm:hidden">Apply</span>
-                        </>
-                      )}
+                      Apply Now
                     </Button>
                   </div>
                 </div>
-
-                {/* Application Status Messages */}
-                {(applyError || applySuccess || applicationStatus) && (
-                  <div className="mb-4">
-                    {(applySuccess || applicationStatus === "success") && (
-                      <div className="bg-green-50 border border-green-200 rounded-lg p-3 flex items-center gap-2">
-                        <FaCheckCircle className="text-green-600 text-sm flex-shrink-0" />
-                        <span className="text-green-700 text-sm font-medium">
-                          Application submitted successfully! The employer will
-                          review your application.
-                        </span>
-                      </div>
-                    )}
-                    {(applyError || applicationStatus === "error") && (
-                      <div className="bg-red-50 border border-red-200 rounded-lg p-3 flex items-center gap-2">
-                        <FaQuestionCircle className="text-red-600 text-sm flex-shrink-0" />
-                        <div className="text-red-700 text-sm">
-                          <p className="font-medium">Application failed</p>
-                          <p className="text-xs mt-1">
-                            {applyError ||
-                              "Something went wrong. Please try again."}
-                          </p>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {/* Job Description */}
+                {/* Job Description - Always visible */}
                 <div className="mb-4">
                   <h3 className="text-base sm:text-lg font-bold mb-2 sm:mb-3 flex items-center gap-1.5">
                     <FaBriefcase className="text-blue-600 text-sm" />
@@ -429,220 +341,14 @@ export default function JobDetailsPage() {
                     </p>
                   </div>
                 </div>
-
-                {/* Job Details - Single Column */}
-                <div className="space-y-3 sm:space-y-4 mb-4">
-                  {/* Internship Details */}
-                  {selectedJobDetails.opportunity_type === "Internship" && (
-                    <div className="bg-blue-50 rounded-lg p-3 border border-blue-200">
-                      <h4 className="font-semibold text-blue-800 mb-2 flex items-center gap-1.5 text-sm">
-                        <FaCalendarAlt className="text-blue-600 text-xs" />
-                        Internship Details
-                      </h4>
-                      <div className="space-y-1.5 text-xs">
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Duration:</span>
-                          <span className="font-medium">
-                            {selectedJobDetails.internshipDuration}
-                          </span>
-                        </div>
-                        {selectedJobDetails.internship_start_date && (
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">Start Date:</span>
-                            <span className="font-medium">
-                              {new Date(
-                                selectedJobDetails.internship_start_date
-                              ).toLocaleDateString()}
-                            </span>
-                          </div>
-                        )}
-                        {selectedJobDetails.incentive_per_year && (
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">
-                              Incentive/Year:
-                            </span>
-                            <span className="font-medium">
-                              ₹{selectedJobDetails.incentive_per_year}
-                            </span>
-                          </div>
-                        )}
-                        {selectedJobDetails.stipend_type && (
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">Stipend Type:</span>
-                            <span className="font-medium">
-                              {selectedJobDetails.stipend_type}
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Company Information */}
-                  <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
-                    <h4 className="font-semibold text-gray-800 mb-2 flex items-center gap-1.5 text-sm">
-                      <FaBuilding className="text-gray-600 text-xs" />
-                      Company Information
-                    </h4>
-                    <div className="space-y-1.5 text-xs">
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Industry:</span>
-                        <span className="font-medium">
-                          {selectedJobDetails.companyIndustry}
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Location:</span>
-                        <span className="font-medium">
-                          {selectedJobDetails.companyLocation}
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Openings:</span>
-                        <span className="font-medium">
-                          {selectedJobDetails.number_of_openings}
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Status:</span>
-                        <span
-                          className={`font-medium ${
-                            selectedJobDetails.hiringStatus ===
-                            "Actively Hiring"
-                              ? "text-green-600"
-                              : "text-orange-600"
-                          }`}
-                        >
-                          {selectedJobDetails.hiringStatus}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Skills Required */}
-                  {selectedJobDetails.skillsRequired &&
-                    selectedJobDetails.skillsRequired.length > 0 && (
-                      <div className="bg-purple-50 rounded-lg p-3 border border-purple-200">
-                        <h4 className="font-semibold text-purple-800 mb-2 flex items-center gap-1.5 text-sm">
-                          <FaStar className="text-purple-600 text-xs" />
-                          Skills Required
-                        </h4>
-                        <div className="flex flex-wrap gap-1.5">
-                          {selectedJobDetails.skillsRequired.map(
-                            (skill, index) => (
-                              <Badge
-                                key={index}
-                                color="bg-purple-100 text-purple-700 hover:bg-purple-200"
-                                text={skill}
-                                className="text-xs border border-purple-200"
-                              />
-                            )
-                          )}
-                        </div>
-                        {selectedJobDetails.skill_required_note && (
-                          <p className="text-xs text-gray-600 mt-2 italic">
-                            {selectedJobDetails.skill_required_note}
-                          </p>
-                        )}
-                      </div>
-                    )}
-
-                  {/* Perks & Benefits */}
-                  {selectedJobDetails.perks &&
-                    selectedJobDetails.perks.length > 0 && (
-                      <div className="bg-yellow-50 rounded-lg p-3 border border-yellow-200">
-                        <h4 className="font-semibold text-yellow-800 mb-2 flex items-center gap-1.5 text-sm">
-                          <FaGift className="text-yellow-600 text-xs" />
-                          Perks & Benefits
-                        </h4>
-                        <div className="space-y-1.5">
-                          {selectedJobDetails.perks.map((perk, index) => (
-                            <div
-                              key={index}
-                              className="flex items-center gap-1.5 text-xs"
-                            >
-                              <FaCheckCircle className="text-yellow-600 text-xs" />
-                              <span>{perk}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                  {/* Educational Requirements */}
-                  <div className="bg-green-50 rounded-lg p-3 border border-green-200">
-                    <h4 className="font-semibold text-green-800 mb-2 flex items-center gap-1.5 text-sm">
-                      <FaGraduationCap className="text-green-600 text-xs" />
-                      Educational Requirements
-                    </h4>
-                    <div className="space-y-1.5 text-xs">
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">College:</span>
-                        <span className="font-medium">
-                          {selectedJobDetails.college_name}
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Course:</span>
-                        <span className="font-medium">
-                          {selectedJobDetails.course}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Candidate Preferences */}
-                  <div className="bg-indigo-50 rounded-lg p-3 border border-indigo-200">
-                    <h4 className="font-semibold text-indigo-800 mb-2 flex items-center gap-1.5 text-sm">
-                      <FaUserGraduate className="text-indigo-600 text-xs" />
-                      Candidate Preferences
-                    </h4>
-                    <div className="space-y-1.5 text-xs">
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Preferences:</span>
-                        <span className="font-medium">
-                          {selectedJobDetails.candidate_preferences}
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">
-                          Hiring Preferences:
-                        </span>
-                        <span className="font-medium">
-                          {selectedJobDetails.hiring_preferences}
-                        </span>
-                      </div>
-                      {selectedJobDetails.women_preferred && (
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">
-                            Women Preferred:
-                          </span>
-                          <span className="font-medium text-green-600 flex items-center gap-1">
-                            <FaVenus className="text-pink-500 text-xs" />
-                            Yes
-                          </span>
-                        </div>
-                      )}
-                      {selectedJobDetails.languages_known && (
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Languages:</span>
-                          <span className="font-medium">
-                            {selectedJobDetails.languages_known}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* About Company */}
+                {/* About Company - Always visible */}
                 {selectedJobDetails.aboutCompany && (
-                  <div className="mb-4">
+                  <div className="mb-4 bg-blue-50 rounded-lg p-4 border border-blue-100">
                     <h3 className="text-base sm:text-lg font-bold mb-2 sm:mb-3 flex items-center gap-1.5">
-                      <FaIndustry className="text-blue-600 text-sm" />
-                      About the Company
+                      <FaBuilding className="text-blue-600 text-sm" />
+                      About {selectedJobDetails.company_name}
                     </h3>
-                    <div className="bg-gray-50 rounded-lg p-3 sm:p-4 border border-gray-200">
+                    <div className="prose prose-xs sm:prose-sm max-w-none">
                       <p className="text-gray-700 leading-relaxed text-sm">
                         {selectedJobDetails.aboutCompany}
                       </p>
@@ -650,297 +356,468 @@ export default function JobDetailsPage() {
                   </div>
                 )}
 
-                {/* Screening Questions */}
-                {selectedJobDetails.screening_questions &&
-                  selectedJobDetails.screening_questions.length > 0 && (
+                {/* Expandable Content Container */}
+                <div className="relative">
+                  <div className={`transition-all duration-300 ${isExpanded ? 'max-h-none' : 'max-h-96 overflow-hidden'}`}>
+                    {/* Job Details - Single Column */}
+                    <div className="space-y-3 sm:space-y-4 mb-4">
+                      {/* Internship Details */}
+                      {selectedJobDetails.opportunity_type === "Internship" && (
+                        <div className="bg-blue-50 rounded-lg p-3 border border-blue-200">
+                          <h4 className="font-semibold text-blue-800 mb-2 flex items-center gap-1.5 text-sm">
+                            <FaCalendarAlt className="text-blue-600 text-xs" />
+                            Internship Details
+                          </h4>
+                          <div className="space-y-1.5 text-xs">
+                            <div className="flex justify-between">
+                              <span className="text-gray-600">Duration:</span>
+                              <span className="font-medium">
+                                {selectedJobDetails.internshipDuration}
+                              </span>
+                            </div>
+                            {selectedJobDetails.internship_start_date && (
+                              <div className="flex justify-between">
+                                <span className="text-gray-600">Start Date:</span>
+                                <span className="font-medium">
+                                  {new Date(
+                                    selectedJobDetails.internship_start_date
+                                  ).toLocaleDateString()}
+                                </span>
+                              </div>
+                            )}
+                            {selectedJobDetails.incentive_per_year && (
+                              <div className="flex justify-between">
+                                <span className="text-gray-600">
+                                  Incentive/Year:
+                                </span>
+                                <span className="font-medium">
+                                 {selectedJobDetails.incentive_per_year}
+                                </span>
+                              </div>
+                            )}
+                            {selectedJobDetails.stipend_type && (
+                              <div className="flex justify-between">
+                                <span className="text-gray-600">Stipend Type:</span>
+                                <span className="font-medium">
+                                  {selectedJobDetails.stipend_type}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Company Information */}
+                      <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
+                        <h4 className="font-semibold text-gray-800 mb-2 flex items-center gap-1.5 text-sm">
+                          <FaBuilding className="text-gray-600 text-xs" />
+                          Company Information
+                        </h4>
+                        <div className="space-y-1.5 text-xs">
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">Industry:</span>
+                            <span className="font-medium">
+                              {selectedJobDetails.companyIndustry}
+                            </span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">Location:</span>
+                            <span className="font-medium">
+                              {selectedJobDetails.companyLocation}
+                            </span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">Openings:</span>
+                            <span className="font-medium">
+                              {selectedJobDetails.number_of_openings}
+                            </span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">Status:</span>
+                            <span
+                              className={`font-medium ${selectedJobDetails.hiringStatus ===
+                                "Actively Hiring"
+                                ? "text-green-600"
+                                : "text-orange-600"
+                                }`}
+                            >
+                              {selectedJobDetails.hiringStatus}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Skills Required */}
+                      {selectedJobDetails.skillsRequired &&
+                        selectedJobDetails.skillsRequired.length > 0 && (
+                          <div className="bg-purple-50 rounded-lg p-3 border border-purple-200">
+                            <h4 className="font-semibold text-purple-800 mb-2 flex items-center gap-1.5 text-sm">
+                              <FaStar className="text-purple-600 text-xs" />
+                              Skills Required
+                            </h4>
+                            <div className="flex flex-wrap gap-1.5">
+                              {selectedJobDetails.skillsRequired.map(
+                                (skill, index) => (
+                                  <Badge
+                                    key={index}
+                                    color="bg-purple-100 text-purple-700 hover:bg-purple-200"
+                                    text={skill}
+                                    className="text-xs border border-purple-200"
+                                  />
+                                )
+                              )}
+                            </div>
+                            {selectedJobDetails.skill_required_note && (
+                              <p className="text-xs text-gray-600 mt-2 italic">
+                                {selectedJobDetails.skill_required_note}
+                              </p>
+                            )}
+                          </div>
+                        )}
+
+                      {/* Perks & Benefits */}
+                      {selectedJobDetails.perks &&
+                        selectedJobDetails.perks.length > 0 && (
+                          <div className="bg-yellow-50 rounded-lg p-3 border border-yellow-200">
+                            <h4 className="font-semibold text-yellow-800 mb-2 flex items-center gap-1.5 text-sm">
+                              <FaGift className="text-yellow-600 text-xs" />
+                              Perks & Benefits
+                            </h4>
+                            <div className="space-y-1.5">
+                              {selectedJobDetails.perks.map((perk, index) => (
+                                <div
+                                  key={index}
+                                  className="flex items-center gap-1.5 text-xs"
+                                >
+                                  <FaCheckCircle className="text-yellow-600 text-xs" />
+                                  <span>{perk}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                      {/* Eligible Cities */}
+                      {selectedJobDetails.eligible_cities && selectedJobDetails.eligible_cities.length > 0 && (
+                        <div className="bg-blue-50 rounded-lg p-3 border border-blue-200">
+                          <h4 className="font-semibold text-blue-800 mb-2 flex items-center gap-1.5 text-sm">
+                            <FaMapMarkerAlt className="text-blue-600 text-xs" />
+                            Eligible Cities
+                          </h4>
+                          <div className="flex flex-wrap gap-1.5">
+                            {selectedJobDetails.eligible_cities.map((city, index) => (
+                              <Badge
+                                key={`city-${index}`}
+                                color="bg-blue-100 text-blue-700 hover:bg-blue-200"
+                                text={city.name}
+                                className="text-xs border border-blue-200"
+                              />
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Eligible Colleges */}
+                      {selectedJobDetails.eligible_colleges && selectedJobDetails.eligible_colleges.length > 0 && (
+                        <div className="bg-purple-50 rounded-lg p-3 border border-purple-200">
+                          <h4 className="font-semibold text-purple-800 mb-2 flex items-center gap-1.5 text-sm">
+                            <FaBuilding className="text-purple-600 text-xs" />
+                            Eligible Colleges
+                          </h4>
+                          <div className="flex flex-wrap gap-1.5">
+                            {selectedJobDetails.eligible_colleges.map((college, index) => (
+                              <Badge
+                                key={`college-${index}`}
+                                color="bg-purple-100 text-purple-700 hover:bg-purple-200"
+                                text={college.name}
+                                className="text-xs border border-purple-200"
+                              />
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Eligible Courses */}
+                      {selectedJobDetails.eligible_courses && selectedJobDetails.eligible_courses.length > 0 && (
+                        <div className="bg-green-50 rounded-lg p-3 border border-green-200">
+                          <h4 className="font-semibold text-green-800 mb-2 flex items-center gap-1.5 text-sm">
+                            <FaGraduationCap className="text-green-600 text-xs" />
+                            Eligible Courses
+                          </h4>
+                          <div className="flex flex-wrap gap-1.5">
+                            {selectedJobDetails.eligible_courses.map((course, index) => (
+                              <Badge
+                                key={`course-${index}`}
+                                color="bg-green-100 text-green-700 hover:bg-green-200"
+                                text={course.name}
+                                className="text-xs border border-green-200"
+                              />
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      {/* Candidate Preferences */}
+                      <div className="bg-indigo-50 rounded-lg p-3 border border-indigo-200">
+                        <h4 className="font-semibold text-indigo-800 mb-2 flex items-center gap-1.5 text-sm">
+                          <FaUserGraduate className="text-indigo-600 text-xs" />
+                          Candidate Preferences
+                        </h4>
+                        <div className="space-y-1.5 text-xs">
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">Preferences:</span>
+                            <span className="font-medium">
+                              {selectedJobDetails.candidate_preferences}
+                            </span>
+                          </div>
+                          {/* <div className="flex justify-between">
+                            <span className="text-gray-600">
+                              Hiring Preferences:
+                            </span>
+                            <span className="font-medium">
+                              {selectedJobDetails.hiring_preferences}
+                            </span>
+                          </div> */}
+                          {selectedJobDetails.women_preferred && (
+                            <div className="flex justify-between">
+                              <span className="text-gray-600">
+                                Women Preferred:
+                              </span>
+                              <span className="font-medium text-green-600 flex items-center gap-1">
+                                <FaVenus className="text-pink-500 text-xs" />
+                                Yes
+                              </span>
+                            </div>
+                          )}
+                          {selectedJobDetails.languages_known && (
+                            <div className="flex justify-between">
+                              <span className="text-gray-600">Languages:</span>
+                              <span className="font-medium">
+                                {selectedJobDetails.languages_known}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Screening Questions */}
+                    {selectedJobDetails.screening_questions &&
+                      selectedJobDetails.screening_questions.length > 0 && (
+                        <div className="mb-4">
+                          <h3 className="text-base sm:text-lg font-bold mb-2 sm:mb-3 flex items-center gap-1.5">
+                            <FaQuestionCircle className="text-blue-600 text-sm" />
+                            Screening Questions
+                          </h3>
+                          <div className="space-y-2">
+                            {selectedJobDetails.screening_questions.map(
+                              (question, index) => (
+                                <div
+                                  key={index}
+                                  className="bg-orange-50 rounded-lg p-3 border border-orange-200"
+                                >
+                                  <div className="flex items-start gap-2">
+                                    <span className="bg-orange-100 text-orange-700 text-xs font-semibold rounded-full px-1.5 py-0.5 mt-0.5">
+                                      Q{index + 1}
+                                    </span>
+                                    <p className="text-gray-700 text-xs">
+                                      {question}
+                                    </p>
+                                  </div>
+                                </div>
+                              )
+                            )}
+                          </div>
+                        </div>
+                      )}
+
+                    {/* Recruiter Information */}
                     <div className="mb-4">
                       <h3 className="text-base sm:text-lg font-bold mb-2 sm:mb-3 flex items-center gap-1.5">
-                        <FaQuestionCircle className="text-blue-600 text-sm" />
-                        Screening Questions
+                        <FaUserTie className="text-blue-600 text-sm" />
+                        Recruiter Information
                       </h3>
-                      <div className="space-y-2">
-                        {selectedJobDetails.screening_questions.map(
-                          (question, index) => (
-                            <div
-                              key={index}
-                              className="bg-orange-50 rounded-lg p-3 border border-orange-200"
-                            >
-                              <div className="flex items-start gap-2">
-                                <span className="bg-orange-100 text-orange-700 text-xs font-semibold rounded-full px-1.5 py-0.5 mt-0.5">
-                                  Q{index + 1}
-                                </span>
-                                <p className="text-gray-700 text-xs">
-                                  {question}
-                                </p>
-                              </div>
+                      <div className="bg-blue-50 rounded-lg p-3 sm:p-4 border border-blue-200">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div className="flex items-center gap-2">
+                            <img
+                              src={selectedJobDetails.recruiter_profile_pic}
+                              alt="Recruiter"
+                              className="w-10 h-10 rounded-full object-cover border border-gray-200"
+                            />
+                            <div>
+                              <h4 className="font-semibold text-gray-800 text-sm">
+                                {selectedJobDetails.recruiter_full_name}
+                              </h4>
+                              <p className="text-xs text-gray-600">
+                                {selectedJobDetails.recruiterDesignationName}
+                              </p>
                             </div>
-                          )
-                        )}
+                          </div>
+                          <div className="space-y-1.5 text-xs">
+                            <div className="flex items-center gap-1.5">
+                              <FaEnvelope className="text-gray-400 text-xs" />
+                              <span className="text-gray-700">
+                                {selectedJobDetails.recruiter_email}
+                              </span>
+                            </div>
+                            {selectedJobDetails.phone_contact && (
+                              <div className="flex items-center gap-1.5">
+                                <FaPhone className="text-gray-400 text-xs" />
+                                <span className="text-gray-700">
+                                  {selectedJobDetails.phone_contact}
+                                </span>
+                              </div>
+                            )}
+                            {selectedJobDetails.alternate_phone_number && (
+                              <div className="flex items-center gap-1.5">
+                                <FaPhone className="text-gray-400 text-xs" />
+                                <span className="text-gray-700">
+                                  {selectedJobDetails.alternate_phone_number}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
                       </div>
                     </div>
+
+                    {/* Verification Status */}
+                    <div className="mb-4">
+                      <h3 className="text-base sm:text-lg font-bold mb-2 sm:mb-3 flex items-center gap-1.5">
+                        <FaCheckCircle className="text-blue-600 text-sm" />
+                        Verification Status
+                      </h3>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                        <div
+                          className={`flex items-center gap-1.5 p-2 rounded-lg ${selectedJobDetails.is_email_verified
+                            ? "bg-green-50 border border-green-200"
+                            : "bg-red-50 border border-red-200"
+                            }`}
+                        >
+                          <FaEnvelope
+                            className={`text-xs ${selectedJobDetails.is_email_verified
+                              ? "text-green-600"
+                              : "text-red-600"
+                              }`}
+                          />
+                          <span
+                            className={`text-xs font-medium ${selectedJobDetails.is_email_verified
+                              ? "text-green-700"
+                              : "text-red-700"
+                              }`}
+                          >
+                            Email{" "}
+                            {selectedJobDetails.is_email_verified
+                              ? "Verified"
+                              : "Not Verified"}
+                          </span>
+                        </div>
+                        <div
+                          className={`flex items-center gap-1.5 p-2 rounded-lg ${selectedJobDetails.is_phone_verified
+                            ? "bg-green-50 border border-green-200"
+                            : "bg-red-50 border border-red-200"
+                            }`}
+                        >
+                          <FaPhone
+                            className={`text-xs ${selectedJobDetails.is_phone_verified
+                              ? "text-green-600"
+                              : "text-red-600"
+                              }`}
+                          />
+                          <span
+                            className={`text-xs font-medium ${selectedJobDetails.is_phone_verified
+                              ? "text-green-700"
+                              : "text-red-700"
+                              }`}
+                          >
+                            Phone{" "}
+                            {selectedJobDetails.is_phone_verified
+                              ? "Verified"
+                              : "Not Verified"}
+                          </span>
+                        </div>
+                        <div
+                          className={`flex items-center gap-1.5 p-2 rounded-lg ${selectedJobDetails.is_gst_verified
+                            ? "bg-green-50 border border-green-200"
+                            : "bg-red-50 border border-red-200"
+                            }`}
+                        >
+                          <FaBuilding
+                            className={`text-xs ${selectedJobDetails.is_gst_verified
+                              ? "text-green-600"
+                              : "text-red-600"
+                              }`}
+                          />
+                          <span
+                            className={`text-xs font-medium ${selectedJobDetails.is_gst_verified
+                              ? "text-green-700"
+                              : "text-red-700"
+                              }`}
+                          >
+                            GST{" "}
+                            {selectedJobDetails.is_gst_verified
+                              ? "Verified"
+                              : "Not Verified"}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  {/* Gradient Fade Effect - Only visible when content is collapsed */}
+                  {!isExpanded && (
+                    <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-white via-white to-transparent pointer-events-none"></div>
                   )}
-
-                {/* Recruiter Information */}
-                <div className="mb-4">
-                  <h3 className="text-base sm:text-lg font-bold mb-2 sm:mb-3 flex items-center gap-1.5">
-                    <FaUserTie className="text-blue-600 text-sm" />
-                    Recruiter Information
-                  </h3>
-                  <div className="bg-blue-50 rounded-lg p-3 sm:p-4 border border-blue-200">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <div className="flex items-center gap-2">
-                        <img
-                          src={getImageUrl(
-                            selectedJobDetails.recruiterProfilePic
-                          )}
-                          alt="Recruiter"
-                          className="w-10 h-10 rounded-full object-cover border border-gray-200"
-                        />
-                        <div>
-                          <h4 className="font-semibold text-gray-800 text-sm">
-                            {selectedJobDetails.recruiter_name}
-                          </h4>
-                          <p className="text-xs text-gray-600">
-                            {selectedJobDetails.recruiterDesignation}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="space-y-1.5 text-xs">
-                        <div className="flex items-center gap-1.5">
-                          <FaEnvelope className="text-gray-400 text-xs" />
-                          <span className="text-gray-700">
-                            {selectedJobDetails.recruiter_email}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-1.5">
-                          <FaPhone className="text-gray-400 text-xs" />
-                          <span className="text-gray-700">
-                            {selectedJobDetails.recruiter_phone}
-                          </span>
-                        </div>
-                        {selectedJobDetails.phone_contact && (
-                          <div className="flex items-center gap-1.5">
-                            <FaPhone className="text-gray-400 text-xs" />
-                            <span className="text-gray-700">
-                              {selectedJobDetails.phone_contact}
-                            </span>
-                          </div>
-                        )}
-                        {selectedJobDetails.alternate_phone_number && (
-                          <div className="flex items-center gap-1.5">
-                            <FaPhone className="text-gray-400 text-xs" />
-                            <span className="text-gray-700">
-                              {selectedJobDetails.alternate_phone_number}
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
                 </div>
-
-                {/* Verification Status */}
-                <div className="mb-4">
-                  <h3 className="text-base sm:text-lg font-bold mb-2 sm:mb-3 flex items-center gap-1.5">
-                    <FaCheckCircle className="text-blue-600 text-sm" />
-                    Verification Status
-                  </h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-                    <div
-                      className={`flex items-center gap-1.5 p-2 rounded-lg ${
-                        selectedJobDetails.is_email_verified
-                          ? "bg-green-50 border border-green-200"
-                          : "bg-red-50 border border-red-200"
-                      }`}
-                    >
-                      <FaEnvelope
-                        className={`text-xs ${
-                          selectedJobDetails.is_email_verified
-                            ? "text-green-600"
-                            : "text-red-600"
-                        }`}
-                      />
-                      <span
-                        className={`text-xs font-medium ${
-                          selectedJobDetails.is_email_verified
-                            ? "text-green-700"
-                            : "text-red-700"
-                        }`}
-                      >
-                        Email{" "}
-                        {selectedJobDetails.is_email_verified
-                          ? "Verified"
-                          : "Not Verified"}
-                      </span>
-                    </div>
-                    <div
-                      className={`flex items-center gap-1.5 p-2 rounded-lg ${
-                        selectedJobDetails.is_phone_verified
-                          ? "bg-green-50 border border-green-200"
-                          : "bg-red-50 border border-red-200"
-                      }`}
-                    >
-                      <FaPhone
-                        className={`text-xs ${
-                          selectedJobDetails.is_phone_verified
-                            ? "text-green-600"
-                            : "text-red-600"
-                        }`}
-                      />
-                      <span
-                        className={`text-xs font-medium ${
-                          selectedJobDetails.is_phone_verified
-                            ? "text-green-700"
-                            : "text-red-700"
-                        }`}
-                      >
-                        Phone{" "}
-                        {selectedJobDetails.is_phone_verified
-                          ? "Verified"
-                          : "Not Verified"}
-                      </span>
-                    </div>
-                    <div
-                      className={`flex items-center gap-1.5 p-2 rounded-lg ${
-                        selectedJobDetails.is_gst_verified
-                          ? "bg-green-50 border border-green-200"
-                          : "bg-red-50 border border-red-200"
-                      }`}
-                    >
-                      <FaBuilding
-                        className={`text-xs ${
-                          selectedJobDetails.is_gst_verified
-                            ? "text-green-600"
-                            : "text-red-600"
-                        }`}
-                      />
-                      <span
-                        className={`text-xs font-medium ${
-                          selectedJobDetails.is_gst_verified
-                            ? "text-green-700"
-                            : "text-red-700"
-                        }`}
-                      >
-                        GST{" "}
-                        {selectedJobDetails.is_gst_verified
-                          ? "Verified"
-                          : "Not Verified"}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <br />
                 {/* Show More/Less Button */}
-                {!showFullDetails && (
-                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-white via-white to-transparent h-10 flex items-end justify-center pb-1">
-                    <Button
-                      onClick={() => setShowFullDetails(true)}
-                      variant="outline"
-                      size="small"
-                      className="bg-gray-100 hover:bg-gray-200 text-gray-600 font-normal py-1 px-3 rounded-full shadow-sm border border-gray-300 transition-all duration-200 flex items-center gap-1 text-xs hover:shadow-md hover:scale-105"
-                    >
-                      Show more
-                      <svg
-                        className="w-3 h-3"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M19 9l-7 7-7-7"
-                        />
-                      </svg>
-                    </Button>
-                  </div>
-                )}
+                <div className="flex justify-center mb-4">
+                  <Button
+                    onClick={toggleExpanded}
+                    variant="outline"
+                    size="default"
+                    className="flex items-center gap-2 bg-white hover:bg-gray-50 border-2 border-gray-200 hover:border-blue-300 transition-all duration-200 px-6 py-2 rounded-full font-medium text-gray-700 hover:text-blue-600"
+                  >
+                    {isExpanded ? (
+                      <>
+                        <span>Show Less</span>
+                        <FaChevronUp className="text-sm" />
+                      </>
+                    ) : (
+                      <>
+                        <span>Show More Details</span>
+                        <FaChevronDown className="text-sm" />
+                      </>
+                    )}
+                  </Button>
+                </div>
 
-                {showFullDetails && (
-                  <div className="mt-4 flex flex-col items-center gap-3">
-                    <Button
-                      onClick={() => setShowFullDetails(false)}
-                      variant="outline"
-                      size="small"
-                      className="bg-gray-100 hover:bg-gray-200 text-gray-600 font-medium py-1.5 px-4 rounded-full shadow-sm border border-gray-200 transition-all duration-200 flex items-center gap-1.5 text-sm hover:shadow-md hover:scale-105"
-                    >
-                      Show less
-                      <svg
-                        className="w-3.5 h-3.5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M5 15l7-7 7 7"
-                        />
-                      </svg>
-                    </Button>
-
-                    {/* Apply Button moved below Show Less */}
-                    <Button
-                      variant="secondary"
-                      size="large"
-                      className={`font-semibold py-2 px-6 rounded-lg shadow-lg transition-colors duration-200 flex items-center gap-1.5 text-base mt-2 ${
-                        applySuccess
-                          ? "bg-green-600 hover:bg-green-700 text-white"
-                          : "bg-blue-600 hover:bg-blue-700 text-white"
-                      }`}
-                      onClick={async () => {
-                        if (applySuccess) return; // Prevent multiple applications
-
-                        try {
-                          const result = await applyToJob(
-                            selectedJobDetails.job_id
-                          );
-                          if (result.success) {
-                            setApplicationStatus("success");
-                            setTimeout(() => {
-                              setApplicationStatus(null);
-                              resetState();
-                            }, 5000);
-                          } else {
-                            setApplicationStatus("error");
-                            setTimeout(() => {
-                              setApplicationStatus(null);
-                            }, 5000);
-                          }
-                        } catch (error) {
-                          console.error("Application failed:", error);
-                          setApplicationStatus("error");
-                          setTimeout(() => {
-                            setApplicationStatus(null);
-                          }, 5000);
-                        }
-                      }}
-                      loading={applyLoading}
-                      disabled={applyLoading || applySuccess}
-                    >
-                      {applyLoading ? (
-                        <span>Applying...</span>
-                      ) : applySuccess ? (
-                        <>
-                          <FaCheckCircle className="text-white text-xs" />
-                          <span>Applied Successfully</span>
-                        </>
-                      ) : (
-                        <>
-                          <span>Apply Now</span>
-                        </>
-                      )}
-                    </Button>
-                  </div>
-                )}
               </>
             )}
           </main>
         </div>
       </div>
+
+      {/* Apply Form Popup */}
+      {showApplyForm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg w-full max-w-2xl relative max-h-[90vh] overflow-y-auto">
+            <button
+              onClick={() => setShowApplyForm(false)}
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+            >
+              <FaTimes className="w-5 h-5" />
+            </button>
+            <ApplyForm
+              jobId={job_id}
+              onClose={() => setShowApplyForm(false)}
+              onSubmit={(formData) => {
+                console.log('Form submitted:', formData);
+                // The actual submission is handled by the useApplyToJob hook in the ApplyForm component
+                setShowApplyForm(false);
+              }}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
-}
+};

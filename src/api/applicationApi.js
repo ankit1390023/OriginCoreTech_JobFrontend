@@ -5,34 +5,16 @@ const BASE_URL = import.meta.env.VITE_BASE_URL;
 export const applicationApi = {
   applyForJob: async (job_id, applicationData, token) => {
     try {
-      // Validate required fields before making the request
-      const requiredFields = ["name", "email", "resume"];
-      for (const field of requiredFields) {
-        if (!applicationData[field]) {
-          return {
-            success: false,
-            message: `Missing required field: ${field}`,
-          };
-        }
-      }
-
-      // Construct request payload
       const requestData = {
         ...applicationData,
         job_id,
       };
-
-      const apiUrl = `${BASE_URL}/jobpost/apply/${job_id}`;
-      console.log("API URL:", apiUrl);
-      console.log("Request data:", requestData);
-
-      const response = await axios.post(apiUrl, requestData, {
+      const response = await axios.post(`${BASE_URL}/jobpost/apply/${job_id}`, requestData, {
         headers: {
           "Content-Type": "application/json",
-          ...(token && { Authorization: `Bearer ${token}` }),
+          Authorization: `Bearer ${token}`,
         },
       });
-
       return response.data;
     } catch (error) {
       console.error("Application error:", error);

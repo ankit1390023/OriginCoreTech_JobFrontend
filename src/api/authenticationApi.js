@@ -80,3 +80,26 @@ export const updateAadhaarDetails = async (aadhaar_number, aadhaar_card_file, to
       }
     }
   };
+
+  //Function to reset password with forgot password otp
+  export const forgotPassword = async (phoneNumber, token) => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/mobileotp/sendotp`,
+        { phoneNumber }, // body
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      if (error.response) {
+        return error.response.data;
+      } else {
+        return { message: "Something went wrong" };
+      }
+    }
+  };

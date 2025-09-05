@@ -55,9 +55,10 @@ export default function FeedRightSide1() {
       setLoading(true);
       setError(null);
       try {
-        const result = await userDetailsApi.getUserDetails(user.id);
+        const result = await userDetailsApi.getMiniUserDetails(user.id, token);
+        console.log("FEED right side 1", result);
         if (result.success) {
-          setProfile(result.data.publicProfile);
+          setProfile(result.data.userDetail);
         } else {
           setError(result.error || "Failed to fetch user details.");
           setProfile(null);
@@ -111,11 +112,11 @@ export default function FeedRightSide1() {
         ></div>
         <div className="absolute left-2 top-10 w-24 h-24">
           <img
-            src={dummyProfile3}
+            src={profile.user_profile_pic ? profile.user_profile_pic : dummyProfile3}
             alt="Profile"
             className="w-full h-full rounded-full border-4 border-white object-cover"
           />
-        </div>
+        </div>s
       </div>
 
       {/* Profile Info */}

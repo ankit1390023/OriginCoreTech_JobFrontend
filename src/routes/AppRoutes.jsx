@@ -69,14 +69,14 @@ import RecruiterRightProfile from "../pages/recruiter/dashboard/RecruiterRightPr
 
 // Protected Route Wrapper Component
 const ProtectedRoute = ({ children, allowedRoles }) => {
-  const { isAuthenticated, loading, userRole } = useSelector((state) => state.auth);
+  const { isAuthenticated, loading, user } = useSelector((state) => state.auth);
   const location = useLocation();
 
   if (!isAuthenticated) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  if (allowedRoles && !allowedRoles.includes(userRole)) {
+  if (allowedRoles && !allowedRoles.includes(user.user_role)) {
     return <Navigate to="/unauthorized" replace />;
   }
 
@@ -85,7 +85,7 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
 
 // Public Route Wrapper Component
 const PublicRoute = ({ children }) => {
-  const { isAuthenticated } = useSelector((state) => state.auth);
+  const { isAuthenticated, user } = useSelector((state) => state.auth);
   const location = useLocation();
 
   // Don't redirect if it's the OTP verification page
@@ -93,9 +93,18 @@ const PublicRoute = ({ children }) => {
     return children;
   }
 
-  // For all other public routes, redirect to student-fill-account-details if authenticated
+  // For all other public routes, redirect based on user role if authenticated
   if (isAuthenticated) {
-    return <Navigate to="/student-fill-account-details" replace />;
+    switch (user?.user_role) {
+      case 'STUDENT':
+        return <Navigate to="/student-fill-account-details" replace />;
+      case 'COMPANY':
+        return <Navigate to="/recruiter-profile" replace />;
+      case 'UNIVERSITY':
+        return <Navigate to="/university-profile" replace />;
+      default:
+        return <Navigate to="/" replace />;
+    }
   }
 
   return children;
@@ -177,23 +186,19 @@ export const appRouter = createBrowserRouter([
   {
     path: "/recruiter-post-job-intern-details",
     element: (
-      <ProtectedRoute>
+      <ProtectedRoute allowedRoles={['COMPANY']}>
         <RecruiterPostJobInternDetails />
       </ProtectedRoute>
     ),
   },
   {
     path: "/all-jobs",
-    element: (
-      <ProtectedRoute>
-        <AllJObs />
-      </ProtectedRoute>
-    ),
+    element: <AllJObs />
   },
   {
     path: "/jobs/:job_id",
     element: (
-      <ProtectedRoute>
+      <ProtectedRoute allowedRoles={['STUDENT']}>
         <JobDetailsPage />
       </ProtectedRoute>
     ),
@@ -201,7 +206,7 @@ export const appRouter = createBrowserRouter([
   {
     path: "/feed",
     element: (
-      <ProtectedRoute>
+      <ProtectedRoute allowedRoles={['STUDENT', 'COMPANY', 'UNIVERSITY']}>
         <FeedPage />
       </ProtectedRoute>
     ),
@@ -209,7 +214,7 @@ export const appRouter = createBrowserRouter([
   {
     path: "/feed-my-profile",
     element: (
-      <ProtectedRoute>
+      <ProtectedRoute allowedRoles={['STUDENT']}>
         <FeedMyProfile />
       </ProtectedRoute>
     ),
@@ -217,7 +222,7 @@ export const appRouter = createBrowserRouter([
   {
     path: "/feed-view",
     element: (
-      <ProtectedRoute>
+      <ProtectedRoute allowedRoles={['STUDENT']}>
         <FeedView />
       </ProtectedRoute>
     ),
@@ -233,7 +238,7 @@ export const appRouter = createBrowserRouter([
   {
     path: "/feed-terms",
     element: (
-      <ProtectedRoute>
+      <ProtectedRoute allowedRoles={['STUDENT', 'COMPANY', 'UNIVERSITY']}>
         <FeedTerms />
       </ProtectedRoute>
     ),
@@ -241,7 +246,7 @@ export const appRouter = createBrowserRouter([
   {
     path: "/feed-resume",
     element: (
-      <ProtectedRoute>
+      <ProtectedRoute allowedRoles={['STUDENT']}>
         <FeedResume />
       </ProtectedRoute>
     ),
@@ -249,91 +254,107 @@ export const appRouter = createBrowserRouter([
   {
     path: "/feed-ticket",
     element: (
-      <ProtectedRoute allowedRoles={['STUDENT', 'RECRUITER', 'UNIVERSITY']}>
+      <ProtectedRoute allowedRoles={['STUDENT', 'COMPANY', 'UNIVERSITY']}>
         <FeedTicket />
       </ProtectedRoute>
     ),
   },
   {
-    path: "feed-profile",
+    path: "/feed-profile",
     element: (
-      <ProtectedRoute allowedRoles={['STUDENT', 'RECRUITER', 'UNIVERSITY']}>
+      <ProtectedRoute allowedRoles={['STUDENT', 'COMPANY', 'UNIVERSITY']}>
         <Feedprofile />
       </ProtectedRoute>
     ),
   },
   {
-    path: "feed-change-email",
+    path: "/feed-change-email",
     element: (
-      <ProtectedRoute allowedRoles={['STUDENT', 'RECRUITER', 'UNIVERSITY']}>
+      <ProtectedRoute allowedRoles={['STUDENT', 'COMPANY', 'UNIVERSITY']}>
         <FeedChangeEmail />
       </ProtectedRoute>
     ),
   },
   {
-    path: "feed-change-password",
+    path: "/feed-change-password",
     element: (
-      <ProtectedRoute allowedRoles={['STUDENT', 'RECRUITER', 'UNIVERSITY']}>
+      <ProtectedRoute allowedRoles={['STUDENT', 'COMPANY', 'UNIVERSITY']}>
         <FeedChangePassword />
       </ProtectedRoute>
     ),
   },
   {
-    path: "feed-your-skills",
+    path: "/feed-your-skills",
     element: (
-      <ProtectedRoute>
+      <ProtectedRoute allowedRoles={['STUDENT']}>
         <FeedYourSkills />
       </ProtectedRoute>
     ),
   },
   {
-    path: "feed-your-education",
+    path: "/feed-your-education",
     element: (
-      <ProtectedRoute>
+      <ProtectedRoute allowedRoles={['STUDENT']}>
         <FeedYourEducation />
       </ProtectedRoute>
     ),
   },
   {
-    path: "feed-your-experience",
+    path: "/feed-your-experience",
     element: (
-      <ProtectedRoute>
+      <ProtectedRoute allowedRoles={['STUDENT']}>
         <FeedYourExprience />
       </ProtectedRoute>
     ),
   },
 
   {
-    path: "feed-dashboard",
+    path: "/feed-dashboard",
     element: (
-      <ProtectedRoute>
+      <ProtectedRoute allowedRoles={['STUDENT']}>
         <FeedDashBoard />
       </ProtectedRoute>
     ),
   },
   {
-    path: "feed-authentication",
+    path: "/feed-authentication",
     element: (
-      <ProtectedRoute>
+      <ProtectedRoute allowedRoles={['STUDENT']}>
         <FeedAuthentication />
       </ProtectedRoute>
     ),
   },
   {
     path: "/feed-faq",
-    element: <FeedFaq />,
+    element: (
+      <ProtectedRoute allowedRoles={['STUDENT']}>
+        <FeedFaq />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/application-mymassage",
-    element: <MyMassage />,
+    element: (
+      <ProtectedRoute allowedRoles={['STUDENT']}>
+        <MyMassage />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/application-mynotification",
-    element: <MyNotification />,
+    element: (
+      <ProtectedRoute allowedRoles={['STUDENT']}>
+        <MyNotification />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/feed-dashboard",
-    element: <FeedDashBoard />,
+    element: (
+      <ProtectedRoute allowedRoles={['STUDENT']}>
+        <FeedDashBoard />
+      </ProtectedRoute>
+    ),
   },
 
 
@@ -341,148 +362,260 @@ export const appRouter = createBrowserRouter([
 
   {
     path: "/recruiter-profile",
-    element: <RecruiterRightProfile />,
+    element: (
+      <ProtectedRoute allowedRoles={['COMPANY']}>
+        <CompanyRecruiterProfile />
+      </ProtectedRoute>
+    ),
   },
 
   {
     path: "/recruiter-dashboard",
-    element: <RecruiterDashboard />,
+    element: (
+      <ProtectedRoute allowedRoles={['COMPANY']}>
+        <RecruiterDashboard />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/recruiter-total-job-post",
-    element: <RecruiterTotalJobPost />,
+    element: (
+      <ProtectedRoute allowedRoles={['COMPANY']}>
+        <RecruiterTotalJobPost />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/recruiter-application",
-    element: <RecruiterApplication />,
+    element: (
+      <ProtectedRoute allowedRoles={['COMPANY']}>
+        <RecruiterApplication />
+      </ProtectedRoute>
+    ),
   },
 
   {
     path: "/recruiter-application-details",
-    element: <RecruiterApplicationDetails />,
+    element: (
+      <ProtectedRoute allowedRoles={['COMPANY']}>
+        <RecruiterApplicationDetails />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/recruiter-send-assignment",
-    element: <RecruiterSendAssignment />,
+    element: (
+      <ProtectedRoute allowedRoles={['COMPANY']}>
+        <RecruiterSendAssignment />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/recruiter-interview",
-    element: <RecruiterInterview />,
-  },
-  {
-    path: "/recruiter-approval",
-    element: <RecruiterApproval />,
+    element: (
+      <ProtectedRoute allowedRoles={['COMPANY']}>
+        <RecruiterApproval />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/recruiter-pipeline",
-    element: <RecruitePipeline />,
+    element: (
+      <ProtectedRoute allowedRoles={['COMPANY']}>
+        <RecruitePipeline />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/recruiter-upcoming-interview",
-    element: <RecruiterUpcommingInterview />,
+    element: (
+      <ProtectedRoute allowedRoles={['COMPANY']}>
+        <RecruiterUpcommingInterview />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/recruiter-pending-task",
-    element: <RecruiterPendingTask />,
+    element: (
+      <ProtectedRoute allowedRoles={['COMPANY']}>
+        <RecruiterPendingTask />
+      </ProtectedRoute>
+    ),
   },
 
   {
     path: "/recruiter-visiter",
-    element: <RecruiterProfile />,
+    element: (
+      <ProtectedRoute allowedRoles={['COMPANY']}>
+        <RecruiterProfile />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/recruiter-terms",
-    element: <RecruiterTerms />,
-  },
-  {
-    path: "/recruiter-view",
-    element: <RecruiterView />,
+    element: (
+      <ProtectedRoute allowedRoles={['COMPANY']}>
+        <RecruiterTerms />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/recruiter-payment",
-    element: <RecruiterPayment />,
+    element: (
+      <ProtectedRoute allowedRoles={['COMPANY']}>
+        <RecruiterPayment />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/recruiter-pricing",
-    element: <RecruiterPricing />,
+    element: (
+      <ProtectedRoute allowedRoles={['COMPANY']}>
+        <RecruiterPricing />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/recruiter-payment-method",
-    element: <RecruiterPaymentMethod />,
+    element: (
+      <ProtectedRoute allowedRoles={['COMPANY']}>
+        <RecruiterPaymentMethod />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/recruiter-payment-password",
-    element: <RecruiterChangePassword />,
+    element: (
+      <ProtectedRoute allowedRoles={['COMPANY']}>
+        <RecruiterChangePassword />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/recruiter-change-email",
-    element: <RecruiterChangeEmail />,
+    element: (
+      <ProtectedRoute allowedRoles={['COMPANY']}>
+        <RecruiterChangeEmail />
+      </ProtectedRoute>
+    ),
   },
 
   // University related routes
 
   {
     path: "/university-fill-details",
-    element: <UniversityFillDetails />,
+    element: (
+      <ProtectedRoute allowedRoles={['UNIVERSITY']}>
+        <UniversityFillDetails />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/university-profile",
-    element: <UniversityProfile />,
+    element: (
+      <ProtectedRoute allowedRoles={['UNIVERSITY']}>
+        <UniversityProfile />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/university-change-email",
-    element: <UniversityChangeEmail />,
-  },
-  {
-    path: "/university-change-password",
-    element: <UniversityChangePassword />,
+    element: (
+      <ProtectedRoute allowedRoles={['UNIVERSITY']}>
+        <UniversityChangeEmail />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/university-faq",
-    element: <UniversityFaq />,
+    element: (
+      <ProtectedRoute allowedRoles={['UNIVERSITY']}>
+        <UniversityFaq />
+      </ProtectedRoute>
+    ),
   },
 
   {
     path: "/university-terms",
-    element: <UniversityTerms />,
+    element: (
+      <ProtectedRoute allowedRoles={['UNIVERSITY']}>
+        <UniversityTerms />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/university-view",
-    element: <UniversityView />,
+    element: (
+      <ProtectedRoute allowedRoles={['UNIVERSITY']}>
+        <UniversityView />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/university-ticket",
-    element: <UniversityTicket />,
+    element: (
+      <ProtectedRoute allowedRoles={['UNIVERSITY']}>
+        <UniversityTicket />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/university-pricing",
-    element: <UniversityPricing />,
+    element: (
+      <ProtectedRoute allowedRoles={['UNIVERSITY']}>
+        <UniversityPricing />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/university-payment",
-    element: <UniversityPayment />,
+    element: (
+      <ProtectedRoute allowedRoles={['UNIVERSITY']}>
+        <UniversityPayment />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/university-payment-method",
-    element: <UniversityPaymentMethod />,
+    element: (
+      <ProtectedRoute allowedRoles={['UNIVERSITY']}>
+        <UniversityPaymentMethod />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/university-approval",
-    element: <UniversityApproval />,
+    element: (
+      <ProtectedRoute allowedRoles={['UNIVERSITY']}>
+        <UniversityApproval />
+      </ProtectedRoute>
+    ),
   },
 
   // Ai prediction related routes
 
   {
     path: "/ai-prediction",
-    element: <AiProfile />,
+    element: (
+      <ProtectedRoute allowedRoles={['STUDENT']}>
+        <AiProfile />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/ai-prediction1",
-    element: <AiProfile1 />,
+    element: (
+      <ProtectedRoute allowedRoles={['STUDENT']}>
+        <AiProfile1 />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/all-jobs-part",
-    element: <AllJObsPart />,
+    element: (
+      <ProtectedRoute allowedRoles={['STUDENT']}>
+        <AllJObsPart />
+      </ProtectedRoute>
+    ),
   },
 ]);

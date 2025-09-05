@@ -85,21 +85,21 @@ export default function FeedRightProfile() {
 
   return (
     <div>
-      <div className="bg-white shadow border rounded p-4">
+      <div className="p-4 bg-white border rounded shadow">
         {/* Cover + Profile */}
         <div className="relative h-20 mb-12">
           <div
-            className="w-full h-20 rounded-t bg-cover bg-center"
+            className="w-full h-20 bg-center bg-cover rounded-t"
             style={{ backgroundImage: `url(${cover})` }}
           ></div>
-          {/* <div className="absolute bg-blue-600 border rounded-full flex items-center justify-center w-6 h-6 top-2 right-2">
-                        <FaCamera className='text-white w-3 h-3' />
+          {/* <div className="absolute flex items-center justify-center w-6 h-6 bg-blue-600 border rounded-full top-2 right-2">
+                        <FaCamera className='w-3 h-3 text-white' />
                     </div> */}
-          <div className="absolute left-2 top-10 w-24 h-24">
+          <div className="absolute w-24 h-24 left-2 top-10">
             <img
-              src={dummyProfile3}
+              src={ dummyProfile3}
               alt="Profile"
-              className="w-full h-full rounded-full border-4 border-white object-cover"
+              className="object-cover w-full h-full border-4 border-white rounded-full"
             />
           </div>
         </div>
@@ -108,7 +108,7 @@ export default function FeedRightProfile() {
           {loading ? (
             <div>Loading profile...</div>
           ) : error ? (
-            <div className="text-red-500 text-xs mt-1">{error}</div>
+            <div className="mt-1 text-xs text-red-500">{error}</div>
           ) : profile ? (
             <>
               <h2 className="text-lg font-bold text-gray-800">
@@ -116,17 +116,17 @@ export default function FeedRightProfile() {
               </h2>
               <p className="text-sm text-gray-500">{user?.email}</p>
 
-              <p className="text-sm text-gray-700 font-semibold mt-1">
+              <p className="mt-1 text-sm font-semibold text-gray-700">
                 {profile.user_type}
               </p>
-              <p className="text-sm text-gray-600 mt-2">{profile.about_us}</p>
+              <p className="mt-2 text-sm text-gray-600">{profile.about_us}</p>
             </>
           ) : null}
           <div className="flex gap-2 mt-4">
-            <button className="bg-gray-100 text-blue-600 text-sm px-3 py-1 rounded">
+            <button className="px-3 py-1 text-sm text-blue-600 bg-gray-100 rounded">
               {loading ? "Loading..." : `${followersCount} followers`}
             </button>
-            <button className="bg-gray-100 text-blue-600 text-sm px-3 py-1 rounded">
+            <button className="px-3 py-1 text-sm text-blue-600 bg-gray-100 rounded">
               {loading ? "Loading..." : `${followingCount} following`}
             </button>
           </div>
@@ -135,10 +135,10 @@ export default function FeedRightProfile() {
 
         {/* Dashboard */}
         <div className="mt-4">
-          <h3 className="font-semibold text-gray-800 border-t pt-4">
+          <h3 className="pt-4 font-semibold text-gray-800 border-t">
             Your Dashboard
           </h3>
-          <div className="flex justify-between text-yellow-500 font-bold text-lg mt-2">
+          <div className="flex justify-between mt-2 text-lg font-bold text-yellow-500">
             <div>
               <p className="text-2xl">367</p>
               <p className="text-xs text-gray-500">Views today</p>
@@ -152,13 +152,13 @@ export default function FeedRightProfile() {
               <p className="text-xs text-gray-500">Search appearance</p>
             </div>
           </div>
-          <p className="text-sm text-blue-600 text-center cursor-pointer mt-2">
+          <p className="mt-2 text-sm text-center text-blue-600 cursor-pointer">
             See more
           </p>
         </div>
         {/* Profile Visitors */}
         <div className="mt-4">
-          <h3 className="font-semibold text-gray-800 border-t pt-4">
+          <h3 className="pt-4 font-semibold text-gray-800 border-t">
             Profile Visitors
           </h3>
           <div className="grid grid-cols-4 gap-2 mt-2">
@@ -167,13 +167,13 @@ export default function FeedRightProfile() {
                 <img
                   src={visitor.img}
                   alt={visitor.name}
-                  className="mx-auto object-cover w-12 h-12 rounded"
+                  className="object-cover w-12 h-12 mx-auto rounded"
                 />
-                <p className="text-xs text-gray-600 mt-1">{visitor.name}</p>
+                <p className="mt-1 text-xs text-gray-600">{visitor.name}</p>
               </div>
             ))}
           </div>
-          <p className="text-sm text-blue-600 text-center cursor-pointer mt-2">
+          <p className="mt-2 text-sm text-center text-blue-600 cursor-pointer">
             See more
           </p>
         </div>

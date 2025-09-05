@@ -13,7 +13,6 @@ import FeedRightProfile from "./FeedRightProfile.jsx";
 import feedApi from "../../../api/feedApi";
 import uploadImageApi from "../../../api/uploadImageApi";
 import useFeedApi from "../../../hooks/useFeedApi";
-import { useNavigate } from "react-router-dom";
 
 export default function FeedPage() {
   const { token, user } = useSelector((state) => state.auth);
@@ -156,15 +155,15 @@ export default function FeedPage() {
   };
 
   const handleShare = async (post) => {
-    try {
-      const encodedId = btoa(post.id.toString());
-      const postUrl = `${window.location.origin}/feed/${encodedId}`;
+  try {
+    const encodedId = btoa(post.id.toString());
+    const postUrl = `${window.location.origin}/feed/${encodedId}`;
 
-      const shareData = {
-        title: post.title || "Check out this post!",
-        text: `${post.description?.slice(0, 120)}...`, // preview text
-        url: postUrl,
-      };
+    const shareData = {
+      title: post.title || "Check out this post!",
+      text: `${post.description?.slice(0, 120)}...`, // preview text
+      url: postUrl,
+    };
 
       if (navigator.share) {
         // Native share sheet (WhatsApp, FB, LinkedIn, etc.)
@@ -180,13 +179,7 @@ export default function FeedPage() {
       console.error("Error sharing:", err);
     }
   };
-  const navigate = useNavigate();
 
-  const handleOpenPost = (postId) => {
-    const SECRET = process.env.REACT_APP_POST_SALT_SECRET; // same as backend
-    const encodedId = btoa(`${postId}:${SECRET}`);
-    navigate(`/feed/${encodedId}`);
-  };
 
   return (
     <MainLayout>
@@ -196,54 +189,7 @@ export default function FeedPage() {
 
         {/* Main content section */}
         <section className="w-full max-w-[750px] p-2 mx-auto">
-          {/* Create post card */}
-          <div className="flex flex-col gap-3 p-3 mb-4 bg-white rounded-lg shadow-sm sm:p-4">
-            <div className="flex items-center w-full gap-2">
-              <img
-                src={profile}
-                alt="Profile"
-                className="flex-shrink-0 w-10 h-10 rounded-full sm:w-12 sm:h-12"
-              />
-              <Input
-                type="text"
-                size="large"
-                placeholder="Share something..."
-                className="flex-1 h-12 border border-gray-400 rounded px-3 sm:px-4 w-full sm:min-w-[300px] md:min-w-[400px] lg:min-w-[500px] xl:min-w-[600px]"
-                value={caption}
-                onChange={(e) => setCaption(e.target.value)}
-              />
-            </div>
-            <div className="flex items-center gap-2 pl-12 sm:gap-3 sm:pl-14">
-              <label className="flex items-center gap-2 p-1 transition-colors rounded cursor-pointer hover:bg-gray-50">
-                <img src={addMediaIcon} alt="Add media" className="w-4 h-4" />
-                <span className="text-xs text-gray-500 sm:text-sm">
-                  Add media
-                </span>
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={handleImageChange}
-                />
-              </label>
-              {imagePreview && (
-                <img
-                  src={imagePreview}
-                  alt="Preview"
-                  className="object-cover w-12 h-12 ml-2 rounded-lg sm:w-16 sm:h-16"
-                />
-              )}
-            </div>
-            <Button
-              className="px-3 py-2 ml-auto text-sm text-white transition-colors bg-blue-600 rounded-lg sm:px-4 hover:bg-blue-700 sm:text-base"
-              size="small"
-              onClick={handleFeedPost}
-              disabled={uploadingImage}
-            >
-              {uploadingImage ? "Posting..." : "Post"}
-            </Button>
-          </div>
-
+          
           {/* Loading and error states */}
           {loading && (
             <div className="py-8 text-center text-gray-600">Loading...</div>
@@ -265,17 +211,23 @@ export default function FeedPage() {
                 key={post.id}
                 className="p-3 mb-4 bg-white border rounded-lg shadow-sm sm:p-4"
               >
+                {/* Post header */}
                 <header className="flex items-center gap-2 mb-3 sm:gap-3">
-                  {/* Profile Picture */}
                   <img
                     src={
-                      post.User?.profile_pic ? post.User.profile_pic : profile // fallback image
+                      post.profile_pic
+                        ? post.profile_pic.startsWith("data:")
+                          ? post.profile_pic
+                          : `data:image/jpeg;base64,${post.profile_pic}`
+                        : post.User?.profile_pic
+                        ? post.User.profile_pic.startsWith("data:")
+                          ? post.User.profile_pic
+                          : `data:image/jpeg;base64,${post.User.profile_pic}`
+                        : profile
                     }
                     alt={post.User?.first_name || "User"}
                     className="flex-shrink-0 object-cover w-8 h-8 rounded-full sm:w-10 sm:h-10"
                   />
-
-                  {/* User Info */}
                   <div className="flex-1 min-w-0">
                     <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-2">
                       <span className="text-sm font-semibold truncate">
@@ -289,8 +241,6 @@ export default function FeedPage() {
                       {post.user_role}
                     </div>
                   </div>
-
-                  {/* Options Button */}
                   <span className="p-1 text-xs text-gray-500 rounded cursor-pointer hover:bg-gray-100">
                     <FaEllipsisH />
                   </span>
@@ -341,6 +291,8 @@ export default function FeedPage() {
                     <LiaShareSolid className="text-lg sm:text-xl" />
                     <span className="mt-1 text-xs sm:text-sm">Share</span>
                   </div>
+
+                  
 
                   <div className="flex flex-col items-center p-2 transition-colors rounded-lg cursor-pointer hover:bg-gray-50">
                     <TbSend className="text-lg sm:text-xl" />

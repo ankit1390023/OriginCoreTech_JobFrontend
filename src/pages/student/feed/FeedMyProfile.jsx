@@ -67,7 +67,7 @@ const FeedMyProfile = () => {
     };
 
     fetchProfileData();
-  }, [token, getUserPublicProfile]);
+  }, [token, getUserPublicProfile, user?.id]);
 
   // Fetch followers and following data on component mount
   useEffect(() => {
@@ -83,7 +83,7 @@ const FeedMyProfile = () => {
         checkFollowStatus(profile._id);
       }
     }
-  }, [token, profile, checkFollowStatus]);
+  }, [token, profile, checkFollowStatus, user?.id]);
 
   return (
     <MainLayout>
@@ -95,7 +95,9 @@ const FeedMyProfile = () => {
           <div className="text-center space-y-4 mb-6">
             <div className="relative inline-block">
               <img
-                src={profile?.profileImage || "/src/assets/dummyProfile1.jpg"}
+                src={
+                  profile?.user_profile_pic || "/src/assets/dummyProfile1.jpg"
+                }
                 alt={
                   profile?.first_name
                     ? `${profile.first_name} ${profile.last_name}`
@@ -128,7 +130,7 @@ const FeedMyProfile = () => {
                 </>
               ) : null}
             </div>
-            
+
             <div className="flex flex-wrap items-center gap-2 mt-4 justify-center">
               <span className="bg-gray-100 text-blue-600 text-sm px-3 py-1 rounded">
                 {followersCount} followers
@@ -162,6 +164,7 @@ const FeedMyProfile = () => {
                       <img
                         src={
                           activity.user?.profileImage ||
+                          profile?.user_profile_pic ||
                           "/src/assets/profile1.png"
                         }
                         alt={activity.user?.first_name || "User"}
@@ -269,9 +272,12 @@ const FeedMyProfile = () => {
                     >
                       <div className="flex items-start gap-3">
                         <img
-                          src={experience.logo}
+                          src={experience.logo || "/src/assets/WebsiteLogo.svg"}
                           alt={experience.company}
                           className="w-12 h-12 object-contain"
+                          onError={(e) => {
+                            e.target.src = "/src/assets/WebsiteLogo.svg";
+                          }}
                         />
                         <div className="flex-1">
                           <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between">
@@ -340,9 +346,12 @@ const FeedMyProfile = () => {
                     >
                       <div className="flex items-start gap-3">
                         <img
-                          src={education.logo}
+                          src={education.logo || "/src/assets/WebsiteLogo.svg"}
                           alt={education.institution}
                           className="w-10 h-10 rounded-full object-cover"
+                          onError={(e) => {
+                            e.target.src = "/src/assets/WebsiteLogo.svg";
+                          }}
                         />
                         <div className="flex-1">
                           <div className="flex flex-col sm:flex-row sm:justify-between">
@@ -396,34 +405,42 @@ const FeedMyProfile = () => {
             ) : (
               <>
                 <div className="space-y-4">
-                  {displayedSkills.map((skill, index) => {
-                    // Handle both formatted skill objects and raw API response objects
-                    const skillName =
-                      skill.skill ||
-                      skill.domain ||
-                      skill.name ||
-                      "Unknown Skill";
-                    const skillCategory = skill.category || "Technical Skills";
-                    const skillDescription =
-                      skill.description ||
-                      (skill.subSkills && Array.isArray(skill.subSkills)
-                        ? `Sub-skills: ${skill.subSkills.join(", ")}`
-                        : `Proficient in ${skillName}`);
-                    const skillLogo =
-                      skill.logo ||
-                      skill.certificate_image ||
-                      "/src/assets/WebsiteLogo.svg";
-                    const skillId = skill.id || skill._id || index;
+                  {displayedSkills.map((skill) => {
+                    // Extract authority names safely
+                    let authorityText = "";
+                    if (skill.authority) {
+                      if (Array.isArray(skill.authority)) {
+                        // Handle array of authority objects
+                        authorityText = skill.authority
+                          .map((auth) => {
+                            if (typeof auth === "object" && auth !== null) {
+                              return auth.name || "Unknown Authority";
+                            }
+                            return String(auth);
+                          })
+                          .join(", ");
+                      } else if (
+                        typeof skill.authority === "object" &&
+                        skill.authority !== null
+                      ) {
+                        // Handle single authority object
+                        authorityText =
+                          skill.authority.name || String(skill.authority);
+                      } else {
+                        // Handle string or other types
+                        authorityText = String(skill.authority);
+                      }
+                    }
 
                     return (
                       <div
-                        key={skillId}
+                        key={skill.id}
                         className="bg-white border rounded-lg p-4"
                       >
                         <div className="flex items-start gap-3">
                           <img
-                            src={skillLogo}
-                            alt={skillName}
+                            src={skill.authority.logo_url || "/src/assets/WebsiteLogo.svg"}
+                            alt={skill.skill || skill.domain || "Skill"}
                             className="w-10 h-10 rounded-full object-cover"
                             onError={(e) => {
                               e.target.src = "/src/assets/WebsiteLogo.svg";
@@ -433,19 +450,26 @@ const FeedMyProfile = () => {
                             <div className="flex flex-col sm:flex-row sm:justify-between">
                               <div>
                                 <h3 className="font-semibold text-gray-900">
-                                  {skillName}
+                                  {skill.skill ||
+                                    skill.domain ||
+                                    "Unknown Skill"}
                                 </h3>
-                                <p className="text-gray-600">{skillCategory}</p>
-                                {skill.authority && (
+                                <p className="text-gray-600">
+                                  {skill.category || "Technical Skills"}
+                                </p>
+                                {authorityText && (
                                   <p className="text-gray-500 text-xs">
-                                    Authority: {skill.authority}
+                                    Authority: {authorityText}
                                   </p>
                                 )}
                               </div>
                               <FaEllipsisH className="text-gray-400 mt-2 sm:mt-0 cursor-pointer" />
                             </div>
                             <p className="text-gray-700 text-sm mt-2 leading-relaxed line-clamp-2">
-                              {skillDescription}
+                              {skill.description ||
+                                `Proficient in ${
+                                  skill.skill || skill.domain || "this skill"
+                                }`}
                             </p>
                           </div>
                         </div>

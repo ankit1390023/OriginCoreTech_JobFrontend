@@ -1140,12 +1140,10 @@ export default function RecruiterPostJobInternDetails() {
           : new Date().toISOString().split("T")[0],
       }),
 
-      ...(formData.opportunity_type === "Project" && {
-        // Project-specific transformations if needed
-        internship_start_date: formData.is_custom_internship_date
-          ? formData.internship_from_date
-          : new Date().toISOString().split("T")[0],
-      }),
+      ...(formData.opportunity_type === "Project" &&
+        {
+          // Project-specific transformations if needed
+        }),
     };
     
     return apiData;

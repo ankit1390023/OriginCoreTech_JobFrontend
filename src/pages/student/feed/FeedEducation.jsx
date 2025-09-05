@@ -54,7 +54,7 @@ useEffect(() => {
 
     try {
       console.log("Fetching user details for ID:", user.id);
-      const result = await userDetailsApi.getUserPublicProfile(user.id,token);
+      const result = await userDetailsApi.getUserDetails(user.id);
 
       console.log("API Response:", result);
 
