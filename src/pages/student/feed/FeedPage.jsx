@@ -7,6 +7,7 @@ import { BiCommentDetail, BiLike } from "react-icons/bi";
 import { FaEllipsisH } from "react-icons/fa";
 import { TbSend } from "react-icons/tb";
 import { LiaShareSolid } from "react-icons/lia";
+import dummyProfile3 from "../../../assets/dummyProfile3.jpg";
 import Button from "../../../components/ui/Button";
 import Input from "../../../components/ui/Input";
 import FeedRightProfile from "./FeedRightProfile.jsx";
