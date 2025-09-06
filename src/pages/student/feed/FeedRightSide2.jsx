@@ -6,6 +6,7 @@ import dummyProfile2 from "../../../assets/dummyProfile2.jpg";
 import dummyProfile3 from "../../../assets/dummyProfile3.jpg";
 import uberLogo from "../../../assets/uber-logo.png";
 import carDashboard from "../../../assets/car-dashboard.png";
+import { getImageUrl } from "../../../../utils.js";
 
 import { FaEye } from 'react-icons/fa';
 
@@ -69,9 +70,9 @@ const FeedRightSide2 = () => {
   };
 
   return (
-    <div className="flex justify-center bg-gray-100 min-h-screen items-start">
+    <div className="flex items-start justify-center min-h-screen bg-gray-100">
       <div
-        className="bg-white shadow-md flex flex-col mt-4"
+        className="flex flex-col mt-4 bg-white shadow-md"
         style={{
           width: "375px",
           height: "725px",
@@ -87,16 +88,16 @@ const FeedRightSide2 = () => {
 
         {/* Profile Visitors */}
         <div>
-          <h2 className="font-semibold text-lg">Profile Visitors</h2>
+          <h2 className="text-lg font-semibold">Profile Visitors</h2>
           <div className="grid grid-cols-4 gap-3 mt-3">
             {profileVisitors.map((visitor, index) => (
               <div key={index} className="flex flex-col items-center">
                 <img
                   src={visitor.img}
                   alt={visitor.name}
-                  className="w-14 h-14 rounded-md object-cover"
+                  className="object-cover rounded-md w-14 h-14"
                 />
-                <p className="text-xs text-gray-700 mt-1 text-center">
+                <p className="mt-1 text-xs text-center text-gray-700">
                   {visitor.name}
                 </p>
               </div>
@@ -104,7 +105,7 @@ const FeedRightSide2 = () => {
           </div>
           <button
             onClick={() => navigate("/recruiter-see-more-visitors")}
-            className="text-blue-500 text-sm mt-2 hover:underline block text-center"
+            className="block mt-2 text-sm text-center text-blue-500 hover:underline"
           >
             See more
           </button>
@@ -114,8 +115,8 @@ const FeedRightSide2 = () => {
 
         {/* Dashboard Stats */}
         <div>
-          <h2 className="font-semibold text-lg">Your Dashboard</h2>
-          <div className="grid grid-cols-3 text-center mt-3">
+          <h2 className="text-lg font-semibold">Your Dashboard</h2>
+          <div className="grid grid-cols-3 mt-3 text-center">
             {stats.map((stat, idx) => (
               <div key={idx}>
                 <p className="text-2xl font-bold text-yellow-600">{stat.value}</p>
@@ -125,7 +126,7 @@ const FeedRightSide2 = () => {
           </div>
           <button
             onClick={() => navigate("/recruiter-see-more-dashboard-stats")}
-            className="text-blue-500 text-sm mt-2 hover:underline block text-center"
+            className="block mt-2 text-sm text-center text-blue-500 hover:underline"
           >
             See more
           </button>
@@ -135,7 +136,7 @@ const FeedRightSide2 = () => {
 
         {/* Course List */}
                   <div className="flex flex-col gap-6 mt-4">
-                  <h1 className="text-lg font-bold text-gray-900 mb-2">Your Like thease</h1>
+                  <h1 className="mb-2 text-lg font-bold text-gray-900">Your Like thease</h1>
                     {courses.map((course) => (
                       <div
                         key={course.id}
@@ -146,14 +147,14 @@ const FeedRightSide2 = () => {
                           <img
                             src="https://via.placeholder.com/50"
                             alt="course"
-                            className="w-12 h-12 rounded-md object-cover"
+                            className="object-cover w-12 h-12 rounded-md"
                           />
                           <div>
                             <h3 className="text-base font-semibold">{course.title}</h3>
                             <p className="text-xs text-gray-100">{course.learners}</p>
                           </div>
-                          <div className="ml-auto flex items-center gap-2 bg-gray-100 px-2 py-1 rounded-full">
-                            <FaEye className="text-gray-600 text-xs" />
+                          <div className="flex items-center gap-2 px-2 py-1 ml-auto bg-gray-100 rounded-full">
+                            <FaEye className="text-xs text-gray-600" />
                             <span className="text-[10px] text-gray-700">Skills</span>
                           </div>
                         </div>
@@ -165,7 +166,7 @@ const FeedRightSide2 = () => {
                           >
                             {course.tag}
                           </span>
-                          <span className="bg-white text-gray-800 px-3 py-1 rounded-md text-xs">
+                          <span className="px-3 py-1 text-xs text-gray-800 bg-white rounded-md">
                             {course.duration}
                           </span>
                         </div>

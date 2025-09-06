@@ -8,6 +8,7 @@ import uploadImageApi from "../../../api/uploadImageApi";
 import { userDetailsApi } from "../../../api/userDetailsApi";
 import { updateProfileLocally } from '../../../redux/feature/profileSlice';
 import { useDispatch } from 'react-redux';
+import { getImageUrl } from "../../../../utils.js";
 
 
 const FeedView = () => {
@@ -422,7 +423,7 @@ const getFileNameFromUrl = (url) => {
             <div className="relative">
               <div className="w-20 h-20 overflow-hidden border-4 border-gray-200 rounded-full sm:w-24 sm:h-24">
                 <img
-                  src={profileImage}
+                  src={getImageUrl(profileImage)}
                   alt="Profile"
                   className="object-cover w-full h-full"
                 />

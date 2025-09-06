@@ -85,27 +85,34 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
 
 // Public Route Wrapper Component
 const PublicRoute = ({ children }) => {
-  const { isAuthenticated, user } = useSelector((state) => state.auth);
-  const location = useLocation();
+    const { isAuthenticated, user } = useSelector((state) => state.auth);
+    const location = useLocation();
 
-  // Don't redirect if it's the OTP verification page
-  if (location.pathname === '/signup-verify-otp-email') {
-    return children;
-  }
+    // 👇 Check if user is in signup → OTP flow
+    const isInSignupFlow =
+      location.state?.inSignupFlow === true ||
+      sessionStorage.getItem("inSignupFlow") === "true";
 
-  // For all other public routes, redirect based on user role if authenticated
-  if (isAuthenticated) {
-    switch (user?.user_role) {
-      case 'STUDENT':
-        return <Navigate to="/student-fill-account-details" replace />;
-      case 'COMPANY':
-        return <Navigate to="/recruiter-profile" replace />;
-      case 'UNIVERSITY':
-        return <Navigate to="/university-profile" replace />;
-      default:
-        return <Navigate to="/" replace />;
+    // Don't redirect if:
+    // - it's the OTP page, OR
+    // - user just came from signup and is in OTP flow
+    if (location.pathname === "/signup-verify-otp-email" || isInSignupFlow) {
+      return children;
     }
-  }
+
+    // Redirect authenticated users as before
+    if (isAuthenticated) {
+      switch (user?.user_role) {
+        case "STUDENT":
+          return <Navigate to="/student-fill-account-details" replace />;
+        case "COMPANY":
+          return <Navigate to="/recruiter-profile" replace />;
+        case "UNIVERSITY":
+          return <Navigate to="/university-profile" replace />;
+        default:
+          return <Navigate to="/" replace />;
+      }
+    }
 
   return children;
 };

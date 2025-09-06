@@ -13,6 +13,7 @@ import { Link } from "react-router-dom";
 import { useGetJobApi } from "../../../hooks/useGetJobApi";
 import { useState } from "react";
 import { Input, Button, Loader, Checkbox, Badge } from "../../../components/ui";
+import { getImageUrl } from "../../../../utils.js";
 
 
 export default function AllJObs() {
@@ -27,24 +28,24 @@ export default function AllJObs() {
   return (
     <div className="bg-[#f5f6f7] min-h-screen">
       <Header />
-      <div className="max-w-7xl mx-auto pt-2 sm:pt-3 md:pt-4 lg:pt-6 pb-4 sm:pb-6 px-3 sm:px-4 md:px-6 lg:px-8">
+      <div className="px-3 pt-2 pb-4 mx-auto max-w-7xl sm:pt-3 md:pt-4 lg:pt-6 sm:pb-6 sm:px-4 md:px-6 lg:px-8">
         {/* Mobile Filter Toggle */}
-        <div className="lg:hidden mb-3 sm:mb-4">
+        <div className="mb-3 lg:hidden sm:mb-4">
           <Button
             onClick={toggleFilters}
             variant="outline"
             size="default"
-            className="flex items-center gap-2 bg-white rounded-xl px-4 py-3 shadow border border-gray-200 w-full justify-center hover:bg-gray-50 transition-colors"
+            className="flex items-center justify-center w-full gap-2 px-4 py-3 transition-colors bg-white border border-gray-200 shadow rounded-xl hover:bg-gray-50"
           >
             {isFiltersOpen ? (
               <>
-                <FaTimes className="text-gray-600 text-sm" />
-                <span className="font-medium text-sm">Close Filters</span>
+                <FaTimes className="text-sm text-gray-600" />
+                <span className="text-sm font-medium">Close Filters</span>
               </>
             ) : (
               <>
-                <FaFilter className="text-gray-600 text-sm" />
-                <span className="font-medium text-sm">Show Filters</span>
+                <FaFilter className="text-sm text-gray-600" />
+                <span className="text-sm font-medium">Show Filters</span>
               </>
             )}
           </Button>
@@ -61,10 +62,10 @@ export default function AllJObs() {
             }`}
           >
             <div>
-              <h2 className="text-lg sm:text-xl lg:text-2xl font-extrabold mb-2 text-gray-900">
+              <h2 className="mb-2 text-lg font-extrabold text-gray-900 sm:text-xl lg:text-2xl">
                 Job Filters
               </h2>
-              <p className="text-gray-500 text-sm">
+              <p className="text-sm text-gray-500">
                 Help us match you with the best career opportunities
               </p>
             </div>
@@ -73,7 +74,7 @@ export default function AllJObs() {
               <div className="flex flex-col gap-2">
                 <Input
                   label={
-                    <span className="text-sm font-semibold flex items-center gap-2 text-gray-700">
+                    <span className="flex items-center gap-2 text-sm font-semibold text-gray-700">
                       <FaBriefcase className="text-gray-400" /> Profile
                     </span>
                   }
@@ -87,7 +88,7 @@ export default function AllJObs() {
               <div className="flex flex-col gap-2">
                 <Input
                   label={
-                    <span className="text-sm font-semibold flex items-center gap-2 text-gray-700">
+                    <span className="flex items-center gap-2 text-sm font-semibold text-gray-700">
                       <FaMapMarkerAlt className="text-gray-400" /> Location
                     </span>
                   }
@@ -96,14 +97,14 @@ export default function AllJObs() {
                   size="small"
                   className="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300"
                 />
-                <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
                   <Checkbox
                     label="Remote"
-                    className="flex items-center gap-2 text-sm font-medium p-0 border-0 bg-transparent"
+                    className="flex items-center gap-2 p-0 text-sm font-medium bg-transparent border-0"
                   />
                   <Checkbox
                     label="Hybrid"
-                    className="flex items-center gap-2 text-sm font-medium p-0 border-0 bg-transparent"
+                    className="flex items-center gap-2 p-0 text-sm font-medium bg-transparent border-0"
                   />
                 </div>
               </div>
@@ -111,7 +112,7 @@ export default function AllJObs() {
               <div className="flex flex-col gap-2">
                 <Input
                   label={
-                    <span className="text-sm font-semibold flex items-center gap-2 text-gray-700">
+                    <span className="flex items-center gap-2 text-sm font-semibold text-gray-700">
                       <FaUserTie className="text-gray-400" /> Years of
                       experience
                     </span>
@@ -126,7 +127,7 @@ export default function AllJObs() {
               <div className="flex flex-col gap-2">
                 <Input
                   label={
-                    <span className="text-sm font-semibold flex items-center gap-2 text-gray-700">
+                    <span className="flex items-center gap-2 text-sm font-semibold text-gray-700">
                       <FaBuilding className="text-gray-400" /> Company
                     </span>
                   }
@@ -140,7 +141,7 @@ export default function AllJObs() {
               <div className="flex flex-col gap-2">
                 <Input
                   label={
-                    <span className="text-sm font-semibold flex items-center gap-2 text-gray-700">
+                    <span className="flex items-center gap-2 text-sm font-semibold text-gray-700">
                       <FaMoneyBillWave className="text-gray-400" /> Annual
                       Salary (in lakhs)
                     </span>
@@ -153,9 +154,9 @@ export default function AllJObs() {
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row justify-between items-center gap-3 mt-4">
+            <div className="flex flex-col items-center justify-between gap-3 mt-4 sm:flex-row">
               <button
-                className="text-blue-500 text-sm font-semibold hover:underline w-full sm:w-auto text-center transition-colors"
+                className="w-full text-sm font-semibold text-center text-blue-500 transition-colors hover:underline sm:w-auto"
                 aria-label="Clear all filters"
               >
                 Clear all
@@ -174,10 +175,10 @@ export default function AllJObs() {
           {/* Right: Jobs List */}
           <main className="bg-white rounded-2xl shadow border border-gray-100 p-4 sm:p-5 md:p-6 lg:p-8 flex flex-col min-h-[80vh] w-full sm:w-[600px] md:w-[700px] lg:w-[800px] mx-auto">
             <header className="mb-4 sm:mb-6">
-              <h2 className="text-xl sm:text-2xl lg:text-3xl font-extrabold mb-2 text-gray-900">
+              <h2 className="mb-2 text-xl font-extrabold text-gray-900 sm:text-2xl lg:text-3xl">
                 Jobs
               </h2>
-              <p className="text-gray-500 text-sm sm:text-base">
+              <p className="text-sm text-gray-500 sm:text-base">
                 Start applying to the latest job vacancies at the leading
                 companies in India below.
               </p>
@@ -186,21 +187,21 @@ export default function AllJObs() {
             {/* Job Cards */}
             <section className="flex flex-col gap-3 sm:gap-4 lg:gap-6">
               {loading && (
-                <div className="text-center py-8 sm:py-12">
+                <div className="py-8 text-center sm:py-12">
                   <Loader message="Loading jobs..." />
                 </div>
               )}
 
               {error && (
-                <div className="text-center py-8 sm:py-12">
-                  <p className="text-red-500 text-sm sm:text-base mb-4">
+                <div className="py-8 text-center sm:py-12">
+                  <p className="mb-4 text-sm text-red-500 sm:text-base">
                     Error loading jobs: {error}
                   </p>
                   <Button
                     onClick={refetch}
                     variant="secondary"
                     size="small"
-                    className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 text-sm transition-colors"
+                    className="px-4 py-2 text-sm text-white transition-colors bg-blue-500 rounded-lg hover:bg-blue-600"
                   >
                     Try Again
                   </Button>
@@ -218,17 +219,17 @@ export default function AllJObs() {
                     className="no-underline"
                   >
                     <article
-                      className="relative flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 lg:gap-6 bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 lg:p-6 transition-all duration-200 hover:shadow-lg hover:border-blue-200 group cursor-pointer"
+                      className="relative flex flex-col gap-3 p-4 transition-all duration-200 bg-white border border-gray-200 shadow-sm cursor-pointer sm:flex-row sm:items-center sm:gap-4 lg:gap-6 rounded-xl sm:p-5 lg:p-6 hover:shadow-lg hover:border-blue-200 group"
                       tabIndex={0}
                       aria-label={`Job: ${job.jobRole} at ${job.company_name}`}
                     >
                       {/* Skills required badge */}
                       {job.skill_missing && (
-                        <div className="absolute -top-2 sm:-top-3 left-4 z-10">
+                        <div className="absolute z-10 -top-2 sm:-top-3 left-4">
                           <Badge
                             color="bg-blue-600 text-white hover:bg-blue-700"
                             text={`skills required ?`}
-                            className="text-xs font-semibold shadow-lg border border-blue-700"
+                            className="text-xs font-semibold border border-blue-700 shadow-lg"
                           />
                         </div>
                       )}
@@ -236,16 +237,16 @@ export default function AllJObs() {
                       {/* Company Logo */}
                       <div className="flex-shrink-0">
                         <img
-                          src={job.logo_url}
+                          src={getImageUrl(job.logo_url)}
                           alt={`${job.company_name} logo`}
-                          className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-lg object-contain bg-gray-100 border border-gray-200"
+                          className="object-contain w-12 h-12 bg-gray-100 border border-gray-200 rounded-lg sm:w-14 sm:h-14 lg:w-16 lg:h-16"
                         />
                       </div>
 
                       {/* Job Details */}
                       <div className="flex-1 min-w-0 space-y-2 sm:space-y-3">
                         <div>
-                          <h3 className="font-bold text-base sm:text-lg lg:text-xl leading-tight text-gray-900 group-hover:text-blue-600 transition-colors">
+                          <h3 className="text-base font-bold leading-tight text-gray-900 transition-colors sm:text-lg lg:text-xl group-hover:text-blue-600">
                             {job.jobRole}
                           </h3>
                           <p className="text-sm font-semibold">
@@ -258,7 +259,7 @@ export default function AllJObs() {
                             color="bg-gray-100 text-gray-700 hover:bg-gray-200"
                             className="text-xs border border-gray-200"
                           >
-                            <FaMapMarkerAlt className="text-gray-400 text-xs" />
+                            <FaMapMarkerAlt className="text-xs text-gray-400" />
                             <span className="truncate">
                               {job.company_location}
                             </span>
@@ -267,7 +268,7 @@ export default function AllJObs() {
                             color="bg-gray-100 text-gray-700 hover:bg-gray-200"
                             className="text-xs border border-gray-200"
                           >
-                            <FaUserTie className="text-gray-400 text-xs" />
+                            <FaUserTie className="text-xs text-gray-400" />
                             <span className="truncate">{job.experience}</span>
                           </Badge> */}
                           {job.salary && (
@@ -292,7 +293,7 @@ export default function AllJObs() {
                               : "bg-green-500 text-white hover:bg-green-600"
                           }
                           text={job.hiring_status}
-                          className="text-sm font-semibold shadow-lg border border-gray-200"
+                          className="text-sm font-semibold border border-gray-200 shadow-lg"
                         />
                         <Badge
                           color="bg-gray-100 text-gray-700 hover:bg-gray-200"
@@ -307,7 +308,7 @@ export default function AllJObs() {
                               : "bg-yellow-400 text-white hover:bg-yellow-600"
                           }
                           text={`${job.matchPercentage || 0}% match`}
-                          className="text-sm border font-semibold shadow-lg"
+                          className="text-sm font-semibold border shadow-lg"
                         />
                       </div>
                     </article>
@@ -315,8 +316,8 @@ export default function AllJObs() {
                 ))}
 
               {!loading && !error && (!allJobs || allJobs.length === 0) && (
-                <div className="text-center py-12 sm:py-16">
-                  {/* <p className="text-gray-500 text-lg">No jobs found.</p> */}
+                <div className="py-12 text-center sm:py-16">
+                  {/* <p className="text-lg text-gray-500">No jobs found.</p> */}
                   <Loader message="Loading jobs..." />
                 </div>
               )}

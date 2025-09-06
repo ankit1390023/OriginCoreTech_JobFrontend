@@ -20,6 +20,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../../redux/feature/authSlice";
 import softDeleteAccount from "../../../api/feedApi";
 import { userDetailsApi } from "../../../api/userDetailsApi";
+import { getImageUrl } from "../../../../utils.js";
 
 const Feedprofile = () => {
   const [activeDropdown, setActiveDropdown] = useState(null);
@@ -155,21 +156,21 @@ const Feedprofile = () => {
   if (isLoading) {
     return (
       <MainLayout>
-        <div className="flex justify-center bg-gray-100 min-h-screen px-2 lg:px-8">
-          <div className="hidden lg:block flex-grow"></div>
+        <div className="flex justify-center min-h-screen px-2 bg-gray-100 lg:px-8">
+          <div className="flex-grow hidden lg:block"></div>
           <section className="w-full max-w-[95vw] sm:max-w-[600px] md:max-w-[700px] lg:max-w-[800px] h-auto p-3 sm:p-4 md:p-5 lg:p-6 rounded-[5px] bg-white flex flex-col shadow-lg gap-3 sm:gap-4 mt-2 mx-auto">
             <div className="bg-[#002B6B] text-white p-3 sm:p-4 lg:p-4 flex flex-col sm:flex-row sm:items-center justify-between rounded-[5px] gap-3 sm:gap-4">
-              <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
-                <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-18 lg:h-18 rounded-md bg-gray-200 animate-pulse"></div>
-                <div className="min-w-0 flex-1">
-                  <div className="h-5 sm:h-6 bg-gray-200 rounded animate-pulse mb-2"></div>
-                  <div className="h-4 bg-gray-200 rounded animate-pulse mb-1"></div>
+              <div className="flex items-center flex-1 min-w-0 gap-3 sm:gap-4">
+                <div className="w-12 h-12 bg-gray-200 rounded-md sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-18 lg:h-18 animate-pulse"></div>
+                <div className="flex-1 min-w-0">
+                  <div className="h-5 mb-2 bg-gray-200 rounded sm:h-6 animate-pulse"></div>
+                  <div className="h-4 mb-1 bg-gray-200 rounded animate-pulse"></div>
                   <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
                 </div>
               </div>
-              <div className="h-10 w-24 bg-gray-200 rounded-full animate-pulse"></div>
+              <div className="w-24 h-10 bg-gray-200 rounded-full animate-pulse"></div>
             </div>
-            <div className="p-3 sm:p-4 lg:p-6 space-y-3">
+            <div className="p-3 space-y-3 sm:p-4 lg:p-6">
               {[...Array(7)].map((_, i) => (
                 <div
                   key={i}
@@ -179,9 +180,9 @@ const Feedprofile = () => {
             </div>
           </section>
           <aside className="hidden lg:block w-full max-w-[350px] p-2 sticky top-4 h-fit">
-            <div className="h-96 bg-gray-100 rounded-lg animate-pulse"></div>
+            <div className="bg-gray-100 rounded-lg h-96 animate-pulse"></div>
           </aside>
-          <div className="hidden lg:block flex-grow"></div>
+          <div className="flex-grow hidden lg:block"></div>
         </div>
       </MainLayout>
     );
@@ -191,11 +192,11 @@ const Feedprofile = () => {
   if (error) {
     return (
       <MainLayout>
-        <div className="flex justify-center bg-gray-100 min-h-screen px-2 lg:px-8">
-          <div className="hidden lg:block flex-grow"></div>
+        <div className="flex justify-center min-h-screen px-2 bg-gray-100 lg:px-8">
+          <div className="flex-grow hidden lg:block"></div>
           <section className="w-full max-w-[95vw] sm:max-w-[600px] md:max-w-[700px] lg:max-w-[800px] h-auto p-3 sm:p-4 md:p-5 lg:p-6 rounded-[5px] bg-white flex flex-col shadow-lg gap-3 sm:gap-4 mt-2 mx-auto">
             <div
-              className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+              className="relative px-4 py-3 text-red-700 bg-red-100 border border-red-400 rounded"
               role="alert"
             >
               <strong className="font-bold">Error: </strong>
@@ -205,7 +206,7 @@ const Feedprofile = () => {
           <aside className="hidden lg:block w-full max-w-[350px] p-2 sticky top-4 h-fit">
             <FeedRightProfile />
           </aside>
-          <div className="hidden lg:block flex-grow"></div>
+          <div className="flex-grow hidden lg:block"></div>
         </div>
       </MainLayout>
     );
@@ -213,32 +214,32 @@ const Feedprofile = () => {
 
   return (
     <MainLayout>
-      <div className="flex justify-center bg-gray-100 min-h-screen px-2 lg:px-8">
+      <div className="flex justify-center min-h-screen px-2 bg-gray-100 lg:px-8">
         {/* Left Spacer */}
-        <div className="hidden lg:block flex-grow"></div>
+        <div className="flex-grow hidden lg:block"></div>
         <section className="w-full max-w-[95vw] sm:max-w-[600px] md:max-w-[700px] lg:max-w-[800px] h-auto p-3 sm:p-4 md:p-5 lg:p-6 rounded-[5px] bg-white flex flex-col shadow-lg gap-3 sm:gap-4 mt-2 mx-auto">
           {/* Profile Header */}
           <div className="bg-[#002B6B] text-white p-3 sm:p-4 lg:p-4 flex flex-col sm:flex-row sm:items-center justify-between rounded-[5px] gap-3 sm:gap-4">
-            <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
+            <div className="flex items-center flex-1 min-w-0 gap-3 sm:gap-4">
               <img
                 src={
-                  profile.user_profile_pic? profile.user_profile_pic : "https://i.pravatar.cc/100?img=1"
+                  profile.user_profile_pic? getImageUrl(profile.user_profile_pic) : "https://i.pravatar.cc/100?img=1"
                 }
                 alt="avatar"
-                className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-18 lg:h-18 rounded-md object-cover flex-shrink-0"
+                className="flex-shrink-0 object-cover w-12 h-12 rounded-md sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-18 lg:h-18"
               />
-              <div className="min-w-0 flex-1">
-                <h1 className="text-base sm:text-lg md:text-xl lg:text-2xl font-semibold truncate">
+              <div className="flex-1 min-w-0">
+                <h1 className="text-base font-semibold truncate sm:text-lg md:text-xl lg:text-2xl">
                   {profile
                     ? `${profile.first_name} ${profile.last_name}`
                     : "Loading..."}
                 </h1>
-                <p className="text-xs sm:text-sm text-gray-200 truncate">
+                <p className="text-xs text-gray-200 truncate sm:text-sm">
                   {/* @{profile?.first_name.toLowerCase()}
                   {profile?.last_name.toLowerCase()} */}
                   {profile.email}
                 </p>
-                <p className="text-xs sm:text-sm text-gray-200 truncate">
+                <p className="text-xs text-gray-200 truncate sm:text-sm">
                   {profile?.user_role === "STUDENT"
                     ? "Student"
                     : "Recruiter"}
@@ -275,11 +276,11 @@ const Feedprofile = () => {
                       </div>
                     </div>
                     <div className="flex flex-col w-auto text-left opacity-100">
-                      <span className="text-sm sm:text-base md:text-medium lg:text-medium text-gray-900 font-medium">
+                      <span className="text-sm font-medium text-gray-900 sm:text-base md:text-medium lg:text-medium">
                         {option.title}
                       </span>
                       {option.subtitle && (
-                        <span className="text-xs sm:text-sm md:text-base text-gray-400">
+                        <span className="text-xs text-gray-400 sm:text-sm md:text-base">
                           {option.subtitle}
                         </span>
                       )}
@@ -289,14 +290,14 @@ const Feedprofile = () => {
                   {option.hasChevron && (
                     <ChevronRight
                       size={18}
-                      className="text-gray-400 flex-shrink-0 ml-2 sm:ml-3"
+                      className="flex-shrink-0 ml-2 text-gray-400 sm:ml-3"
                     />
                   )}
                 </button>
 
                 {/* Dropdowns */}
                 {activeDropdown === option.id && (
-                  <div className="ml-10 sm:ml-12 md:ml-14 lg:ml-16 mt-1 sm:mt-2 space-y-1 sm:space-y-2">
+                  <div className="mt-1 ml-10 space-y-1 sm:ml-12 md:ml-14 lg:ml-16 sm:mt-2 sm:space-y-2">
                     {(option.id === "help"
                       ? [
                           {
@@ -333,12 +334,12 @@ const Feedprofile = () => {
                         onClick={item.action}
                         className="w-full flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-lg bg-gray-50 hover:bg-gray-100 active:bg-gray-200 transition-colors min-h-[48px] sm:min-h-[52px]"
                       >
-                        <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-600 flex-shrink-0">
-                          <div className="w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center">
+                        <div className="flex items-center justify-center flex-shrink-0 w-8 h-8 text-gray-600 bg-gray-100 rounded-full sm:w-10 sm:h-10">
+                          <div className="flex items-center justify-center w-4 h-4 sm:w-5 sm:h-5">
                             {item.icon}
                           </div>
                         </div>
-                        <span className="text-sm sm:text-base md:text-lg text-gray-900 font-medium truncate">
+                        <span className="text-sm font-medium text-gray-900 truncate sm:text-base md:text-lg">
                           {item.label}
                         </span>
                       </button>
@@ -355,7 +356,7 @@ const Feedprofile = () => {
           <FeedRightProfile />
         </aside>
         {/* Right Spacer */}
-        <div className="hidden lg:block flex-grow"></div>
+        <div className="flex-grow hidden lg:block"></div>
       </div>
     </MainLayout>
   );

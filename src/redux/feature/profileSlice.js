@@ -6,15 +6,18 @@ export const fetchProfile = createAsyncThunk(
   'profile/fetchProfile',
   async (_, { getState }) => {
     const state = getState();
+    
     const currentProfile = state.profile.profile;
 
     // Skip if already loaded (avoid unnecessary fetch)
-    if (currentProfile && currentProfile.user_profile_pic !== undefined) {
+    if (currentProfile ) {
       return currentProfile; // or return early if you prefer
     }
-
-    const response = await userDetailsApi.getMiniUserDetails();
-    const user = response.user;
+  
+    const response = await userDetailsApi.getMiniUserDetails(state.auth.user.id,state.auth.token);
+    console.log("slicee" , response)
+    
+    const user = response.data.user;
 
     
     return {
@@ -34,7 +37,7 @@ const profileSlice = createSlice({
   name: 'profile',
   initialState: {
     profile: {
-      user_profile_pic: dummyProfile,
+      user_profile_pic: null,
       about_us: null,
       career_objective: null,
       // followersCount: 0,

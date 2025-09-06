@@ -10,6 +10,7 @@ import { useSelector } from "react-redux";
 import Select from "react-select";
 import { useMasterData } from "../../hooks/master/useMasterData";
 import useUploadImageApi from "../../hooks/useUploadImageApi";
+import {getImageUrl} from "../../../utils.js";
 
 const formSchema = z.object({
   designation_id: z.string().min(1, { message: "Designation is required" }),
@@ -17,8 +18,8 @@ const formSchema = z.object({
   industry_id: z.string().min(1, { message: "Industry is required" }),
   company_location_id: z.string().min(1, { message: "City is required" }),
   about: z.string().min(10, { message: "About section must be at least 10 characters" }),
-  logo_url: z.string().url({ message: "Invalid logo URL" }).max(500),
-  profile_pic: z.string().url({ message: "Invalid profile picture URL" }).max(500),
+  logo_url: z.string().min(1, "Logo is required").max(500),
+  profile_pic: z.string().min(1, "Profile picture is required").max(500),
   language_ids: z.array(z.string()).optional(),
   is_email_verified: z.boolean().default(false),
   is_phone_verified: z.boolean().default(false),
@@ -139,7 +140,7 @@ export default function CompanyRecruiterProfile() {
       subheading="Set up your company recruiter profile to start posting jobs and internships."
       hideMobileIllustration={true}
     >
-      <div className="relative shadow-md flex w-full min-h-screen overflow-hidden md:items-center md:justify-center">
+      <div className="relative flex w-full min-h-screen overflow-hidden shadow-md md:items-center md:justify-center">
         <div className="flex justify-center flex-1 w-full md:mt-0">
           <div className="w-full max-w-full p-6 bg-white shadow-md rounded-xl sm:shadow-xl sm:max-w-2xl sm:p-8">
             <form
@@ -267,7 +268,7 @@ export default function CompanyRecruiterProfile() {
               {/* ===== File Uploads ===== */}
               <div className="space-y-2">
                 <label className="block text-xs font-medium text-gray-700">Company Logo</label>
-                <div className="flex items-center justify-between border border-gray-200 p-2 rounded">
+                <div className="flex items-center justify-between p-2 border border-gray-200 rounded">
                   <div>
                     <input
                       type="file"
@@ -276,14 +277,14 @@ export default function CompanyRecruiterProfile() {
                       className="text-sm"
                       disabled={uploading}
                     />
-                    {uploading && <span className="text-xs text-blue-500 ml-2">Uploading...</span>}
+                    {uploading && <span className="ml-2 text-xs text-blue-500">Uploading...</span>}
                   </div>
                   <div>
                     {logoPreview && (
                       <img
                         src={logoPreview}
                         alt="Company Logo"
-                        className="w-10 h-10 object-cover rounded"
+                        className="object-cover w-10 h-10 rounded"
                       />
                     )}
                   </div>
@@ -295,7 +296,7 @@ export default function CompanyRecruiterProfile() {
 
               <div className="space-y-2">
                 <label className="block text-xs font-medium text-gray-700">Profile Picture</label>
-                <div className="flex items-center justify-between border border-gray-200 p-2 rounded">
+                <div className="flex items-center justify-between p-2 border border-gray-200 rounded">
                   <div>
                     <input
                       type="file"
@@ -304,14 +305,14 @@ export default function CompanyRecruiterProfile() {
                       className="text-sm"
                       disabled={uploading}
                     />
-                    {uploading && <span className="text-xs text-blue-500 ml-2">Uploading...</span>}
+                    {uploading && <span className="ml-2 text-xs text-blue-500">Uploading...</span>}
                   </div>
                   <div>
                     {profilePicPreview && (
                       <img
                         src={profilePicPreview}
                         alt="Profile Pic"
-                        className="w-10 h-10 object-cover rounded border"
+                        className="object-cover w-10 h-10 border rounded"
                       />
                     )}
                   </div>
@@ -351,7 +352,7 @@ export default function CompanyRecruiterProfile() {
               </div>
 
               {/* ===== Verification Checkboxes ===== */}
-              <div className="grid grid-cols-1 gap-3 md:grid-cols-3 text-sm">
+              <div className="grid grid-cols-1 gap-3 text-sm md:grid-cols-3">
                 <Checkbox
                   id="is_email_verified"
                   label="Email Verified"

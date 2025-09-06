@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button } from '../../../components/ui';
 import MainLayout from '../../../components/layout/MainLayout';
 import FeedRightProfile from '../feed/FeedRightProfile';
-
+import { getImageUrl } from "../../../../utils.js";
 const FeedResume = () => {
   const [selectedTemplate, setSelectedTemplate] = useState(1);
   
@@ -226,9 +226,9 @@ const FeedResume = () => {
 
   return (
     <MainLayout>
-  <div className="flex justify-center gap-2 bg-gray-100 min-h-screen px-2 lg:px-8 items-start">
+  <div className="flex items-start justify-center min-h-screen gap-2 px-2 bg-gray-100 lg:px-8">
   {/* Left Spacer */}
-  <div className="hidden lg:block flex-grow "></div>
+  <div className="flex-grow hidden lg:block "></div>
     {/* Left Spacer */}
     {/* Resume Template Section */}
       <section 
@@ -236,12 +236,12 @@ const FeedResume = () => {
       
       >
         {/* Page Title */}
-        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 lg:mb-8 px-2">
+        <h1 className="px-2 mb-4 text-xl font-bold text-gray-900 sm:text-2xl lg:text-3xl sm:mb-6 lg:mb-8">
           Choose Resume template
         </h1>
 
         {/* Resume Templates Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6 mb-6 sm:mb-8 px-2">
+        <div className="grid grid-cols-1 gap-3 px-2 mb-6 sm:grid-cols-2 lg:grid-cols-3 sm:gap-4 lg:gap-6 sm:mb-8">
           {resumeTemplates.map((template) => (
             <div
               key={template.id}
@@ -251,18 +251,18 @@ const FeedResume = () => {
                onClick={() => handleTemplateSelect(template.id)}
              >
                {/* Resume Template Card */}
-               <div className="bg-white rounded-lg shadow-lg overflow-hidden h-64 sm:h-72 lg:h-96">
+               <div className="h-64 overflow-hidden bg-white rounded-lg shadow-lg sm:h-72 lg:h-96">
                 {/* Header */}
                 <div className={`h-2 ${getAccentColorClass(template.accentColor)}`}></div>
                 
                                  {/* Resume Content */}
-                 <div className="p-2 sm:p-3 lg:p-4 h-full">
+                 <div className="h-full p-2 sm:p-3 lg:p-4">
                    <div className="flex items-center mb-2 sm:mb-3">
-                     <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 bg-gray-200 rounded-full flex items-center justify-center text-sm sm:text-base lg:text-lg mr-2 sm:mr-3">
+                     <div className="flex items-center justify-center w-8 h-8 mr-2 text-sm bg-gray-200 rounded-full sm:w-10 sm:h-10 lg:w-12 lg:h-12 sm:text-base lg:text-lg sm:mr-3">
                        {template.content.leftColumn?.photo || template.content.rightColumn?.photo}
                      </div>
                      <div>
-                       <h3 className="font-semibold text-xs sm:text-sm text-gray-900">
+                       <h3 className="text-xs font-semibold text-gray-900 sm:text-sm">
                          {template.name}
                        </h3>
                        <p className="text-xs text-gray-600">
@@ -272,22 +272,22 @@ const FeedResume = () => {
                    </div>
 
                                      {/* Template Preview Content */}
-                   <div className="text-xs text-gray-600 space-y-1 sm:space-y-2">
+                   <div className="space-y-1 text-xs text-gray-600 sm:space-y-2">
                      {template.id === 1 || template.id === 5 ? (
                        // Olivia Wilson template
                        <div className="grid grid-cols-2 gap-1 sm:gap-2">
                          <div>
-                           <p className="font-medium text-gray-800 text-xs">Contact</p>
+                           <p className="text-xs font-medium text-gray-800">Contact</p>
                            <p className="text-xs">Phone, Email, Address</p>
-                           <p className="font-medium text-gray-800 mt-1 sm:mt-2 text-xs">Education</p>
+                           <p className="mt-1 text-xs font-medium text-gray-800 sm:mt-2">Education</p>
                            <p className="text-xs">Bachelor of Fine Arts</p>
-                           <p className="font-medium text-gray-800 mt-1 sm:mt-2 text-xs">Skills</p>
+                           <p className="mt-1 text-xs font-medium text-gray-800 sm:mt-2">Skills</p>
                            <p className="text-xs">Digital Marketing, Branding</p>
                          </div>
                          <div>
-                           <p className="font-medium text-gray-800 text-xs">Profile</p>
+                           <p className="text-xs font-medium text-gray-800">Profile</p>
                            <p className="text-xs">Creative designer with 5+ years...</p>
-                           <p className="font-medium text-gray-800 mt-1 sm:mt-2 text-xs">Experience</p>
+                           <p className="mt-1 text-xs font-medium text-gray-800 sm:mt-2">Experience</p>
                            <p className="text-xs">Senior Graphic Designer</p>
                          </div>
                        </div>
@@ -295,14 +295,14 @@ const FeedResume = () => {
                        // Sally Branders template
                        <div className="grid grid-cols-2 gap-1 sm:gap-2">
                          <div className={`${getAccentColorClass(template.accentColor)} p-1 sm:p-2 rounded`}>
-                           <p className="font-medium text-white text-xs">CONTACTO</p>
-                           <p className="font-medium text-white text-xs mt-1 sm:mt-2">SKILLS</p>
-                           <p className="text-white text-xs">Excel, CRM, Problem-solving</p>
+                           <p className="text-xs font-medium text-white">CONTACTO</p>
+                           <p className="mt-1 text-xs font-medium text-white sm:mt-2">SKILLS</p>
+                           <p className="text-xs text-white">Excel, CRM, Problem-solving</p>
                          </div>
                          <div>
-                           <p className="font-medium text-gray-800 text-xs">EXPERIENCE</p>
+                           <p className="text-xs font-medium text-gray-800">EXPERIENCE</p>
                            <p className="text-xs">Professional Experience</p>
-                           <p className="font-medium text-gray-800 mt-1 sm:mt-2 text-xs">EDUCATION</p>
+                           <p className="mt-1 text-xs font-medium text-gray-800 sm:mt-2">EDUCATION</p>
                            <p className="text-xs">MBA, Bachelor of Commerce</p>
                          </div>
                        </div>
@@ -310,15 +310,15 @@ const FeedResume = () => {
                        // Harry Lewis template
                        <div className="grid grid-cols-2 gap-1 sm:gap-2">
                          <div>
-                           <p className="font-medium text-gray-800 text-xs">OBJECTIVE</p>
+                           <p className="text-xs font-medium text-gray-800">OBJECTIVE</p>
                            <p className="text-xs">Resume Objective</p>
-                           <p className="font-medium text-gray-800 mt-1 sm:mt-2 text-xs">SKILLS</p>
+                           <p className="mt-1 text-xs font-medium text-gray-800 sm:mt-2">SKILLS</p>
                            <p className="text-xs">Professional Skills</p>
                          </div>
                          <div>
-                           <p className="font-medium text-gray-800 text-xs">CONTACT</p>
+                           <p className="text-xs font-medium text-gray-800">CONTACT</p>
                            <p className="text-xs">Contact Information</p>
-                           <p className="font-medium text-gray-800 mt-1 sm:mt-2 text-xs">HISTORY</p>
+                           <p className="mt-1 text-xs font-medium text-gray-800 sm:mt-2">HISTORY</p>
                            <p className="text-xs">Work History</p>
                          </div>
                        </div>
@@ -326,15 +326,15 @@ const FeedResume = () => {
                        // Richard Sanchez template
                        <div className="grid grid-cols-2 gap-1 sm:gap-2">
                          <div>
-                           <p className="font-medium text-gray-800 text-xs">CONTACT</p>
+                           <p className="text-xs font-medium text-gray-800">CONTACT</p>
                            <p className="text-xs">Contact Information</p>
-                           <p className="font-medium text-gray-800 mt-1 sm:mt-2 text-xs">EDUCATION</p>
+                           <p className="mt-1 text-xs font-medium text-gray-800 sm:mt-2">EDUCATION</p>
                            <p className="text-xs">Education Details</p>
                          </div>
                          <div>
-                           <p className="font-medium text-gray-800 text-xs">PROFILE</p>
+                           <p className="text-xs font-medium text-gray-800">PROFILE</p>
                            <p className="text-xs">Professional Profile</p>
-                           <p className="font-medium text-gray-800 mt-1 sm:mt-2 text-xs">EXPERIENCE</p>
+                           <p className="mt-1 text-xs font-medium text-gray-800 sm:mt-2">EXPERIENCE</p>
                            <p className="text-xs">Work Experience</p>
                          </div>
                        </div>
@@ -345,8 +345,8 @@ const FeedResume = () => {
 
                              {/* Selection Indicator */}
                {template.selected && (
-                 <div className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 w-5 h-5 sm:w-6 sm:h-6 bg-red-500 rounded-full flex items-center justify-center">
-                   <svg className="w-3 h-3 sm:w-4 sm:h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                 <div className="absolute flex items-center justify-center w-5 h-5 bg-red-500 rounded-full -top-1 -right-1 sm:-top-2 sm:-right-2 sm:w-6 sm:h-6">
+                   <svg className="w-3 h-3 text-white sm:w-4 sm:h-4" fill="currentColor" viewBox="0 0 20 20">
                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                    </svg>
                  </div>
@@ -361,7 +361,7 @@ const FeedResume = () => {
             variant="primary"
             size="large"
             onClick={handleDownload}
-            className="px-4 sm:px-6 lg:px-8 py-2 sm:py-3 text-sm sm:text-base lg:text-lg w-full sm:w-auto"
+            className="w-full px-4 py-2 text-sm sm:px-6 lg:px-8 sm:py-3 sm:text-base lg:text-lg sm:w-auto"
           >
             Download
           </Button>
@@ -373,7 +373,7 @@ const FeedResume = () => {
                     <FeedRightProfile />
                 </aside>
                 {/* Right Spacer */}
-                <div className="hidden lg:block flex-grow "></div>
+                <div className="flex-grow hidden lg:block "></div>
                 </div>
     </MainLayout>
   );

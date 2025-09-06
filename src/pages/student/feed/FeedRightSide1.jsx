@@ -4,6 +4,7 @@ import dummyProfile3 from "../../../assets/dummyProfile3.jpg";
 import { useEffect, useState } from "react";
 import feedApi from "../../../api/feedApi";
 import { userDetailsApi } from "../../../api/userDetailsApi";
+import { getImageUrl } from "../../../../utils.js";
 
 import { FaEye } from "react-icons/fa";
 
@@ -91,7 +92,7 @@ export default function FeedRightSide1() {
         ></div>
         <div className="absolute w-24 h-24 left-2 top-10">
           <img
-            src={profile?.user_profile_pic||  dummyProfile3}
+            src={getImageUrl(profile?.user_profile_pic)||  dummyProfile3}
             alt="Profile"
             className="object-cover w-full h-full border-4 border-white rounded-full"
           />

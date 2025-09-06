@@ -8,12 +8,13 @@ import MainLayout from "../../../components/layout/MainLayout";
 import FeedRightProfile from "../feed/FeedRightProfile";
 import { useUserDetailsApi } from "../../../hooks/useUserDetailsApi";
 import useFeedApi from "../../../hooks/useFeedApi";
-import { formatTimeAgo, formatNumber } from "../../../../utils";
+import { formatTimeAgo, formatNumber, getImageUrl } from "../../../../utils";
 
-const dummyProfile="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLMI5YxZE03Vnj-s-sth2_JxlPd30Zy7yEGg&s";
-  
+
+import dummyProfile from "/src/assets/dummyProfile1.jpg";
 const FeedMyProfile = () => {
   const { user, token } = useSelector((state) => state.auth);
+  // const { profile}= useSelector((state) => state.auth);
 
   const {
     loading,
@@ -97,11 +98,8 @@ const FeedMyProfile = () => {
           {/* Profile Header */}
           <div className="mb-6 space-y-4 text-center">
             <div className="relative inline-block">
-            
               <img
-                src={
-                  profile?.user_profile_pic || dummyProfile
-                }
+                src={getImageUrl(profile?.user_profile_pic) || dummyProfile}
                 alt={
                   profile?.first_name
                     ? `${profile.first_name} ${profile.last_name}`
@@ -166,9 +164,7 @@ const FeedMyProfile = () => {
                   >
                     <div className="flex items-start gap-3">
                       <img
-                        
                         src={
-                          
                           profile?.user_profile_pic ||
                           activity.user?.profileImage ||
                           "/src/assets/profile1.png"
@@ -204,7 +200,7 @@ const FeedMyProfile = () => {
                         {activity.image && (
                           <div className="mt-3">
                             <img
-                              src={activity.image}
+                              src={getImageUrl(activity.image)}
                               alt="Post content"
                               className="object-cover w-full max-w-md rounded-lg"
                               onError={(e) => {
@@ -278,7 +274,10 @@ const FeedMyProfile = () => {
                     >
                       <div className="flex items-start gap-3">
                         <img
-                          src={experience.logo || "/src/assets/WebsiteLogo.svg"}
+                          src={
+                            getImageUrl(experience.logo) ||
+                            "/src/assets/WebsiteLogo.svg"
+                          }
                           alt={experience.company}
                           className="object-contain w-12 h-12"
                           onError={(e) => {
@@ -327,7 +326,7 @@ const FeedMyProfile = () => {
               </>
             )}
           </div>
-     
+
           {/* Education */}
           <hr className="border-gray-400" />
           <div className="pt-6 mb-6 border-t">
@@ -352,7 +351,10 @@ const FeedMyProfile = () => {
                     >
                       <div className="flex items-start gap-3">
                         <img
-                          src={education.logo || "/src/assets/WebsiteLogo.svg"}
+                          src={
+                            getImageUrl(education.logo) ||
+                            "/src/assets/WebsiteLogo.svg"
+                          }
                           alt={education.institution}
                           className="object-cover w-10 h-10 rounded-full"
                           onError={(e) => {
@@ -445,7 +447,7 @@ const FeedMyProfile = () => {
                       >
                         <div className="flex items-start gap-3">
                           <img
-                            src={skill.logo || "/src/assets/WebsiteLogo.svg"}
+                            src={getImageUrl(skill.logo) || "/src/assets/WebsiteLogo.svg"}
                             alt={skill.skill || skill.domain || "Skill"}
                             className="object-cover w-10 h-10 rounded-full"
                             onError={(e) => {

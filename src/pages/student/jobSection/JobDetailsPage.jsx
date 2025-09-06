@@ -29,6 +29,7 @@ import { useGetJobApi } from "../../../hooks/useGetJobApi";
 import { useGetJobById } from "../../../hooks/useGetJobApi";
 import { Button, Loader, Badge } from "../../../components/ui";
 import ApplyForm from './applyForm';
+import { getImageUrl } from "../../../../utils.js";
 
 export default function JobDetailsPage() {
   const { job_id } = useParams();
@@ -163,7 +164,7 @@ export default function JobDetailsPage() {
                     >
                       <img
                         src={
-                          job.logo_url ||
+                          getImageUrl(job.logo_url) ||
                           "https://via.placeholder.com/48x48?text=Logo"
                         }
                         alt="logo"
@@ -252,7 +253,7 @@ export default function JobDetailsPage() {
                 {/* Header Section */}
                 <div className="relative flex flex-col gap-2 mb-3 sm:flex-row sm:items-start sm:gap-3 md:gap-4 sm:mb-4">
                   <img
-                    src={selectedJobDetails.logo_url}
+                    src={getImageUrl(selectedJobDetails.logo_url)}
                     alt="Company Logo"
                     className="self-start flex-shrink-0 object-contain w-12 h-12 bg-gray-100 rounded-lg sm:w-16 sm:h-16 md:w-20 md:h-20"
                   />
@@ -640,7 +641,7 @@ export default function JobDetailsPage() {
                         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                           <div className="flex items-center gap-2">
                             <img
-                              src={selectedJobDetails.recruiter_profile_pic}
+                              src={getImageUrl(selectedJobDetails.recruiter_profile_pic)}
                               alt="Recruiter"
                               className="object-cover w-10 h-10 border border-gray-200 rounded-full"
                             />

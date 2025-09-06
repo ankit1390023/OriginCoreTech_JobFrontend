@@ -15,6 +15,7 @@ import feedApi from "../../../api/feedApi";
 import uploadImageApi from "../../../api/uploadImageApi";
 import useFeedApi from "../../../hooks/useFeedApi";
 import { useNavigate } from "react-router-dom";
+import { getImageUrl } from "../../../../utils.js";
 
 export default function FeedPage() {
   const { token, user } = useSelector((state) => state.auth);
@@ -202,7 +203,7 @@ export default function FeedPage() {
           <div className="flex flex-col gap-3 p-3 mb-4 bg-white rounded-lg shadow-sm sm:p-4">
             <div className="flex items-center w-full gap-2">
               <img
-                src={profile.user_profile_pic}
+                src={getImageUrl(profile.user_profile_pic)}
                 alt="Profile"
                 className="flex-shrink-0 w-10 h-10 rounded-full sm:w-12 sm:h-12"
               />
@@ -271,7 +272,7 @@ export default function FeedPage() {
                   {/* Profile Picture */}
                   <img
                     src={
-                      post.User?.profile_pic ? post.User.profile_pic : profile // fallback image
+                      getImageUrl(post.User?.profile_pic) ? getImageUrl(post.User.profile_pic) : profile.user_profile_pic // fallback image
                     }
                     alt={post.User?.first_name || "User"}
                     className="flex-shrink-0 object-cover w-8 h-8 rounded-full sm:w-10 sm:h-10"
@@ -301,7 +302,7 @@ export default function FeedPage() {
                 {/* Post image */}
                 {post.image && (
                   <img
-                    src={post.image}
+                    src={getImageUrl(post.image)}
                     alt="Post"
                     className="rounded-lg object-cover w-[80%] h-80 sm:h-64 mb-3"
                   />
@@ -384,9 +385,9 @@ export default function FeedPage() {
                             <div className="flex items-start gap-2">
                               <img
                                 src={
-                                  comment.profile_pic
+                                  getImageUrl(comment.profile_pic)
                                     ? comment.profile_pic.startsWith("data:")
-                                      ? comment.profile_pic
+                                      ? getImageUrl(comment.profile_pic)
                                       : `data:image/jpeg;base64,${comment.profile_pic}`
                                     : profile
                                 }

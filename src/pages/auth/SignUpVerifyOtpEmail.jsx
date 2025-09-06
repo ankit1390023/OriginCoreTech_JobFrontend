@@ -93,6 +93,7 @@ export default function SignUpVerifyOtpEmail() {
       console.log("User role:", user_role);
       switch (user_role) {
         case "STUDENT":
+          sessionStorage.removeItem('inSignupFlow');
           navigate("/student-fill-account-details");
           break;
         case "COMPANY":

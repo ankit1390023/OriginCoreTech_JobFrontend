@@ -13,6 +13,7 @@ import FeedRightProfile from "./FeedRightProfile.jsx";
 import feedApi from "../../../api/feedApi";
 import uploadImageApi from "../../../api/uploadImageApi";
 import useFeedApi from "../../../hooks/useFeedApi";
+import { getImageUrl } from "../../../../utils.js";
 
 export default function FeedPage() {
   const { token, user } = useSelector((state) => state.auth);
@@ -217,11 +218,11 @@ export default function FeedPage() {
                     src={
                       post.profile_pic
                         ? post.profile_pic.startsWith("data:")
-                          ? post.profile_pic
+                          ? getImageUrl(post.profile_pic)
                           : `data:image/jpeg;base64,${post.profile_pic}`
                         : post.User?.profile_pic
                         ? post.User.profile_pic.startsWith("data:")
-                          ? post.User.profile_pic
+                          ? getImageUrl(post.User.profile_pic)
                           : `data:image/jpeg;base64,${post.User.profile_pic}`
                         : profile
                     }
@@ -249,7 +250,7 @@ export default function FeedPage() {
                 {/* Post image */}
                 {post.image && (
                   <img
-                    src={post.image}
+                    src={getImageUrl(post.image)}
                     alt="Post"
                     className="rounded-lg object-cover w-[80%] h-80 sm:h-64 mb-3"
                   />
@@ -336,7 +337,7 @@ export default function FeedPage() {
                                 src={
                                   comment.profile_pic
                                     ? comment.profile_pic.startsWith("data:")
-                                      ? comment.profile_pic
+                                      ? getImageUrl(comment.profile_pic)
                                       : `data:image/jpeg;base64,${comment.profile_pic}`
                                     : profile
                                 }

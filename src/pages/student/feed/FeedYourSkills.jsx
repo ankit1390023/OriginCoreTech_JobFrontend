@@ -13,6 +13,8 @@ import { useSelector } from "react-redux";
 import useUploadImageApi from "../../../hooks/useUploadImageApi";
 import { userDetailsApi } from "../../../api/userDetailsApi";
 import { z } from "zod";
+import { getImageUrl } from "../../../../utils.js";
+
 
 
 // validation schema for feed your skills component
@@ -740,7 +742,7 @@ const handleSaveChanges = async () => {
                     /* Image Viewer */
                     <div className="flex justify-center">
                       <img
-                        src={selectedCertificate.url}
+                        src={getImageUrl(selectedCertificate.url)}
                         alt={selectedCertificate.name}
                         className="object-contain max-w-full border border-gray-300 rounded max-h-96"
                       />
@@ -750,7 +752,7 @@ const handleSaveChanges = async () => {
                   {/* Download Link */}
                   <div className="flex justify-center">
                     <a
-                      href={selectedCertificate.url}
+                      href={getImageUrl(selectedCertificate.url)}
                       download={selectedCertificate.name}
                       className="inline-flex items-center px-4 py-2 text-white transition-colors bg-blue-500 rounded-lg hover:bg-blue-600"
                     >
