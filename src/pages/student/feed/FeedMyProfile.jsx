@@ -10,6 +10,8 @@ import { useUserDetailsApi } from "../../../hooks/useUserDetailsApi";
 import useFeedApi from "../../../hooks/useFeedApi";
 import { formatTimeAgo, formatNumber } from "../../../../utils";
 
+const dummyProfile="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLMI5YxZE03Vnj-s-sth2_JxlPd30Zy7yEGg&s";
+  
 const FeedMyProfile = () => {
   const { user, token } = useSelector((state) => state.auth);
 
@@ -98,7 +100,7 @@ const FeedMyProfile = () => {
             
               <img
                 src={
-                  profile?.user_profile_pic || "/src/assets/dummyProfile1.jpg"
+                  profile?.user_profile_pic || dummyProfile
                 }
                 alt={
                   profile?.first_name
@@ -164,6 +166,7 @@ const FeedMyProfile = () => {
                   >
                     <div className="flex items-start gap-3">
                       <img
+                        
                         src={
                           
                           profile?.user_profile_pic ||
@@ -442,7 +445,7 @@ const FeedMyProfile = () => {
                       >
                         <div className="flex items-start gap-3">
                           <img
-                            src={skill.authority.logo_url || "/src/assets/WebsiteLogo.svg"}
+                            src={skill.logo || "/src/assets/WebsiteLogo.svg"}
                             alt={skill.skill || skill.domain || "Skill"}
                             className="object-cover w-10 h-10 rounded-full"
                             onError={(e) => {

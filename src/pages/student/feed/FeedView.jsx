@@ -6,9 +6,13 @@ import FeedRightProfile from "../feed/FeedRightProfile";
 import { useSelector } from "react-redux";
 import uploadImageApi from "../../../api/uploadImageApi";
 import { userDetailsApi } from "../../../api/userDetailsApi";
+import { updateProfileLocally } from '../../../redux/feature/profileSlice';
+import { useDispatch } from 'react-redux';
+
 
 const FeedView = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [profileImage, setProfileImage] = useState("/src/assets/dummyProfile1.jpg");
   const [isUploading, setIsUploading] = useState(false);
   const [uploadStatus, setUploadStatus] = useState(null);
@@ -115,31 +119,38 @@ const FeedView = () => {
       
       if (result.success || result.message) {
         // Update local state with new data
-        if (field === 'name') {
-          const nameParts = editValue.split(' ');
-          setUserData(prev => ({
+        if (field === "name") {
+          const nameParts = editValue.split(" ");
+          setUserData((prev) => ({
             ...prev,
             publicProfile: {
               ...prev.publicProfile,
-              first_name: nameParts[0] || '',
-              last_name: nameParts.slice(1).join(' ') || ''
-            }
+              first_name: nameParts[0] || "",
+              last_name: nameParts.slice(1).join(" ") || "",
+            },
           }));
         } else {
-          setUserData(prev => ({
+          setUserData((prev) => ({
             ...prev,
             publicProfile: {
               ...prev.publicProfile,
-              [field]: editValue
-            }
+              [field]: editValue,
+            },
           }));
         }
-        
+
+        //  UPDATE REDUX PROFILE SLICE → Sidebar will auto-update!
+        dispatch(
+          updateProfileLocally({
+            ...userDataPayload,
+          })
+        );
+
         setEditingField(null);
-        setEditValue('');
+        setEditValue("");
         setUploadStatus({
-          type: 'success',
-          message: "Information updated successfully!"
+          type: "success",
+          message: "Information updated successfully!",
         });
       } else {
         throw new Error(result.message || "Failed to update information");
@@ -207,9 +218,11 @@ const handleProfileImageUpload = async () => {
             
             console.log("Profile update API response:", result);
             
-            if (result.success) {
+            if (result.message == "User details updated successfully.") {
               // Update both local state and profileImage state
-              setProfileImage(uploadedUrl);
+              //for re render
+              const imageUrlWithCacheBust = `${uploadedUrl}?t=${Date.now()}`;
+              setProfileImage(imageUrlWithCacheBust);
               setUserData(prev => ({
                 ...prev,
                 publicProfile: {
@@ -217,6 +230,7 @@ const handleProfileImageUpload = async () => {
                   user_profile_pic: uploadedUrl
                 }
               }));
+              dispatch(updateProfileLocally({ user_profile_pic: uploadedUrl }));
               setUploadStatus({
                 type: "success",
                 message: "Profile picture updated successfully!",
@@ -293,9 +307,11 @@ const handleUploadResume = () => {
             
             console.log("Resume update API response:", result);
             
-            if (result.success) {
+            if (result.message == "User details fetched successfully") {
               // Update both local state and resumeUrl state
-              setResumeUrl(uploadedUrl);
+              const resumeUrlWithCacheBust = `${uploadedUrl}?t=${Date.now()}`;
+              setResumeUrl(resumeUrlWithCacheBust);
+        
               setUserData(prev => ({
                 ...prev,
                 publicProfile: {

@@ -163,6 +163,7 @@ export const useUserDetailsApi = () => {
             setEducationData([]);
           }
 
+          
           // Format and set skills data
           if (data.skills?.length) {
             formattedSkills = data.skills.map((skill, index) => {
@@ -185,11 +186,14 @@ export const useUserDetailsApi = () => {
                   skill.subSkills.length > 0
                     ? `Sub-skills: ${skill.subSkills.join(", ")}`
                     : `Proficient in ${skillName} with practical experience and knowledge.`;
-                  // const skillLogo = authority.map(item => item.logo_url)[0];
+                  const skillLogo =
+                    Array.isArray(skill.authority) && skill.authority.length > 0
+                      ? skill.authority[0].logo_url
+                      : "/src/assets/WebsiteLogo.svg";
   
                 return {
                   id: skill._id || skill.id || index + 1,
-                  logo: skill.logo_url,
+                  logo: skillLogo,
                   skill: skillName,
                   category: skill.category || "Technical Skills",
                   description: skillDescription,

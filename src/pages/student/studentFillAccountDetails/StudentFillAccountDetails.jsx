@@ -365,9 +365,9 @@ const handleSubmitClick = async () => {
   }, [methods]);
 
   const FormContent = () => (
-    <div className="flex-1 w-full flex justify-center">
-      <div className="bg-white rounded-xl shadow-none sm:shadow-xl w-full mt-4 max-w-full sm:max-w-2xl p-6 sm:p-8">
-        <div className="-mt-2 mb-6">
+    <div className="flex justify-center flex-1 w-full">
+      <div className="w-full max-w-full p-6 mt-4 bg-white shadow-none rounded-xl sm:shadow-xl sm:max-w-2xl sm:p-8">
+        <div className="mb-6 -mt-2">
           <ProgressBar currentStep={step} steps={steps} />
         </div>
         <FormProvider {...methods}>
@@ -406,7 +406,7 @@ const handleSubmitClick = async () => {
       subheading="Fill in your account details to continue"
     >
       {submitError && (
-        <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+        <div className="p-4 mb-4 text-red-700 bg-red-100 border border-red-400 rounded">
           {submitError}
         </div>
       )}

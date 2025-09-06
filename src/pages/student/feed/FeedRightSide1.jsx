@@ -46,37 +46,11 @@ export default function FeedRightSide1() {
   const [followingCount, setFollowingCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [profile, setProfile] = useState(null);
   const [expandedPathway, setExpandedPathway] = useState(null);
 
   const { token, user } = useSelector((state) => state.auth);
 
-
-  // Fetch user profile
-  useEffect(() => {
-    async function fetchUserProfile() {
-      if (!token || !user) return;
-      setLoading(true);
-      setError(null);
-      try {
-        
-        const result = await userDetailsApi.getMiniUserDetails(user.id, token);
-        
-        if (result.success) {
-          setProfile(result.data.user);
-        } else {
-          setError(result.error || "Failed to fetch user details.");
-          setProfile(null);
-        }
-      } catch {
-        setError("Failed to fetch user details.");
-        setProfile(null);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchUserProfile();
-  }, [token, user]);
+  const { profile } = useSelector((state) => state.profile);
 
   // Fetch followers/following
   useEffect(() => {
@@ -133,11 +107,11 @@ export default function FeedRightSide1() {
         ) : profile ? (
           <>
             <h2 className="text-lg font-bold text-gray-800">
-              {profile.first_name} {profile.last_name}
+              {user.first_name} {user.last_name}
             </h2>
             <p className="text-sm text-gray-500">{profile.email}</p>
             <p className="mt-1 text-sm font-semibold text-gray-700">
-              {profile.user_type}
+              {user.user_type}
             </p>
             <p className="mt-2 text-sm text-gray-600">{profile.about_us}</p>
           </>

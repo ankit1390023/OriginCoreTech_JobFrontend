@@ -18,6 +18,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function FeedPage() {
   const { token, user } = useSelector((state) => state.auth);
+  const {profile}= useSelector((state) => state.profile);
 
   const [caption, setCaption] = useState("");
   const [imageFile, setImageFile] = useState(null);
@@ -201,7 +202,7 @@ export default function FeedPage() {
           <div className="flex flex-col gap-3 p-3 mb-4 bg-white rounded-lg shadow-sm sm:p-4">
             <div className="flex items-center w-full gap-2">
               <img
-                src={profile}
+                src={profile.user_profile_pic}
                 alt="Profile"
                 className="flex-shrink-0 w-10 h-10 rounded-full sm:w-12 sm:h-12"
               />
