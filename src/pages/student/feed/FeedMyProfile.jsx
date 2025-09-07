@@ -9,12 +9,14 @@ import FeedRightProfile from "../feed/FeedRightProfile";
 import { useUserDetailsApi } from "../../../hooks/useUserDetailsApi";
 import useFeedApi from "../../../hooks/useFeedApi";
 import { formatTimeAgo, formatNumber, getImageUrl } from "../../../../utils";
+import dummyProfile3 from "../../../assets/dummyProfile3.jpg";
 
 
 import dummyProfile from "/src/assets/dummyProfile1.jpg";
 const FeedMyProfile = () => {
   const { user, token } = useSelector((state) => state.auth);
   // const { profile}= useSelector((state) => state.auth);
+  // const [dp,setDp]=useState(false);
 
   const {
     loading,
@@ -99,7 +101,7 @@ const FeedMyProfile = () => {
           <div className="mb-6 space-y-4 text-center">
             <div className="relative inline-block">
               <img
-                src={getImageUrl(profile?.user_profile_pic) || dummyProfile}
+                src={getImageUrl(profile?.user_profile_pic) || dummyProfile3}
                 alt={
                   profile?.first_name
                     ? `${profile.first_name} ${profile.last_name}`
@@ -165,9 +167,7 @@ const FeedMyProfile = () => {
                     <div className="flex items-start gap-3">
                       <img
                         src={
-                          profile?.user_profile_pic ||
-                          activity.user?.profileImage ||
-                          "/src/assets/profile1.png"
+                          profile.user_profile_pic? getImageUrl(profile.user_profile_pic):dummyProfile3
                         }
                         alt={activity.user?.first_name || "User"}
                         className="object-cover w-10 h-10 rounded-full"

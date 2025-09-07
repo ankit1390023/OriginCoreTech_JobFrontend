@@ -191,6 +191,8 @@ export default function FeedPage() {
     navigate(`/feed/${encodedId}`);
   };
 
+  // console.log("state.auth", profile);
+
   return (
     <MainLayout>
       <div className="flex justify-center min-h-screen px-2 bg-gray-100 sm:px-4 md:px-6 lg:px-8">
@@ -203,7 +205,7 @@ export default function FeedPage() {
           <div className="flex flex-col gap-3 p-3 mb-4 bg-white rounded-lg shadow-sm sm:p-4">
             <div className="flex items-center w-full gap-2">
               <img
-                src={getImageUrl(profile.user_profile_pic) || dummyProfile3}
+                src={profile.user_profile_pic ? getImageUrl(profile.user_profile_pic) : dummyProfile3}
                 alt="Profile"
                 className="flex-shrink-0 w-10 h-10 rounded-full sm:w-12 sm:h-12"
               />
@@ -272,7 +274,7 @@ export default function FeedPage() {
                   {/* Profile Picture */}
                   <img
                     src={
-                      getImageUrl(post.User?.profile_pic) ? getImageUrl(post.User.profile_pic) : profile.user_profile_pic // fallback image
+                      post.User?.profile_pic ? getImageUrl(post.User.profile_pic) : getImageUrl(profile.user_profile_pic) // fallback image
                     }
                     alt={post.User?.first_name || "User"}
                     className="flex-shrink-0 object-cover w-8 h-8 rounded-full sm:w-10 sm:h-10"

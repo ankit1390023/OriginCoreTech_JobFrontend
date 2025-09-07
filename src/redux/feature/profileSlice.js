@@ -6,8 +6,10 @@ export const fetchProfile = createAsyncThunk(
   'profile/fetchProfile',
   async (_, { getState }) => {
     const state = getState();
+    console.log("slicee state", state);
     
     const currentProfile = state.profile.profile;
+    console.log(currentProfile);
 
     // Skip if already loaded (avoid unnecessary fetch)
     if (currentProfile ) {
@@ -15,9 +17,10 @@ export const fetchProfile = createAsyncThunk(
     }
   
     const response = await userDetailsApi.getMiniUserDetails(state.auth.user.id,state.auth.token);
-    console.log("slicee" , response)
+    console.log("slicee response" , response)
     
     const user = response.data.user;
+    console.log("slicee user",user);
 
     
     return {

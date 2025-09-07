@@ -73,14 +73,14 @@ export default function FeedRightSide3() {
       {/* Cover + Profile */}
       <div className="relative h-20 mb-12">
         <div
-          className="w-full h-20 rounded-t bg-cover bg-center"
+          className="w-full h-20 bg-center bg-cover rounded-t"
           style={{ backgroundImage: `url(${cover})` }}
         ></div>
-        <div className="absolute left-2 top-10 w-24 h-24">
+        <div className="absolute w-24 h-24 left-2 top-10">
           <img
-            src={dummyProfile3}
+            src={profile.user_profile_pic? getImageUrl(profile.user_profile_pic): dummyProfile3}
             alt="Profile"
-            className="w-full h-full rounded-full border-4 border-white object-cover"
+            className="object-cover w-full h-full border-4 border-white rounded-full"
           />
         </div>
       </div>
@@ -90,25 +90,25 @@ export default function FeedRightSide3() {
         {loading ? (
           <div>Loading profile...</div>
         ) : error ? (
-          <div className="text-red-500 text-xs mt-1">{error}</div>
+          <div className="mt-1 text-xs text-red-500">{error}</div>
         ) : profile ? (
           <>
             <h2 className="text-lg font-bold text-gray-800">
               {profile.first_name} {profile.last_name}
             </h2>
             <p className="text-sm text-gray-500">{profile.email}</p>
-            <p className="text-sm text-gray-700 font-semibold mt-1">
+            <p className="mt-1 text-sm font-semibold text-gray-700">
               {profile.user_type}
             </p>
-            <p className="text-sm text-gray-600 mt-2">{profile.about_us}</p>
+            <p className="mt-2 text-sm text-gray-600">{profile.about_us}</p>
           </>
         ) : null}
 
         <div className="flex gap-2 mt-4">
-          <button className="bg-gray-100 text-blue-600 text-sm px-3 py-1 rounded">
+          <button className="px-3 py-1 text-sm text-blue-600 bg-gray-100 rounded">
             {loading ? "Loading..." : `${followersCount} followers`}
           </button>
-          <button className="bg-gray-100 text-blue-600 text-sm px-3 py-1 rounded">
+          <button className="px-3 py-1 text-sm text-blue-600 bg-gray-100 rounded">
             {loading ? "Loading..." : `${followingCount} following`}
           </button>
         </div>
