@@ -45,8 +45,8 @@ export const login = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message ||
-          error.response?.statusText ||
-          'Login failed. Please check your credentials.'
+        error.response?.statusText ||
+        'Login failed. Please check your credentials.'
       );
     }
   }
@@ -63,22 +63,18 @@ export const signup = createAsyncThunk(
 
       const data = response.data;
       const user = data.user || data.data?.user;
-      const token = data.token || data.data?.token;
 
-      if (!user || !token) {
+      if (!user) {
         throw new Error('Invalid response format from server');
       }
 
-      // ✅ Persist token + user
-      localStorage.setItem('authToken', token);
-      localStorage.setItem('user', JSON.stringify(user));
 
-      return { user, token };
+      return { user }; // No token on signup
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message ||
-          error.response?.statusText ||
-          'Signup failed. Please try again.'
+        error.response?.statusText ||
+        'Signup failed. Please try again.'
       );
     }
   }
