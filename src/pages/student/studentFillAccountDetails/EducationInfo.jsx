@@ -1,13 +1,8 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useFormContext, Controller } from "react-hook-form";
-import Select from 'react-select';
+import Select from "react-select";
 import { useMasterData } from "../../../hooks/master/useMasterData";
-import {
-  Loader,
-  Input,
-  Label,
-  ErrorMessage,
-} from "../../../components/ui";
+import { Loader, Input, Label, ErrorMessage } from "../../../components/ui";
 
 // Generate year options for dropdown
 const generateYearOptions = () => {
@@ -29,21 +24,25 @@ export default function EducationInfo() {
   } = useFormContext();
 
   const {
-    data: { jobRoles, courses, specializationByCourse, schoolColleges, companies },
+    data: {
+      jobRoles,
+      courses,
+      specializationByCourse,
+      schoolColleges,
+      companies,
+    },
     loading,
     error,
     refetch,
     getSpecializationsForCourse,
   } = useMasterData();
 
-
-
   // Get specializations based on selected course
   const selectedCourse = watch("course");
   const courseSpecializations = useMemo(() => {
     console.log("Selected course ID:", selectedCourse);
     if (!selectedCourse) return [];
-    const course = courses?.find(c => c.id == Number(selectedCourse)); // ✅ compare id
+    const course = courses?.find((c) => c.id == Number(selectedCourse)); // ✅ compare id
     return course ? getSpecializationsForCourse(course.id) : [];
   }, [selectedCourse, courses, getSpecializationsForCourse]);
 
@@ -393,20 +392,29 @@ export default function EducationInfo() {
               name="experience_years"
               control={control}
               rules={{ required: "Experience is required" }}
-              render={({ field }) => (
-                <Select
-                  {...field}
-                  options={Array.from({ length: 41 }, (_, i) => ({
-                    value: i,
-                    label: `${i} ${i === 1 ? "year" : "years"}`,
-                  }))}
-                  placeholder="Select experience"
-                  isClearable
-                  isSearchable
-                  className="w-full text-sm"
-                  classNamePrefix="select"
-                />
-              )}
+              render={({ field: { onChange, value, ref } }) => {
+                const options = Array.from({ length: 41 }, (_, i) => ({
+                  value: i,
+                  label: `${i} ${i === 1 ? "year" : "years"}`,
+                }));
+                return (
+                  <Select
+                    ref={ref}
+                    value={
+                      options.find((option) => option.value === value) || null
+                    }
+                    onChange={(selectedOption) =>
+                      onChange(selectedOption ? selectedOption.value : null)
+                    }
+                    options={options}
+                    placeholder="Select experience"
+                    isClearable
+                    isSearchable
+                    className="w-full text-sm"
+                    classNamePrefix="select"
+                  />
+                );
+              }}
             />
             {errors.experience_years && (
               <ErrorMessage>{errors.experience_years.message}</ErrorMessage>
@@ -460,46 +468,39 @@ export default function EducationInfo() {
               Company Name
             </label>
             <Controller
-              name="company_name"
+              name="company_id"
               control={control}
               rules={{ required: "Company name is required" }}
-              render={({ field }) => (
-                <input
-                  type="text"
-                  {...field}
-                  placeholder="Enter company name"
-                  className="w-full px-2 py-2 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              render={({ field: { onChange, onBlur, value, ref } }) => (
+                <Select
+                  ref={ref}
+                  value={
+                    companies?.find(
+                      (option) =>
+                        option.id === value || option.id === Number(value)
+                    ) || null
+                  }
+                  onChange={(selectedOption) => {
+                    console.log("Selected company:", selectedOption);
+                    onChange(selectedOption ? selectedOption.id : null);
+                  }}
+                  onBlur={onBlur}
+                  options={companies}
+                  getOptionLabel={(option) => option.company_name}
+                  getOptionValue={(option) => option.id}
+                  placeholder="Select Company Name"
+                  className="w-full text-sm"
+                  classNamePrefix="select"
+                  isClearable
+                  isSearchable
+                  isLoading={loading}
+                  loadingMessage={() => "Loading companies..."}
+                  noOptionsMessage={() => "No companies found"}
                 />
-                //to make searchable seclt of company name
-                // <Select
-                //   ref={ref}
-                //   value={
-                //     companies?.find(
-                //       (option) =>
-                //         option.id === value || option.id === Number(value)
-                //     ) || null
-                //   }
-                //   onChange={(selectedOption) => {
-                //     console.log("Selected option:", selectedOption);
-                //     onChange(selectedOption ? selectedOption.id : null);
-                //   }}
-                //   onBlur={onBlur}
-                //   options={companies}
-                //   getOptionLabel={(option) => option.company_name}
-                //   getOptionValue={(option) => option.id}
-                //   placeholder="Select Company Name"
-                //   className="w-full text-sm"
-                //   classNamePrefix="select"
-                //   isClearable
-                //   isSearchable
-                //   isLoading={loading}
-                //   loadingMessage={() => "Loading job roles..."}
-                //   noOptionsMessage={() => "No job roles found"}
-                // />
               )}
             />
-            {errors.company_name && (
-              <ErrorMessage>{errors.company_name.message}</ErrorMessage>
+            {errors.company_id && (
+              <ErrorMessage>{errors.company_id.message}</ErrorMessage>
             )}
           </div>
           <div className="flex gap-1 mb-2 sm:gap-2 sm:mb-3">

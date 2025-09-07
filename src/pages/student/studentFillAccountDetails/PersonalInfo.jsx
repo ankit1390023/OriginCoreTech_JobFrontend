@@ -1,20 +1,16 @@
 import React, { useEffect } from "react";
 import { useFormContext, Controller } from "react-hook-form";
 import { useSelector } from "react-redux";
-import Select from 'react-select';
+import Select from "react-select";
 import { useMasterData } from "../../../hooks/master/useMasterData";
-import {
-  Loader,
-  Input,
-  PhoneInput,
-} from "../../../components/ui";
+import { Loader, Input, PhoneInput } from "../../../components/ui";
 
 export default function PersonalInfo() {
   const {
     register,
     formState: { errors },
     setValue,
-    control
+    control,
   } = useFormContext();
 
   const { user } = useSelector((state) => state.auth);
@@ -25,9 +21,9 @@ export default function PersonalInfo() {
     isLoading,
     isError,
     error,
-    refetch
+    refetch,
   } = useMasterData();
-  console.log("locations", locations)
+  console.log("locations", locations);
   // Pre-fill user data into form if available
   useEffect(() => {
     if (user) {
@@ -40,12 +36,12 @@ export default function PersonalInfo() {
 
   // Reusable error message with retry button
   const CustomErrorMessage = ({ message, onRetry }) => (
-    <div className="w-full p-3 border rounded bg-red-50 text-red-500 text-xs">
+    <div className="w-full p-3 text-xs text-red-500 border rounded bg-red-50">
       <div className="flex items-center justify-between">
         <span>{message}</span>
         <button
           onClick={onRetry}
-          className="ml-2 px-2 py-1 bg-red-500 text-white rounded text-xs hover:bg-red-600 transition-colors"
+          className="px-2 py-1 ml-2 text-xs text-white transition-colors bg-red-500 rounded hover:bg-red-600"
         >
           Retry
         </button>
@@ -60,7 +56,7 @@ export default function PersonalInfo() {
   if (isError) {
     return (
       <CustomErrorMessage
-        message={error?.message || 'Failed to load required data'}
+        message={error?.message || "Failed to load required data"}
         onRetry={refetch}
       />
     );
@@ -94,7 +90,7 @@ export default function PersonalInfo() {
         type="email"
         placeholder="example@email.com"
         error={errors.email?.message}
-        className="bg-gray-50 cursor-not-allowed"
+        className="cursor-not-allowed bg-gray-50"
         readOnly
         {...register("email")}
       />
@@ -119,7 +115,9 @@ export default function PersonalInfo() {
 
       {/* Location Dropdown */}
       <div className="w-full">
-        <label className="block text-sm font-medium text-gray-700 mb-1">City</label>
+        <label className="block mb-1 text-sm font-medium text-gray-700">
+          City
+        </label>
         <Controller
           name="current_location_id"
           control={control}
@@ -127,18 +125,26 @@ export default function PersonalInfo() {
           render={({ field: { onChange, onBlur, value, ref } }) => (
             <Select
               ref={ref}
-              value={value ? {
-                value: String(value),
-                label: locations.find(l => l.id === value || l.id === Number(value))?.name
-              } : null}
+              value={
+                value
+                  ? {
+                      value: String(value),
+                      label: locations.find(
+                        (l) => l.id === value || l.id === Number(value)
+                      )?.name,
+                    }
+                  : null
+              }
               onChange={(option) => {
                 onChange(option ? String(option.value) : null);
               }}
               onBlur={onBlur}
-              options={(Array.isArray(locations) ? locations : []).map((location) => ({
-                value: String(location.id),
-                label: location.name,
-              }))}
+              options={(Array.isArray(locations) ? locations : []).map(
+                (location) => ({
+                  value: String(location.id),
+                  label: location.name,
+                })
+              )}
               placeholder="Select your city"
               className="text-sm"
               classNamePrefix="select"
@@ -148,13 +154,17 @@ export default function PersonalInfo() {
           )}
         />
         {errors.current_location_id && (
-          <p className="mt-1 text-xs text-red-500">{errors.current_location_id.message}</p>
+          <p className="mt-1 text-xs text-red-500">
+            {errors.current_location_id.message}
+          </p>
         )}
       </div>
 
       {/* Gender */}
       <div className="w-full">
-        <label className="block text-sm font-medium text-gray-700 mb-1">Gender</label>
+        <label className="block mb-1 text-sm font-medium text-gray-700">
+          Gender
+        </label>
         <Controller
           name="gender"
           control={control}
@@ -162,12 +172,14 @@ export default function PersonalInfo() {
           render={({ field }) => (
             <Select
               {...field}
-              value={field.value ? { value: field.value, label: field.value } : null}
-              onChange={(option) => field.onChange(option?.value || '')}
+              value={
+                field.value ? { value: field.value, label: field.value } : null
+              }
+              onChange={(option) => field.onChange(option?.value || "")}
               options={[
                 { value: "Male", label: "Male" },
                 { value: "Female", label: "Female" },
-                { value: "Other", label: "Other" }
+                { value: "Other", label: "Other" },
               ]}
               placeholder="Select gender"
               className="text-sm"

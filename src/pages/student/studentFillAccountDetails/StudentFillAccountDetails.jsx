@@ -30,7 +30,7 @@ const personalInfoSchema = z.object({
 });
 
 const educationInfoSchema = z.object({
-  type: z.string().min(1, { message: "Type is required" }),
+  type: z.string().min(1, { message: "Type is required" }).optional(),
   standard: z.string().optional(), // School students
   course: z.string().optional(), // College/freshers
   specialization: z.number().optional(),
@@ -41,6 +41,7 @@ const educationInfoSchema = z.object({
   job_id: z.number().optional(), // 👈 fixed
   company_name: z.string().optional(), // 👈 fixed
   salary: z.string().optional(),
+  company_id:z.number().optional(),
 });
 
 const preferencesSchema = z.object({
@@ -53,11 +54,11 @@ const domainsSchema = z.object({
     .array(
       z.object({
         id: z.number().optional(),
-        name: z.string().optional(),
-        company: z.string().optional(),
+        // name: z.string().optional(),
+        // company: z.string().optional(),
         // authority_id: z.string().optional(),
         authority_id: z.union([z.string(), z.number()]).optional(),
-        certificate: z.array(z.string().url()).optional(),
+        certificate: z.array(z.string()).optional(),
         certificateName: z.string().optional(),
         skills: z
           .array(
@@ -154,83 +155,6 @@ export default function StudentFillAccountDetails() {
 
 
 
-const handleSubmitClick = async () => {
-  setIsSubmitting(true);
-  setSubmitError(null);
-
-  try {
-    console.log("=== FORM SUBMISSION STARTED ===");
-    let formData = methods.getValues();
-    
-    // Validate that each domain has authority_id
-    const domainsWithMissingAuthority = formData.domains?.filter(domain => 
-      !domain.authority_id || domain.authority_id === ""
-    );
-    
-    if (domainsWithMissingAuthority?.length > 0) {
-      setSubmitError("Please select a company/authority for all domains");
-      setIsSubmitting(false);
-      return;
-    }
-    
-    // Transform domains into skills array for backend
-    const skills = [];
-    if (formData.domains) {
-      formData.domains.forEach(domain => {
-        if (domain.skills && domain.authority_id) {
-          domain.skills.forEach(skill => {
-            skills.push({
-              authority_id: domain.authority_id,
-              skill_id: skill.skill_id
-            });
-          });
-        }
-      });
-    }
-    
-    // Add skills array to formData
-    formData = {
-      ...formData,
-      skills: skills,
-      domains: formData.domains.map(({ certificateName, ...rest }) => rest),
-    };
-    
-    // Ensure schema validation runs
-    const isValid = await methods.trigger();
-    if (!isValid) {
-      console.warn("Validation failed. Fix errors before submitting.");
-      setIsSubmitting(false);
-      return;
-    }
-
-    console.log("Final form data:", JSON.stringify(formData, null, 2));
-
-    let response;
-    response = await createUserDetails(formData, user.token);
-
-    console.log("API response:", response);
-    alert("Form submitted successfully!");
-    navigate("/all-jobs");
-  } catch (error) {
-    console.error("Form submission error:", error);
-
-    let errorMessage = "Error submitting form. Please try again.";
-    if (error.response?.data?.message) {
-      errorMessage = error.response.data.message;
-    } else if (error.response?.data?.error) {
-      errorMessage = `Validation Error: ${error.response.data.error}`;
-    } else if (error.response?.data) {
-      errorMessage = `Server Error: ${JSON.stringify(error.response.data)}`;
-    }
-
-    setSubmitError(errorMessage);
-    alert(errorMessage);
-  } finally {
-    setIsSubmitting(false);
-  }
-};
-
-
 // const handleSubmitClick = async () => {
 //   setIsSubmitting(true);
 //   setSubmitError(null);
@@ -238,45 +162,41 @@ const handleSubmitClick = async () => {
 //   try {
 //     console.log("=== FORM SUBMISSION STARTED ===");
 //     let formData = methods.getValues();
-
+    
 //     // Validate that each domain has authority_id
-//     const domainsWithMissingAuthority = formData.domains?.filter(
-//       (domain) =>
-//         domain.authority_id === null ||
-//         domain.authority_id === undefined ||
-//         domain.authority_id === ""
+//     const domainsWithMissingAuthority = formData.domains?.filter(domain => 
+//       !domain.authority_id || domain.authority_id === ""
 //     );
-
+    
 //     if (domainsWithMissingAuthority?.length > 0) {
 //       setSubmitError("Please select a company/authority for all domains");
 //       setIsSubmitting(false);
 //       return;
 //     }
-
+    
 //     // Transform domains into skills array for backend
 //     const skills = [];
 //     if (formData.domains) {
-//       formData.domains.forEach((domain) => {
+//       formData.domains.forEach(domain => {
 //         if (domain.skills && domain.authority_id) {
-//           domain.skills.forEach((skill) => {
+//           domain.skills.forEach(skill => {
 //             skills.push({
-//               authority_id: Number(domain.authority_id), // ✅ Ensure it's a number
-//               skill_id: skill.skill_id,
+//               authority_id: domain.authority_id,
+//               skill_id: skill.skill_id
 //             });
 //           });
 //         }
 //       });
 //     }
-
+    
 //     // Add skills array to formData
 //     formData = {
 //       ...formData,
-//       skills: skills, // ✅ Flat skills array at root level
-//       domains: formData.domains.map(
-//         ({ certificateName, authority_id, ...rest }) => rest
-//       ), // ✅ Remove authority_id from domains
+//       skills: skills,
+//       domains: formData.domains.map(({ certificateName, ...rest }) => rest),
 //     };
-
+//     console.log(formdata);
+    
 //     // Ensure schema validation runs
 //     const isValid = await methods.trigger();
 //     if (!isValid) {
@@ -313,6 +233,90 @@ const handleSubmitClick = async () => {
 // };
 
 
+const handleSubmitClick = async () => {
+  console.log("------------submiting")
+  setIsSubmitting(true);
+  setSubmitError(null);
+
+  try {
+    console.log("=== FORM SUBMISSION STARTED ===");
+    let formData = methods.getValues();
+
+    // Validate that each domain has authority_id
+    const domainsWithMissingAuthority = formData.domains?.filter(
+      (domain) =>
+        domain.authority_id === null ||
+        domain.authority_id === undefined ||
+        domain.authority_id === ""
+    );
+
+    if (domainsWithMissingAuthority?.length > 0) {
+      setSubmitError("Please select a company/authority for all domains");
+      setIsSubmitting(false);
+      return;
+    }
+
+    // Transform domains into skills array for backend
+    const skills = [];
+    if (formData.domains) {
+      formData.domains.forEach((domain) => {
+        if (domain.skills && domain.authority_id) {
+          domain.skills.forEach((skill) => {
+            skills.push({
+              authority_id: Number(domain.authority_id), // ✅ Ensure it's a number
+              skill_id: skill.skill_id,
+            });
+          });
+        }
+      });
+    }
+
+    // Add skills array to formData
+    formData = {
+      ...formData,
+      skills: skills, // ✅ Flat skills array at root level
+      domains: formData.domains.map(
+        ({ certificateName, authority_id, ...rest }) => rest
+      ), // ✅ Remove authority_id from domains
+    };
+      console.log("Form data in handle submi befor valid", formData);
+    // Ensure schema validation runs
+    const isValid = await methods.trigger();
+    console.log("isvalid",isValid)
+    if (!isValid) {
+      console.warn("Validation failed. Fix errors before submitting.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    console.log("Final form data:", JSON.stringify(formData, null, 2));
+
+    let response;
+    response = await createUserDetails(formData, user.token);
+
+    console.log("API response:", response);
+    alert("Form submitted successfully!");
+    navigate("/all-jobs");
+  } catch (error) {
+    console.error("Form submission error:", error);
+
+    let errorMessage = "Error submitting form. Please try again.";
+    if (error.response?.data?.message) {
+      errorMessage = error.response.data.message;
+    } else if (error.response?.data?.error) {
+      errorMessage = `Validation Error: ${error.response.data.error}`;
+    } else if (error.response?.data) {
+      errorMessage = `Server Error: ${JSON.stringify(error.response.data)}`;
+    }
+
+    setSubmitError(errorMessage);
+    alert(errorMessage);
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+
+
 
 
 
@@ -323,9 +327,12 @@ const handleSubmitClick = async () => {
   };
 
   const [step, setStep] = useState(0);
+  console.log("step",step);
 
   const onNext = async () => {
     const formData = methods.getValues();
+
+    console.log("nnnnextt", formData);
 
     const stepFields = {
       0: ["first_name", "last_name", "email", "phone", "dob", "current_location_id", "gender"],
@@ -342,17 +349,20 @@ const handleSubmitClick = async () => {
       } else if (type === "College Student" || type === "Fresher") {
         stepFields[1].push("course", "college_id", "specialization", "start_year", "end_year");
       } else if (type === "Working Professional") {
-        stepFields[1].push("experience_years", "job_id", "company_name", "start_year", "end_year");
+        stepFields[1].push("experience_years", "job_id", "company_id", "start_year", "end_year");
       }
     }
 
     const valid = await methods.trigger(stepFields[step] || []);
+    console.log("validd", valid);
     if (!valid) return;
 
     if (step < steps.length - 1) {
       setStep((s) => s + 1);
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
+
+    console.log(formData);
   };
 
   const onBack = () => setStep((s) => s - 1);

@@ -11,7 +11,7 @@ const persistConfig = {
     storage,                     //the storage engine to use (localStorage for web) 
     version: 1,                  //version of the persisted state (for migrations)
     whitelist: ['auth'],         //which slices of state to persist (here, only 'auth')
-    blacklist: ['profile']                //which slices of state to not persist (here, none)
+    blacklist: []                //which slices of state to not persist (here, none)
 }
 
 // 2. Combine reducers

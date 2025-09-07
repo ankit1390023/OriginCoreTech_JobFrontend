@@ -7,7 +7,6 @@ import { FaCamera } from "react-icons/fa6";
 import { useEffect, useState } from "react";
 import feedApi from "../../../api/feedApi";
 import { userDetailsApi } from "../../../api/userDetailsApi";
-import { getImageUrl } from "../../../../utils.js";
 
 const visitors = [
   { name: "Olivia Rhye", img: dummyProfile1 },
@@ -27,8 +26,35 @@ export default function FeedRightProfile() {
   const [followingCount, setFollowingCount] = useState(0); // Added for following count
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [profile, setProfile] = useState(null);
   const { token, user } = useSelector((state) => state.auth);
-  const {profile}= useSelector((state) => state.profile);
+  
+
+  // Fetch user public profile using user_id from Redux
+  useEffect(() => {
+    async function fetchUserProfile() {
+      if (!token || !user) return;
+
+      setLoading(true);
+      setError(null);
+      try {
+        const result = await userDetailsApi.getUserDetails(user.id);
+        console.log("result from fetchUserProfiljhgfghje", result);
+        if (result.success) {
+          setProfile(result.data.publicProfile); // Only set the publicProfile part
+        } else {
+          setError(result.error || "Failed to fetch user details.");
+          setProfile(null);
+        }
+      } catch (err) {
+        setError("Failed to fetch user details.");
+        setProfile(null);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchUserProfile();
+  }, [token, user]);
 
   useEffect(() => {
     async function fetchFollowersAndFollowing() {
@@ -72,7 +98,7 @@ export default function FeedRightProfile() {
                     </div> */}
           <div className="absolute w-24 h-24 left-2 top-10">
             <img
-              src={getImageUrl(profile.user_profile_pic) || dummyProfile3}
+              src={ dummyProfile3}
               alt="Profile"
               className="object-cover w-full h-full border-4 border-white rounded-full"
             />
@@ -87,12 +113,12 @@ export default function FeedRightProfile() {
           ) : profile ? (
             <>
               <h2 className="text-lg font-bold text-gray-800">
-                {user.first_name} {user.last_name}
+                {profile.first_name} {profile.last_name}
               </h2>
               <p className="text-sm text-gray-500">{user?.email}</p>
 
               <p className="mt-1 text-sm font-semibold text-gray-700">
-                {user.user_type}
+                {profile.user_type}
               </p>
               <p className="mt-2 text-sm text-gray-600">{profile.about_us}</p>
             </>
@@ -149,7 +175,7 @@ export default function FeedRightProfile() {
             ))}
           </div>
           <p className="mt-2 text-sm text-center text-blue-600 cursor-pointer">
-            See more
+            See more {profile}
           </p>
         </div>
       </div>

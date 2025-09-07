@@ -9,12 +9,13 @@ import { userDetailsApi } from "../../../api/userDetailsApi";
 import { updateProfileLocally } from '../../../redux/feature/profileSlice';
 import { useDispatch } from 'react-redux';
 import { getImageUrl } from "../../../../utils.js";
+import dummyProfile3 from "../../../assets/dummyProfile3.jpg";
 
 
 const FeedView = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [profileImage, setProfileImage] = useState("/src/assets/dummyProfile1.jpg");
+  const [profileImage, setProfileImage] = useState(dummyProfile3);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadStatus, setUploadStatus] = useState(null);
   const [resumeUrl, setResumeUrl] = useState(null);

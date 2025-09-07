@@ -85,34 +85,34 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
 
 // Public Route Wrapper Component
 const PublicRoute = ({ children }) => {
-    const { isAuthenticated, user } = useSelector((state) => state.auth);
-    const location = useLocation();
+  const { isAuthenticated, user } = useSelector((state) => state.auth);
+  const location = useLocation();
 
-    // 👇 Check if user is in signup → OTP flow
-    const isInSignupFlow =
-      location.state?.inSignupFlow === true ||
-      sessionStorage.getItem("inSignupFlow") === "true";
+  // 👇 Check if user is in signup → OTP flow
+  const isInSignupFlow =
+    location.state?.inSignupFlow === true ||
+    sessionStorage.getItem("inSignupFlow") === "true";
 
-    // Don't redirect if:
-    // - it's the OTP page, OR
-    // - user just came from signup and is in OTP flow
-    if (location.pathname === "/signup-verify-otp-email" || isInSignupFlow) {
-      return children;
+  // Don't redirect if:
+  // - it's the OTP page, OR
+  // - user just came from signup and is in OTP flow
+  if (location.pathname === "/signup-verify-otp-email" || isInSignupFlow) {
+    return children;
+  }
+
+  // Redirect authenticated users as before
+  if (isAuthenticated) {
+    switch (user?.user_role) {
+      case "STUDENT":
+        return <Navigate to="/student-fill-account-details" replace />;
+      case "COMPANY":
+        return <Navigate to="/recruiter-profile" replace />;
+      case "UNIVERSITY":
+        return <Navigate to="/university-profile" replace />;
+      default:
+        return <Navigate to="/" replace />;
     }
-
-    // Redirect authenticated users as before
-    if (isAuthenticated) {
-      switch (user?.user_role) {
-        case "STUDENT":
-          return <Navigate to="/student-fill-account-details" replace />;
-        case "COMPANY":
-          return <Navigate to="/recruiter-profile" replace />;
-        case "UNIVERSITY":
-          return <Navigate to="/university-profile" replace />;
-        default:
-          return <Navigate to="/" replace />;
-      }
-    }
+  }
 
   return children;
 };
@@ -385,6 +385,14 @@ export const appRouter = createBrowserRouter([
     ),
   },
   {
+    path: "/recruiter-right-profile",
+    element: (
+      <ProtectedRoute allowedRoles={['COMPANY']}>
+        <RecruiterRightProfile />
+      </ProtectedRoute>
+    ),
+  },
+  {
     path: "/recruiter-total-job-post",
     element: (
       <ProtectedRoute allowedRoles={['COMPANY']}>
@@ -393,7 +401,7 @@ export const appRouter = createBrowserRouter([
     ),
   },
   {
-    path: "/recruiter-application",
+    path: "/recruiter-view-applications/:job_id",
     element: (
       <ProtectedRoute allowedRoles={['COMPANY']}>
         <RecruiterApplication />
@@ -402,10 +410,18 @@ export const appRouter = createBrowserRouter([
   },
 
   {
-    path: "/recruiter-application-details",
+    path: "/recruiter-application-details/:job_id/:application_id",
     element: (
       <ProtectedRoute allowedRoles={['COMPANY']}>
         <RecruiterApplicationDetails />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/recruiter-application-data",
+    element: (
+      <ProtectedRoute allowedRoles={['COMPANY']}>
+        <RecruiterApplicationData />
       </ProtectedRoute>
     ),
   },
@@ -418,10 +434,10 @@ export const appRouter = createBrowserRouter([
     ),
   },
   {
-    path: "/recruiter-interview",
+    path: "/recruiter-interview/:id",
     element: (
       <ProtectedRoute allowedRoles={['COMPANY']}>
-        <RecruiterApproval />
+        <RecruiterInterview />
       </ProtectedRoute>
     ),
   },

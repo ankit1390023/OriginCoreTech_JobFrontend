@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import MainLayout from "../../../components/layout/MainLayout.jsx";
-import profile from "../../../assets/profile.png";
+import profilee from "../../../assets/profile.png";
 import addMediaIcon from "../../../assets/add-media.png";
 import { BiCommentDetail, BiLike } from "react-icons/bi";
 import { FaEllipsisH } from "react-icons/fa";
@@ -203,7 +203,7 @@ export default function FeedPage() {
           <div className="flex flex-col gap-3 p-3 mb-4 bg-white rounded-lg shadow-sm sm:p-4">
             <div className="flex items-center w-full gap-2">
               <img
-                src={getImageUrl(profile.user_profile_pic)}
+                src={getImageUrl(profile.user_profile_pic) || dummyProfile3}
                 alt="Profile"
                 className="flex-shrink-0 w-10 h-10 rounded-full sm:w-12 sm:h-12"
               />

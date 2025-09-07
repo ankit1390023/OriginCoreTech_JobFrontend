@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { userDetailsApi } from '../../api/userDetailsApi'; 
 const dummyProfile =  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLMI5YxZE03Vnj-s-sth2_JxlPd30Zy7yEGg&s";
- 
+// import dummyProfile3 from "../../";
 export const fetchProfile = createAsyncThunk(
   'profile/fetchProfile',
   async (_, { getState }) => {

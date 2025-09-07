@@ -7,6 +7,7 @@ import { FaTimes } from "react-icons/fa";
 import useUploadImageApi from "../../../hooks/useUploadImageApi";
 
 export default function SkillsForm() {
+
   const {
     setValue,
     control,
@@ -24,15 +25,16 @@ export default function SkillsForm() {
   const { uploadImage, loading: uploading } = useUploadImageApi();
   const debounceTimeouts = useRef({});
 
- 
   // Format companies for react-select (keep IDs as numbers)
-const companyOptions = companies?.map(company => ({
-    value: company.id, // ✅ Keep as number
-    label: company.company_name
-})) || [];
+  const companyOptions =
+    companies?.map((company) => ({
+      value: company.id, // ✅ Keep as number
+      label: company.company_name,
+    })) || [];
 
   // Add console logging to debug re-renders
-  console.log("SkillsForm re-rendered, domains:", domains.length);
+  console.log("SkillsForm re-rendered, domains:", domains);
+  
 
   // Initialize local company values when domains change
   useEffect(() => {
@@ -60,6 +62,7 @@ const companyOptions = companies?.map(company => ({
     const domainId = domain.id;
     return getSkillsForDomain(domainId) || [];
   };
+
 
   const handleAddDomain = (domain) => {
     const domainName = domain.domain_name || domain.name || domain;
@@ -183,9 +186,9 @@ const companyOptions = companies?.map(company => ({
     <div className="space-y-4">
       <div className="mb-4">
         <Label>Areas of Interest</Label>
-        <div className="flex items-center border rounded-md px-3 py-2 mb-2">
+        <div className="flex items-center px-3 py-2 mb-2 border rounded-md">
           <input
-            className="flex-1 outline-none text-sm"
+            className="flex-1 text-sm outline-none"
             placeholder="Search and add domains..."
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
@@ -202,7 +205,7 @@ const companyOptions = companies?.map(company => ({
 
         {searchInput.trim() && filteredDomains.length > 0 && (
           <div className="mb-3">
-            <div className="text-xs mb-2 text-gray-500 font-medium">
+            <div className="mb-2 text-xs font-medium text-gray-500">
               Matched domains
             </div>
             <div className="flex flex-wrap gap-2">
@@ -229,7 +232,7 @@ const companyOptions = companies?.map(company => ({
           return (
             <div
               key={stableKey}
-              className="border rounded-lg p-4 bg-white hover:shadow-sm"
+              className="p-4 bg-white border rounded-lg hover:shadow-sm"
             >
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center">
@@ -241,7 +244,7 @@ const companyOptions = companies?.map(company => ({
                     className="ml-2 text-gray-400 hover:text-red-500"
                     onClick={() => handleRemoveDomain(idx)}
                   >
-                    <FaTimes className="h-3 w-3" />
+                    <FaTimes className="w-3 h-3" />
                   </button>
                 </div>
 
@@ -267,14 +270,14 @@ const companyOptions = companies?.map(company => ({
               </div>
 
               {domain.certificate && (
-                <div className="flex items-center justify-between bg-gray-50 p-2 rounded-md mb-3">
-                  <span className="text-xs font-medium text-green-600 truncate max-w-xs">
+                <div className="flex items-center justify-between p-2 mb-3 rounded-md bg-gray-50">
+                  <span className="max-w-xs text-xs font-medium text-green-600 truncate">
                     {domain.certificateName || "Uploaded file"}
                   </span>
                   <button
                     type="button"
                     onClick={() => handleCertificateChange(idx, null)}
-                    className="text-red-500 hover:text-red-700 text-xs"
+                    className="text-xs text-red-500 hover:text-red-700"
                   >
                     Remove
                   </button>
@@ -283,7 +286,7 @@ const companyOptions = companies?.map(company => ({
 
               {skills.length > 0 && (
                 <div className="mt-4">
-                  <div className="text-sm text-gray-700 mb-2">
+                  <div className="mb-2 text-sm text-gray-700">
                     Select related skills for {domain.name}:
                   </div>
                   <div className="flex flex-wrap gap-2 mb-2">

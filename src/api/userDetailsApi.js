@@ -1,6 +1,5 @@
 import axios from "axios";
-const BASE_URL =
-  import.meta.env.VITE_BASE_URL || "http://212.95.51.83:5000/api";
+const BASE_URL = import.meta.env.VITE_BASE_URL || "http://212.95.51.83:5000/api";
 
 // API service functions for user details
 export const userDetailsApi = {
@@ -137,7 +136,7 @@ export const userDetailsApi = {
         `${BASE_URL}/users/getUserData`,
         { headers }
       );
-      return { success: true, data: response.data };
+      return { success: true, data: response.data};
     } catch (error) {
       console.error("Error fetching user details:", error);
       return {
