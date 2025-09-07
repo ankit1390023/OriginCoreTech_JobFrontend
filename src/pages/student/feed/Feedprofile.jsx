@@ -22,6 +22,7 @@ import softDeleteAccount from "../../../api/feedApi";
 import { userDetailsApi } from "../../../api/userDetailsApi";
 import { getImageUrl } from "../../../../utils.js";
 
+
 const Feedprofile = () => {
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [profile, setProfile] = useState(null);
@@ -222,8 +223,7 @@ const Feedprofile = () => {
           <div className="bg-[#002B6B] text-white p-3 sm:p-4 lg:p-4 flex flex-col sm:flex-row sm:items-center justify-between rounded-[5px] gap-3 sm:gap-4">
             <div className="flex items-center flex-1 min-w-0 gap-3 sm:gap-4">
               <img
-                src={
-                  profile.user_profile_pic? getImageUrl(profile.user_profile_pic) : "https://i.pravatar.cc/100?img=1"
+                src={ "https://i.pravatar.cc/100?img=1"
                 }
                 alt="avatar"
                 className="flex-shrink-0 object-cover w-12 h-12 rounded-md sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-18 lg:h-18"
@@ -231,13 +231,13 @@ const Feedprofile = () => {
               <div className="flex-1 min-w-0">
                 <h1 className="text-base font-semibold truncate sm:text-lg md:text-xl lg:text-2xl">
                   {profile
-                    ? `${profile.first_name} ${profile.last_name}`
+                    ? `${profile?.first_name} ${profile?.last_name}`
                     : "Loading..."}
                 </h1>
                 <p className="text-xs text-gray-200 truncate sm:text-sm">
                   {/* @{profile?.first_name.toLowerCase()}
                   {profile?.last_name.toLowerCase()} */}
-                  {profile.email}
+                  {profile?.email}
                 </p>
                 <p className="text-xs text-gray-200 truncate sm:text-sm">
                   {profile?.user_role === "STUDENT"

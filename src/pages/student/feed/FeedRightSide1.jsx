@@ -110,11 +110,11 @@ export default function FeedRightSide1() {
             <h2 className="text-lg font-bold text-gray-800">
               {user.first_name} {user.last_name}
             </h2>
-            <p className="text-sm text-gray-500">{profile.email}</p>
+            <p className="text-sm text-gray-500">{profile?.email}</p>
             <p className="mt-1 text-sm font-semibold text-gray-700">
               {user.user_type}
             </p>
-            <p className="mt-2 text-sm text-gray-600">{profile.about_us}</p>
+            <p className="mt-2 text-sm text-gray-600">{profile?.about_us}</p>
           </>
         ) : null}
 

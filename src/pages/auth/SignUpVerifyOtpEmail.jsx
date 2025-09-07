@@ -96,6 +96,7 @@ export default function SignUpVerifyOtpEmail() {
           navigate("/student-fill-account-details");
           break;
         case "COMPANY":
+          sessionStorage.removeItem("inSignupFlow");
           navigate("/recruiter-profile");
           break;
         case "UNIVERSITY":
