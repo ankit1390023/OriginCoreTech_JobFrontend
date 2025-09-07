@@ -75,11 +75,11 @@ export default function SignUpVerifyOtpEmail() {
         email: email,
         otp: getFullOtp(),
       });
-      console.log("OTP verification success:", response);
-      console.log("OTP verification success:", response.data);
 
       // Store user and token in Redux if present
       if (response.data.user && response.data.token) {
+        localStorage.setItem('authToken', response.data.token);
+        localStorage.setItem('user', JSON.stringify(response.data.user));
         dispatch(
           login.fulfilled({
             user: response.data.user,
@@ -90,7 +90,6 @@ export default function SignUpVerifyOtpEmail() {
 
       // Role-based redirection
       const user_role = response.data.user.user_role;
-      console.log("User role:", user_role);
       switch (user_role) {
         case "STUDENT":
           sessionStorage.removeItem('inSignupFlow');
@@ -167,11 +166,10 @@ export default function SignUpVerifyOtpEmail() {
                       type="text"
                       maxLength={1}
                       disabled={loading}
-                      className={`w-full h-12 text-center text-lg font-semibold border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                        errors[`otp${index + 1}`]
-                          ? "border-red-500 bg-red-50"
-                          : "border-gray-300 hover:border-gray-400"
-                      }`}
+                      className={`w-full h-12 text-center text-lg font-semibold border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${errors[`otp${index + 1}`]
+                        ? "border-red-500 bg-red-50"
+                        : "border-gray-300 hover:border-gray-400"
+                        }`}
                       placeholder="0"
                       value={watch(`otp${index + 1}`) || ""}
                       onChange={(e) => {
@@ -214,7 +212,9 @@ export default function SignUpVerifyOtpEmail() {
                   </div>
                 ))}
               </div>
-
+              {(otpError) && (<p className="mt-1 text-xs text-red-500">
+                {otpError}
+              </p>)}
               {(errors.otp1 || errors.otp2 || errors.otp3 || errors.otp4) && (
                 <p className="mt-1 text-xs text-red-500">
                   Please enter a valid 4-digit OTP

@@ -135,8 +135,6 @@ export default function LoginVerifyOtpEmail() {
         email: data.email,
         otp: data.otp,
       });
-      console.log("OTP verification success:", response);
-      console.log("OTP verification success:", response.data);
 
       // Store user and token in Redux if present
       if (response.data.user && response.data.token) {
@@ -225,11 +223,10 @@ export default function LoginVerifyOtpEmail() {
                   onChange={(e) => handleOtpChange(index, e.target.value)}
                   onKeyDown={(e) => handleKeyDown(index, e)}
                   placeholder=""
-                  className={`w-full h-7 sm:h-8 text-center text-xs font-semibold border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-transparent transition-all duration-200 ${
-                    errors.otp
+                  className={`w-full h-7 sm:h-8 text-center text-xs font-semibold border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-transparent transition-all duration-200 ${errors.otp
                       ? "border-red-500 bg-red-50"
                       : "border-gray-300 hover:border-gray-400"
-                  }`}
+                    }`}
                 />
               ))}
             </div>

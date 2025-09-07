@@ -71,7 +71,6 @@ import RecruiterRightProfile from "../pages/recruiter/dashboard/RecruiterRightPr
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { isAuthenticated, loading, user } = useSelector((state) => state.auth);
   const location = useLocation();
-
   if (!isAuthenticated) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }

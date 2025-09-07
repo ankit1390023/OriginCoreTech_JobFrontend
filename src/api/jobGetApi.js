@@ -1,7 +1,6 @@
 import axios from "axios";
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
-console.log("BASE_URL", BASE_URL);
 //Api service function for job get
 
 export const jobGetApi = {
@@ -13,7 +12,6 @@ export const jobGetApi = {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log("response.data from getAllJobs", response);
       return response.data;
     } catch (error) {
       throw error;

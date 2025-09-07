@@ -43,7 +43,6 @@ export default function LoginSendOtpEmail() {
       const response = await axios.post(`${BASE_URL}/otp/send-otp`, {
         email: data.email,
       });
-      console.log("OTP sent successfully:", response.data);
       alert("OTP sent successfully, please check your email");
       // You can redirect or show success message here
       navigate("/login-verify-otp-email");

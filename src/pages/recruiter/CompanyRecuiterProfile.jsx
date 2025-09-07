@@ -10,7 +10,7 @@ import { useSelector } from "react-redux";
 import Select from "react-select";
 import { useMasterData } from "../../hooks/master/useMasterData";
 import useUploadImageApi from "../../hooks/useUploadImageApi";
-import {getImageUrl} from "../../../utils.js";
+import { getImageUrl } from "../../../utils.js";
 
 const formSchema = z.object({
   designation_id: z.string().min(1, { message: "Designation is required" }),
@@ -96,7 +96,6 @@ export default function CompanyRecruiterProfile() {
   };
 
   const onSubmit = async (data) => {
-    console.log("Original Form Data:", data);
 
     // ✅ Convert string IDs to integers for API
     const apiData = {
@@ -106,8 +105,6 @@ export default function CompanyRecruiterProfile() {
       company_location_id: parseInt(data.company_location_id, 10),
       language_ids: data.language_ids?.map(id => parseInt(id, 10)) || [],
     };
-   
-    console.log("API Data (with integers):", apiData);
 
     try {
       if (!token) {

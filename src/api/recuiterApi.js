@@ -34,7 +34,6 @@ export const recruiterApi = {
           },
         }
       );
-      console.log("response.data from getProfile", response.data);
       return response.data;
     } catch (error) {
       throw error;

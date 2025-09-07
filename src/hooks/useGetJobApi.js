@@ -13,7 +13,6 @@ export const useGetJobApi = () => {
       if (!token) return;
 
       const response = await jobGetApi.getAllJobs(token);
-      console.log("response.data from fetchAllJobs", response);
       setAllJobs(response.data || response);
     };
     fetchAllJobs();
@@ -60,8 +59,7 @@ export const useGetJobById = (job_id) => {
         setJob(response);
       } catch (error) {
         setError(
-          `Failed to load job details: ${
-            error.response?.data?.message || error.message
+          `Failed to load job details: ${error.response?.data?.message || error.message
           }`
         );
       } finally {

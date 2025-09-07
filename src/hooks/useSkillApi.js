@@ -44,7 +44,6 @@ export const useSkillApi = () => {
           duplicatedCertificates,
           token
         );
-        console.log("Upload response:", response);
         return response;
       } catch (err) {
         console.error("Error uploading skills:", err);

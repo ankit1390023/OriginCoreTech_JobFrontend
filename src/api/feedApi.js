@@ -63,7 +63,6 @@ const feedApi = {
   },
   postLike: async (post_id, data, token) => {
     try {
-      console.log("data", data);
       const response = await axios.post(
         `${BASE_URL}/feed/posts/${post_id}/like`,
         data,
@@ -192,7 +191,6 @@ const feedApi = {
         accepted: data.accepted || true,
       };
 
-      console.log("Formatted request data:", requestData);
 
       const response = await axios.post(
         `${BASE_URL}/user-details/updateTermsAndCondition`,
@@ -204,12 +202,9 @@ const feedApi = {
           },
         }
       );
-      console.log("updateTermsAndCondition response:", response.data);
       return response.data;
     } catch (error) {
       console.log("error while updating terms and conditions", error);
-      console.log("Server response data:", error.response?.data);
-      console.log("Request data sent:", data);
       throw error;
     }
   },
@@ -231,7 +226,7 @@ const feedApi = {
       console.log("error while soft deleting account", error);
       throw error;
     }
-  },  
+  },
 
 };
 

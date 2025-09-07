@@ -31,15 +31,7 @@ export const useApplyToJob = () => {
       // Prepare minimal application data if none provided
       const data = applicationData || { job_id };
 
-      console.log("Applying for job with data:", { job_id, data });
-      console.log("Token available:", !!token);
-      console.log(
-        "Token value:",
-        token ? token.substring(0, 10) + "..." : "No token"
-      );
-
       const response = await applicationApi.applyForJob(job_id, data, token);
-      console.log("Application response:", response);
 
       if (response.success) {
         setSuccess(true);

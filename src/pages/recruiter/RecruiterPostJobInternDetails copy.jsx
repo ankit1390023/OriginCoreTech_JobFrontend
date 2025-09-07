@@ -111,7 +111,7 @@ const jobPostSchema = z.object({
         path: ["duration_id"],
       });
     }
-    
+
     if (data.is_custom_internship_date) {
       if (!data.internship_from_date) {
         ctx.addIssue({
@@ -143,12 +143,12 @@ const jobPostSchema = z.object({
 
   // Stipend validation
   if ((data.opportunity_type === "Internship" && data.stipend_type === "Paid") ||
-      (data.opportunity_type === "Job" && data.stipend_type === "Fixed") ||
-      (data.opportunity_type === "Project")) {
-    
+    (data.opportunity_type === "Job" && data.stipend_type === "Fixed") ||
+    (data.opportunity_type === "Project")) {
+
     if (data.stipend_min == null || data.stipend_max == null) {
-      const fieldType = data.opportunity_type === "Internship" ? "stipend" : 
-                       data.opportunity_type === "Job" ? "salary" : "budget";
+      const fieldType = data.opportunity_type === "Internship" ? "stipend" :
+        data.opportunity_type === "Job" ? "salary" : "budget";
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: `${fieldType} range is required`,
@@ -195,7 +195,7 @@ const SearchableSelect = ({
 }) => {
   const [searchInput, setSearchInput] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
-  
+
   const filteredOptions = options.filter(option =>
     getOptionLabel(option).toLowerCase().includes(searchInput.toLowerCase())
   );
@@ -203,7 +203,7 @@ const SearchableSelect = ({
   // Handle selection
   const handleSelect = (option) => {
     const optionValue = getOptionValue(option);
-    
+
     if (isMulti) {
       // For multi-select, toggle the value
       const currentValues = Array.isArray(value) ? value : [];
@@ -230,7 +230,7 @@ const SearchableSelect = ({
   // Get selected options for display
   const getSelectedOptions = () => {
     if (isMulti) {
-      return Array.isArray(value) 
+      return Array.isArray(value)
         ? options.filter(opt => value.includes(getOptionValue(opt)))
         : [];
     } else {
@@ -247,13 +247,13 @@ const SearchableSelect = ({
           type="text"
           className="flex-1 text-sm outline-none"
           placeholder={
-            isMulti 
-              ? (Array.isArray(selectedOptions) && selectedOptions.length 
-                  ? `${selectedOptions.length} selected` 
-                  : placeholder)
-              : (selectedOptions 
-                  ? getOptionLabel(selectedOptions) 
-                  : placeholder)
+            isMulti
+              ? (Array.isArray(selectedOptions) && selectedOptions.length
+                ? `${selectedOptions.length} selected`
+                : placeholder)
+              : (selectedOptions
+                ? getOptionLabel(selectedOptions)
+                : placeholder)
           }
           value={searchInput}
           onChange={(e) => {
@@ -261,25 +261,24 @@ const SearchableSelect = ({
             setShowDropdown(true);
           }}
           onFocus={() => setShowDropdown(true)}
-          // onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
+        // onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
         />
       </div>
-      
+
       {showDropdown && searchInput.trim() && filteredOptions.length > 0 && (
         <div className="absolute z-10 w-full mt-1 overflow-y-auto bg-white border border-gray-300 rounded-md shadow-lg max-h-48">
           {filteredOptions.slice(0, 10).map((option) => {
             const optionValue = getOptionValue(option);
-            const isSelected = isMulti 
+            const isSelected = isMulti
               ? Array.isArray(value) && value.includes(optionValue)
               : value === optionValue;
-              
+
             return (
               <button
                 key={optionValue}
                 type="button"
-                className={`w-full text-left px-3 py-2 text-sm hover:bg-blue-50 hover:text-blue-800 transition-colors ${
-                  isSelected ? 'bg-blue-100 text-blue-800' : ''
-                }`}
+                className={`w-full text-left px-3 py-2 text-sm hover:bg-blue-50 hover:text-blue-800 transition-colors ${isSelected ? 'bg-blue-100 text-blue-800' : ''
+                  }`}
                 onClick={() => handleSelect(option)}
               >
                 {getOptionLabel(option)}
@@ -291,7 +290,7 @@ const SearchableSelect = ({
           })}
         </div>
       )}
-      
+
       {/* Display selected items for multi-select */}
       {isMulti && Array.isArray(selectedOptions) && selectedOptions.length > 0 && (
         <div className="flex flex-wrap gap-1 mt-1">
@@ -313,7 +312,7 @@ const SearchableSelect = ({
           ))}
         </div>
       )}
-      
+
       {/* Display selected item for single-select */}
       {!isMulti && selectedOptions && (
         <div className="mt-1 text-sm text-gray-600">
@@ -331,7 +330,7 @@ const SearchableSelect = ({
           </button>
         </div>
       )}
-      
+
       {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
     </div>
   );
@@ -359,18 +358,18 @@ const SearchableSelect = ({
 //   const handleAddDomain = (domain) => {
 //     const domainId = domain.domain_id || domain.id;
 //     const domainName = domain.domain_name || domain.name || `Domain ${domainId}`;
-    
+
 //     // Check if already selected
 //     if (!selectedDomains.find(d => (d.domain_id || d.id) === domainId)) {
 //       // Get skills for this domain
 //       const skills = getSkillsForDomain(domainId) || [];
-      
+
 //       // Update all states
 //       setSelectedDomains(prev => [...prev, { ...domain, id: domainId, name: domainName }]);
 //       setDomainSkillsMap(prev => ({ ...prev, [domainId]: skills }));
 //       setSelectedSkillsByDomain(prev => ({ ...prev, [domainId]: [] }));
 //     }
-    
+
 //     setSearchInput("");
 //   };
 
@@ -378,23 +377,23 @@ const SearchableSelect = ({
 //   const handleRemoveDomain = (domainId) => {
 //     // Remove domain from selected list
 //     setSelectedDomains(prev => prev.filter(d => (d.domain_id || d.id) !== domainId));
-    
+
 //     // Remove from skills map
 //     setDomainSkillsMap(prev => {
 //       const newMap = { ...prev };
 //       delete newMap[domainId];
 //       return newMap;
 //     });
-    
+
 //     // Remove from selected skills and notify parent
 //     setSelectedSkillsByDomain(prev => {
 //       const newMap = { ...prev };
 //       delete newMap[domainId];
-      
+
 //       // Notify parent of remaining skills
 //       const allRemainingSkills = Object.values(newMap).flat();
 //       onSkillsChange(allRemainingSkills.map(s => s.skill_id));
-      
+
 //       return newMap;
 //     });
 //   };
@@ -404,22 +403,22 @@ const SearchableSelect = ({
 //     setSelectedSkillsByDomain(prev => {
 //       const currentSkills = prev[domainId] || [];
 //       const skillExists = currentSkills.some(s => s.skill_id === skill.skill_id);
-      
+
 //       // Toggle the skill
 //       const updatedSkills = skillExists
 //         ? currentSkills.filter(s => s.skill_id !== skill.skill_id)
 //         : [...currentSkills, { skill_id: skill.skill_id, skill_name: skill.skill_name }];
-      
+
 //       // Update state for this domain
 //       const newSelection = {
 //         ...prev,
 //         [domainId]: updatedSkills,
 //       };
-      
+
 //       // Collect ALL selected skills and notify parent
 //       const allSelectedSkills = Object.values(newSelection).flat();
 //       onSkillsChange(allSelectedSkills.map(s => s.skill_id));
-      
+
 //       return newSelection;
 //     });
 //   };
@@ -427,7 +426,7 @@ const SearchableSelect = ({
 //   return (
 //     <div>
 //       <Label htmlFor="skills">Skills Required</Label>
-      
+
 //       {/* Domain Search */}
 //       <div className="flex items-center px-2 py-2 mb-2 transition-all duration-200 border border-gray-300 rounded-md focus-within:ring-1 focus-within:ring-blue-400 focus-within:border-transparent hover:border-gray-400">
 //         <input
@@ -473,7 +472,7 @@ const SearchableSelect = ({
 //           const domainName = domain.domain_name || domain.name || `Domain ${domainId}`;
 //           const skills = domainSkillsMap[domainId] || [];
 //           const selectedSkills = selectedSkillsByDomain[domainId] || [];
-          
+
 //           return (
 //             <div key={domainId} className="flex flex-col gap-2 p-3 border rounded-md">
 //               <div className="flex items-center justify-between">
@@ -573,16 +572,16 @@ const SearchableSelect = ({
 //   const handleAddDomain = (domain) => {
 //     const domainId = domain.domain_id || domain.id;
 //     const domainName = domain.domain_name || domain.name || `Domain ${domainId}`;
-    
+
 //     // Check if already selected
 //     if (!selectedDomains.find(d => (d.domain_id || d.id) === domainId)) {
 //       // Get skills for this domain (cache them)
 //       const skills = getSkillsForDomain(domainId) || [];
-      
+
 //       setSelectedDomains(prev => [...prev, { ...domain, id: domainId, name: domainName }]);
 //       setDomainSkillsCache(prev => ({ ...prev, [domainId]: skills }));
 //     }
-    
+
 //     setSearchInput("");
 //   };
 
@@ -590,14 +589,14 @@ const SearchableSelect = ({
 //   const handleRemoveDomain = (domainId) => {
 //     const newSelectedDomains = selectedDomains.filter(d => (d.domain_id || d.id) !== domainId);
 //     setSelectedDomains(newSelectedDomains);
-    
+
 //     // Remove from cache
 //     setDomainSkillsCache(prev => {
 //       const newCache = { ...prev };
 //       delete newCache[domainId];
 //       return newCache;
 //     });
-    
+
 //     // Recalculate all selected skills
 //     const allSelectedSkills = newSelectedDomains
 //       .flatMap(domain => domain.selectedSkills || [])
@@ -612,21 +611,21 @@ const SearchableSelect = ({
 //         if ((domain.domain_id || domain.id) === domainId) {
 //           const currentSkills = domain.selectedSkills || [];
 //           const skillExists = currentSkills.some(s => s.skill_id === skill.skill_id);
-          
+
 //           const updatedSkills = skillExists
 //             ? currentSkills.filter(s => s.skill_id !== skill.skill_id)
 //             : [...currentSkills, { skill_id: skill.skill_id, skill_name: skill.skill_name }];
-          
+
 //           // Update the domain with selected skills
 //           const updatedDomain = { ...domain, selectedSkills: updatedSkills };
-          
+
 //           // Notify parent of all selected skills
 //           const allSelectedSkills = [...selectedDomains]
 //             .map(d => d.id === domainId ? updatedDomain : d)
 //             .flatMap(d => d.selectedSkills || [])
 //             .map(s => s.skill_id);
 //           onSkillsChange(allSelectedSkills);
-          
+
 //           return updatedDomain;
 //         }
 //         return domain;
@@ -637,7 +636,7 @@ const SearchableSelect = ({
 //   return (
 //     <div>
 //       <Label htmlFor="skills">Skills Required</Label>
-      
+
 //       {/* Domain Search */}
 //       <div className="flex items-center px-2 py-2 mb-2 transition-all duration-200 border border-gray-300 rounded-md focus-within:ring-1 focus-within:ring-blue-400 focus-within:border-transparent hover:border-gray-400">
 //         <input
@@ -682,7 +681,7 @@ const SearchableSelect = ({
 //           const domainName = domain.domain_name || domain.name || `Domain ${domainId}`;
 //           const skills = domainSkillsCache[domainId] || [];
 //           const selectedSkills = domain.selectedSkills || [];
-          
+
 //           return (
 //             <div key={domainId} className="flex flex-col gap-2 p-3 border rounded-md">
 //               <div className="flex items-center justify-between">
@@ -748,8 +747,8 @@ const SearchableSelect = ({
 // };
 
 
-const DomainSkillsSelector = ({ 
-  domains = [], 
+const DomainSkillsSelector = ({
+  domains = [],
   getSkillsForDomain,
   onSkillsChange,
   error,
@@ -767,45 +766,45 @@ const DomainSkillsSelector = ({
   // Add domain
   const handleAddDomain = (domain) => {
     // console.log("🔵 handleAddDomain called with:", domain);
-    
+
     const domainId = domain.domain_id || domain.id;
     const domainName = domain.domain_name || domain.name || `Domain ${domainId}`;
-    
+
     // console.log("🔵 Processing - domainId:", domainId, "domainName:", domainName);
-    
+
     // Check if already selected
     if (!selectedDomainSkills.find(d => (d.domain_id || d.id) === domainId)) {
       // console.log("🔵 Domain not found in selected, adding...");
-      
+
       // Get skills for this domain (cache them)
       const skills = getSkillsForDomain(domainId) || [];
       // console.log("🔵 Got skills for domain:", skills.length, "skills");
-      
+
       const newDomainSkills = [...selectedDomainSkills, { ...domain, id: domainId, name: domainName, selectedSkills: [] }];
       onDomainSkillsChange(newDomainSkills);
       setDomainSkillsCache(prev => ({ ...prev, [domainId]: skills }));
-      
+
       // console.log("🔵 Domain added successfully");
     } else {
       // console.log("🔵 Domain already exists in selected domains");
     }
-    
+
     setSearchInput("");
   };
 
   // Remove domain
   const handleRemoveDomain = (domainId) => {
     // console.log("🟡 Removing domain:", domainId);
-    
+
     const remainingDomains = selectedDomainSkills.filter(d => (d.domain_id || d.id) !== domainId);
     onDomainSkillsChange(remainingDomains);
-    
+
     setDomainSkillsCache(prev => {
       const newCache = { ...prev };
       delete newCache[domainId];
       return newCache;
     });
-    
+
     // Notify parent with remaining skills
     const allSkills = remainingDomains.flatMap(d => d.selectedSkills || []).map(s => s.skill_id);
     onSkillsChange(allSkills);
@@ -814,29 +813,29 @@ const DomainSkillsSelector = ({
   // Toggle skill for a domain
   const toggleSkill = (domainId, skill) => {
     // console.log("🔴 Toggling skill:", skill.skill_name, "for domain:", domainId);
-    
+
     const updatedDomains = selectedDomainSkills.map(domain => {
       const currentDomainId = domain.domain_id || domain.id;
-      
+
       if (currentDomainId === domainId) {
         const currentSkills = domain.selectedSkills || [];
         const skillExists = currentSkills.some(s => s.skill_id === skill.skill_id);
-        
+
         const updatedSkills = skillExists
           ? currentSkills.filter(s => s.skill_id !== skill.skill_id)
           : [...currentSkills, { skill_id: skill.skill_id, skill_name: skill.skill_name }];
-        
+
         const updatedDomain = { ...domain, selectedSkills: updatedSkills };
         // console.log("🔴 Updated domain with skills:", updatedDomain);
-        
+
         return updatedDomain;
       }
       return domain;
     });
-    
+
     // Update parent state and notify
     onDomainSkillsChange(updatedDomains);
-    
+
     // Notify parent of skill changes
     const allSkills = updatedDomains.flatMap(d => d.selectedSkills || []).map(s => s.skill_id);
     onSkillsChange(allSkills);
@@ -845,7 +844,7 @@ const DomainSkillsSelector = ({
   return (
     <div>
       <Label htmlFor="skills">Skills Required</Label>
-      
+
       {/* Domain Search */}
       <div className="flex items-center px-2 py-2 mb-2 transition-all duration-200 border border-gray-300 rounded-md focus-within:ring-1 focus-within:ring-blue-400 focus-within:border-transparent hover:border-gray-400">
         <input
@@ -889,11 +888,11 @@ const DomainSkillsSelector = ({
         {selectedDomainSkills.map((domain, index) => {
           const domainId = domain.domain_id || domain.id;
           const domainName = domain.domain_name || domain.name || `Domain ${domainId}`;
-          
+
           // Get skills for this domain - fetch directly without causing re-renders
           const skills = domainSkillsCache[domainId] || getSkillsForDomain(domainId) || [];
           const selectedSkills = domain.selectedSkills || [];
-          
+
           return (
             <div key={domainId} className="flex flex-col gap-2 p-3 border rounded-md">
               <div className="flex items-center justify-between">
@@ -929,11 +928,10 @@ const DomainSkillsSelector = ({
                             e.preventDefault();
                             toggleSkill(domainId, skill);
                           }}
-                          className={`rounded-md px-2 py-1 text-xs border transition-all duration-200 ${
-                            isSelected
-                              ? "bg-blue-600 text-white border-blue-600"
-                              : "bg-gray-100 text-gray-800 border-gray-300 hover:border-gray-400"
-                          }`}
+                          className={`rounded-md px-2 py-1 text-xs border transition-all duration-200 ${isSelected
+                            ? "bg-blue-600 text-white border-blue-600"
+                            : "bg-gray-100 text-gray-800 border-gray-300 hover:border-gray-400"
+                            }`}
                         >
                           {skill.skill_name}
                         </button>
@@ -962,12 +960,12 @@ const DomainSkillsSelector = ({
 
 
 
- 
+
 
 // ==================== MAIN COMPONENT ====================
 export default function RecruiterPostJobInternDetails() {
   // console.log("🔄 RecruiterPostJobInternDetails component rendered/re-rendered");
-  
+
   const navigate = useNavigate();
   const { user, token } = useSelector((state) => state.auth);
   const methods = useForm({
@@ -1006,7 +1004,7 @@ export default function RecruiterPostJobInternDetails() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  
+
   // Store domain selection state at parent level to survive re-renders
   const [selectedDomainSkills, setSelectedDomainSkills] = useState([]);
 
@@ -1036,7 +1034,7 @@ export default function RecruiterPostJobInternDetails() {
   const stipend_type = methods.watch("stipend_type");
   const is_custom_internship_date = methods.watch("is_custom_internship_date");
   const current_skill_ids = methods.watch("skill_ids");
-  
+
   // console.log("🎯 Current form skill_ids:", current_skill_ids);
 
   // Handle opportunity type change - just clear everything
@@ -1070,10 +1068,10 @@ export default function RecruiterPostJobInternDetails() {
       eligiblecollege_ids: [],
       eligiblecourse_ids: [],
     });
-    
+
     // Clear domain skills
     setSelectedDomainSkills([]);
-    
+
     // Clear messages
     setSuccessMessage("");
     setErrorMessage("");
@@ -1111,7 +1109,7 @@ export default function RecruiterPostJobInternDetails() {
       screening_questions: Array.isArray(formData.screening_questions)
         ? formData.screening_questions
         : formData.screening_questions?.split("\n").filter((q) => q.trim()) ||
-          [],
+        [],
       phone_contact: formData.phone_contact,
       alternate_phone_number: formData.alternate_phone_number,
       eligiblecity_ids: formData.eligiblecity_ids,
@@ -1141,40 +1139,16 @@ export default function RecruiterPostJobInternDetails() {
       }),
 
       ...(formData.opportunity_type === "Project" &&
-        {
-          // Project-specific transformations if needed
-        }),
+      {
+        // Project-specific transformations if needed
+      }),
     };
-    
+
     return apiData;
   };
 
   const onSubmit = async (data) => {
-    console.log("=== FORM SUBMISSION STARTED ===");
-    console.log("📊 Raw Form Data:", data);
-    console.log("🏷️ Opportunity Type:", data.opportunity_type);
-    
-    // Log internship date info
-    if (data.opportunity_type === "Internship") {
-      console.log("📅 Internship Date Info:", {
-        is_custom_internship_date: data.is_custom_internship_date,
-        internship_from_date: data.internship_from_date,
-        internship_to_date: data.internship_to_date,
-        today_date: new Date().toISOString().split('T')[0],
-        will_use_today: !data.is_custom_internship_date
-      });
-    }
-    
-    console.log("💰 Stipend Info:", {
-      opportunity_type: data.opportunity_type,
-      stipend_type: data.stipend_type,
-      stipend_min: data.stipend_min,
-      stipend_max: data.stipend_max
-    });
-    console.log("📊 Current selected domain skills:", selectedDomainSkills);
-    console.log("📊 Current form skill_ids:", methods.getValues("skill_ids"));
-    console.log("📊 User token:", token ? "Present" : "Missing");
-    
+
     setIsSubmitting(true);
     setErrorMessage("");
     setSuccessMessage("");
@@ -1182,40 +1156,29 @@ export default function RecruiterPostJobInternDetails() {
     try {
       // Transform form data to match backend API
       const jobPostData = transformFormDataToAPI(data);
-      
-      console.log("=== TRANSFORMED DATA FOR API ===");
-      console.log("📤 Job post data being sent to API:");
-      console.log(JSON.stringify(jobPostData, null, 2));
 
       if (!token) {
         throw new Error("Authentication token not found. Please log in again.");
       }
 
       // Call the API
-      console.log("📡 Calling API...");
       const response = await jobPostApi.createJobPost(jobPostData, token);
-      
-      console.log("=== API SUCCESS ===");
-      console.log("📥 Response from API:", response);
-      
+
+
       setSuccessMessage(`${data.opportunity_type} posted successfully!`);
-      
+
       // Clear domain skills state and reset form
       setSelectedDomainSkills([]);
       methods.reset();
-      
+
       // Redirect to recruiter dashboard after successful posting
       setTimeout(() => {
-        console.log("🚀 Redirecting to dashboard...");
         navigate('/recruiter-dashboard');
       }, 2000);
-      
+
     } catch (error) {
-      console.log("=== API ERROR ===");
       console.log("❌ Error:", error);
-      console.log("❌ Error response:", error.response);
-      console.log("❌ Error message:", error.message);
-      
+
       const errorMsg = error.response?.data?.message || error.message || "Failed to post. Please try again.";
       setErrorMessage(errorMsg);
     } finally {
@@ -1316,10 +1279,10 @@ export default function RecruiterPostJobInternDetails() {
             {/* Job Role - Searchable Select */}
             <div>
               <Label htmlFor="job_role_id">
-                {opportunity_type === "Internship" 
-                  ? "Internship Profile" 
-                  : opportunity_type === "Job" 
-                    ? "Job Title" 
+                {opportunity_type === "Internship"
+                  ? "Internship Profile"
+                  : opportunity_type === "Job"
+                    ? "Job Title"
                     : "Project Title"}
               </Label>
               <SearchableSelect
@@ -1417,10 +1380,10 @@ export default function RecruiterPostJobInternDetails() {
             {/* Job Type */}
             <div>
               <Label htmlFor="job_type">
-                {opportunity_type === "Internship" 
-                  ? "Internship Type" 
-                  : opportunity_type === "Job" 
-                    ? "Job Type" 
+                {opportunity_type === "Internship"
+                  ? "Internship Type"
+                  : opportunity_type === "Job"
+                    ? "Job Type"
                     : "Project Type"}
               </Label>
               <div className={radioContainerStyles}>
@@ -1454,11 +1417,10 @@ export default function RecruiterPostJobInternDetails() {
                       key={day}
                       type="button"
                       className={`w-10 h-10 rounded-full border text-sm font-semibold flex items-center justify-center
-                          ${
-                            methods.getValues("days_in_office") === day
-                              ? "bg-blue-600 text-white border-blue-600"
-                              : "bg-white text-gray-700 border-gray-300"
-                          }
+                          ${methods.getValues("days_in_office") === day
+                          ? "bg-blue-600 text-white border-blue-600"
+                          : "bg-white text-gray-700 border-gray-300"
+                        }
                           hover:border-blue-400 transition`}
                       onClick={() =>
                         methods.setValue("days_in_office", day, {
@@ -1509,10 +1471,10 @@ export default function RecruiterPostJobInternDetails() {
             {/* Description */}
             <div>
               <Label htmlFor="job_description">
-                {opportunity_type === "Internship" 
-                  ? "Intern's responsibility" 
-                  : opportunity_type === "Job" 
-                    ? "Job description" 
+                {opportunity_type === "Internship"
+                  ? "Intern's responsibility"
+                  : opportunity_type === "Job"
+                    ? "Job description"
                     : "Project description"}
               </Label>
               <Textarea
@@ -1560,15 +1522,15 @@ export default function RecruiterPostJobInternDetails() {
             {/* Stipend Type */}
             <div>
               <Label htmlFor="stipend_type">
-                {opportunity_type === "Internship" 
-                  ? "Stipend" 
-                  : opportunity_type === "Job" 
-                    ? "Fixed Pay" 
+                {opportunity_type === "Internship"
+                  ? "Stipend"
+                  : opportunity_type === "Job"
+                    ? "Fixed Pay"
                     : "Project Budget"}
               </Label>
               <div className={radioContainerStyles}>
-                {(opportunity_type === "Internship" 
-                  ? ["Paid", "Unpaid"] 
+                {(opportunity_type === "Internship"
+                  ? ["Paid", "Unpaid"]
                   : ["Fixed"]
                 ).map((type) => (
                   <label key={type} className="flex items-center gap-2 cursor-pointer">
@@ -1585,35 +1547,35 @@ export default function RecruiterPostJobInternDetails() {
             </div>
 
             {/* Stipend Amount */}
-            {((opportunity_type === "Internship" && stipend_type === "Paid") || 
-             (opportunity_type === "Job" && stipend_type === "Fixed") ||
-             (opportunity_type === "Project")) && (
-              <div>
-                <Label htmlFor="stipend_range">
-                  {opportunity_type === "Internship" 
-                    ? "Stipend Range" 
-                    : opportunity_type === "Job" 
-                      ? "Fixed Pay Range" 
-                      : "Project Budget Range"}
-                </Label>
-                <div className="flex flex-col gap-2 sm:flex-row sm:gap-3">
-                  <Input
-                    type="number"
-                    placeholder="₹ Min"
-                    min="0"
-                    {...methods.register("stipend_min", { valueAsNumber: true })}
-                    error={methods.formState.errors.stipend_min?.message}
-                  />
-                  <Input
-                    type="number"
-                    placeholder="₹ Max"
-                    min="0"
-                    {...methods.register("stipend_max", { valueAsNumber: true })}
-                    error={methods.formState.errors.stipend_max?.message}
-                  />
+            {((opportunity_type === "Internship" && stipend_type === "Paid") ||
+              (opportunity_type === "Job" && stipend_type === "Fixed") ||
+              (opportunity_type === "Project")) && (
+                <div>
+                  <Label htmlFor="stipend_range">
+                    {opportunity_type === "Internship"
+                      ? "Stipend Range"
+                      : opportunity_type === "Job"
+                        ? "Fixed Pay Range"
+                        : "Project Budget Range"}
+                  </Label>
+                  <div className="flex flex-col gap-2 sm:flex-row sm:gap-3">
+                    <Input
+                      type="number"
+                      placeholder="₹ Min"
+                      min="0"
+                      {...methods.register("stipend_min", { valueAsNumber: true })}
+                      error={methods.formState.errors.stipend_min?.message}
+                    />
+                    <Input
+                      type="number"
+                      placeholder="₹ Max"
+                      min="0"
+                      {...methods.register("stipend_max", { valueAsNumber: true })}
+                      error={methods.formState.errors.stipend_max?.message}
+                    />
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
             {/* Incentives (Internship only) */}
             {opportunity_type === "Internship" && stipend_type === "Paid" && (
@@ -1630,26 +1592,26 @@ export default function RecruiterPostJobInternDetails() {
             {/* Perks */}
             <div>
               <Label htmlFor="perks">
-                {opportunity_type === "Internship" 
-                  ? "Perks (Select all that apply)" 
+                {opportunity_type === "Internship"
+                  ? "Perks (Select all that apply)"
                   : "Benefits (Select all that apply)"}
               </Label>
               <div className="grid grid-cols-1 gap-2 p-3 rounded-lg sm:grid-cols-2 sm:gap-3 bg-gray-50">
                 {(opportunity_type === "Internship"
                   ? [
-                      "Certificate of completion",
-                      "Letter of recommendation",
-                      "Flexible work hours",
-                      "5 days a week",
-                      "Informal dress code",
-                      "Free snacks & beverages",
-                    ]
+                    "Certificate of completion",
+                    "Letter of recommendation",
+                    "Flexible work hours",
+                    "5 days a week",
+                    "Informal dress code",
+                    "Free snacks & beverages",
+                  ]
                   : [
-                      "5 days a week",
-                      "Health Insurance",
-                      "Life Insurance",
-                      "Flexible work hours",
-                    ]
+                    "5 days a week",
+                    "Health Insurance",
+                    "Life Insurance",
+                    "Flexible work hours",
+                  ]
                 ).map((perk) => (
                   <label
                     key={perk}
@@ -1846,17 +1808,10 @@ export default function RecruiterPostJobInternDetails() {
               >
                 Save Draft
               </Button>
-              <Button 
-                type="submit" 
-                loading={isSubmitting} 
+              <Button
+                type="submit"
+                loading={isSubmitting}
                 variant="primary"
-                onClick={() => {
-                  console.log("🔘 Post button clicked");
-                  console.log("📊 Form values:", methods.getValues());
-                  console.log("❌ Form errors:", methods.formState.errors);
-                  console.log("✅ Form isValid:", methods.formState.isValid);
-                  console.log("🎯 Selected domain skills:", selectedDomainSkills);
-                }}
               >
                 {isSubmitting ? "Posting..." : `Post ${opportunity_type}`}
               </Button>

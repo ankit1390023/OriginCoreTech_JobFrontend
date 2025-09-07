@@ -50,15 +50,9 @@ export const skillApi = {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log("response.data from uploadSkills", response.data);
       return response.data;
     } catch (error) {
       console.error("Error uploading skills:", error);
-      console.log("error.response.data from uploadSkills", error.response.data);
-      console.log(
-        "error.response.status from uploadSkills",
-        error.response.status
-      );
       throw error;
     }
   },

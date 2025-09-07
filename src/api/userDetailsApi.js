@@ -76,18 +76,8 @@ export const userDetailsApi = {
         { headers }
       );
 
-      console.log("data from backend", response);
       if (!response.data) {
         return { success: true, data: null };
-      }
-
-      // Log the skills data structure for debugging
-      if (response.data.skills) {
-        console.log("Skills data structure:", response.data.skills);
-        console.log("First skill type:", typeof response.data.skills[0]);
-        if (response.data.skills[0]) {
-          console.log("First skill content:", response.data.skills[0]);
-        }
       }
 
       // Return specific data type if requested
@@ -136,7 +126,7 @@ export const userDetailsApi = {
         `${BASE_URL}/users/getUserData`,
         { headers }
       );
-      return { success: true, data: response.data};
+      return { success: true, data: response.data };
     } catch (error) {
       console.error("Error fetching user details:", error);
       return {

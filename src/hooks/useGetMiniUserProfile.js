@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import {userDetailsApi} from "../api/userDetailsApi.js";
+import { userDetailsApi } from "../api/userDetailsApi.js";
 
 const useGetMiniUserProfile = ({ user, token }) => {
     const [loading, setLoading] = useState(false);
@@ -12,9 +12,8 @@ const useGetMiniUserProfile = ({ user, token }) => {
             setLoading(true);
             setError(null);
             try {
-                const response = await userDetailsApi.getUserDetails(user,token);
+                const response = await userDetailsApi.getUserDetails(user, token);
                 setMiniProfile(response);
-                console.log("response from minidetail hook Profile", response);
             } catch (error) {
                 setError("Failed to load profile");
             } finally {

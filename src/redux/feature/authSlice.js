@@ -27,7 +27,6 @@ export const login = createAsyncThunk(
           headers: { 'Content-Type': 'application/json' },
         }
       );
-      console.log("Login API raw response:", response.data);
 
       const data = response.data;
       const user = data.user || data.data?.user;
@@ -68,9 +67,13 @@ export const signup = createAsyncThunk(
         throw new Error('Invalid response format from server');
       }
 
-
+      // Send OTP after signup success
+      const otpResponse = await axios.post(`${BASE_URL}/otp/send-otp`, {
+        email: signupData.email,
+      });
       return { user }; // No token on signup
     } catch (error) {
+      console.log("Signup error:", error);
       return rejectWithValue(
         error.response?.data?.message ||
         error.response?.statusText ||
@@ -134,9 +137,6 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(signup.fulfilled, (state, action) => {
-        state.user = action.payload.user;
-        state.token = action.payload.token;
-        state.isAuthenticated = true;
         state.loading = false;
         state.error = null;
       })

@@ -58,7 +58,7 @@ const schema = z
     {
       path: ["email"],
       message:
-        "Company email must use an official domain (e.g., yourcompany.com)", 
+        "Company email must use an official domain (e.g., yourcompany.com)",
     }
   );
 
@@ -98,29 +98,19 @@ export default function SignUp() {
           user_role: data.user_role,
         })
       );
-
       if (signup.rejected.match(resultAction)) {
         return; // signup failed
       }
-
-      // Send OTP after signup success
-      const otpResponse = await axios.post(`${BASE_URL}/otp/send-otp`, {
-        email: data.email,
+      alert("Registration successful! OTP sent to your email.");
+      sessionStorage.setItem('inSignupFlow', 'true');
+      navigate("/signup-verify-otp-email", {
+        state: {
+          email: data.email,
+          user_role: data.user_role,
+          inSignupFlow: true,
+        },
       });
 
-      if (otpResponse.status === 200) {
-        alert("Registration successful! OTP sent to your email.");
-        sessionStorage.setItem('inSignupFlow', 'true');
-        navigate("/signup-verify-otp-email", {
-          state: {
-            email: data.email,
-            user_role: data.user_role,
-            inSignupFlow:true,
-          },
-        });
-      } else {
-        alert("Registration successful but failed to send OTP.");
-      }
     } catch (err) {
       alert("Registration successful but failed to send OTP. Please try again.");
     }
@@ -195,8 +185,8 @@ export default function SignUp() {
             {/* Company hint */}
             {selectedRole === "COMPANY" && (
               <p className="text-xs text-gray-500 mt-0.5 mb-2">
-                Company emails must use official domains  
-                
+                Company emails must use official domains
+
               </p>
             )}
 

@@ -44,7 +44,7 @@ export const applicationApi = {
     }
   },
 
-  getApplicationById: async (job_id,application_id, token) => {
+  getApplicationById: async (job_id, application_id, token) => {
     try {
       const response = await axios.get(
         `${BASE_URL}/jobpost/${job_id}/applicant/${application_id}`,
@@ -54,13 +54,6 @@ export const applicationApi = {
           },
         }
       );
-      console.log("API Response Status:", response.status);
-      console.log("API Response Data:", JSON.stringify(response.data, null, 2));
-      if (response.data && response.data.applicationDetails) {
-        console.log("Application Details found in response:", response.data.applicationDetails);
-      } else {
-        console.warn("No applicationDetails found in response");
-      }
       return response.data;
     } catch (error) {
       throw error;
@@ -70,10 +63,6 @@ export const applicationApi = {
     if (!token) {
       throw new Error("No auth token provided");
     }
-
-    console.log("received token in scheduleInterview", token);
-    console.log("application_id in scheduleInterview", application_id);
-    console.log("form interview data in scheduleInterview", interviewData);
 
     // Build payload exactly as backend requires
     const payload = {
@@ -99,33 +88,32 @@ export const applicationApi = {
       }
     );
 
-    console.log("response from scheduleInterview", response.data);
     return response.data;
   }
   ,
   updateApplicationStatus: async (application_id, job_post_id, user_id, status, token) => {
-  try {
-    const response = await axios.post(
-      `${BASE_URL}/application/status`,
-      {
-        application_id,  // applicant’s application id
-        job_post_id,     // job post id
-        user_id,         // ✅ recruiter id (from Redux auth.user.id)
-        status,          // new status
-      },
-      {
-        headers: {
-          Authorization:` Bearer ${token}`,
-          "Content-Type": "application/json",
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/application/status`,
+        {
+          application_id,  // applicant’s application id
+          job_post_id,     // job post id
+          user_id,         // ✅ recruiter id (from Redux auth.user.id)
+          status,          // new status
         },
-      }
-    );
+        {
+          headers: {
+            Authorization: ` Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-    return response.data;
-  } catch (error) {
-    console.error("Error updating application status:", error);
-    throw error.response?.data || { message: "Unknown error" };
-  }
-},
+      return response.data;
+    } catch (error) {
+      console.error("Error updating application status:", error);
+      throw error.response?.data || { message: "Unknown error" };
+    }
+  },
 
 };

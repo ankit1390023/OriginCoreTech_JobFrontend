@@ -125,11 +125,9 @@ export const useUserDetailsApi = () => {
                 exp.end_date
               )}`,
               timeSpan: calculateTimeSpan(exp.start_date, exp.end_date),
-              description: `Worked as ${
-                exp.job_role_title || "employee"
-              } at ${exp.company_name || "company"}. Status: ${
-                exp.status || "unknown"
-              }`,
+              description: `Worked as ${exp.job_role_title || "employee"
+                } at ${exp.company_name || "company"}. Status: ${exp.status || "unknown"
+                }`,
               status: exp.status,
             }));
             setWorkExperiences(formattedExperiences);
@@ -143,27 +141,23 @@ export const useUserDetailsApi = () => {
               id: edu.id || index + 1,
               logo: edu.schoolCollegeEducations.logo_pic,
               institution: edu.schoolCollegeEducations.name || "Unknown Institution",
-              degree: `${edu.level || "Education"}${
-                edu.course ? `, ${edu.course}` : ""
-              }${edu.specialization ? ` - ${edu.specialization}` : ""}`,
+              degree: `${edu.level || "Education"}${edu.course ? `, ${edu.course}` : ""
+                }${edu.specialization ? ` - ${edu.specialization}` : ""}`,
               duration: `${edu.start_year || "N/A"} - ${edu.end_year || "N/A"}`,
-              description: `Studied at ${
-                edu.schoolOrCollege || "institution"
-              } under ${edu.board_or_university || "board"}. ${
-                edu.percentage_or_cgpa
+              description: `Studied at ${edu.schoolOrCollege || "institution"
+                } under ${edu.board_or_university || "board"}. ${edu.percentage_or_cgpa
                   ? `Achieved ${edu.percentage_or_cgpa}%`
                   : ""
-              }`,
+                }`,
               percentage: edu.percentage_or_cgpa,
               board: edu.board_or_university,
             }));
-            console.log(formattedEducation);
             setEducationData(formattedEducation);
           } else {
             setEducationData([]);
           }
 
-          
+
           // Format and set skills data
           if (data.skills?.length) {
             formattedSkills = data.skills.map((skill, index) => {
@@ -182,15 +176,15 @@ export const useUserDetailsApi = () => {
                   skill.domain || skill.name || skill.skill || "Unknown Skill";
                 const skillDescription =
                   skill.subSkills &&
-                  Array.isArray(skill.subSkills) &&
-                  skill.subSkills.length > 0
+                    Array.isArray(skill.subSkills) &&
+                    skill.subSkills.length > 0
                     ? `Sub-skills: ${skill.subSkills.join(", ")}`
                     : `Proficient in ${skillName} with practical experience and knowledge.`;
-                  const skillLogo =
-                    Array.isArray(skill.authority) && skill.authority.length > 0
-                      ? skill.authority[0].logo_url
-                      : "/src/assets/WebsiteLogo.svg";
-  
+                const skillLogo =
+                  Array.isArray(skill.authority) && skill.authority.length > 0
+                    ? skill.authority[0].logo_url
+                    : "/src/assets/WebsiteLogo.svg";
+
                 return {
                   id: skill._id || skill.id || index + 1,
                   logo: skillLogo,

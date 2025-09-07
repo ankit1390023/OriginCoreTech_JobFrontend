@@ -97,11 +97,7 @@ export const useApplicantDetail = (job_id, application_id) => {
           application_id,
           token
         );
-        console.log("Full API response:", JSON.stringify(res, null, 2));
-        console.log("applicationDetails in response:", res.applicationDetails);
 
-        console.log("API response:", res); // Debug log
-        
         setApplicant({
           application_id: res.application_id,
           user_id: res.user_id,
@@ -156,7 +152,6 @@ export const useScheduleInterview = () => {
         setLoading(false);
         return;
       }
-      console.log("hooks", formData);
       const res = await applicationApi.scheduleInterview(
         application_id,
         formData,
@@ -164,7 +159,6 @@ export const useScheduleInterview = () => {
       );
 
       setSuccess(res.message || "Interview scheduled successfully");
-      console.log("the res is ", res);
       return res;
     } catch (err) {
       setError(err.response?.data?.message || "Failed to schedule interview");
