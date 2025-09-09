@@ -67,6 +67,7 @@ import AiProfile1 from "../pages/aiprediction/AiProfile1";
 import AllJObsPart from "../pages/aiprediction/AlljobsPart";
 import RecruiterRightProfile from "../pages/recruiter/dashboard/RecruiterRightProfile";
 import CompanyProfileEdit from "../pages/recruiter/CompanyProfileEdit";
+import CompanyAuthentication from "../pages/recruiter/CompanyAuthentication";
 
 // Protected Route Wrapper Component
 const ProtectedRoute = ({ children, allowedRoles }) => {
@@ -199,6 +200,12 @@ export const appRouter = createBrowserRouter([
     ),
   },
   {
+    path: "/company-authentication",
+    element: <ProtectedRoute allowedRoles={['COMPANY']}>
+      <CompanyAuthentication />
+    </ProtectedRoute>
+  },
+  {
     path: "/all-jobs",
     element: <AllJObs />
   },
@@ -320,14 +327,6 @@ export const appRouter = createBrowserRouter([
     element: (
       <ProtectedRoute allowedRoles={['STUDENT']}>
         <FeedDashBoard />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/feed-authentication",
-    element: (
-      <ProtectedRoute allowedRoles={['STUDENT']}>
-        <FeedAuthentication />
       </ProtectedRoute>
     ),
   },

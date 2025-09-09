@@ -17,6 +17,7 @@ const FeedAuthentication = () => {
   const [email, setEmail] = useState("Amangupta@gmail.com");
   const [phoneResendTime, setPhoneResendTime] = useState(15);
   const [aadharResendTime, setAadharResendTime] = useState(15);
+  const [isEditingEmail, setIsEditingEmail] = useState(false);
 
   // get token from redux (assuming auth slice has it)
   const token = useSelector((state) => state.auth?.token);
@@ -80,7 +81,7 @@ const FeedAuthentication = () => {
   // const handleEditEmail = () => {
   //   setIsEditingEmail(true);
   // };
-  
+
   const handleSaveEmail = async () => {
     try {
       const res = await updateEmail(newEmail, token);
@@ -95,7 +96,7 @@ const FeedAuthentication = () => {
       alert("Error while updating email");
     }
   };
-  
+
   const handleCancelEmail = () => {
     setNewEmail(email);
     setIsEditingEmail(false);
@@ -272,49 +273,49 @@ const FeedAuthentication = () => {
             </p>
           </div>
 
-        {/* Email ID Display Section */}
-<div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
-  <Label className="text-sm font-semibold text-gray-700">Email ID</Label>
+          {/* Email ID Display Section */}
+          <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+            <Label className="text-sm font-semibold text-gray-700">Email ID</Label>
 
-  {isEditingEmail ? (
-    <div className="mt-2 flex flex-col gap-2">
-      <Input
-        type="email"
-        value={newEmail}
-        onChange={(e) => setNewEmail(e.target.value)}
-        className="w-full"
-      />
-      <div className="flex gap-2">
-        <Button
-          variant="secondary"
-          size="sm"
-          className="bg-green-500 text-white hover:bg-green-600"
-          onClick={handleSaveEmail}
-        >
-          Save
-        </Button>
-        <Button
-          variant="secondary"
-          size="sm"
-          className="bg-gray-400 text-white hover:bg-gray-500"
-          onClick={handleCancelEmail}
-        >
-          Cancel
-        </Button>
-      </div>
-    </div>
-  ) : (
-    <div className="mt-1">
-      <p className="text-sm text-gray-800 mb-2">{email}</p>
-      <button
-        onClick={handleEditEmail}
-        className="text-blue-600 text-sm hover:text-blue-800 underline"
-      >
-        Edit/Change
-      </button>
-    </div>
-  )}
-</div>
+            {isEditingEmail ? (
+              <div className="mt-2 flex flex-col gap-2">
+                <Input
+                  type="email"
+                  value={newEmail}
+                  onChange={(e) => setNewEmail(e.target.value)}
+                  className="w-full"
+                />
+                <div className="flex gap-2">
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    className="bg-green-500 text-white hover:bg-green-600"
+                    onClick={handleSaveEmail}
+                  >
+                    Save
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    className="bg-gray-400 text-white hover:bg-gray-500"
+                    onClick={handleCancelEmail}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <div className="mt-1">
+                <p className="text-sm text-gray-800 mb-2">{email}</p>
+                <button
+                  onClick={() => setIsEditingEmail(true)}
+                  className="text-blue-600 text-sm hover:text-blue-800 underline"
+                >
+                  Edit/Change
+                </button>
+              </div>
+            )}
+          </div>
 
 
           {/* Save Changes Button */}
