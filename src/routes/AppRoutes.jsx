@@ -66,6 +66,7 @@ import AiProfile from "../pages/aiprediction/AiProfile";
 import AiProfile1 from "../pages/aiprediction/AiProfile1";
 import AllJObsPart from "../pages/aiprediction/AlljobsPart";
 import RecruiterRightProfile from "../pages/recruiter/dashboard/RecruiterRightProfile";
+import CompanyProfileEdit from "../pages/recruiter/CompanyProfileEdit";
 
 // Protected Route Wrapper Component
 const ProtectedRoute = ({ children, allowedRoles }) => {
@@ -384,10 +385,10 @@ export const appRouter = createBrowserRouter([
     ),
   },
   {
-    path: "/recruiter-right-profile",
+    path: "/company-profile-edit",
     element: (
       <ProtectedRoute allowedRoles={['COMPANY']}>
-        <RecruiterRightProfile />
+        <CompanyProfileEdit />
       </ProtectedRoute>
     ),
   },
