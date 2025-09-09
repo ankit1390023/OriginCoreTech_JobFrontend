@@ -31,7 +31,6 @@ const Feedprofile = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  // ✅ Assuming you store token and user in Redux
   const { token, user } = useSelector((state) => state.auth);
 
   const toggleDropdown = (id) => {
@@ -77,7 +76,6 @@ const Feedprofile = () => {
         return;
       }
 
-      // ✅ Call API correctly
       const response = await softDeleteAccount({ user_Id: user._id }, token);
 
       if (response?.success) {
@@ -223,7 +221,7 @@ const Feedprofile = () => {
           <div className="bg-[#002B6B] text-white p-3 sm:p-4 lg:p-4 flex flex-col sm:flex-row sm:items-center justify-between rounded-[5px] gap-3 sm:gap-4">
             <div className="flex items-center flex-1 min-w-0 gap-3 sm:gap-4">
               <img
-                src={ "https://i.pravatar.cc/100?img=1"
+                src={ getImageUrl(user.user_profile_pic) || "https://i.pravatar.cc/100?img=1"
                 }
                 alt="avatar"
                 className="flex-shrink-0 object-cover w-12 h-12 rounded-md sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-18 lg:h-18"
@@ -231,7 +229,7 @@ const Feedprofile = () => {
               <div className="flex-1 min-w-0">
                 <h1 className="text-base font-semibold truncate sm:text-lg md:text-xl lg:text-2xl">
                   {profile
-                    ? `${profile?.first_name} ${profile?.last_name}`
+                    ? `${user?.first_name} ${user?.last_name}`
                     : "Loading..."}
                 </h1>
                 <p className="text-xs text-gray-200 truncate sm:text-sm">
@@ -240,7 +238,7 @@ const Feedprofile = () => {
                   {profile?.email}
                 </p>
                 <p className="text-xs text-gray-200 truncate sm:text-sm">
-                  {profile?.user_role === "STUDENT"
+                  {user?.user_role === "STUDENT"
                     ? "Student"
                     : "Recruiter"}
                 </p>

@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { userDetailsApi } from '../../api/userDetailsApi'; 
-const dummyProfile =  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLMI5YxZE03Vnj-s-sth2_JxlPd30Zy7yEGg&s";
-// import dummyProfile3 from "../../";
+
+
 export const fetchProfile = createAsyncThunk(
   'profile/fetchProfile',
   async (_, { getState }) => {
@@ -9,13 +9,13 @@ export const fetchProfile = createAsyncThunk(
     console.log("slicee state", state);
     
     const currentProfile = state.profile.profile;
-    console.log(currentProfile);
+    console.log("this is current profile", currentProfile);
 
     // Skip if already loaded (avoid unnecessary fetch)
-    if (currentProfile ) {
-      return currentProfile; // or return early if you prefer
-    }
-  
+    // if (currentProfile ) {
+    //   return currentProfile; // or return early if you prefer
+    // }
+    console.log("going inside get mini user details");
     const response = await userDetailsApi.getMiniUserDetails(state.auth.user.id,state.auth.token);
     console.log("slicee response" , response)
     
@@ -27,7 +27,7 @@ export const fetchProfile = createAsyncThunk(
       user_profile_pic: user.user_profile_pic,
       about_us: user.about_us,
       career_objective: user.career_objective,
-      // Add more later:
+      //wil do that in future
       // followersCount: user.followersCount || 0,
       // followingCount: user.followingCount || 0,
     };

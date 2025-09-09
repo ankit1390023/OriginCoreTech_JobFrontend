@@ -433,7 +433,7 @@ export const appRouter = createBrowserRouter([
     ),
   },
   {
-    path: "/recruiter-interview/:id",
+    path: "/recruiter-schedule-interview/:id",
     element: (
       <ProtectedRoute allowedRoles={['COMPANY']}>
         <RecruiterInterview />

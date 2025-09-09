@@ -6,11 +6,12 @@ import { recruiterApi } from "../../api/recuiterApi";
 import { useNavigate } from "react-router-dom";
 import { Input, Textarea, Button, Checkbox } from "../../components/ui";
 import SignUpLayout from "../../components/layout/SignUpLayout";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Select from "react-select";
 import { useMasterData } from "../../hooks/master/useMasterData";
 import useUploadImageApi from "../../hooks/useUploadImageApi";
 import { getImageUrl } from "../../../utils.js";
+import {updateUser} from "../../redux/feature/authSlice.js"
 
 const formSchema = z.object({
   designation_id: z.string().min(1, { message: "Designation is required" }),
@@ -27,6 +28,7 @@ const formSchema = z.object({
 });
 
 export default function CompanyRecruiterProfile() {
+  const dispatch = useDispatch();
   const [logoPreview, setLogoPreview] = useState(null);
   const [profilePicPreview, setProfilePicPreview] = useState(null);
   const { token } = useSelector((state) => state.auth);
@@ -89,6 +91,7 @@ export default function CompanyRecruiterProfile() {
       try {
         const url = await uploadImage(file, "profilePic");
         setValue("profile_pic", url);
+        
       } catch (err) {
         console.error("Profile pic upload failed", err);
       }
@@ -112,8 +115,10 @@ export default function CompanyRecruiterProfile() {
         return;
       }
       const response = await recruiterApi.createProfile(apiData, token);
+      console.log("recruiter update profile",response);
 
       if (response && response.profile) {
+        dispatch(updateUser({user_profile_pic:response.profile.profile_picUrl}));
         alert("Profile created successfully");
         reset();
         navigate("/recruiter-dashboard");
