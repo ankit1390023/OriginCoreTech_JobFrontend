@@ -41,7 +41,6 @@ const CompanyProfileEdit = () => {
                 setLoading(true);
                 const response = await recruiterApi.getProfile(token);
                 setUserData(response);
-
                 const initialValues = {
                     company_name: response?.company_name || "",
                     about: response?.about || "",
@@ -62,7 +61,6 @@ const CompanyProfileEdit = () => {
                 setLoading(false);
             }
         };
-
         if (token) {
             getProfile();
         }
@@ -386,7 +384,6 @@ const CompanyProfileEdit = () => {
 
                                 {editingSections.languages ? (
                                     <div className="space-y-1">
-                                        <label className="block text-xs font-medium text-gray-700">Languages (Optional)</label>
                                         <Select
                                             isMulti
                                             value={languages

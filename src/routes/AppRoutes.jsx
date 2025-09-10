@@ -17,7 +17,7 @@ import CompanyRecruiterProfile from "../pages/recruiter/CompanyRecuiterProfile";
 import FeedPage from "../pages/student/feed/FeedPage";
 import FeedMyProfile from "../pages/student/feed/FeedMyProfile";
 import FeedView from "../pages/student/feed/FeedView";
-import FeedApplication from "../pages/student/feed/FeedApplication";
+
 import FeedTerms from "../pages/student/feed/FeedTerms";
 import FeedResume from "../pages/student/feed/FeedResume";
 import FeedTicket from "../pages/student/feed/FeedTicket";
@@ -68,6 +68,13 @@ import AllJObsPart from "../pages/aiprediction/AlljobsPart";
 import RecruiterRightProfile from "../pages/recruiter/dashboard/RecruiterRightProfile";
 import CompanyProfileEdit from "../pages/recruiter/CompanyProfileEdit";
 import CompanyAuthentication from "../pages/recruiter/CompanyAuthentication";
+import MyApplication6 from "../pages/student/application/Myapplication6";
+import MyApplication5 from "../pages/student/application/Myapplication5";
+import MyApplication4 from "../pages/student/application/Myapplication4";
+import MyApplication3 from "../pages/student/application/Myapplication3";
+import MyApplication2 from "../pages/student/application/Myapplication2";
+import MyApplication1 from "../pages/student/application/Myapplication1";
+import StudentApplications from "../pages/student/application/studentApplications";
 
 // Protected Route Wrapper Component
 const ProtectedRoute = ({ children, allowedRoles }) => {
@@ -191,6 +198,7 @@ export const appRouter = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
+ 
   {
     path: "/recruiter-post-job-intern-details",
     element: (
@@ -238,14 +246,6 @@ export const appRouter = createBrowserRouter([
     element: (
       <ProtectedRoute allowedRoles={['STUDENT']}>
         <FeedView />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/feed-application",
-    element: (
-      <ProtectedRoute>
-        <FeedApplication />
       </ProtectedRoute>
     ),
   },
@@ -339,6 +339,54 @@ export const appRouter = createBrowserRouter([
     ),
   },
   {
+     path: "/my-application1",
+    element: (
+      <ProtectedRoute allowedRoles={['STUDENT']}>
+        <MyApplication1 />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/my-application2",
+    element: (
+      <ProtectedRoute allowedRoles={['STUDENT']}>
+        <MyApplication2 />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/my-application3",
+    element: (
+      <ProtectedRoute allowedRoles={['STUDENT']}>
+        <MyApplication3 />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/my-application4",
+    element: (
+      <ProtectedRoute allowedRoles={['STUDENT']}>
+        <MyApplication4 />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/my-application5",
+    element: (
+      <ProtectedRoute allowedRoles={['STUDENT']}>
+        <MyApplication5 />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/my-application6",
+    element: (
+      <ProtectedRoute allowedRoles={['STUDENT']}>
+        <MyApplication6 />
+      </ProtectedRoute>
+    ),
+  },
+  {
     path: "/application-mymassage",
     element: (
       <ProtectedRoute allowedRoles={['STUDENT']}>
@@ -359,6 +407,14 @@ export const appRouter = createBrowserRouter([
     element: (
       <ProtectedRoute allowedRoles={['STUDENT']}>
         <FeedDashBoard />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/student-applications",
+    element: (
+      <ProtectedRoute allowedRoles={['STUDENT']}>
+        <StudentApplications />
       </ProtectedRoute>
     ),
   },

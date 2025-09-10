@@ -214,3 +214,25 @@ export const useUpdateApplicationStatus = () => {
 
   return { updateStatus, loading, error, success, updatedApplication };
 };
+
+export const useGetStudentApplications = () => {
+  const { token } = useSelector((state) => state.auth);
+  const [applications, setApplications] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  useEffect(() => {
+    const fetchApplications = async () => {
+      setLoading(true);
+      try {
+        const res = await applicationApi.getStudentApplications(token);
+        setApplications(res);
+      } catch (err) {
+        setError(err.message || "Failed to fetch applications");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchApplications();
+  }, [token]);
+  return { applications, loading, error };
+};

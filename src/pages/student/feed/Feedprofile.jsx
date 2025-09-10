@@ -111,7 +111,7 @@ const Feedprofile = () => {
       title: "My Applications",
       subtitle: "Manage your applications",
       hasChevron: true,
-      action: () => navigate("/feed-application"),
+      action: () => navigate("/student-applications"),
     },
     {
       id: "terms",
