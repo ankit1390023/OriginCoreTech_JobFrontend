@@ -11,17 +11,26 @@ import { useNavigate } from 'react-router-dom';
 const StudentApplications = () => {
     const [activeFilter, setActiveFilter] = useState('All');
     const [filteredApplications, setFilteredApplications] = useState([]);
+    const [expandedSections, setExpandedSections] = useState({
+        interviews: {},
+        assignments: {}
+    });
     const { token } = useSelector(state => state.auth);
     const filterOptions = [
         'All',
         'applied',
         'interview',
         'hired',
-        'rejected'
+        'rejected',
+        'has_interview',
+        'has_assignment',
+        'upcoming_interview',
+        'upcoming_assignment'
     ];
 
     const { applications: applicationsData, loading, error } = useGetStudentApplications();
     const navigate = useNavigate();
+    console.log("applicationsData", applicationsData);
 
     // Filter applications when activeFilter or applicationsData changes
     useEffect(() => {
@@ -30,9 +39,26 @@ const StudentApplications = () => {
         if (activeFilter === 'All') {
             setFilteredApplications(applicationsData.applications);
         } else {
-            const filtered = applicationsData.applications.filter(app =>
-                app.status.toLowerCase() === activeFilter.toLowerCase()
-            );
+            const filter = activeFilter.toLowerCase();
+            const filtered = applicationsData.applications.filter(app => {
+                switch (filter) {
+                    case 'applied':
+                    case 'interview':
+                    case 'hired':
+                    case 'rejected':
+                        return app.status.toLowerCase() === filter;
+                    case 'has_interview':
+                        return app.has_interview_invitation === true;
+                    case 'has_assignment':
+                        return app.has_assignment === true;
+                    case 'upcoming_interview':
+                        return app.upcoming_interview !== null;
+                    case 'upcoming_assignment':
+                        return app.upcoming_assignment !== null;
+                    default:
+                        return false;
+                }
+            });
             setFilteredApplications(filtered);
         }
     }, [activeFilter, applicationsData]);
@@ -64,15 +90,35 @@ const StudentApplications = () => {
 
     // Format filter display text
     const getFilterDisplayText = (filter) => {
-        if (filter === 'applied') return 'Applied';
-        if (filter === 'interview') return 'Interview';
-        return filter.charAt(0).toUpperCase() + filter.slice(1);
+        const filterMap = {
+            'all': 'All',
+            'applied': 'Applied',
+            'interview': 'Interview',
+            'hired': 'Hired',
+            'rejected': 'Rejected',
+            'has_interview': 'Interview Invites',
+            'has_assignment': 'Assignments',
+            'upcoming_interview': 'Upcoming Interviews',
+            'upcoming_assignment': 'Upcoming Assignments'
+        };
+        return filterMap[filter.toLowerCase()] || filter;
     };
 
     // Handle View Details button click
     const handleViewDetails = (e, jobPostId) => {
         e.stopPropagation(); // Prevent the click from bubbling up to the parent div
         navigate(`/jobs/${jobPostId}`);
+    };
+
+    // Toggle expanded state for interviews/assignments
+    const toggleExpanded = (type, applicationId) => {
+        setExpandedSections(prev => ({
+            ...prev,
+            [type]: {
+                ...prev[type],
+                [applicationId]: !prev[type][applicationId]
+            }
+        }));
     };
 
     return (
@@ -159,6 +205,124 @@ const StudentApplications = () => {
                                                     {job.applicantCount || '0'} Applicants
                                                 </span>
                                             </div>
+
+                                            {/* Interview and Assignment Badges */}
+                                            <div className="flex flex-wrap gap-2 mt-2">
+                                                {job.has_interview_invitation && (
+                                                    <button
+                                                        onClick={() => toggleExpanded('interviews', job.application_id)}
+                                                        className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 hover:bg-blue-200 transition-colors"
+                                                    >
+                                                        {job.interviews?.length || 0} Interview{job.interviews?.length !== 1 ? 's' : ''}
+                                                        <svg
+                                                            className={`ml-1 w-3 h-3 transition-transform ${expandedSections.interviews[job.application_id] ? 'rotate-180' : ''}`}
+                                                            fill="none"
+                                                            stroke="currentColor"
+                                                            viewBox="0 0 24 24"
+                                                        >
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                                        </svg>
+                                                    </button>
+                                                )}
+                                                {job.has_assignment && (
+                                                    <button
+                                                        onClick={() => toggleExpanded('assignments', job.application_id)}
+                                                        className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 hover:bg-purple-200 transition-colors"
+                                                    >
+                                                        {job.assignments?.length || 0} Assignment{job.assignments?.length !== 1 ? 's' : ''}
+                                                        <svg
+                                                            className={`ml-1 w-3 h-3 transition-transform ${expandedSections.assignments[job.application_id] ? 'rotate-180' : ''}`}
+                                                            fill="none"
+                                                            stroke="currentColor"
+                                                            viewBox="0 0 24 24"
+                                                        >
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                                        </svg>
+                                                    </button>
+                                                )}
+                                            </div>
+
+                                            {/* All Interviews Section */}
+                                            {job.has_interview_invitation && expandedSections.interviews[job.application_id] && (
+                                                <div className="mt-3 space-y-2">
+                                                    <h4 className="text-sm font-medium text-gray-700">All Interviews</h4>
+                                                    <div className="space-y-2">
+                                                        {job.interviews?.map((interview, idx) => (
+                                                            <div key={interview.id || idx} className="p-3 bg-gray-50 rounded-lg border border-gray-100">
+                                                                <div className="flex justify-between items-start">
+                                                                    <div>
+                                                                        <div className="font-medium">{interview.name}</div>
+                                                                        <div className="text-sm text-gray-600">{interview.message}</div>
+                                                                    </div>
+                                                                    {interview.id === job.upcoming_interview?.id && (
+                                                                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                                                                            Upcoming
+                                                                        </span>
+                                                                    )}
+                                                                </div>
+                                                                <div className="mt-2 text-sm text-gray-600">
+                                                                    <div>Date: {new Date(interview.date).toLocaleDateString()}</div>
+                                                                    <div>Time: {interview.startTime} - {interview.endTime}</div>
+                                                                    {interview.videoLink && (
+                                                                        <a
+                                                                            href={interview.videoLink}
+                                                                            target="_blank"
+                                                                            rel="noopener noreferrer"
+                                                                            className="text-blue-600 hover:underline inline-flex items-center mt-1"
+                                                                        >
+                                                                            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                                                            </svg>
+                                                                            Join Meeting
+                                                                        </a>
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {/* All Assignments Section */}
+                                            {job.has_assignment && expandedSections.assignments[job.application_id] && (
+                                                <div className="mt-3 space-y-2">
+                                                    <h4 className="text-sm font-medium text-gray-700">All Assignments</h4>
+                                                    <div className="space-y-2">
+                                                        {job.assignments?.map((assignment, idx) => (
+                                                            <div key={assignment.id || idx} className="p-3 bg-gray-50 rounded-lg border border-gray-100">
+                                                                <div className="flex justify-between items-start">
+                                                                    <div>
+                                                                        <div className="font-medium">Assignment {idx + 1}</div>
+                                                                        <div className="text-sm text-gray-600">{assignment.message}</div>
+                                                                    </div>
+                                                                    {assignment.id === job.upcoming_assignment?.id && (
+                                                                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
+                                                                            Current
+                                                                        </span>
+                                                                    )}
+                                                                </div>
+                                                                <div className="mt-2 text-sm text-gray-600">
+                                                                    <div>Deadline: {new Date(assignment.deadline).toLocaleDateString()}</div>
+                                                                    <div>Status: {assignment.status || 'Pending'}</div>
+                                                                    {assignment.assignment_url && (
+                                                                        <a
+                                                                            href={assignment.assignment_url}
+                                                                            target="_blank"
+                                                                            rel="noopener noreferrer"
+                                                                            className="text-blue-600 hover:underline inline-flex items-center mt-1"
+                                                                        >
+                                                                            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                                            </svg>
+                                                                            {assignment.status === 'submitted' ? 'View Submission' : 'View Assignment'}
+                                                                        </a>
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
                                         </div>
 
                                         {/* Right Column: Status, Skill Match, and View Details */}
@@ -188,6 +352,7 @@ const StudentApplications = () => {
                                                     ></div>
                                                 </div>
                                             </div>
+
 
                                             {/* View Details Button */}
                                             <button

@@ -205,7 +205,7 @@ export default function FeedPage() {
           <div className="flex flex-col gap-3 p-3 mb-4 bg-white rounded-lg shadow-sm sm:p-4">
             <div className="flex items-center w-full gap-2">
               <img
-                src={profile.user_profile_pic ? getImageUrl(profile.user_profile_pic) : dummyProfile3}
+                src={user.user_profile_pic ? getImageUrl(user.user_profile_pic) : dummyProfile3}
                 alt="Profile"
                 className="flex-shrink-0 w-10 h-10 rounded-full sm:w-12 sm:h-12"
               />

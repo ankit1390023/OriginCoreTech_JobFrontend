@@ -1,4 +1,4 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import cover from "../../../assets/cover.png";
 import dummyProfile3 from "../../../assets/dummyProfile3.jpg";
 import dummyProfile1 from "../../../assets/dummyProfile1.jpg";
@@ -7,6 +7,9 @@ import { FaCamera } from "react-icons/fa6";
 import { useEffect, useState } from "react";
 import feedApi from "../../../api/feedApi";
 import { userDetailsApi } from "../../../api/userDetailsApi";
+import { getImageUrl } from "../../../../utils.js";
+
+ 
 
 const visitors = [
   { name: "Olivia Rhye", img: dummyProfile1 },
@@ -28,6 +31,10 @@ export default function FeedRightProfile() {
   const [error, setError] = useState(null);
   const [profile, setProfile] = useState(null);
   const { token, user } = useSelector((state) => state.auth);
+  const miniProfile = useSelector((state) => state.profile.profile);
+  console.log("this is mini profile",miniProfile);
+ 
+
   
 
   // Fetch user public profile using user_id from Redux
@@ -98,7 +105,7 @@ export default function FeedRightProfile() {
                     </div> */}
           <div className="absolute w-24 h-24 left-2 top-10">
             <img
-              src={ dummyProfile3}
+              src={ user.user_profile_pic? getImageUrl(user.user_profile_pic): dummyProfile3}
               alt="Profile"
               className="object-cover w-full h-full border-4 border-white rounded-full"
             />
@@ -113,14 +120,14 @@ export default function FeedRightProfile() {
           ) : profile ? (
             <>
               <h2 className="text-lg font-bold text-gray-800">
-                {profile.first_name} {profile.last_name}
+                {user.first_name} {user.last_name}
               </h2>
               <p className="text-sm text-gray-500">{user?.email}</p>
 
               <p className="mt-1 text-sm font-semibold text-gray-700">
-                {profile.user_type}
+                {user.user_role}
               </p>
-              <p className="mt-2 text-sm text-gray-600">{profile.about_us}</p>
+              <p className="mt-2 text-sm text-gray-600">{user.about_us}</p>
             </>
           ) : null}
           <div className="flex gap-2 mt-4">

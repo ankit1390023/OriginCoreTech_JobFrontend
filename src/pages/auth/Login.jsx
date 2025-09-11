@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import AuthLayout from "../../components/layout/AuthLayout";
 import { Input, Button, Link } from "../../components/ui";
 import { login } from "../../redux/feature/authSlice";
+import { fetchProfile } from "../../redux/feature/profileSlice";
 
 // ✅ Validation schema
 const schema = z.object({
@@ -93,8 +94,7 @@ export default function Login() {
     >
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="w-full bg-white p-0 rounded-none shadow-none max-w-full 
-                   md:p-4 md:rounded-lg md:shadow-md md:max-w-md md:mx-auto"
+        className="w-full max-w-full p-0 bg-white rounded-none shadow-none md:p-4 md:rounded-lg md:shadow-md md:max-w-md md:mx-auto"
       >
         {/* Email */}
         <Input
@@ -118,7 +118,7 @@ export default function Login() {
         />
 
         {/* Remember + Forgot Password */}
-        <div className="flex flex-row items-center justify-between mb-2 sm:mb-3 gap-1 sm:gap-0">
+        <div className="flex flex-row items-center justify-between gap-1 mb-2 sm:mb-3 sm:gap-0">
           <label className="flex items-center text-[10px] cursor-pointer space-x-1">
             <input
               type="checkbox"
@@ -145,8 +145,7 @@ export default function Login() {
         {/* Error */}
         {error && (
           <div
-            className="text-xs text-red-500 mb-2 sm:mb-3 text-center 
-                          bg-red-50 p-2 sm:p-3 rounded-md"
+            className="p-2 mb-2 text-xs text-center text-red-500 rounded-md sm:mb-3 bg-red-50 sm:p-3"
           >
             {error}
           </div>
@@ -166,7 +165,7 @@ export default function Login() {
           type="button"
           variant="outline"
           disabled={loading}
-          className="w-full flex items-center justify-center shadow-none hover:shadow-none"
+          className="flex items-center justify-center w-full shadow-none hover:shadow-none"
         >
           <FcGoogle size={14} className="mr-1.5" />
           <span className="text-xs">Continue with Google</span>
@@ -179,7 +178,7 @@ export default function Login() {
           disabled={loading}
           as={Link}
           to="/login-send-otp-email"
-          className="w-full mt-2 shadow-none hover:shadow-none flex items-center justify-center"
+          className="flex items-center justify-center w-full mt-2 shadow-none hover:shadow-none"
         >
           <span className="text-xs">Login with OTP</span>
         </Button>

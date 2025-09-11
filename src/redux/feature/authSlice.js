@@ -40,6 +40,7 @@ export const login = createAsyncThunk(
       localStorage.setItem('authToken', token);
       localStorage.setItem('user', JSON.stringify(user));
 
+
       return { user, token };
     } catch (error) {
       return rejectWithValue(
@@ -94,16 +95,16 @@ const authSlice = createSlice({
       state.loading = false;
       state.error = null;
       localStorage.removeItem('authToken');
-      localStorage.removeItem('user'); // ✅ clear user
+      localStorage.removeItem('user'); //  clear user
     },
 
-    // ✅ Generic updateUser reducer
+    //  Generic updateUser reducer
     updateUser: (state, action) => {
       state.user = { ...state.user, ...action.payload };
       localStorage.setItem("user", JSON.stringify(state.user)); // keep in sync
     },
 
-    // ✅ Explicit updateEmail reducer for clarity
+    // Explicit updateEmail reducer for clarity
     updateEmail: (state, action) => {
       if (state.user) {
         state.user.email = action.payload;
@@ -149,6 +150,6 @@ const authSlice = createSlice({
 });
 
 // ✅ Export both actions
-export const { logout, updateUser, updateEmail } = authSlice.actions;
+export const { logout, updateUser, updateEmail} = authSlice.actions;
 
 export default authSlice.reducer;

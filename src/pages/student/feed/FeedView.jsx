@@ -3,18 +3,19 @@ import { useNavigate } from "react-router-dom";
 import { FaCamera } from "react-icons/fa";
 import MainLayout from "../../../components/layout/MainLayout";
 import FeedRightProfile from "../feed/FeedRightProfile";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import uploadImageApi from "../../../api/uploadImageApi";
 import { userDetailsApi } from "../../../api/userDetailsApi";
 import { updateProfileLocally } from '../../../redux/feature/profileSlice';
-import { useDispatch } from 'react-redux';
 import { getImageUrl } from "../../../../utils.js";
 import dummyProfile3 from "../../../assets/dummyProfile3.jpg";
+import { updateUser } from "../../../redux/feature/authSlice";
 
 
 const FeedView = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { user, token, isAuthenticated } = useSelector((state) => state.auth);
   const [profileImage, setProfileImage] = useState(dummyProfile3);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadStatus, setUploadStatus] = useState(null);
@@ -25,7 +26,7 @@ const FeedView = () => {
   const [editingField, setEditingField] = useState(null);
   const [editValue, setEditValue] = useState('');
   const [isSaving, setIsSaving] = useState(false);
-  const { user, token, isAuthenticated } = useSelector((state) => state.auth);
+  
 
   useEffect(() => {
     async function fetchUserProfile() {
@@ -143,10 +144,11 @@ const FeedView = () => {
 
         //  UPDATE REDUX PROFILE SLICE → Sidebar will auto-update!
         dispatch(
-          updateProfileLocally({
+          updateUser({
             ...userDataPayload,
           })
         );
+        
 
         setEditingField(null);
         setEditValue("");
@@ -232,7 +234,7 @@ const handleProfileImageUpload = async () => {
                   user_profile_pic: uploadedUrl
                 }
               }));
-              dispatch(updateProfileLocally({ user_profile_pic: uploadedUrl }));
+              dispatch(updateUser({ user_profile_pic: uploadedUrl }));
               setUploadStatus({
                 type: "success",
                 message: "Profile picture updated successfully!",

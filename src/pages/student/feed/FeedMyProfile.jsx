@@ -101,10 +101,10 @@ const FeedMyProfile = () => {
           <div className="mb-6 space-y-4 text-center">
             <div className="relative inline-block">
               <img
-                src={getImageUrl(profile?.user_profile_pic) || dummyProfile3}
+                src={getImageUrl(user.user_profile_pic) || dummyProfile3}
                 alt={
-                  profile?.first_name
-                    ? `${profile.first_name} ${profile.last_name}`
+                  user.first_name
+                    ? `${user.first_name} ${user.last_name}`
                     : "User Profile"
                 }
                 className="object-cover w-24 h-24 border-4 rounded-full border-blue-50"
@@ -122,14 +122,14 @@ const FeedMyProfile = () => {
               ) : profile ? (
                 <>
                   <h2 className="text-lg font-bold text-gray-800">
-                    {profile.first_name} {profile.last_name}
+                    {user.first_name} {user.last_name}
                   </h2>
-                  <p className="text-sm text-gray-500">{profile.email}</p>
+                  <p className="text-sm text-gray-500">{user.email}</p>
                   <p className="mt-1 text-sm font-semibold text-gray-700">
-                    {profile.user_type}
+                    {user.user_role}
                   </p>
                   <p className="mt-2 text-sm text-gray-600">
-                    {profile.about_us}
+                    {user.about_us}
                   </p>
                 </>
               ) : null}
@@ -167,7 +167,7 @@ const FeedMyProfile = () => {
                     <div className="flex items-start gap-3">
                       <img
                         src={
-                          profile.user_profile_pic? getImageUrl(profile.user_profile_pic):dummyProfile3
+                          user.user_profile_pic? getImageUrl(user.user_profile_pic):dummyProfile3
                         }
                         alt={activity.user?.first_name || "User"}
                         className="object-cover w-10 h-10 rounded-full"
