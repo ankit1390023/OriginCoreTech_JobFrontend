@@ -3,13 +3,16 @@ import { useSelector } from "react-redux";
 import { useParams, useLocation } from "react-router-dom";
 import MainLayout from "../../../components/layout/MainLayout";
 import RecruiterApplicationData from "./RecruiterApplicationData";
-import { jobPostApi } from "../../../api/jobPostApi";
 import useUploadImageApi from "../../../hooks/useUploadImageApi";
+import axios from "axios";
+
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 export default function SendAssignment() {
   const [message, setMessage] = useState(
     "Thank you for your interest in our internship opening. As a next step, we are expecting you to complete a short assignment.\n\nThanks,\nMansi"
   );
+  const { token } = useSelector((state) => state.auth);
   const [file, setFile] = useState(null);
   const [deadline, setDeadline] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -43,47 +46,66 @@ export default function SendAssignment() {
     }
   };
 
-  /** Submit assignment (console only) */
-  const handleSubmit = async (e) => {
-    e.preventDefault();
 
-    if (!deadline) {
-      alert("⚠️ Please select a submission deadline");
-      return;
+//Submit assignment to server 
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  if (!deadline) {
+    alert(" Please select a submission deadline");
+    return;
+  }
+  if (!file) {
+    alert(" Please select a file");
+    return;
+  }
+
+  try {
+    setIsSubmitting(true);
+
+    // Upload file first
+    const fileUrl = await uploadAssignmentFile(file);
+
+    // Prepare payload
+    const assignmentData = {
+      message,
+      deadline,
+      assignment_url: fileUrl,
+    };
+
+    if (!token) {
+      throw new Error("No authentication token found. Please log in again.");
     }
-    if (!file) {
-      alert("⚠️ Please select a file");
-      return;
-    }
+    const response = await axios.post(
+      `${BASE_URL}/assignments/${applicationId}`,
+      assignmentData,
+      {
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
-    try {
-      setIsSubmitting(true);
+    console.log("Assignment created:", response.data);
 
-      // Upload first
-      const fileUrl = await uploadAssignmentFile(file);
+    alert("Assignment sent successfully!");
+    setMessage("");
+    setDeadline("");
+    setFile(null);
+  } catch (error) {
+    console.error("Assignment submission failed:", error);
 
-      // Prepare payload
-      const assignmentData = {
-        applicationId,
-        applicantName: applicant.name || "No Name",
-        message,
-        deadline,
-        assignment_url: fileUrl,
-      };
+    const errorMessage =
+      error.response?.data?.error ||
+      error.message ||
+      "Failed to send assignment";
 
-      // ✅ Only console final result instead of API call
-      console.log("📌 Final Assignment Data:", assignmentData);
-
-      alert("✅ Assignment data prepared successfully (check console)");
-      setMessage("");
-      setDeadline("");
-      setFile(null);
-    } catch (error) {
-      alert(error.message || "❌ Failed to process assignment");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+    alert(errorMessage);
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   return (
     <MainLayout>

@@ -97,15 +97,11 @@ const PublicRoute = ({ children }) => {
   const { isAuthenticated, user } = useSelector((state) => state.auth);
   const location = useLocation();
 
-  // 👇 Check if user is in signup → OTP flow
-  const isInSignupFlow =
-    location.state?.inSignupFlow === true ||
-    sessionStorage.getItem("inSignupFlow") === "true";
 
   // Don't redirect if:
   // - it's the OTP page, OR
   // - user just came from signup and is in OTP flow
-  if (location.pathname === "/signup-verify-otp-email" || isInSignupFlow) {
+  if (location.pathname === "/signup-verify-otp-email" ) {
     return children;
   }
 

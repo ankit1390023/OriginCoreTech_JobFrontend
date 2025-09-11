@@ -3,7 +3,6 @@ import { Button, Badge } from '../../../components/ui';
 import MainLayout from '../../../components/layout/MainLayout';
 import { Loader2 } from 'lucide-react';
 import { useGetStudentApplications } from '../../../hooks/useApplications';
-import { useSelector } from 'react-redux';
 import FeedRightProfile from '../feed/FeedRightProfile';
 import { getImageUrl } from '../../../../utils';
 import { useNavigate } from 'react-router-dom';
@@ -15,7 +14,6 @@ const StudentApplications = () => {
         interviews: {},
         assignments: {}
     });
-    const { token } = useSelector(state => state.auth);
     const filterOptions = [
         'All',
         'applied',
