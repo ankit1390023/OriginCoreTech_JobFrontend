@@ -155,7 +155,7 @@
 
 
 import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import MainLayout from "../../../components/layout/MainLayout";
 import RecruiterApplicationData from "./RecruiterApplicationData";
 import { jobPostApi } from "../../../api/jobPostApi";
@@ -170,7 +170,8 @@ export default function SendAssignment() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { token } = useSelector((state) => state.auth);
-  const applicationId = useParams().application_id;
+  const { job_id,application_id } = useParams();
+  const applicationId=application_id;
   const location = useLocation();
   const applicant = location.state?.applicant || {};
 
@@ -216,7 +217,7 @@ export default function SendAssignment() {
       <div className="flex justify-center min-h-screen gap-6 px-4 py-6 bg-gray-100">
         {/* Left Sidebar */}
         <aside>
-          <RecruiterApplicationData  />
+          <RecruiterApplicationData job_id={job_id} />
         </aside>
 
         {/* Right Main Section */}

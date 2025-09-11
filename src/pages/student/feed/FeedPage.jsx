@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import MainLayout from "../../../components/layout/MainLayout.jsx";
-import profilee from "../../../assets/profile.png";
 import addMediaIcon from "../../../assets/add-media.png";
 import { BiCommentDetail, BiLike } from "react-icons/bi";
 import { FaEllipsisH } from "react-icons/fa";
@@ -14,7 +13,6 @@ import FeedRightProfile from "./FeedRightProfile.jsx";
 import feedApi from "../../../api/feedApi";
 import uploadImageApi from "../../../api/uploadImageApi";
 import useFeedApi from "../../../hooks/useFeedApi";
-import { useNavigate } from "react-router-dom";
 import { getImageUrl } from "../../../../utils.js";
 
 export default function FeedPage() {
@@ -159,39 +157,31 @@ export default function FeedPage() {
   };
 
   const handleShare = async (post) => {
+    if (!post?.slug) {
+      alert("This post cannot be shared.");
+      return;
+    }
+
+    const postUrl = `${window.location.origin}/feed-post/${post.slug}`;
+    const shareText = post.caption?.slice(0, 120) || "Check out this post!";
+
     try {
-      const encodedId = btoa(post.id.toString());
-      const postUrl = `${window.location.origin}/feed/${encodedId}`;
-
-      const shareData = {
-        title: post.title || "Check out this post!",
-        text: `${post.description?.slice(0, 120)}...`, // preview text
-        url: postUrl,
-      };
-
       if (navigator.share) {
-        // Native share sheet (WhatsApp, FB, LinkedIn, etc.)
-        await navigator.share(shareData);
+        await navigator.share({
+          title: "Check this out!",
+          text: shareText,
+          url: postUrl,
+        });
       } else {
-        // ✅ Fallback: copy text + URL
-        await navigator.clipboard.writeText(
-          `${post.title}\n${post.description}\n${postUrl}`
-        );
-        alert("Post details copied to clipboard!");
+        await navigator.clipboard.writeText(`${shareText}\n\n${postUrl}`);
+        alert("Post link copied to clipboard!");
       }
     } catch (err) {
       console.error("Error sharing:", err);
+      prompt("Copy to share:", `${shareText}\n\n${postUrl}`);
     }
   };
-  const navigate = useNavigate();
 
-  const handleOpenPost = (postId) => {
-    const SECRET = process.env.REACT_APP_POST_SALT_SECRET; // same as backend
-    const encodedId = btoa(`${postId}:${SECRET}`);
-    navigate(`/feed/${encodedId}`);
-  };
-
-  // console.log("state.auth", profile);
 
   return (
     <MainLayout>
@@ -386,11 +376,8 @@ export default function FeedPage() {
                           <div key={comment.id} className="mb-3">
                             <div className="flex items-start gap-2">
                               <img
-                                src={
+                                src={ comment.profile_pic ?
                                   getImageUrl(comment.profile_pic)
-                                    ? comment.profile_pic.startsWith("data:")
-                                      ? getImageUrl(comment.profile_pic)
-                                      : `data:image/jpeg;base64,${comment.profile_pic}`
                                     : profile
                                 }
                                 alt=""

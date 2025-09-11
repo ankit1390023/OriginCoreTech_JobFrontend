@@ -15,6 +15,7 @@ import LoginVerifyOtpEmail from "../pages/auth/LoginVerifyOtpEmail";
 import LoginSendOtpEmail from "../pages/auth/LoginSendOtpEmail";
 import CompanyRecruiterProfile from "../pages/recruiter/CompanyRecuiterProfile";
 import FeedPage from "../pages/student/feed/FeedPage";
+import FeedPostDetail from "../pages/student/feed/FeedPostDetail"
 import FeedMyProfile from "../pages/student/feed/FeedMyProfile";
 import FeedView from "../pages/student/feed/FeedView";
 import FeedApplication from "../pages/student/feed/FeedApplication";
@@ -141,7 +142,7 @@ export const appRouter = createBrowserRouter([
       <PublicRoute>
         <ForgotPassword />,
       </PublicRoute>
-    )
+    ),
   },
   {
     path: "/login-send-otp-email",
@@ -149,7 +150,7 @@ export const appRouter = createBrowserRouter([
       <PublicRoute>
         <LoginSendOtpEmail />
       </PublicRoute>
-    )
+    ),
   },
   {
     path: "/login-verify-otp-email",
@@ -157,7 +158,7 @@ export const appRouter = createBrowserRouter([
       <PublicRoute>
         <LoginVerifyOtpEmail />,
       </PublicRoute>
-    )
+    ),
   },
   {
     path: "/signup-choose-role",
@@ -173,7 +174,7 @@ export const appRouter = createBrowserRouter([
       <PublicRoute>
         <SignUp />,
       </PublicRoute>
-    )
+    ),
   },
   {
     path: "/signup-verify-otp-email",
@@ -181,7 +182,7 @@ export const appRouter = createBrowserRouter([
       <PublicRoute>
         <SignUpVerifyOtpEmail />,
       </PublicRoute>
-    )
+    ),
   },
   {
     path: "/student-fill-account-details",
@@ -194,41 +195,52 @@ export const appRouter = createBrowserRouter([
   {
     path: "/recruiter-post-job-intern-details",
     element: (
-      <ProtectedRoute allowedRoles={['COMPANY']}>
+      <ProtectedRoute allowedRoles={["COMPANY"]}>
         <RecruiterPostJobInternDetails />
       </ProtectedRoute>
     ),
   },
   {
     path: "/company-authentication",
-    element: <ProtectedRoute allowedRoles={['COMPANY']}>
-      <CompanyAuthentication />
-    </ProtectedRoute>
+    element: (
+      <ProtectedRoute allowedRoles={["COMPANY"]}>
+        <CompanyAuthentication />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/all-jobs",
-    element: <AllJObs />
+    element: <AllJObs />,
   },
   {
     path: "/jobs/:job_id",
     element: (
-      <ProtectedRoute allowedRoles={['STUDENT']}>
+      <ProtectedRoute allowedRoles={["STUDENT"]}>
         <JobDetailsPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/feed-post/:slug",
+    element: (
+      <ProtectedRoute allowedRoles={["STUDENT", "COMPANY", "UNIVERSITY"]}>
+        <FeedPostDetail/>
       </ProtectedRoute>
     ),
   },
   {
     path: "/feed",
     element: (
-      <ProtectedRoute allowedRoles={['STUDENT', 'COMPANY', 'UNIVERSITY']}>
+      <ProtectedRoute allowedRoles={["STUDENT", "COMPANY", "UNIVERSITY"]}>
         <FeedPage />
       </ProtectedRoute>
     ),
   },
+
   {
     path: "/feed-my-profile",
     element: (
-      <ProtectedRoute allowedRoles={['STUDENT']}>
+      <ProtectedRoute allowedRoles={["STUDENT"]}>
         <FeedMyProfile />
       </ProtectedRoute>
     ),
@@ -236,7 +248,7 @@ export const appRouter = createBrowserRouter([
   {
     path: "/feed-view",
     element: (
-      <ProtectedRoute allowedRoles={['STUDENT']}>
+      <ProtectedRoute allowedRoles={["STUDENT"]}>
         <FeedView />
       </ProtectedRoute>
     ),
@@ -252,7 +264,7 @@ export const appRouter = createBrowserRouter([
   {
     path: "/feed-terms",
     element: (
-      <ProtectedRoute allowedRoles={['STUDENT', 'COMPANY', 'UNIVERSITY']}>
+      <ProtectedRoute allowedRoles={["STUDENT", "COMPANY", "UNIVERSITY"]}>
         <FeedTerms />
       </ProtectedRoute>
     ),
@@ -260,7 +272,7 @@ export const appRouter = createBrowserRouter([
   {
     path: "/feed-resume",
     element: (
-      <ProtectedRoute allowedRoles={['STUDENT']}>
+      <ProtectedRoute allowedRoles={["STUDENT"]}>
         <FeedResume />
       </ProtectedRoute>
     ),
@@ -268,7 +280,7 @@ export const appRouter = createBrowserRouter([
   {
     path: "/feed-ticket",
     element: (
-      <ProtectedRoute allowedRoles={['STUDENT', 'COMPANY', 'UNIVERSITY']}>
+      <ProtectedRoute allowedRoles={["STUDENT", "COMPANY", "UNIVERSITY"]}>
         <FeedTicket />
       </ProtectedRoute>
     ),
@@ -276,7 +288,7 @@ export const appRouter = createBrowserRouter([
   {
     path: "/feed-profile",
     element: (
-      <ProtectedRoute allowedRoles={['STUDENT', 'COMPANY', 'UNIVERSITY']}>
+      <ProtectedRoute allowedRoles={["STUDENT", "COMPANY", "UNIVERSITY"]}>
         <Feedprofile />
       </ProtectedRoute>
     ),
@@ -284,7 +296,7 @@ export const appRouter = createBrowserRouter([
   {
     path: "/feed-change-email",
     element: (
-      <ProtectedRoute allowedRoles={['STUDENT', 'COMPANY', 'UNIVERSITY']}>
+      <ProtectedRoute allowedRoles={["STUDENT", "COMPANY", "UNIVERSITY"]}>
         <FeedChangeEmail />
       </ProtectedRoute>
     ),
@@ -292,7 +304,7 @@ export const appRouter = createBrowserRouter([
   {
     path: "/feed-change-password",
     element: (
-      <ProtectedRoute allowedRoles={['STUDENT', 'COMPANY', 'UNIVERSITY']}>
+      <ProtectedRoute allowedRoles={["STUDENT", "COMPANY", "UNIVERSITY"]}>
         <FeedChangePassword />
       </ProtectedRoute>
     ),
@@ -300,7 +312,7 @@ export const appRouter = createBrowserRouter([
   {
     path: "/feed-your-skills",
     element: (
-      <ProtectedRoute allowedRoles={['STUDENT']}>
+      <ProtectedRoute allowedRoles={["STUDENT"]}>
         <FeedYourSkills />
       </ProtectedRoute>
     ),
@@ -308,7 +320,7 @@ export const appRouter = createBrowserRouter([
   {
     path: "/feed-your-education",
     element: (
-      <ProtectedRoute allowedRoles={['STUDENT']}>
+      <ProtectedRoute allowedRoles={["STUDENT"]}>
         <FeedYourEducation />
       </ProtectedRoute>
     ),
@@ -316,7 +328,7 @@ export const appRouter = createBrowserRouter([
   {
     path: "/feed-your-experience",
     element: (
-      <ProtectedRoute allowedRoles={['STUDENT']}>
+      <ProtectedRoute allowedRoles={["STUDENT"]}>
         <FeedYourExprience />
       </ProtectedRoute>
     ),
@@ -325,7 +337,7 @@ export const appRouter = createBrowserRouter([
   {
     path: "/feed-dashboard",
     element: (
-      <ProtectedRoute allowedRoles={['STUDENT']}>
+      <ProtectedRoute allowedRoles={["STUDENT"]}>
         <FeedDashBoard />
       </ProtectedRoute>
     ),
@@ -333,7 +345,7 @@ export const appRouter = createBrowserRouter([
   {
     path: "/feed-faq",
     element: (
-      <ProtectedRoute allowedRoles={['STUDENT']}>
+      <ProtectedRoute allowedRoles={["STUDENT"]}>
         <FeedFaq />
       </ProtectedRoute>
     ),
@@ -341,7 +353,7 @@ export const appRouter = createBrowserRouter([
   {
     path: "/application-mymassage",
     element: (
-      <ProtectedRoute allowedRoles={['STUDENT']}>
+      <ProtectedRoute allowedRoles={["STUDENT"]}>
         <MyMassage />
       </ProtectedRoute>
     ),
@@ -349,7 +361,7 @@ export const appRouter = createBrowserRouter([
   {
     path: "/application-mynotification",
     element: (
-      <ProtectedRoute allowedRoles={['STUDENT']}>
+      <ProtectedRoute allowedRoles={["STUDENT"]}>
         <MyNotification />
       </ProtectedRoute>
     ),
@@ -357,19 +369,18 @@ export const appRouter = createBrowserRouter([
   {
     path: "/feed-dashboard",
     element: (
-      <ProtectedRoute allowedRoles={['STUDENT']}>
+      <ProtectedRoute allowedRoles={["STUDENT"]}>
         <FeedDashBoard />
       </ProtectedRoute>
     ),
   },
-
 
   // Recruiter related routes
 
   {
     path: "/recruiter-profile",
     element: (
-      <ProtectedRoute allowedRoles={['COMPANY']}>
+      <ProtectedRoute allowedRoles={["COMPANY"]}>
         <CompanyRecruiterProfile />
       </ProtectedRoute>
     ),
@@ -378,7 +389,7 @@ export const appRouter = createBrowserRouter([
   {
     path: "/recruiter-dashboard",
     element: (
-      <ProtectedRoute allowedRoles={['COMPANY']}>
+      <ProtectedRoute allowedRoles={["COMPANY"]}>
         <RecruiterDashboard />
       </ProtectedRoute>
     ),
@@ -386,7 +397,7 @@ export const appRouter = createBrowserRouter([
   {
     path: "/company-profile-edit",
     element: (
-      <ProtectedRoute allowedRoles={['COMPANY']}>
+      <ProtectedRoute allowedRoles={["COMPANY"]}>
         <CompanyProfileEdit />
       </ProtectedRoute>
     ),
@@ -394,7 +405,7 @@ export const appRouter = createBrowserRouter([
   {
     path: "/recruiter-total-job-post",
     element: (
-      <ProtectedRoute allowedRoles={['COMPANY']}>
+      <ProtectedRoute allowedRoles={["COMPANY"]}>
         <RecruiterTotalJobPost />
       </ProtectedRoute>
     ),
@@ -402,7 +413,7 @@ export const appRouter = createBrowserRouter([
   {
     path: "/recruiter-view-applications/:job_id",
     element: (
-      <ProtectedRoute allowedRoles={['COMPANY']}>
+      <ProtectedRoute allowedRoles={["COMPANY"]}>
         <RecruiterApplication />
       </ProtectedRoute>
     ),
@@ -411,7 +422,7 @@ export const appRouter = createBrowserRouter([
   {
     path: "/recruiter-application-details/:job_id/:application_id",
     element: (
-      <ProtectedRoute allowedRoles={['COMPANY']}>
+      <ProtectedRoute allowedRoles={["COMPANY"]}>
         <RecruiterApplicationDetails />
       </ProtectedRoute>
     ),
@@ -419,23 +430,23 @@ export const appRouter = createBrowserRouter([
   {
     path: "/recruiter-application-data",
     element: (
-      <ProtectedRoute allowedRoles={['COMPANY']}>
+      <ProtectedRoute allowedRoles={["COMPANY"]}>
         <RecruiterApplicationData />
       </ProtectedRoute>
     ),
   },
   {
-    path: "/recruiter-send-assignment",
+    path: "/recruiter-send-assignment/:job_id/:application_id",
     element: (
-      <ProtectedRoute allowedRoles={['COMPANY']}>
+      <ProtectedRoute allowedRoles={["COMPANY"]}>
         <RecruiterSendAssignment />
       </ProtectedRoute>
     ),
   },
   {
-    path: "/recruiter-schedule-interview/:id",
+    path: "/recruiter-schedule-interview/:job_id/:id",
     element: (
-      <ProtectedRoute allowedRoles={['COMPANY']}>
+      <ProtectedRoute allowedRoles={["COMPANY"]}>
         <RecruiterInterview />
       </ProtectedRoute>
     ),
@@ -443,7 +454,7 @@ export const appRouter = createBrowserRouter([
   {
     path: "/recruiter-pipeline",
     element: (
-      <ProtectedRoute allowedRoles={['COMPANY']}>
+      <ProtectedRoute allowedRoles={["COMPANY"]}>
         <RecruitePipeline />
       </ProtectedRoute>
     ),
@@ -451,7 +462,7 @@ export const appRouter = createBrowserRouter([
   {
     path: "/recruiter-upcoming-interview",
     element: (
-      <ProtectedRoute allowedRoles={['COMPANY']}>
+      <ProtectedRoute allowedRoles={["COMPANY"]}>
         <RecruiterUpcommingInterview />
       </ProtectedRoute>
     ),
@@ -459,7 +470,7 @@ export const appRouter = createBrowserRouter([
   {
     path: "/recruiter-pending-task",
     element: (
-      <ProtectedRoute allowedRoles={['COMPANY']}>
+      <ProtectedRoute allowedRoles={["COMPANY"]}>
         <RecruiterPendingTask />
       </ProtectedRoute>
     ),
@@ -468,7 +479,7 @@ export const appRouter = createBrowserRouter([
   {
     path: "/recruiter-visiter",
     element: (
-      <ProtectedRoute allowedRoles={['COMPANY']}>
+      <ProtectedRoute allowedRoles={["COMPANY"]}>
         <RecruiterProfile />
       </ProtectedRoute>
     ),
@@ -476,7 +487,7 @@ export const appRouter = createBrowserRouter([
   {
     path: "/recruiter-terms",
     element: (
-      <ProtectedRoute allowedRoles={['COMPANY']}>
+      <ProtectedRoute allowedRoles={["COMPANY"]}>
         <RecruiterTerms />
       </ProtectedRoute>
     ),
@@ -484,7 +495,7 @@ export const appRouter = createBrowserRouter([
   {
     path: "/recruiter-payment",
     element: (
-      <ProtectedRoute allowedRoles={['COMPANY']}>
+      <ProtectedRoute allowedRoles={["COMPANY"]}>
         <RecruiterPayment />
       </ProtectedRoute>
     ),
@@ -492,7 +503,7 @@ export const appRouter = createBrowserRouter([
   {
     path: "/recruiter-pricing",
     element: (
-      <ProtectedRoute allowedRoles={['COMPANY']}>
+      <ProtectedRoute allowedRoles={["COMPANY"]}>
         <RecruiterPricing />
       </ProtectedRoute>
     ),
@@ -500,7 +511,7 @@ export const appRouter = createBrowserRouter([
   {
     path: "/recruiter-payment-method",
     element: (
-      <ProtectedRoute allowedRoles={['COMPANY']}>
+      <ProtectedRoute allowedRoles={["COMPANY"]}>
         <RecruiterPaymentMethod />
       </ProtectedRoute>
     ),
@@ -508,7 +519,7 @@ export const appRouter = createBrowserRouter([
   {
     path: "/recruiter-payment-password",
     element: (
-      <ProtectedRoute allowedRoles={['COMPANY']}>
+      <ProtectedRoute allowedRoles={["COMPANY"]}>
         <RecruiterChangePassword />
       </ProtectedRoute>
     ),
@@ -516,7 +527,7 @@ export const appRouter = createBrowserRouter([
   {
     path: "/recruiter-change-email",
     element: (
-      <ProtectedRoute allowedRoles={['COMPANY']}>
+      <ProtectedRoute allowedRoles={["COMPANY"]}>
         <RecruiterChangeEmail />
       </ProtectedRoute>
     ),
@@ -527,7 +538,7 @@ export const appRouter = createBrowserRouter([
   {
     path: "/university-fill-details",
     element: (
-      <ProtectedRoute allowedRoles={['UNIVERSITY']}>
+      <ProtectedRoute allowedRoles={["UNIVERSITY"]}>
         <UniversityFillDetails />
       </ProtectedRoute>
     ),
@@ -535,7 +546,7 @@ export const appRouter = createBrowserRouter([
   {
     path: "/university-profile",
     element: (
-      <ProtectedRoute allowedRoles={['UNIVERSITY']}>
+      <ProtectedRoute allowedRoles={["UNIVERSITY"]}>
         <UniversityProfile />
       </ProtectedRoute>
     ),
@@ -543,7 +554,7 @@ export const appRouter = createBrowserRouter([
   {
     path: "/university-change-email",
     element: (
-      <ProtectedRoute allowedRoles={['UNIVERSITY']}>
+      <ProtectedRoute allowedRoles={["UNIVERSITY"]}>
         <UniversityChangeEmail />
       </ProtectedRoute>
     ),
@@ -551,7 +562,7 @@ export const appRouter = createBrowserRouter([
   {
     path: "/university-faq",
     element: (
-      <ProtectedRoute allowedRoles={['UNIVERSITY']}>
+      <ProtectedRoute allowedRoles={["UNIVERSITY"]}>
         <UniversityFaq />
       </ProtectedRoute>
     ),
@@ -560,7 +571,7 @@ export const appRouter = createBrowserRouter([
   {
     path: "/university-terms",
     element: (
-      <ProtectedRoute allowedRoles={['UNIVERSITY']}>
+      <ProtectedRoute allowedRoles={["UNIVERSITY"]}>
         <UniversityTerms />
       </ProtectedRoute>
     ),
@@ -568,7 +579,7 @@ export const appRouter = createBrowserRouter([
   {
     path: "/university-view",
     element: (
-      <ProtectedRoute allowedRoles={['UNIVERSITY']}>
+      <ProtectedRoute allowedRoles={["UNIVERSITY"]}>
         <UniversityView />
       </ProtectedRoute>
     ),
@@ -576,7 +587,7 @@ export const appRouter = createBrowserRouter([
   {
     path: "/university-ticket",
     element: (
-      <ProtectedRoute allowedRoles={['UNIVERSITY']}>
+      <ProtectedRoute allowedRoles={["UNIVERSITY"]}>
         <UniversityTicket />
       </ProtectedRoute>
     ),
@@ -584,7 +595,7 @@ export const appRouter = createBrowserRouter([
   {
     path: "/university-pricing",
     element: (
-      <ProtectedRoute allowedRoles={['UNIVERSITY']}>
+      <ProtectedRoute allowedRoles={["UNIVERSITY"]}>
         <UniversityPricing />
       </ProtectedRoute>
     ),
@@ -592,7 +603,7 @@ export const appRouter = createBrowserRouter([
   {
     path: "/university-payment",
     element: (
-      <ProtectedRoute allowedRoles={['UNIVERSITY']}>
+      <ProtectedRoute allowedRoles={["UNIVERSITY"]}>
         <UniversityPayment />
       </ProtectedRoute>
     ),
@@ -600,7 +611,7 @@ export const appRouter = createBrowserRouter([
   {
     path: "/university-payment-method",
     element: (
-      <ProtectedRoute allowedRoles={['UNIVERSITY']}>
+      <ProtectedRoute allowedRoles={["UNIVERSITY"]}>
         <UniversityPaymentMethod />
       </ProtectedRoute>
     ),
@@ -608,7 +619,7 @@ export const appRouter = createBrowserRouter([
   {
     path: "/university-approval",
     element: (
-      <ProtectedRoute allowedRoles={['UNIVERSITY']}>
+      <ProtectedRoute allowedRoles={["UNIVERSITY"]}>
         <UniversityApproval />
       </ProtectedRoute>
     ),
@@ -619,7 +630,7 @@ export const appRouter = createBrowserRouter([
   {
     path: "/ai-prediction",
     element: (
-      <ProtectedRoute allowedRoles={['STUDENT']}>
+      <ProtectedRoute allowedRoles={["STUDENT"]}>
         <AiProfile />
       </ProtectedRoute>
     ),
@@ -627,7 +638,7 @@ export const appRouter = createBrowserRouter([
   {
     path: "/ai-prediction1",
     element: (
-      <ProtectedRoute allowedRoles={['STUDENT']}>
+      <ProtectedRoute allowedRoles={["STUDENT"]}>
         <AiProfile1 />
       </ProtectedRoute>
     ),
@@ -635,7 +646,7 @@ export const appRouter = createBrowserRouter([
   {
     path: "/all-jobs-part",
     element: (
-      <ProtectedRoute allowedRoles={['STUDENT']}>
+      <ProtectedRoute allowedRoles={["STUDENT"]}>
         <AllJObsPart />
       </ProtectedRoute>
     ),
