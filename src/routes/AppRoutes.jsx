@@ -481,7 +481,7 @@ export const appRouter = createBrowserRouter([
     ),
   },
   {
-    path: "/recruiter-send-assignment",
+    path: "/recruiter-send-assignment/:application_id",
     element: (
       <ProtectedRoute allowedRoles={['COMPANY']}>
         <RecruiterSendAssignment />
