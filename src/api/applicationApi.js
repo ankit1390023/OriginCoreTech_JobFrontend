@@ -27,7 +27,20 @@ export const applicationApi = {
       };
     }
   },
-
+  getStudentApplications: async (token) => {
+    try {
+      const response = await axios.get(`${BASE_URL}/user/applications`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
+      });
+      console.log("response.data from getStudentApplications", response.data);
+      return response.data;
+    } catch (error) {
+      console.log("Error while fetching student applications", error);
+      throw error;
+    }
+  },
   getAllApplicantsByJob: async (job_id, token) => {
     try {
       const response = await axios.get(
@@ -43,7 +56,6 @@ export const applicationApi = {
       throw error;
     }
   },
-
   getApplicationById: async (job_id, application_id, token) => {
     try {
       const response = await axios.get(
@@ -89,8 +101,7 @@ export const applicationApi = {
     );
 
     return response.data;
-  }
-  ,
+  },
   updateApplicationStatus: async (application_id, job_post_id, user_id, status, token) => {
     try {
       const response = await axios.post(
