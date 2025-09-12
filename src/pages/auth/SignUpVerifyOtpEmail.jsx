@@ -92,11 +92,9 @@ export default function SignUpVerifyOtpEmail() {
       const user_role = response.data.user.user_role;
       switch (user_role) {
         case "STUDENT":
-          sessionStorage.removeItem('inSignupFlow');
           navigate("/student-fill-account-details");
           break;
         case "COMPANY":
-          sessionStorage.removeItem("inSignupFlow");
           navigate("/recruiter-profile");
           break;
         case "UNIVERSITY":

@@ -3,7 +3,6 @@ import { Button, Badge } from '../../../components/ui';
 import MainLayout from '../../../components/layout/MainLayout';
 import { Loader2 } from 'lucide-react';
 import { useGetStudentApplications } from '../../../hooks/useApplications';
-import { useSelector } from 'react-redux';
 import FeedRightProfile from '../feed/FeedRightProfile';
 import { getImageUrl } from '../../../../utils';
 import { useNavigate } from 'react-router-dom';
@@ -15,7 +14,6 @@ const StudentApplications = () => {
         interviews: {},
         assignments: {}
     });
-    const { token } = useSelector(state => state.auth);
     const filterOptions = [
         'All',
         'applied',
@@ -71,9 +69,9 @@ const StudentApplications = () => {
     if (loading) {
         return (
             <MainLayout>
-                <div className="flex justify-center items-center min-h-screen">
+                <div className="flex items-center justify-center min-h-screen">
                     <div className="flex flex-col items-center gap-4">
-                        <Loader2 className="h-12 w-12 animate-spin text-blue-500" />
+                        <Loader2 className="w-12 h-12 text-blue-500 animate-spin" />
                         <p className="text-gray-600">Loading your applications...</p>
                     </div>
                 </div>
@@ -107,6 +105,7 @@ const StudentApplications = () => {
     // Handle View Details button click
     const handleViewDetails = (e, jobPostId) => {
         e.stopPropagation(); // Prevent the click from bubbling up to the parent div
+        console.log("student apllication ",jobPostId);
         navigate(`/jobs/${jobPostId}`);
     };
 
@@ -123,15 +122,15 @@ const StudentApplications = () => {
 
     return (
         <MainLayout>
-            <div className="flex justify-center bg-gray-100 min-h-screen px-2 lg:px-8 items-start">
+            <div className="flex items-start justify-center min-h-screen px-2 bg-gray-100 lg:px-8">
                 {/* Left Spacer */}
-                <div className="hidden lg:block flex-grow "></div>
+                <div className="flex-grow hidden lg:block "></div>
 
 
                 <section className="bg-white rounded-[10px] p-5 shadow-lg mt-2 w-[780px] h-auto opacity-100 gap-[10px]">
                     {/* Header */}
                     <div className="mb-6 sm:mb-8">
-                        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-4 sm:mb-6">
+                        <h1 className="mb-4 text-xl font-bold text-gray-900 sm:text-2xl lg:text-3xl sm:mb-6">
                             Your Applications
                         </h1>
 
@@ -158,19 +157,19 @@ const StudentApplications = () => {
                             applications.map((job) => (
                                 <div
                                     key={job.application_id}
-                                    className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 shadow-sm hover:shadow-md transition-shadow duration-200"
+                                    className="p-4 transition-shadow duration-200 bg-white border border-gray-200 rounded-lg shadow-sm sm:p-6 hover:shadow-md"
                                 >
-                                    <div className="flex flex-col sm:flex-row sm:items-start gap-4">
+                                    <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
                                         {/* Company Logo */}
-                                        <div className="w-16 h-16 flex-shrink-0 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
+                                        <div className="flex items-center justify-center flex-shrink-0 w-16 h-16 overflow-hidden bg-gray-100 rounded-lg">
                                             {job.company_logo ? (
                                                 <img
                                                     src={getImageUrl(job.company_logo)}
                                                     alt={job.company_name}
-                                                    className="w-full h-full object-cover"
+                                                    className="object-cover w-full h-full"
                                                 />
                                             ) : (
-                                                <div className="text-gray-400 text-2xl font-semibold">
+                                                <div className="text-2xl font-semibold text-gray-400">
                                                     {job.company_name?.charAt(0) || 'C'}
                                                 </div>
                                             )}
@@ -183,7 +182,7 @@ const StudentApplications = () => {
                                             </h3>
                                             <p className="text-gray-600">{job.company_name}</p>
 
-                                            <div className="mt-3 flex flex-wrap items-center gap-4 text-sm text-gray-500">
+                                            <div className="flex flex-wrap items-center gap-4 mt-3 text-sm text-gray-500">
                                                 {job.applied_date && (
                                                     <span className="flex items-center">
                                                         <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -248,8 +247,8 @@ const StudentApplications = () => {
                                                     <h4 className="text-sm font-medium text-gray-700">All Interviews</h4>
                                                     <div className="space-y-2">
                                                         {job.interviews?.map((interview, idx) => (
-                                                            <div key={interview.id || idx} className="p-3 bg-gray-50 rounded-lg border border-gray-100">
-                                                                <div className="flex justify-between items-start">
+                                                            <div key={interview.id || idx} className="p-3 border border-gray-100 rounded-lg bg-gray-50">
+                                                                <div className="flex items-start justify-between">
                                                                     <div>
                                                                         <div className="font-medium">{interview.name}</div>
                                                                         <div className="text-sm text-gray-600">{interview.message}</div>
@@ -268,7 +267,7 @@ const StudentApplications = () => {
                                                                             href={interview.videoLink}
                                                                             target="_blank"
                                                                             rel="noopener noreferrer"
-                                                                            className="text-blue-600 hover:underline inline-flex items-center mt-1"
+                                                                            className="inline-flex items-center mt-1 text-blue-600 hover:underline"
                                                                         >
                                                                             <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
@@ -289,8 +288,8 @@ const StudentApplications = () => {
                                                     <h4 className="text-sm font-medium text-gray-700">All Assignments</h4>
                                                     <div className="space-y-2">
                                                         {job.assignments?.map((assignment, idx) => (
-                                                            <div key={assignment.id || idx} className="p-3 bg-gray-50 rounded-lg border border-gray-100">
-                                                                <div className="flex justify-between items-start">
+                                                            <div key={assignment.id || idx} className="p-3 border border-gray-100 rounded-lg bg-gray-50">
+                                                                <div className="flex items-start justify-between">
                                                                     <div>
                                                                         <div className="font-medium">Assignment {idx + 1}</div>
                                                                         <div className="text-sm text-gray-600">{assignment.message}</div>
@@ -309,7 +308,7 @@ const StudentApplications = () => {
                                                                             href={assignment.assignment_url}
                                                                             target="_blank"
                                                                             rel="noopener noreferrer"
-                                                                            className="text-blue-600 hover:underline inline-flex items-center mt-1"
+                                                                            className="inline-flex items-center mt-1 text-blue-600 hover:underline"
                                                                         >
                                                                             <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -328,7 +327,7 @@ const StudentApplications = () => {
                                         {/* Right Column: Status, Skill Match, and View Details */}
                                         <div className="flex flex-col items-end gap-3 w-30">
                                             {/* Status Badge */}
-                                            <div className="w-full flex justify-end">
+                                            <div className="flex justify-end w-full">
                                                 <span className={`px-3 py-1 rounded-full text-xs font-medium text-center w-full ${job.status === 'hired' ? 'bg-green-100 text-green-800' :
                                                     job.status === 'rejected' ? 'bg-red-100 text-red-800' :
                                                         'bg-blue-100 text-blue-800'
@@ -339,7 +338,7 @@ const StudentApplications = () => {
 
                                             {/* Skill Match */}
                                             <div className="w-full">
-                                                <div className="flex justify-between text-xs text-gray-500 mb-1">
+                                                <div className="flex justify-between mb-1 text-xs text-gray-500">
                                                     <span>Match</span>
                                                     <span className="font-medium">{job.skill_match_percentage || 0}%</span>
                                                 </div>
@@ -365,12 +364,12 @@ const StudentApplications = () => {
                                     </div>
 
                                     {/* Action Buttons */}
-                                    <div className="mt-4 pt-4 border-t border-gray-100 flex flex-wrap gap-3">
+                                    <div className="flex flex-wrap gap-3 pt-4 mt-4 border-t border-gray-100">
                                     </div>
                                 </div>
                             ))
                         ) : (
-                            <div className="text-center py-8 text-gray-500">
+                            <div className="py-8 text-center text-gray-500">
                                 No applications found.
                             </div>
                         )}
@@ -382,7 +381,7 @@ const StudentApplications = () => {
                     <FeedRightProfile />
                 </aside>
                 {/* Right Spacer */}
-                <div className="hidden lg:block flex-grow "></div>
+                <div className="flex-grow hidden lg:block "></div>
             </div>
         </MainLayout>
     );

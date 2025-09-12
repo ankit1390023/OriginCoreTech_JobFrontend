@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useSelector } from "react-redux";
 
-const BASE_URL = import.meta.env.VITE_BASE_URL; // <-- replace with your backend base url
+const BASE_URL = import.meta.env.VITE_BASE_URL; 
 
 const TotalJobPosts = () => {
   const [search, setSearch] = useState("");
@@ -16,13 +16,13 @@ const TotalJobPosts = () => {
   const navigate = useNavigate();
 
   const { token } = useSelector((state) => state.auth);
+  const [applicantCounts, setApplicantCounts] = useState({});
 
   // Fetch job posts from backend
   useEffect(() => {
     const fetchJobPosts = async () => {
       try {
         setLoading(true);
-        // assuming token is stored in localStorage
         const response = await axios.get(
           `${BASE_URL}/company-recruiter/jobpost/list`,
           {
@@ -33,6 +33,11 @@ const TotalJobPosts = () => {
         );
         if (response.data.success) {
           setJobPosts(response.data.data);
+
+          //  Fetch applicant count for each job
+          response.data.data.forEach((job) => {
+            fetchApplicantCount(job.job_id);
+          });
         } else {
           setError("Failed to fetch job posts");
         }
@@ -45,15 +50,40 @@ const TotalJobPosts = () => {
     };
 
     fetchJobPosts();
-  }, []);
+  }, [token]); 
   console.log("Job Posts:", jobPosts);
+
+  const fetchApplicantCount = async (jobId) => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/jobpost/${jobId}/applicantCount`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (response.data.success) {
+        setApplicantCounts((prev) => ({
+          ...prev,
+          [jobId]: response.data.data || 0,
+        }));
+      }
+    } catch (err) {
+      console.error(`Error fetching applicant count for job ${jobId}:`, err);
+      setApplicantCounts((prev) => ({
+        ...prev,
+        [jobId]: 0, // fallback to 0 on error
+      }));
+    }
+  };
+
   // Filter jobs by search
   const filteredJobs = jobPosts.filter(
     (job) =>
-      job.JobRole?. title.toLowerCase().includes(search.toLowerCase()) ||
+      job.JobRole?.title.toLowerCase().includes(search.toLowerCase()) ||
       job.skill_required_note?.toLowerCase().includes(search.toLowerCase())
   );
-
 
   return (
     <MainLayout>
@@ -122,7 +152,11 @@ const TotalJobPosts = () => {
                           )
                         }
                       >
-                        View applications ({job.job_id})
+                        View applications (
+                        {applicantCounts[job.job_id] !== undefined
+                          ? applicantCounts[job.job_id]
+                          : "..."}
+                        )
                       </button>
                     </div>
 

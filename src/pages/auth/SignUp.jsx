@@ -102,12 +102,10 @@ export default function SignUp() {
         return; // signup failed
       }
       alert("Registration successful! OTP sent to your email.");
-      sessionStorage.setItem('inSignupFlow', 'true');
       navigate("/signup-verify-otp-email", {
         state: {
           email: data.email,
           user_role: data.user_role,
-          inSignupFlow: true,
         },
       });
 

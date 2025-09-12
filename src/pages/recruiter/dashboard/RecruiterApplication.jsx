@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState } from "react";
 import { Search } from "lucide-react";
 import { Link, useNavigate, useParams, useLocation } from "react-router-dom";
 import MainLayout from "../../../components/layout/MainLayout";
@@ -159,8 +159,7 @@ const RecruiterApplication = () => {
                           <button
                             onClick={() =>
                               navigate(
-                                "/recruiter-send-assignment/" +
-                                  app.application_id,
+                                `/recruiter-send-assignment/${job_id}/${app.application_id}`,
                                 { state: { applicant: app } }
                               )
                             }
@@ -171,8 +170,7 @@ const RecruiterApplication = () => {
                           <button
                             onClick={() =>
                               navigate(
-                                "/recruiter-schedule-interview/" +
-                                  app.application_id,
+                                `/recruiter-schedule-interview/${job_id}/${app.application_id}`,
                                 { state: { applicationData: app } }
                               )
                             }

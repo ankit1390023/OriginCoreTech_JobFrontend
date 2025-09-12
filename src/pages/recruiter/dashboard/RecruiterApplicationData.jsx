@@ -113,10 +113,12 @@
 
 import React, { useState } from "react";
 import { Search } from "lucide-react";
-import { useApplications } from "../../../hooks/useApplications"; // adjust path if needed
+import { useApplications } from "../../../hooks/useApplications"; 
+import { useNavigate } from "react-router-dom";
 
 const ApplicationsSmall = ({ job_id }) => {
   const [search, setSearch] = useState("");
+  const navigate = useNavigate();
 
   // use hook with job_id from prop
   const { applications, loading, error } = useApplications(job_id);
@@ -166,9 +168,13 @@ const ApplicationsSmall = ({ job_id }) => {
             filteredApps.map((app, index) => (
               <div
                 key={app.application_id || index}
-                className={`flex justify-between items-start rounded-lg border border-gray-200 p-3 ${app.cardBg || "bg-white"}`}
+                className={`w-full max-w-[327px] mb-4 p-4 bg-white border border-gray-200 rounded-lg shadow-sm"> ${
+                  app.cardBg || "bg-white"
+                }`}
                 onClick={() =>
-                  console.log("Application clicked:", app.application_id)
+                  navigate(
+                    `/recruiter-application-details/${job_id}/${app.application_id}`
+                  )
                 }
               >
                 {/* Left Info */}

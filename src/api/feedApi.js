@@ -228,6 +228,13 @@ const feedApi = {
     }
   },
 
+  getPostBySlug: async (slug, token) => {
+    const response = await axios.get(`${BASE_URL}/feed/post/${slug}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data; // your backend returns single post object
+  }
+
 };
 
 export default feedApi;

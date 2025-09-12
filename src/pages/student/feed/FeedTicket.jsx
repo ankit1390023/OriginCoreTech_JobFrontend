@@ -41,7 +41,7 @@ const FeedTicket = () => {
     const ticketData = {
       issue_title: issue_title.trim(),
       issue_detail: body.trim(),
-      role: "student",
+      role: user.user_role,
       email: userEmail, 
       priority,
     };

@@ -4,7 +4,7 @@ import FeedRightProfile from "../feed/FeedRightProfile";
 import MainLayout from "../../../components/layout/MainLayout";
 import axios from "axios";
 
-const BASE_URL = "http://212.95.51.83:5000/api"; // ✅ use your backend base URL
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const FeedTerms = () => {
   const [termsData, setTermsData] = useState("");
@@ -14,19 +14,18 @@ const FeedTerms = () => {
   // Get token and user from Redux state
   const { token, isAuthenticated } = useSelector((state) => state.auth);
 
-  // ✅ API call
   const getTermsAndCondition = async (token) => {
     try {
       const response = await axios.get(
-        `${BASE_URL}/user-details/getterms_and_condition`, // ✅ corrected endpoint
+        `${BASE_URL}/user-details/getterms_and_condition`, 
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`, // keep if your API requires it
+            // Authorization: `Bearer ${token}`, //currently token is not required
           },
         }
       );
-      return response.data; // ✅ return the body directly
+      return response.data;
     } catch (error) {
       console.error("Error while getting terms and conditions", error);
       throw error;
@@ -43,6 +42,7 @@ const FeedTerms = () => {
         }
 
         const response = await getTermsAndCondition(token);
+        // console.log(response);
         setTermsData(response.terms_and_condition); // ✅ correct access
         setError(null);
       } catch (err) {
