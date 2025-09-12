@@ -200,7 +200,7 @@ const ApplicationDetail = () => {
     <MainLayout>
       <div className="flex items-start justify-center min-h-screen px-2 bg-gray-100 lg:px-4 ">
         {/* <div className="hidden lg:block w-[250px]"></div> */}
-        <aside className="hidden lg:block  max-w-full sticky top-4 h-fit mt-2">
+        <aside className="hidden lg:block  max-w-full sticky top-4 h-fit mt-2 py-2 ">
           {/* hidden lg:block w-[350px] xl:w-[450px] 2xl:w-[550px] h-screen sticky top-0 pt-6  overflow-y-auto" */}
           <RecruiterApplicationData job_id={job_id} />
         </aside>

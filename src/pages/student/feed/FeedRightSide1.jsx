@@ -51,7 +51,6 @@ export default function FeedRightSide1() {
 
   const { token, user } = useSelector((state) => state.auth);
 
-  const { profile } = useSelector((state) => state.profile);
 
   // Fetch followers/following
   useEffect(() => {
@@ -101,12 +100,7 @@ export default function FeedRightSide1() {
 
       {/* Profile Info */}
       <div className="pt-4">
-        {loading ? (
-          <div>Loading profile...</div>
-        ) : error ? (
-          <div className="mt-1 text-xs text-red-500">{error}</div>
-        ) : profile ? (
-          <>
+        
             <h2 className="text-lg font-bold text-gray-800">
               {user.first_name} {user.last_name}
             </h2>
@@ -115,8 +109,8 @@ export default function FeedRightSide1() {
               {user.user_type}
             </p>
             <p className="mt-2 text-sm text-gray-600">{user.about_us}</p>
-          </>
-        ) : null}
+          
+       
 
         <div className="flex gap-2 mt-4">
           <button className="px-3 py-1 text-sm text-blue-600 bg-gray-100 rounded">

@@ -23,7 +23,7 @@ const FAQSection = () => {
   };
 
   // Get token from Redux store
-  const { token } = useSelector((state) => state.auth);
+  const { user,token } = useSelector((state) => state.auth);
 
   useEffect(() => {
     const fetchFaqs = async () => {
@@ -37,7 +37,7 @@ const FAQSection = () => {
         setLoading(true);
         setErrorMsg("");
 
-        const response = await faqApi.getStudentFaqs(token);
+        const response = await faqApi.getFaqsByRole(user.user_role,token);
 
         // Handle the response structure: { message: "FAQs fetched successfully", data: [...] }
         if (response.data && response.data.data) {
@@ -72,15 +72,15 @@ const FAQSection = () => {
 
   return (
     <MainLayout>
-      <div className="flex justify-center bg-gray-100 min-h-screen px-2 lg:px-8 items-start">
+      <div className="flex items-start justify-center min-h-screen px-2 bg-gray-100 lg:px-8">
         {/* Left Spacer */}
-        <div className="hidden lg:block flex-grow"></div>
+        <div className="flex-grow hidden lg:block"></div>
 
         <div className="bg-white rounded-[10px] p-5 shadow-lg mt-2 w-[729px] h-[631px] opacity-100 gap-[10px]">
-          <h2 className="text-3xl font-bold text-center text-blue-900 mb-2">
+          <h2 className="mb-2 text-3xl font-bold text-center text-blue-900">
             FAQs
           </h2>
-          <p className="text-center text-gray-500 mb-4">
+          <p className="mb-4 text-center text-gray-500">
             Our expert advisors can help you find the right solution for you.
           </p>
 
@@ -107,7 +107,7 @@ const FAQSection = () => {
                 >
                   <button
                     onClick={() => toggleFAQ(index)}
-                    className="w-full text-left px-5 py-4 flex justify-between items-center focus:outline-none"
+                    className="flex items-center justify-between w-full px-5 py-4 text-left focus:outline-none"
                   >
                     <span className="font-medium text-gray-800">
                       {faq.question}
@@ -140,7 +140,7 @@ const FAQSection = () => {
           <RecruiterRightSide2 />
         </aside>
         {/* Right Spacer */}
-        <div className="hidden lg:block flex-grow"></div>
+        <div className="flex-grow hidden lg:block"></div>
       </div>
     </MainLayout>
   );

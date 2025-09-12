@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef } from "react";
 import { FaCheckCircle, FaEnvelope, FaSpinner } from "react-icons/fa";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
