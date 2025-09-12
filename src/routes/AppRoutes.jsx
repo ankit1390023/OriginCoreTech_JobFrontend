@@ -76,7 +76,7 @@ import MyApplication2 from "../pages/student/application/Myapplication2";
 import MyApplication1 from "../pages/student/application/Myapplication1";
 import StudentApplications from "../pages/student/application/studentApplications";
 
-// Protected Route Wrapper Component
+
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { isAuthenticated, loading, user } = useSelector((state) => state.auth);
   const location = useLocation();
@@ -586,7 +586,7 @@ export const appRouter = createBrowserRouter([
       <ProtectedRoute allowedRoles={['UNIVERSITY']}>
         <UniversityFillDetails />
       </ProtectedRoute>
-    ),
+    )
   },
   {
     path: "/university-profile",
@@ -594,32 +594,7 @@ export const appRouter = createBrowserRouter([
       <ProtectedRoute allowedRoles={['UNIVERSITY']}>
         <UniversityProfile />
       </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/university-change-email",
-    element: (
-      <ProtectedRoute allowedRoles={['UNIVERSITY']}>
-        <UniversityChangeEmail />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/university-faq",
-    element: (
-      <ProtectedRoute allowedRoles={['UNIVERSITY']}>
-        <UniversityFaq />
-      </ProtectedRoute>
-    ),
-  },
-
-  {
-    path: "/university-terms",
-    element: (
-      <ProtectedRoute allowedRoles={['UNIVERSITY']}>
-        <UniversityTerms />
-      </ProtectedRoute>
-    ),
+    )
   },
   {
     path: "/university-view",
@@ -627,7 +602,31 @@ export const appRouter = createBrowserRouter([
       <ProtectedRoute allowedRoles={['UNIVERSITY']}>
         <UniversityView />
       </ProtectedRoute>
-    ),
+    )
+  },
+  {
+    path: "/university-change-email",
+    element: (
+      <ProtectedRoute allowedRoles={['UNIVERSITY']}>
+        <UniversityChangeEmail />
+      </ProtectedRoute>
+    )
+  },
+  {
+    path: "/university-faq",
+    element: (
+      <ProtectedRoute allowedRoles={['UNIVERSITY']}>
+        <UniversityFaq />
+      </ProtectedRoute>
+    )
+  },
+  {
+    path: "/university-terms",
+    element: (
+      <ProtectedRoute allowedRoles={['UNIVERSITY']}>
+        <UniversityTerms />
+      </ProtectedRoute>
+    )
   },
   {
     path: "/university-ticket",
@@ -635,7 +634,7 @@ export const appRouter = createBrowserRouter([
       <ProtectedRoute allowedRoles={['UNIVERSITY']}>
         <UniversityTicket />
       </ProtectedRoute>
-    ),
+    )
   },
   {
     path: "/university-pricing",

@@ -1,90 +1,128 @@
 import React, { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useForm, Controller } from "react-hook-form";
 import SignUpLayout from "../../components/layout/SignUpLayout";
-import { FcGoogle } from "react-icons/fc";
 import {
   Input,
   Textarea,
   Button,
   ErrorMessage,
-  Link,
 } from "../../components/ui";
-
-const BASE_URL = import.meta.env.VITE_BASE_URL;
-
-const schema = z.object({
-  college_name: z
-    .string()
-    .min(2, { message: "College name must be at least 2 characters" }),
-  course: z.string().min(1, { message: "Course is required" }),
-  address: z
-    .string()
-    .min(10, { message: "Address must be at least 10 characters" }),
-  pincode: z
-    .string()
-    .length(6, { message: "Pincode must be exactly 6 digits" })
-    .regex(/^\d{6}$/, { message: "Pincode must contain only numbers" }),
-  website_link: z.string().url({ message: "Please enter a valid website URL" }),
-  about: z
-    .string()
-    .min(20, { message: "About section must be at least 20 characters" }),
-  social_media_link: z
-    .string()
-    .url({ message: "Please enter a valid social media URL" })
-    .optional()
-    .or(z.literal("")),
-});
+import { useMasterData } from "../../hooks/master/useMasterData";
+import useUploadImageApi from "../../hooks/useUploadImageApi";
+import Select from "react-select";
+import { useSelector } from "react-redux";
+import { createUniversityProfile } from "../../api/university/university";  
 
 export default function UniversityFillDetails() {
+  const [isSmallDevice, setIsSmallDevice] = useState(false);
+  const [logoPreview, setLogoPreview] = useState(null);
+  const [profilePicPreview, setProfilePicPreview] = useState(null);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const { token } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
+  const { courses } = useMasterData();
+  const { uploadImage, loading: uploading } = useUploadImageApi();
+
+  // ✅ useForm setup
   const {
     register,
     handleSubmit,
+    control,
+    setValue,
+    reset,
     formState: { errors },
   } = useForm({
-    resolver: zodResolver(schema),
+    defaultValues: {
+      college_name: "",
+      course_ids: [],
+      profile_pic: null,
+      university_logo_url: null,
+      address: "",
+      pincode: "",
+      website_link: "",
+      about: "",
+      social_media_link: "",
+    },
   });
 
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const navigate = useNavigate();
-  // Add state to track if device is small
-  const [isSmallDevice, setIsSmallDevice] = useState(false);
-
+  // Detect screen size
   useEffect(() => {
-    const checkDeviceSize = () => {
-      setIsSmallDevice(window.innerWidth < 1024); // lg breakpoint
-    };
+    const checkDeviceSize = () => setIsSmallDevice(window.innerWidth < 1024);
     checkDeviceSize();
     window.addEventListener("resize", checkDeviceSize);
     return () => window.removeEventListener("resize", checkDeviceSize);
   }, []);
 
+  const courseOptions = Array.isArray(courses) ? courses : [];
+
+  // ✅ File upload handlers
+  const handleLogoUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const previewUrl = URL.createObjectURL(file);
+      setLogoPreview(previewUrl);
+      try {
+        const url = await uploadImage(file, "logoUrl");
+        setValue("university_logo_url", url, { shouldValidate: true });
+      } catch (err) {
+        console.error("Logo upload failed", err);
+      }
+    }
+  };
+
+  const handleProfilePicUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const previewUrl = URL.createObjectURL(file);
+      setProfilePicPreview(previewUrl);
+      try {
+        const url = await uploadImage(file, "profilePic");
+        setValue("profile_pic", url, { shouldValidate: true });
+      } catch (err) {
+        console.error("Profile pic upload failed", err);
+      }
+    }
+  };
+
+  // ✅ Submit
   const onSubmit = async (data) => {
     setLoading(true);
     setError("");
-
     try {
-      const response = await axios.post(`${BASE_URL}/universitydetail`, {
-        ...data,
-        email_id_verified: true,
-        adhar_verified: false,
-        phone_verified: false,
-      });
+      console.log("=== FORM DATA ===", JSON.stringify(data, null, 2));
 
-      console.log("University details saved:", response.data);
-      // Redirect to home or dashboard after successful submission
-      navigate("/");
-    } catch (error) {
-      console.error("Error saving university details:", error);
-      if (error.response?.data?.message) {
-        setError(error.response.data.message);
-      } else {
-        setError("Failed to save university details. Please try again.");
+      const response = await createUniversityProfile(data, token);
+      if(response.success){
+       alert(response.message);
       }
+      console.log("Server response:", response.data);
+
+      // Reset form after successful submission
+      reset({
+        college_name: "",
+        course_ids: [],
+        profile_pic: null,
+        university_logo_url: null,
+        address: "",
+        pincode: "",
+        website_link: "",
+        about: "",
+        social_media_link: "",
+      });
+      
+      // Clear previews
+      setLogoPreview(null);
+      setProfilePicPreview(null);
+      
+      // Show success message or redirect if needed
+      // navigate('/some-success-page');
+      
+    } catch (err) {
+      console.error("Error saving:", err);
+      setError("Failed to save university details. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -92,69 +130,151 @@ export default function UniversityFillDetails() {
 
   const FormContent = () => (
     <div className="bg-white rounded-lg shadow-md p-6">
-      {error && (
-        <ErrorMessage onClose={() => setError("")}>{error}</ErrorMessage>
-      )}
+      {error && <ErrorMessage onClose={() => setError("")}>{error}</ErrorMessage>}
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        {/* College name */}
         <Input
-          label="College/University Name"
-          required
-          placeholder="Enter your college/university name"
+          label="College Name"
+          placeholder="Enter college name"
           error={errors.college_name?.message}
-          {...register("college_name")}
+          {...register("college_name", { required: "College name is required" })}
         />
 
-        <Input
-          label="Course/Program"
-          required
-          placeholder="e.g., BTech, MTech, MBA, etc."
-          error={errors.course?.message}
-          {...register("course")}
-        />
+        {/* Courses */}
+        <div className="space-y-1">
+          <label className="block text-xs font-medium text-gray-700">Select Courses *</label>
+          <Controller
+            name="course_ids"
+            control={control}
+            rules={{ validate: (v) => v.length > 0 || "At least one course is required" }}
+            render={({ field }) => (
+              <Select
+                {...field}
+                isMulti
+                options={courseOptions}
+                getOptionLabel={(o) => o.name}
+                getOptionValue={(o) => o.id}
+                placeholder="Select Courses"
+                isSearchable
+                className="text-sm"
+                classNamePrefix="select"
+                onChange={(selected) => field.onChange(selected.map((o) => o.id))}
+                value={courseOptions.filter((o) => field.value?.includes(o.id))}
+              />
+            )}
+          />
+          {errors.course_ids && <p className="text-xs text-red-500">{errors.course_ids.message}</p>}
+        </div>
 
+        {/* Address */}
         <Textarea
           label="Address"
-          required
           placeholder="Enter complete address"
           error={errors.address?.message}
-          {...register("address")}
+          {...register("address", { required: "Address is required" })}
         />
 
+        {/* Pincode */}
         <Input
           label="Pincode"
-          required
           placeholder="Enter 6-digit pincode"
           maxLength={6}
           error={errors.pincode?.message}
-          {...register("pincode")}
+          {...register("pincode", {
+            required: "Pincode is required",
+            pattern: { value: /^\d{6}$/, message: "Enter valid 6-digit pincode" },
+          })}
         />
 
+        {/* Website */}
         <Input
           label="Website Link"
-          required
-          type="url"
           placeholder="https://www.youruniversity.edu"
           error={errors.website_link?.message}
-          {...register("website_link")}
+          {...register("website_link", {
+            required: "Website link is required",
+            pattern: { value: /^https?:\/\//i, message: "Must start with http:// or https://" },
+          })}
         />
 
+        {/* About */}
         <Textarea
           label="About University"
-          required
-          placeholder="Tell us about your university, its mission, and what makes it special..."
+          placeholder="Tell us about your university..."
           error={errors.about?.message}
-          {...register("about")}
-        />
+          {...register("about", { required: "About is required" })}
+        />       
+        {/* university logo upload */}
+        <div className="space-y-2">
+          <label className="block text-xs font-medium text-gray-700">University Logo</label>
+          <div className="flex items-center justify-between p-2 border border-gray-200 rounded">
+            <div>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleLogoUpload}
+                className="text-sm"
+                disabled={uploading}
+              />
+              {uploading && <span className="ml-2 text-xs text-blue-500">Uploading...</span>}
+            </div>
+            <div>
+              {logoPreview && (
+                <img
+                  src={logoPreview}
+                  alt="University Logo"
+                  className="object-cover w-10 h-10 rounded"
+                />
+              )}
+            </div>
+          </div>
+          {errors.logo_url && (
+            <p className="text-xs text-red-500">{errors.logo_url.message}</p>
+          )}
+        </div>
 
+      {/* profile pic upload */}
+        <div className="space-y-2">
+          <label className="block text-xs font-medium text-gray-700">Profile Picture</label>
+          <div className="flex items-center justify-between p-2 border border-gray-200 rounded">
+            <div>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleProfilePicUpload}
+                className="text-sm"
+                disabled={uploading}
+              />
+              {uploading && <span className="ml-2 text-xs text-blue-500">Uploading...</span>}
+            </div>
+            <div>
+              {profilePicPreview && (
+                <img
+                  src={profilePicPreview}
+                  alt="Profile Pic"
+                  className="object-cover w-10 h-10 border rounded"
+                />
+              )}
+            </div>
+          </div>
+          {errors.profile_pic && (
+            <p className="text-xs text-red-500">{errors.profile_pic.message}</p>
+          )}
+        </div>
+
+
+        {/* Social media */}
         <Input
-          label="Social Media Link (Optional)"
-          type="url"
+          label="Social Media Link"
           placeholder="https://linkedin.com/company/youruniversity"
           error={errors.social_media_link?.message}
-          {...register("social_media_link")}
+          {...register("social_media_link", {
+            pattern: { value: /^https?:\/\//i, message: "Must start with http:// or https://" },
+          })}
         />
 
+        {/* Submit */}
         <Button
           variant="secondary"
           loading={loading}
@@ -164,36 +284,10 @@ export default function UniversityFillDetails() {
         >
           {loading ? "Saving..." : "Save University Details"}
         </Button>
-
-        <div className="flex items-center my-4 sm:my-6">
-          <div className="flex-grow h-px bg-gray-300"></div>
-          <span className="mx-3 sm:mx-4 text-gray-400 text-sm sm:text-base font-medium">
-            Or
-          </span>
-          <div className="flex-grow h-px bg-gray-300"></div>
-        </div>
-
-        <Button
-          variant="outline"
-          disabled={loading}
-          className="w-full flex items-center justify-center"
-          type="button"
-        >
-          <FcGoogle size={20} className="sm:w-6 sm:h-6 mr-2 sm:mr-3" />
-          <span className="text-sm sm:text-base">Sign up with Google</span>
-        </Button>
-
-        <p className="text-center text-sm sm:text-base text-gray-600 mt-6 sm:mt-8">
-          Already have an account?{" "}
-          <Link to="/login" variant="primary">
-            Login
-          </Link>
-        </p>
       </form>
     </div>
   );
 
-  // Replace layout logic with SignUpLayout for all devices
   return (
     <SignUpLayout
       heading="University Details"
