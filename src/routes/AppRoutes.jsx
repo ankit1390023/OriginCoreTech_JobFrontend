@@ -79,7 +79,7 @@ import MyApplication2 from "../pages/student/application/Myapplication2";
 import MyApplication1 from "../pages/student/application/Myapplication1";
 import StudentApplications from "../pages/student/application/studentApplications";
 
-// Protected Route Wrapper Component
+
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { isAuthenticated, user } = useSelector((state) => state.auth);
   const location = useLocation();
@@ -103,7 +103,7 @@ const PublicRoute = ({ children }) => {
   // Don't redirect if:
   // - it's the OTP page, OR
   // - user just came from signup and is in OTP flow
-  if (location.pathname === "/signup-verify-otp-email" ) {
+  if (location.pathname === "/signup-verify-otp-email") {
     return children;
   }
 
@@ -197,7 +197,7 @@ export const appRouter = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
- 
+
   {
     path: "/recruiter-post-job-intern-details",
     element: (
@@ -230,7 +230,7 @@ export const appRouter = createBrowserRouter([
     path: "/feed-post/:slug",
     element: (
       <ProtectedRoute allowedRoles={["STUDENT", "COMPANY", "UNIVERSITY"]}>
-        <FeedPostDetail/>
+        <FeedPostDetail />
       </ProtectedRoute>
     ),
   },
@@ -349,7 +349,7 @@ export const appRouter = createBrowserRouter([
     ),
   },
   {
-     path: "/my-application1",
+    path: "/my-application1",
     element: (
       <ProtectedRoute allowedRoles={['STUDENT']}>
         <MyApplication1 />
@@ -611,7 +611,7 @@ export const appRouter = createBrowserRouter([
       <ProtectedRoute allowedRoles={["UNIVERSITY"]}>
         <UniversityFillDetails />
       </ProtectedRoute>
-    ),
+    )
   },
   {
     path: "/university-profile",
@@ -619,7 +619,15 @@ export const appRouter = createBrowserRouter([
       <ProtectedRoute allowedRoles={["UNIVERSITY"]}>
         <UniversityProfile />
       </ProtectedRoute>
-    ),
+    )
+  },
+  {
+    path: "/university-view",
+    element: (
+      <ProtectedRoute allowedRoles={['UNIVERSITY']}>
+        <UniversityView />
+      </ProtectedRoute>
+    )
   },
   {
     path: "/university-change-email",
@@ -627,7 +635,7 @@ export const appRouter = createBrowserRouter([
       <ProtectedRoute allowedRoles={["UNIVERSITY"]}>
         <UniversityChangeEmail />
       </ProtectedRoute>
-    ),
+    )
   },
   {
     path: "/university-change-password",
@@ -643,9 +651,8 @@ export const appRouter = createBrowserRouter([
       <ProtectedRoute allowedRoles={["UNIVERSITY"]}>
         <UniversityFaq />
       </ProtectedRoute>
-    ),
+    )
   },
-
   {
     path: "/university-terms",
     element: (
@@ -668,7 +675,7 @@ export const appRouter = createBrowserRouter([
       <ProtectedRoute allowedRoles={["UNIVERSITY"]}>
         <UniversityTicket />
       </ProtectedRoute>
-    ),
+    )
   },
   {
     path: "/university-pricing",
@@ -727,6 +734,6 @@ export const appRouter = createBrowserRouter([
       <ProtectedRoute allowedRoles={["STUDENT"]}>
         <AllJObsPart />
       </ProtectedRoute>
-    ),
-  },
+    )
+  }
 ]);

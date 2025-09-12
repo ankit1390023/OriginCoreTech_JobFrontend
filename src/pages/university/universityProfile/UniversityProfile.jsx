@@ -1,3 +1,5 @@
+
+
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -47,7 +49,6 @@ const UniversityProfile = () => {
     userData();
   }, [user,token]);
 
-  // ✅ Delete Account handler
   const handleDeleteAccount = async () => {
     try {
       if (!window.confirm("Are you sure you want to delete your account?"))
@@ -87,7 +88,7 @@ const UniversityProfile = () => {
       title: "Activity Feed",
       subtitle: "Your recent activity",
       hasChevron: true,
-      action: () => navigate("/university-view"),
+      action: () => navigate("/feed"),
     },
     {
       id: "terms",
