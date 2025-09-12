@@ -5,7 +5,7 @@ import RecruiterApplicationData from "./RecruiterApplicationData";
 import { useScheduleInterview } from "../../../hooks/useApplications";
 
 const ScheduleInterview = () => {
-  const { job_id,application_id } = useParams();
+  const { job_id,id:application_id } = useParams();
   const navigate = useNavigate();
   const { scheduleInterview } = useScheduleInterview();
 

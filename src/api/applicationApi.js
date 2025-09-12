@@ -75,7 +75,6 @@ export const applicationApi = {
     if (!token) {
       throw new Error("No auth token provided");
     }
-
     // Build payload exactly as backend requires
     const payload = {
       message: interviewData.message || "Interview is scheduled for you",
@@ -109,7 +108,7 @@ export const applicationApi = {
         {
           application_id,  // applicant’s application id
           job_post_id,     // job post id
-          user_id,         // ✅ recruiter id (from Redux auth.user.id)
+          user_id,         //  recruiter id (from Redux auth.user.id)
           status,          // new status
         },
         {

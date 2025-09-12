@@ -1,4 +1,4 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import cover from "../../../assets/cover.png";
 import dummyProfile3 from "../../../assets/dummyProfile3.jpg";
 import dummyProfile1 from "../../../assets/dummyProfile1.jpg";
@@ -6,7 +6,6 @@ import dummyProfile2 from "../../../assets/dummyProfile2.jpg";
 import { FaCamera } from "react-icons/fa6";
 import { useEffect, useState } from "react";
 import feedApi from "../../../api/feedApi";
-import { userDetailsApi } from "../../../api/userDetailsApi";
 import { getImageUrl } from "../../../../utils.js";
 
  
@@ -23,6 +22,7 @@ const visitors = [
 ];
 
 export default function FeedRightProfile() {
+  
   const [followers, setFollowers] = useState([]);
   const [followersCount, setFollowersCount] = useState(0);
   const [following, setFollowing] = useState([]); // Added for following
@@ -31,37 +31,7 @@ export default function FeedRightProfile() {
   const [error, setError] = useState(null);
   const [profile, setProfile] = useState(null);
   const { token, user } = useSelector((state) => state.auth);
-  const miniProfile = useSelector((state) => state.profile.profile);
-  console.log("this is mini profile",miniProfile);
  
-
-  
-
-  // Fetch user public profile using user_id from Redux
-  useEffect(() => {
-    async function fetchUserProfile() {
-      if (!token || !user) return;
-
-      setLoading(true);
-      setError(null);
-      try {
-        const result = await userDetailsApi.getUserDetails(user.id);
-        console.log("result from fetchUserProfiljhgfghje", result);
-        if (result.success) {
-          setProfile(result.data.publicProfile); // Only set the publicProfile part
-        } else {
-          setError(result.error || "Failed to fetch user details.");
-          setProfile(null);
-        }
-      } catch (err) {
-        setError("Failed to fetch user details.");
-        setProfile(null);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchUserProfile();
-  }, [token, user]);
 
   useEffect(() => {
     async function fetchFollowersAndFollowing() {

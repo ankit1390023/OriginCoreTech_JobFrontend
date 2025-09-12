@@ -17,7 +17,6 @@ import { getImageUrl } from "../../../../utils.js";
 
 export default function FeedPage() {
   const { token, user } = useSelector((state) => state.auth);
-  const {profile}= useSelector((state) => state.profile);
 
   const [caption, setCaption] = useState("");
   const [imageFile, setImageFile] = useState(null);
@@ -264,7 +263,7 @@ export default function FeedPage() {
                   {/* Profile Picture */}
                   <img
                     src={
-                      post.User?.profile_pic ? getImageUrl(post.User.profile_pic) : getImageUrl(profile.user_profile_pic) // fallback image
+                      post.User?.profile_pic ? getImageUrl(post.User.profile_pic) : getImageUrl(user.user_profile_pic) // fallback image
                     }
                     alt={post.User?.first_name || "User"}
                     className="flex-shrink-0 object-cover w-8 h-8 rounded-full sm:w-10 sm:h-10"
