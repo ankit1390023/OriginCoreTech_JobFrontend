@@ -95,14 +95,14 @@ const UniversityProfile = () => {
       icon: <Bell size={20} />,
       title: "Terms & Conditions",
       hasChevron: true,
-      action: () => navigate("/feed-terms"),
+      action: () => navigate("/university-terms"),
     },
     {
       id: "Permission",
       icon: <Shield size={20} />,
       title: "Terms & Permission",
       hasChevron: true,
-      action: () => navigate("/feed-terms"),
+      action: () => navigate("/university-terms"),
     },
     {
       id: "help",

@@ -154,7 +154,7 @@ const ApplicationsSmall = ({ job_id }) => {
         </div>
 
         {/* Applications List */}
-        <div className="flex flex-col gap-4 pr-1 overflow-y-auto">
+        <div className="flex flex-col gap-4 pr-1 ">
           {loading && (
             <p className="text-sm text-gray-500">Loading applications...</p>
           )}
@@ -168,7 +168,7 @@ const ApplicationsSmall = ({ job_id }) => {
             filteredApps.map((app, index) => (
               <div
                 key={app.application_id || index}
-                className={`w-full max-w-[327px] mb-4 p-4 bg-white border border-gray-200 rounded-lg shadow-sm"> ${
+                className={` mb-4 p-4 bg-white border border-gray-200 rounded-lg shadow-sm"> ${
                   app.cardBg || "bg-white"
                 }`}
                 onClick={() =>
@@ -191,7 +191,7 @@ const ApplicationsSmall = ({ job_id }) => {
 
                 {/* Resume Match */}
                 <span
-                  className={`px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ${app.matchColor}`}
+                  className={`px-2 py-1  text-xs rounded-full font-medium whitespace-nowrap ${app.matchColor}`}
                 >
                   Resume match: {app.match}
                 </span>

@@ -123,46 +123,46 @@ export default function FeedRightSide1() {
       </div>
 
       {/* Course List */}
-      <div className="flex flex-col gap-6 mt-4">
-        <h1 className="mb-2 text-lg font-bold text-gray-900">
-          Your Like thease
-        </h1>
-        {courses.map((course) => (
-          <div
-            key={course.id}
-            className={`${course.bgColor} text-white rounded-lg p-4 flex flex-col gap-3`}
-          >
-            {/* Top Row */}
-            <div className="flex items-center gap-3">
-              <img
-                src="https://via.placeholder.com/50"
-                alt="course"
-                className="object-cover w-12 h-12 rounded-md"
-              />
-              <div>
-                <h3 className="text-base font-semibold">{course.title}</h3>
-                <p className="text-xs text-gray-100">{course.learners}</p>
-              </div>
-              <div className="flex items-center gap-2 px-2 py-1 ml-auto bg-gray-100 rounded-full">
-                <FaEye className="text-xs text-gray-600" />
-                <span className="text-[10px] text-gray-700">Skills</span>
-              </div>
+            <div className="flex flex-col gap-6 mt-4">
+              <h1 className="mb-2 text-lg font-bold text-gray-900">
+                Your Like thease
+              </h1>
+              {courses.map((course) => (
+                <div
+                  key={course.id}
+                  className={`${course.bgColor} text-white rounded-lg p-4 flex flex-col gap-3`}
+                >
+                  {/* Top Row */}
+                  <div className="flex items-center gap-3">
+                    <img
+                      src="https://via.placeholder.com/50"
+                      alt="course"
+                      className="object-cover w-12 h-12 rounded-md"
+                    />
+                    <div>
+                      <h3 className="text-base font-semibold">{course.title}</h3>
+                      <p className="text-xs text-gray-100">{course.learners}</p>
+                    </div>
+                    <div className="flex items-center gap-2 px-2 py-1 ml-auto bg-gray-100 rounded-full">
+                      <FaEye className="text-xs text-gray-600" />
+                      <span className="text-[10px] text-gray-700">Skills</span>
+                    </div>
+                  </div>
+      
+                  {/* Bottom Row */}
+                  <div className="flex items-center gap-3">
+                    <span
+                      className={`${course.tagColor} px-3 py-1 rounded-md text-xs`}
+                    >
+                      {course.tag}
+                    </span>
+                    <span className="px-3 py-1 text-xs text-gray-800 bg-white rounded-md">
+                      {course.duration}
+                    </span>
+                  </div>
+                </div>
+              ))}
             </div>
-
-            {/* Bottom Row */}
-            <div className="flex items-center gap-3">
-              <span
-                className={`${course.tagColor} px-3 py-1 rounded-md text-xs`}
-              >
-                {course.tag}
-              </span>
-              <span className="px-3 py-1 text-xs text-gray-800 bg-white rounded-md">
-                {course.duration}
-              </span>
-            </div>
-          </div>
-        ))}
-      </div>
     </div>
   );
 }

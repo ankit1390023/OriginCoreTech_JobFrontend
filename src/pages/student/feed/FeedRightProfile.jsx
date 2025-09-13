@@ -29,8 +29,9 @@ export default function FeedRightProfile() {
   const [followingCount, setFollowingCount] = useState(0); // Added for following count
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [profile, setProfile] = useState(null);
+
   const { token, user } = useSelector((state) => state.auth);
+
  
 
   useEffect(() => {
@@ -87,7 +88,7 @@ export default function FeedRightProfile() {
             <div>Loading profile...</div>
           ) : error ? (
             <div className="mt-1 text-xs text-red-500">{error}</div>
-          ) : profile ? (
+          ) : token ? (
             <>
               <h2 className="text-lg font-bold text-gray-800">
                 {user.first_name} {user.last_name}
@@ -152,7 +153,7 @@ export default function FeedRightProfile() {
             ))}
           </div>
           <p className="mt-2 text-sm text-center text-blue-600 cursor-pointer">
-            See more {profile}
+            See more {}
           </p>
         </div>
       </div>

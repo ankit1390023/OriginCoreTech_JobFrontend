@@ -54,7 +54,7 @@ import UniversityChangeEmail from "../pages/university/universityProfile/Univers
 import UniversityChangePassword from "../pages/university/universityProfile/UniversityChangePassword";
 import UniversityFaq from "../pages/university/universityProfile/UniversityFaq";
 import UniversityView from "../pages/university/universityProfile/UniversityView";
-import UniversityTerms from "../pages/university/universityProfile/UniversityTerm";
+import UniversityTerms from "../pages/university/universityProfile/UniversityTerms";
 import RecruiterPayment from "../pages/recruiter/profile/RecruiterPayment";
 import RecruiterPricing from "../pages/recruiter/profile/RecruiterPricing";
 import RecruiterPaymentMethod from "../pages/recruiter/profile/RecruiterPaymentMethod";

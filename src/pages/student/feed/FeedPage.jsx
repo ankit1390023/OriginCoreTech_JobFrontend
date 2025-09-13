@@ -377,7 +377,7 @@ export default function FeedPage() {
                               <img
                                 src={ comment.profile_pic ?
                                   getImageUrl(comment.profile_pic)
-                                    : profile
+                                    : dummyProfile3
                                 }
                                 alt=""
                                 className="flex-shrink-0 object-cover w-6 h-6 mt-1 rounded-full sm:w-7 sm:h-7"
