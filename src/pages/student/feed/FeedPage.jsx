@@ -263,7 +263,7 @@ export default function FeedPage() {
                   {/* Profile Picture */}
                   <img
                     src={
-                      post.User?.profile_pic ? getImageUrl(post.User.profile_pic) : getImageUrl(user.user_profile_pic) // fallback image
+                      post.User?.profile_pic ? getImageUrl(post.User.profile_pic) : dummyProfile3 // fallback image
                     }
                     alt={post.User?.first_name || "User"}
                     className="flex-shrink-0 object-cover w-8 h-8 rounded-full sm:w-10 sm:h-10"
@@ -377,7 +377,7 @@ export default function FeedPage() {
                               <img
                                 src={ comment.profile_pic ?
                                   getImageUrl(comment.profile_pic)
-                                    : profile
+                                    : dummyProfile3
                                 }
                                 alt=""
                                 className="flex-shrink-0 object-cover w-6 h-6 mt-1 rounded-full sm:w-7 sm:h-7"

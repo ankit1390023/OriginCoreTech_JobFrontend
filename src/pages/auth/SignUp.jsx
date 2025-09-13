@@ -8,7 +8,6 @@ import { Input, Button, Link, PhoneInput } from "../../components/ui";
 import SignUpLayoutForLarge from "../../components/layout/SignUpLayoutForLarge";
 import { useDispatch, useSelector } from "react-redux";
 import { signup } from "../../redux/feature/authSlice";
-import axios from "axios";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
@@ -35,11 +34,9 @@ const schema = z
       .string()
       .min(10, { message: "Phone number must be at least 10 digits" })
       .regex(/^\d+$/, { message: "Phone number must contain only digits" }),
-    email: z
-      .string()
-      .email({
-        message: "Please enter a valid email (e.g., user@company.com)",
-      }),
+    email: z.string().email({
+      message: "Please enter a valid email (e.g., user@company.com)",
+    }),
     password: z
       .string()
       .min(6, { message: "Password must be at least 6 characters" }),
@@ -108,9 +105,10 @@ export default function SignUp() {
           user_role: data.user_role,
         },
       });
-
     } catch (err) {
-      alert("Registration successful but failed to send OTP. Please try again.");
+      alert(
+        "Registration successful but failed to send OTP. Please try again."
+      );
     }
   };
 
@@ -142,9 +140,17 @@ export default function SignUp() {
             <div className="flex gap-1 sm:gap-2">
               <div className="flex-1">
                 <Input
-                  label="First Name"
+                  label={
+                    selectedRole === "COMPANY" || selectedRole === "UNIVERSITY"
+                      ? "Representative’s First Name"
+                      : "First Name"
+                  }
                   type="text"
-                  placeholder="First Name"
+                  placeholder={
+                    selectedRole === "COMPANY" || selectedRole === "UNIVERSITY"
+                      ? "e.g., Rahul"
+                      : "First Name"
+                  }
                   error={errors.first_name?.message}
                   disabled={loading}
                   {...register("first_name")}
@@ -152,9 +158,17 @@ export default function SignUp() {
               </div>
               <div className="flex-1">
                 <Input
-                  label="Last Name"
+                  label={
+                    selectedRole === "COMPANY" || selectedRole === "UNIVERSITY"
+                      ? "Representative’s Last Name"
+                      : "Last Name"
+                  }
                   type="text"
-                  placeholder="Last Name"
+                  placeholder={
+                    selectedRole === "COMPANY" || selectedRole === "UNIVERSITY"
+                      ? "e.g., Kumar"
+                      : "Last Name"
+                  }
                   error={errors.last_name?.message}
                   disabled={loading}
                   {...register("last_name")}
@@ -172,7 +186,7 @@ export default function SignUp() {
 
             {/* Email */}
             <Input
-              label="Email ID"
+              label={(selectedRole === "COMPANY" ||selectedRole ==="UNIVERSITY")? "Official Email ID": "Email ID"}
               type="email"
               placeholder="Email"
               error={errors.email?.message}
@@ -184,7 +198,6 @@ export default function SignUp() {
             {selectedRole === "COMPANY" && (
               <p className="text-xs text-gray-500 mt-0.5 mb-2">
                 Company emails must use official domains
-
               </p>
             )}
 
@@ -252,4 +265,3 @@ export default function SignUp() {
     </SignUpLayoutForLarge>
   );
 }
-

@@ -47,9 +47,8 @@ const UniversityProfile = () => {
       }
     };
     userData();
-  }, [user]);
+  }, [user,token]);
 
-  // ✅ Delete Account handler
   const handleDeleteAccount = async () => {
     try {
       if (!window.confirm("Are you sure you want to delete your account?"))
@@ -96,14 +95,14 @@ const UniversityProfile = () => {
       icon: <Bell size={20} />,
       title: "Terms & Conditions",
       hasChevron: true,
-      action: () => navigate("/feed-terms"),
+      action: () => navigate("/university-terms"),
     },
     {
       id: "Permission",
       icon: <Shield size={20} />,
       title: "Terms & Permission",
       hasChevron: true,
-      action: () => navigate("/feed-terms"),
+      action: () => navigate("/university-terms"),
     },
     {
       id: "help",
@@ -134,30 +133,30 @@ const UniversityProfile = () => {
 
   return (
     <MainLayout>
-      <div className="flex justify-center bg-gray-100 min-h-screen px-2 lg:px-8">
+      <div className="flex justify-center min-h-screen px-2 bg-gray-100 lg:px-8">
         {/* Left Spacer */}
-        <div className="hidden lg:block flex-grow "></div>
+        <div className="flex-grow hidden lg:block "></div>
 
         {/* Profile Section */}
         <section className="w-full max-w-[95vw] sm:max-w-[600px] md:max-w-[700px] lg:max-w-[800px] h-auto p-3 sm:p-4 md:p-5 lg:p-6 rounded-[5px] bg-white flex flex-col shadow-lg gap-3 sm:gap-4 mt-2 mx-auto">
           {/* Profile Header */}
           <div className="bg-[#002B6B] text-white p-3 sm:p-4 lg:p-4 flex flex-col sm:flex-row sm:items-center justify-between rounded-[5px] gap-3 sm:gap-4">
-            <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
+            <div className="flex items-center flex-1 min-w-0 gap-3 sm:gap-4">
               <img
                 src={
                   universityDetail?.profile_pic || "https://i.pravatar.cc/100"
                 }
                 alt="avatar"
-                className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-18 lg:h-18 rounded-full object-cover flex-shrink-0"
+                className="flex-shrink-0 object-cover w-12 h-12 rounded-full sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-18 lg:h-18"
               />
-              <div className="min-w-0 flex-1">
-                <h1 className="text-base sm:text-lg md:text-xl lg:text-2xl font-semibold truncate">
+              <div className="flex-1 min-w-0">
+                <h1 className="text-base font-semibold truncate sm:text-lg md:text-xl lg:text-2xl">
                   {universityDetail?.college_name || "Unknown University"}
                 </h1>
-                <p className="text-xs sm:text-sm text-gray-200 truncate">
+                <p className="text-xs text-gray-200 truncate sm:text-sm">
                   @{user?.email}
                 </p>
-                <p className="text-xs sm:text-sm text-gray-200 truncate">
+                <p className="text-xs text-gray-200 truncate sm:text-sm">
                   {user?.user_role}
                 </p>
               </div>
@@ -185,11 +184,11 @@ const UniversityProfile = () => {
                       {option.icon}
                     </div>
                     <div className="flex flex-col text-left">
-                      <span className="text-sm sm:text-base text-gray-900 font-medium">
+                      <span className="text-sm font-medium text-gray-900 sm:text-base">
                         {option.title}
                       </span>
                       {option.subtitle && (
-                        <span className="text-xs sm:text-sm text-gray-400">
+                        <span className="text-xs text-gray-400 sm:text-sm">
                           {option.subtitle}
                         </span>
                       )}
@@ -202,7 +201,7 @@ const UniversityProfile = () => {
 
                 {/* Dropdowns */}
                 {activeDropdown === option.id && (
-                  <div className="ml-10 sm:ml-12 mt-2 space-y-2">
+                  <div className="mt-2 ml-10 space-y-2 sm:ml-12">
                     {(option.id === "help"
                       ? [
                           {
@@ -220,12 +219,12 @@ const UniversityProfile = () => {
                           {
                             icon: <Mail size={16} />,
                             label: "Change email",
-                            action: () => navigate("/feed-change-email"),
+                            action: () => navigate("/university-change-email"),
                           },
                           {
                             icon: <Lock size={16} />,
                             label: "Change password",
-                            action: () => navigate("/feed-change-password"),
+                            action: () => navigate("/university-change-password"),
                           },
                           {
                             icon: <Trash2 size={16} />,
@@ -237,12 +236,12 @@ const UniversityProfile = () => {
                       <button
                         key={i}
                         onClick={item.action}
-                        className="w-full flex items-center gap-3 p-3 sm:p-4 rounded-lg bg-gray-50 hover:bg-gray-100 active:bg-gray-200 transition-colors"
+                        className="flex items-center w-full gap-3 p-3 transition-colors rounded-lg sm:p-4 bg-gray-50 hover:bg-gray-100 active:bg-gray-200"
                       >
-                        <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-gray-600">
+                        <div className="flex items-center justify-center w-8 h-8 text-gray-600 bg-gray-100 rounded-full">
                           {item.icon}
                         </div>
-                        <span className="text-sm sm:text-base text-gray-900 font-medium">
+                        <span className="text-sm font-medium text-gray-900 sm:text-base">
                           {item.label}
                         </span>
                       </button>
@@ -260,7 +259,7 @@ const UniversityProfile = () => {
         </aside>
 
         {/* Right Spacer */}
-        <div className="hidden lg:block flex-grow"></div>
+        <div className="flex-grow hidden lg:block"></div>
       </div>
     </MainLayout>
   );

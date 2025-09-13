@@ -12,8 +12,10 @@ import Input from "../../../components/ui/Input";
 import feedApi from "../../../api/feedApi.js";
 import { getImageUrl } from "../../../../utils.js";
 import { useParams } from "react-router-dom";
-// import { Helmet } from "react-helmet-async";
-import useFeedApi from "../../../hooks/useFeedApi"; // Add this import
+import { Helmet } from "react-helmet-async";
+import useFeedApi from "../../../hooks/useFeedApi"; 
+
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 export default function FeedPostDetail() {
   const { slug } = useParams();
@@ -123,7 +125,8 @@ export default function FeedPostDetail() {
       return;
     }
 
-    const postUrl = `${window.location.origin}/feed-post/${post.slug}`;
+    // Use the social preview endpoint
+     const postUrl = `${BASE_URL}/feed/social-preview?slug=${post.slug}`;
     const shareText = post.caption?.slice(0, 120) || "Check out this post!";
 
     try {
@@ -142,6 +145,63 @@ export default function FeedPostDetail() {
       prompt("Copy to share:", `${shareText}\n\n${postUrl}`);
     }
   };
+
+  // //Add meta tags for improved sharing on various social apps
+  // useEffect(() => {
+  //   if (!post) return;
+
+  //   // Set document title
+  //   const originalTitle = document.title;
+  //   document.title = post.caption?.slice(0, 60) || "Check out this post!";
+
+  //   // Helper to create or update meta tags
+  //   const setMetaTag = (property, content, type = 'property') => {
+  //     // Select by og:property or twitter:name
+  //     let selector = type === 'property'
+  //       ? `meta[property="${property}"]`
+  //       : `meta[name="${property}"]`;
+  //     let element = document.querySelector(selector);
+
+  //     if (!element) {
+  //       element = document.createElement('meta');
+  //       element.setAttribute(type, property);
+  //       document.head.appendChild(element);
+  //     }
+
+  //     element.setAttribute('content', content);
+  //   };
+
+  //   // Set Open Graph Tags
+  //   setMetaTag('og:title', post.caption?.slice(0, 60) || "Check out this post!", 'property');
+  //   setMetaTag('og:description', post.caption?.slice(0, 160) || "A post shared from our platform.", 'property');
+  //   setMetaTag('og:image', "https://hatrabbits.com/en/random-image/", 'property');
+  //   setMetaTag('og:url', `${window.location.origin}/feed-post/${post.slug}`, 'property');
+  //   setMetaTag('og:type', 'article', 'property');
+
+  //   // Set Twitter Card Tags
+  //   setMetaTag('twitter:card', 'summary_large_image', 'name');
+  //   setMetaTag('twitter:title', post.caption?.slice(0, 60) || "Check out this post!", 'name');
+  //   setMetaTag('twitter:description', post.caption?.slice(0, 160) || "A post shared from our platform.", 'name');
+  //   setMetaTag('twitter:image', "https://hatrabbits.com/en/random-image", 'name');
+
+  //   // Cleanup function — reverts title and removes dynamic meta tags (optional)
+  //   return () => {
+  //     document.title = originalTitle;
+
+  //     // Optionally remove only the tags we added
+  //     const metaTagsToRemove = [
+  //       'og:title', 'og:description', 'og:image', 'og:url', 'og:type',
+  //       'twitter:card', 'twitter:title', 'twitter:description', 'twitter:image'
+  //     ];
+
+  //     metaTagsToRemove.forEach(prop => {
+  //       const element = document.querySelector(`meta[property="${prop}"], meta[name="${prop}"]`);
+  //       if (element && element.parentElement) {
+  //         element.parentElement.removeChild(element);
+  //       }
+  //     });
+  //   };
+  // }, [post]); // Re-run when post changes
 
   if (loading) {
     return (

@@ -88,7 +88,7 @@ const RecruiterApplication = () => {
           </div>
 
           {/* Applications List */}
-          <div className="flex flex-col gap-4 pr-1 overflow-y-auto">
+          <div className="flex flex-col gap-4 pr-1 overflow-y-visible">
             {filteredApps.map((app, index) => (
               <div
                 key={index}

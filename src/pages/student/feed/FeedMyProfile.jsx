@@ -5,18 +5,16 @@ import { FaEllipsisH } from "react-icons/fa";
 import { FiHeart, FiMessageSquare, FiSend } from "react-icons/fi";
 import { BsBookmarkFill } from "react-icons/bs";
 import MainLayout from "../../../components/layout/MainLayout";
-import FeedRightProfile from "../feed/FeedRightProfile";
+import FeedRightProfile from "./FeedRightProfile";
 import { useUserDetailsApi } from "../../../hooks/useUserDetailsApi";
 import useFeedApi from "../../../hooks/useFeedApi";
 import { formatTimeAgo, formatNumber, getImageUrl } from "../../../../utils";
 import dummyProfile3 from "../../../assets/dummyProfile3.jpg";
 
-
-import dummyProfile from "/src/assets/dummyProfile1.jpg";
 const FeedMyProfile = () => {
   const { user, token } = useSelector((state) => state.auth);
   // const { profile}= useSelector((state) => state.auth);
-  // const [dp,setDp]=useState(false);
+
 
   const {
     loading,
@@ -73,7 +71,7 @@ const FeedMyProfile = () => {
     };
 
     fetchProfileData();
-  }, [token, getUserPublicProfile, user?.id]);
+  }, [token, getUserPublicProfile]);
 
   // Fetch followers and following data on component mount
   useEffect(() => {
@@ -81,6 +79,9 @@ const FeedMyProfile = () => {
       fetchFollowersAndFollowing();
     }
   }, [token, fetchFollowersAndFollowing]);
+
+
+  // console.log("Fetched profileeeeeeeeee data:", profile);
 
   // Check follow status when profile changes
   useEffect(() => {
@@ -101,7 +102,7 @@ const FeedMyProfile = () => {
           <div className="mb-6 space-y-4 text-center">
             <div className="relative inline-block">
               <img
-                src={getImageUrl(user.user_profile_pic) || dummyProfile3}
+                src={user.user_profile_pic? getImageUrl(user.user_profile_pic) : dummyProfile3}
                 alt={
                   user.first_name
                     ? `${user.first_name} ${user.last_name}`

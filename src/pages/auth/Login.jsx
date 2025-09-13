@@ -9,7 +9,6 @@ import { useDispatch, useSelector } from "react-redux";
 import AuthLayout from "../../components/layout/AuthLayout";
 import { Input, Button, Link } from "../../components/ui";
 import { login } from "../../redux/feature/authSlice";
-import { fetchProfile } from "../../redux/feature/profileSlice";
 
 // ✅ Validation schema
 const schema = z.object({
@@ -40,7 +39,7 @@ export default function Login() {
     defaultValues: { email: "", password: "", remember: false },
   });
 
-  // ✅ Prefill email (from localStorage OR state passed via navigation)
+  // Prefill email (from localStorage OR state passed via navigation)
   useEffect(() => {
     const rememberedEmail = localStorage.getItem("userEmail");
     const stateEmail = location.state?.email;
@@ -51,7 +50,7 @@ export default function Login() {
     }
   }, [setValue, location.state]);
 
-  // ✅ Redirect after login success
+  // Redirect after login success
   useEffect(() => {
     if (isAuthenticated && user) {
       switch (user.user_role) {

@@ -6,7 +6,6 @@ import FeedRightProfile from "../feed/FeedRightProfile";
 import { useSelector, useDispatch } from "react-redux";
 import uploadImageApi from "../../../api/uploadImageApi";
 import { userDetailsApi } from "../../../api/userDetailsApi";
-import { updateProfileLocally } from '../../../redux/feature/profileSlice';
 import { getImageUrl } from "../../../../utils.js";
 import dummyProfile3 from "../../../assets/dummyProfile3.jpg";
 import { updateUser } from "../../../redux/feature/authSlice";
@@ -16,7 +15,7 @@ const FeedView = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user, token, isAuthenticated } = useSelector((state) => state.auth);
-  const [profileImage, setProfileImage] = useState(dummyProfile3);
+  const [profileImage, setProfileImage] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadStatus, setUploadStatus] = useState(null);
   const [resumeUrl, setResumeUrl] = useState(null);
@@ -34,7 +33,9 @@ const FeedView = () => {
       setLoading(true);
       setError(null);
       try {
+        console.log("calling the api");
         const result = await userDetailsApi.getUserPublicProfile(user.id);
+        console.log("api called response",result);
         if (result.success) {
           setUserData(result.data);
           // Set profile image if available
@@ -426,7 +427,7 @@ const getFileNameFromUrl = (url) => {
             <div className="relative">
               <div className="w-20 h-20 overflow-hidden border-4 border-gray-200 rounded-full sm:w-24 sm:h-24">
                 <img
-                  src={getImageUrl(profileImage)}
+                  src={profileImage? getImageUrl(profileImage) : dummyProfile3}
                   alt="Profile"
                   className="object-cover w-full h-full"
                 />

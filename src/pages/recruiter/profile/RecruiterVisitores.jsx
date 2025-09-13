@@ -58,7 +58,7 @@ const  RecruiterProfile = () => {
       icon: <HelpCircle size={20} />,
       title: 'Help & Support',
       hasChevron: true,
-      action: () => navigate('/feed-faq'),
+      action: () => navigate('/recruiter-faq'),
       // no navigate here → handled by toggleDropdown
     },
     {
@@ -90,22 +90,22 @@ const  RecruiterProfile = () => {
 
   return (
     <MainLayout>
-      <div className="flex justify-center bg-gray-100 min-h-screen px-2 lg:px-8">
+      <div className="flex justify-center min-h-screen px-2 bg-gray-100 lg:px-8">
         {/* Left Spacer */}
-        <div className="hidden lg:block flex-grow "></div>
+        <div className="flex-grow hidden lg:block "></div>
         <section className="w-full max-w-[95vw] sm:max-w-[600px] md:max-w-[700px] lg:max-w-[800px] h-auto p-3 sm:p-4 md:p-5 lg:p-6 rounded-[5px] bg-white flex flex-col shadow-lg gap-3 sm:gap-4 mt-2 mx-auto">
           {/* Profile Header */}
           <div className="bg-[#002B6B] text-white p-3 sm:p-4 lg:p-4 flex flex-col sm:flex-row sm:items-center justify-between rounded-[5px] gap-3 sm:gap-4">
-            <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
+            <div className="flex items-center flex-1 min-w-0 gap-3 sm:gap-4">
               <img
                 src="https://i.pravatar.cc/100?img=1"
                 alt="avatar"
-                className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-18 lg:h-18 rounded-md object-cover flex-shrink-0"
+                className="flex-shrink-0 object-cover w-12 h-12 rounded-md sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-18 lg:h-18"
               />
-              <div className="min-w-0 flex-1">
-                <h1 className="text-base sm:text-lg md:text-xl lg:text-2xl font-semibold truncate">Aman Gupta</h1>
-                <p className="text-xs sm:text-sm text-gray-200 truncate">@amangupta09</p>
-                <p className="text-xs sm:text-sm text-gray-200 truncate">Visual Designer</p>
+              <div className="flex-1 min-w-0">
+                <h1 className="text-base font-semibold truncate sm:text-lg md:text-xl lg:text-2xl">Aman Gupta</h1>
+                <p className="text-xs text-gray-200 truncate sm:text-sm">@amangupta09</p>
+                <p className="text-xs text-gray-200 truncate sm:text-sm">Visual Designer</p>
               </div>
             </div>
             <button
@@ -139,11 +139,11 @@ const  RecruiterProfile = () => {
                       </div>
                     </div>
                     <div className="flex flex-col w-auto text-left opacity-100">
-                      <span className="text-sm sm:text-base md:text-medium lg:text-medium text-gray-900 font-medium">
+                      <span className="text-sm font-medium text-gray-900 sm:text-base md:text-medium lg:text-medium">
                         {option.title}
                       </span>
                       {option.subtitle && (
-                        <span className="text-xs sm:text-sm md:text-base text-gray-400">
+                        <span className="text-xs text-gray-400 sm:text-sm md:text-base">
                           {option.subtitle}
                         </span>
                       )}
@@ -151,13 +151,13 @@ const  RecruiterProfile = () => {
                   </div>
 
                   {option.hasChevron && (
-                    <ChevronRight size={18} className="text-gray-400 flex-shrink-0 ml-2 sm:ml-3" />
+                    <ChevronRight size={18} className="flex-shrink-0 ml-2 text-gray-400 sm:ml-3" />
                   )}
                 </button>
 
                 {/* Dropdowns */}
                 {activeDropdown === option.id && (
-                    <div className="ml-10 sm:ml-12 md:ml-14 lg:ml-16 mt-1 sm:mt-2 space-y-1 sm:space-y-2">
+                    <div className="mt-1 ml-10 space-y-1 sm:ml-12 md:ml-14 lg:ml-16 sm:mt-2 sm:space-y-2">
                       {(activeDropdown === 'help'
                         ? [
                             {
@@ -194,12 +194,12 @@ const  RecruiterProfile = () => {
                           onClick={item.action}
                           className="w-full flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-lg bg-gray-50 hover:bg-gray-100 active:bg-gray-200 transition-colors min-h-[48px] sm:min-h-[52px]"
                         >
-                          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-600 flex-shrink-0">
-                            <div className="w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center">
+                          <div className="flex items-center justify-center flex-shrink-0 w-8 h-8 text-gray-600 bg-gray-100 rounded-full sm:w-10 sm:h-10">
+                            <div className="flex items-center justify-center w-4 h-4 sm:w-5 sm:h-5">
                               {item.icon}
                             </div>
                           </div>
-                          <span className="text-sm sm:text-base md:text-lg text-gray-900 font-medium truncate">
+                          <span className="text-sm font-medium text-gray-900 truncate sm:text-base md:text-lg">
                             {item.label}
                           </span>
                         </button>
@@ -216,7 +216,7 @@ const  RecruiterProfile = () => {
           <RecruiterRightSide3 />
         </aside>
         {/* Right Spacer */}
-        <div className="hidden lg:block flex-grow"></div>
+        <div className="flex-grow hidden lg:block"></div>
       </div>
     </MainLayout>
   );

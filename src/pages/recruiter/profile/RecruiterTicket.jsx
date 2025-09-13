@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { Input, RadioGroup, Textarea, Button } from "../../../components/ui";
 import MainLayout from "../../../components/layout/MainLayout";
-import RecruiterRightSide2 from "./RecruiterRightSide2";
+import RecruiterRightProfile from "../dashboard/RecruiterRightProfile";
 import { ticketApi } from "../../../api/ticketApi";
 
 const PRIORITY_OPTIONS = [
@@ -11,18 +11,22 @@ const PRIORITY_OPTIONS = [
   { label: "Low", value: "low" },
 ];
 
-const FeedTicket = () => {
-  const { user } = useSelector((state) => state.auth);
+const RecruiterTicket = () => {
+  const { user,token } = useSelector((state) => state.auth);
   const userEmail = user?.email || "";
 
   const [priority, setPriority] = useState("medium");
   const [issue_title, setIssueTitle] = useState("");
   const [body, setBody] = useState("");
   const [localError, setLocalError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [apiError, setApiError] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLocalError("");
+    setApiError("");
 
     if (!issue_title.trim()) {
       setLocalError("Please enter the issue title.");
@@ -35,34 +39,36 @@ const FeedTicket = () => {
     }
 
     const ticketData = {
+      user_id:user.id,
+      name:user.first_name, //recruiter name currently can update with company_name in the future
       issue_title: issue_title.trim(),
       issue_detail: body.trim(),
-      role: "recruiter", // Default role for student users
-      email: userEmail,
-      priority, // Keep priority for additional context
+      role: "COMPANY",
+      email: userEmail, 
+      priority,
     };
 
     try {
-      await ticketApi.raiseTicket(ticketData);
+      setIsLoading(true);
+      await ticketApi.raiseTicket(ticketData,token);
+      
       // Reset form on success
       setIssueTitle("");
       setBody("");
       setPriority("medium");
-    } catch (err) {
-      // Error is handled by Redux state
-      console.error("Failed to raise ticket:", err);
+      setIsSuccess(true);
+      
+      // Reset success message after 3 seconds
+      setTimeout(() => {
+        setIsSuccess(false);
+      }, 3000);
+    } catch (error) {
+      console.error("Failed to raise ticket:", error);
+      setApiError(error.message || "Failed to submit ticket. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
-
-  // Reset success state after showing message
-  useEffect(() => {
-    if (success) {
-      const timer = setTimeout(() => {
-        // You might want to add a reset action to the slice
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [success]);
 
   return (
     <MainLayout>
@@ -110,15 +116,12 @@ const FeedTicket = () => {
                 rows={3}
               />
             </div>
-            {(localError || error) && (
+            {(localError || apiError) && (
               <div className="text-sm text-red-500">
-                {localError ||
-                  (typeof error === "string"
-                    ? error
-                    : "An error occurred while submitting the ticket")}
+                {localError || apiError}
               </div>
             )}
-            {success && (
+            {isSuccess && (
               <div className="text-sm text-green-600">
                 Ticket submitted successfully!
               </div>
@@ -126,7 +129,7 @@ const FeedTicket = () => {
             <Button
               type="submit"
               className="w-full mt-[5px] text-base sm:text-lg py-2 sm:py-3 rounded-xl b"
-              loading={loading}
+              loading={isLoading}
             >
               Submit
             </Button>
@@ -134,7 +137,7 @@ const FeedTicket = () => {
         </section>
         {/* Profile Card */}
         <aside className="hidden lg:block w-full max-w-[350px] p-2 sticky top-4 h-fit">
-          <RecruiterRightSide2 />
+          <RecruiterRightProfile />
         </aside>
         {/* Right Spacer */}
         <div className="flex-grow hidden lg:block"></div>
@@ -143,4 +146,4 @@ const FeedTicket = () => {
   );
 };
 
-export default FeedTicket;
+export default RecruiterTicket;
