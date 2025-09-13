@@ -13,7 +13,7 @@ import { useMasterData } from "../../hooks/master/useMasterData";
 import useUploadImageApi from "../../hooks/useUploadImageApi";
 import Select from "react-select";
 import { useSelector } from "react-redux";
-import { createUniversityProfile } from "../../api/university/university";  
+import { universityApi } from "../../api/university/universityApi";
 
 export default function UniversityFillDetails() {
   const [isSmallDevice, setIsSmallDevice] = useState(false);
@@ -94,7 +94,7 @@ export default function UniversityFillDetails() {
     try {
       console.log("=== FORM DATA ===", JSON.stringify(data, null, 2));
 
-      const response = await createUniversityProfile(data, token);
+      const response = await universityApi.createUniversityProfile(data, token);
       if(response.success){
        alert(response.message);
       }

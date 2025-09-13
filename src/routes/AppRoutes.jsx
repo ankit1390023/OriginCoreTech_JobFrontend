@@ -76,6 +76,8 @@ import MyApplication3 from "../pages/student/application/Myapplication3";
 import MyApplication2 from "../pages/student/application/Myapplication2";
 import MyApplication1 from "../pages/student/application/Myapplication1";
 import StudentApplications from "../pages/student/application/studentApplications";
+import UniversityProfileEdit from "../pages/university/UniversityProfileEdit";
+import UniversityPublicProfile from "../pages/university/UniversityPublicProfile";
 
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
@@ -600,6 +602,22 @@ export const appRouter = createBrowserRouter([
     element: (
       <ProtectedRoute allowedRoles={["UNIVERSITY"]}>
         <UniversityProfile />
+      </ProtectedRoute>
+    )
+  },
+  {
+    path: "/university-profile-edit",
+    element: (
+      <ProtectedRoute allowedRoles={["UNIVERSITY"]}>
+        <UniversityProfileEdit />
+      </ProtectedRoute>
+    )
+  },
+  {
+    path: "/university-public-profile",
+    element: (
+      <ProtectedRoute allowedRoles={["UNIVERSITY"]}>
+        <UniversityPublicProfile />
       </ProtectedRoute>
     )
   },

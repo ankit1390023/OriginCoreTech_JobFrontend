@@ -37,7 +37,6 @@ const useFeedApi = () => {
     },
     [token, totalPages]
   );
-
   const postFeed = useCallback(
     async (payload) => {
       if (!token) return;
@@ -57,7 +56,6 @@ const useFeedApi = () => {
     },
     [fetchFeed, token]
   );
-
   const handleLike = useCallback(
     async (post_id, user_id) => {
       if (!token) return;
@@ -102,7 +100,6 @@ const useFeedApi = () => {
     },
     [token, posts]
   );
-
   // Fetch followers and following counts
   const fetchFollowersAndFollowing = useCallback(async () => {
     if (!token) return;
