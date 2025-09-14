@@ -16,7 +16,7 @@ import {
   Shield,
 } from "lucide-react";
 import { HiOutlineEye } from "react-icons/hi";
-import UniversityRightSide1 from "./UniversityRightSide1";
+import UniversityRightSidebar from "./UniversityRightSidebar";
 import MainLayout from "../../../components/layout/MainLayout";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../../redux/feature/authSlice";
@@ -80,7 +80,7 @@ const UniversityProfile = () => {
       title: "My Profile",
       subtitle: "Make changes to your profile",
       hasChevron: true,
-      action: () => navigate("/university-view"),
+      action: () => navigate("/university-profile-edit"),
     },
     {
       id: "activity",
@@ -163,7 +163,7 @@ const UniversityProfile = () => {
             </div>
             <button
               className="border border-white rounded-full bg-white px-3 py-2 sm:px-4 sm:py-2.5 text-xs sm:text-sm text-[#002B6B] transition-colors flex items-center gap-1.5 sm:gap-2 self-start sm:self-auto whitespace-nowrap min-h-[44px] sm:min-h-[40px]"
-              onClick={() => navigate("/feed-my-profile")}
+              onClick={() => navigate("/university-public-profile")}
             >
               <HiOutlineEye size={14} className="sm:w-4 sm:h-4" />
               <span className="hidden xs:inline">Profile</span>
@@ -255,7 +255,7 @@ const UniversityProfile = () => {
 
         {/* Right Side */}
         <aside className="hidden lg:block w-full max-w-[350px] p-2 sticky top-4 h-fit">
-          <UniversityRightSide1 />
+          <UniversityRightSidebar />
         </aside>
 
         {/* Right Spacer */}

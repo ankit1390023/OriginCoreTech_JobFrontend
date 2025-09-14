@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Input, Button } from '../../../components/ui';
 import MainLayout from '../../../components/layout/MainLayout';
 import { HiOutlineEye, HiOutlineEyeOff } from 'react-icons/hi';
-import RecruiterRightSide2 from './RecruiterRightSide2';
+import RecruiterRightSidebarWithJobPost from './RecruiterRightSidebarWithJobPost';
 import { userProfileApi } from '../../../api/userProfileApi';
 
 const FeedChangePassword = () => {
@@ -152,7 +152,7 @@ const FeedChangePassword = () => {
         </section>
         {/* Profile Card (only on large screens) */}
         <aside className="hidden lg:block w-full max-w-[350px] p-2 sticky top-4 h-fit">
-          <RecruiterRightSide2 />
+          <RecruiterRightSidebarWithJobPost />
         </aside>
         {/* Right Spacer */}
         <div className="hidden lg:block flex-grow"></div>

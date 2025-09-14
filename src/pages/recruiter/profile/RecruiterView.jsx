@@ -3,7 +3,7 @@
 // import { Link, useNavigate } from 'react-router-dom';
 // import { FaCamera } from 'react-icons/fa';
 // import MainLayout from '../../../components/layout/MainLayout';
-// import RecruiterRightSide3 from './RecruiterRightSide3';
+// import RecruiterRightSidebarWithoutJobPost from './RecruiterRightSidebarWithoutJobPost';
 // import uploadImageApi from '../../../api/uploadImageApi';
 
 // const RecruiterView = () => {
@@ -98,8 +98,8 @@
 //     switch (section) {
 //       case 'About':
 //         return (
-//           <div className="border border-gray-200 rounded-lg p-4 mt-3">
-//             <p className="text-gray-700 leading-relaxed">
+//           <div className="p-4 mt-3 border border-gray-200 rounded-lg">
+//             <p className="leading-relaxed text-gray-700">
 //               Hi, I am Aman working as a designer from 3 years...
 //             </p>
 //           </div>
@@ -107,8 +107,8 @@
       
 //       case 'Career Objective':
 //         return (
-//           <div className="border border-gray-200 rounded-lg p-4 mt-3">
-//             <p className="text-gray-700 leading-relaxed">
+//           <div className="p-4 mt-3 border border-gray-200 rounded-lg">
+//             <p className="leading-relaxed text-gray-700">
 //               lorem ipsum
 //             </p>
 //           </div>
@@ -116,19 +116,19 @@
       
 //       case 'Resume':
 //         return (
-//           <div className="border border-gray-200 rounded-lg p-4 mt-3">
+//           <div className="p-4 mt-3 border border-gray-200 rounded-lg">
 //             {resumeUrl ? (
 //               <div className="flex items-center gap-2">
 //                 <a 
 //                   href={resumeUrl} 
 //                   target="_blank" 
 //                   rel="noopener noreferrer"
-//                   className="text-sm text-green-600 hover:text-green-800 transition-colors"
+//                   className="text-sm text-green-600 transition-colors hover:text-green-800"
 //                 >
 //                   View Resume
 //                 </a>
 //                 <button 
-//                   className="text-sm text-blue-600 hover:text-blue-800 transition-colors" 
+//                   className="text-sm text-blue-600 transition-colors hover:text-blue-800" 
 //                   onClick={handleUploadResume}
 //                 >
 //                   Replace
@@ -136,7 +136,7 @@
 //               </div>
 //             ) : (
 //               <button 
-//                 className="text-sm text-blue-600 hover:text-blue-800 transition-colors" 
+//                 className="text-sm text-blue-600 transition-colors hover:text-blue-800" 
 //                 onClick={handleUploadResume}
 //                 disabled={isUploading}
 //               >
@@ -153,12 +153,12 @@
       
 //       case 'Skills':
 //         return (
-//           <div className="border border-gray-200 rounded-lg p-4 mt-3">
+//           <div className="p-4 mt-3 border border-gray-200 rounded-lg">
 //             <div className="flex flex-wrap gap-2">
 //               {['Digital Marketing', 'Sales', 'UI Design', 'SEO'].map((skill, idx) => (
 //                 <div key={idx} className="flex items-center">
 //                   <span className="text-gray-700">{skill}</span>
-//                   {idx < 3 && <span className="text-red-500 mx-2">•</span>}
+//                   {idx < 3 && <span className="mx-2 text-red-500">•</span>}
 //                 </div>
 //               ))}
 //             </div>
@@ -167,12 +167,12 @@
       
 //       case 'Work Experience':
 //         return (
-//           <div className="border border-gray-200 rounded-lg p-4 mt-3">
+//           <div className="p-4 mt-3 border border-gray-200 rounded-lg">
 //             <div className="flex flex-wrap gap-2">
 //               {['Microsoft', 'Startup', 'Google'].map((company, idx) => (
 //                 <div key={idx} className="flex items-center">
 //                   <span className="text-gray-700">{company}</span>
-//                   {idx < 2 && <span className="text-red-500 mx-2">•</span>}
+//                   {idx < 2 && <span className="mx-2 text-red-500">•</span>}
 //                 </div>
 //               ))}
 //             </div>
@@ -181,12 +181,12 @@
       
 //       case 'Education':
 //         return (
-//           <div className="border border-gray-200 rounded-lg p-4 mt-3">
+//           <div className="p-4 mt-3 border border-gray-200 rounded-lg">
 //             <div className="flex flex-wrap gap-2">
 //               {['abc', 'abc', 'abc'].map((edu, idx) => (
 //                 <div key={idx} className="flex items-center">
 //                   <span className="text-gray-700">{edu}</span>
-//                   {idx < 2 && <span className="text-red-500 mx-2">•</span>}
+//                   {idx < 2 && <span className="mx-2 text-red-500">•</span>}
 //                 </div>
 //               ))}
 //             </div>
@@ -195,12 +195,12 @@
       
 //       case 'Languages':
 //         return (
-//           <div className="border border-gray-200 rounded-lg p-4 mt-3">
+//           <div className="p-4 mt-3 border border-gray-200 rounded-lg">
 //             <div className="flex flex-wrap gap-2">
 //               {['English', 'Hindi', 'Spanish'].map((lang, idx) => (
 //                 <div key={idx} className="flex items-center">
 //                   <span className="text-gray-700">{lang}</span>
-//                   {idx < 2 && <span className="text-red-500 mx-2">•</span>}
+//                   {idx < 2 && <span className="mx-2 text-red-500">•</span>}
 //                 </div>
 //               ))}
 //             </div>
@@ -209,22 +209,22 @@
       
 //       case 'Authentication':
 //         return (
-//           <div className="border border-gray-200 rounded-lg p-4 mt-3">
+//           <div className="p-4 mt-3 border border-gray-200 rounded-lg">
 //             <div className="flex items-center justify-between">
 //               <div className="flex flex-wrap gap-2">
 //                 {['Email ID', 'Phone no.', 'Aadhaar'].map((auth, idx) => (
 //                   <div key={idx} className="flex items-center">
 //                     <span className="text-gray-700">{auth}</span>
-//                     {idx < 2 && <span className="text-red-500 mx-2">•</span>}
+//                     {idx < 2 && <span className="mx-2 text-red-500">•</span>}
 //                   </div>
 //                 ))}
 //               </div>
 //               <div className="flex items-center gap-2">
-//                 <button className="text-sm text-blue-600 hover:text-blue-800 transition-colors" onClick={handleGetVerified}>
+//                 <button className="text-sm text-blue-600 transition-colors hover:text-blue-800" onClick={handleGetVerified}>
 //                   Get Verified
 //                 </button>
-//                 <div className="w-4 h-4 bg-gray-300 rounded-full flex items-center justify-center">
-//                   <span className="text-xs text-gray-600 font-bold">i</span>
+//                 <div className="flex items-center justify-center w-4 h-4 bg-gray-300 rounded-full">
+//                   <span className="text-xs font-bold text-gray-600">i</span>
 //                 </div>
 //               </div>
 //             </div>
@@ -238,9 +238,9 @@
 
 //   return (
 //     <MainLayout>
-//        <div className="flex justify-center bg-gray-100 min-h-screen px-2 lg:px-8">
+//        <div className="flex justify-center min-h-screen px-2 bg-gray-100 lg:px-8">
 //         {/* Left Spacer */}
-//         <div className="hidden lg:block flex-grow"></div>
+//         <div className="flex-grow hidden lg:block"></div>
 //                 {/* Feed Content */}
     
 //     <section
@@ -249,8 +249,8 @@
 //       {/* Profile Section */}
 //       <div className="flex flex-col items-center mb-8">
 //         <div className="relative">
-//           <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden border-4 border-gray-200">
-//             <img src={profileImage} alt="Profile" className="w-full h-full object-cover" />
+//           <div className="w-20 h-20 overflow-hidden border-4 border-gray-200 rounded-full sm:w-24 sm:h-24">
+//             <img src={profileImage} alt="Profile" className="object-cover w-full h-full" />
 //           </div>
 //           {/* Camera Icon */}
 //           <div
@@ -265,8 +265,8 @@
 //             <FaCamera className="w-3 h-3 text-white" />
 //           </div>
 //         </div>
-//         <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mt-4">Aman Gupta</h1>
-//         <p className="text-gray-500 text-sm">@amangupta09</p>
+//         <h1 className="mt-4 text-xl font-bold text-gray-900 sm:text-2xl">Aman Gupta</h1>
+//         <p className="text-sm text-gray-500">@amangupta09</p>
 //       </div>
 
 //       {/* Information Sections */}
@@ -282,9 +282,9 @@
 //           'Authentication'
 //         ].map((section, index) => (
 //           <div key={index}>
-//             <div className="flex justify-between items-start flex-col sm:flex-row gap-2">
+//             <div className="flex flex-col items-start justify-between gap-2 sm:flex-row">
 //               <div className="flex-1">
-//                 <h3 className="font-semibold text-gray-900 mb-2">{section === 'Languages' ? 'Languages you know' : section}</h3>
+//                 <h3 className="mb-2 font-semibold text-gray-900">{section === 'Languages' ? 'Languages you know' : section}</h3>
 //               </div>
 
 //               <div className="flex items-center gap-2">
@@ -296,12 +296,12 @@
 //                           href={resumeUrl} 
 //                           target="_blank" 
 //                           rel="noopener noreferrer"
-//                           className="text-sm text-green-600 hover:text-green-800 transition-colors"
+//                           className="text-sm text-green-600 transition-colors hover:text-green-800"
 //                         >
 //                           View Resume
 //                         </a>
 //                         <button 
-//                           className="text-sm text-blue-600 hover:text-blue-800 transition-colors" 
+//                           className="text-sm text-blue-600 transition-colors hover:text-blue-800" 
 //                           onClick={handleUploadResume}
 //                         >
 //                           Replace
@@ -309,7 +309,7 @@
 //                       </div>
 //                     ) : (
 //                       <button 
-//                         className="text-sm text-blue-600 hover:text-blue-800 transition-colors" 
+//                         className="text-sm text-blue-600 transition-colors hover:text-blue-800" 
 //                         onClick={handleUploadResume}
 //                         disabled={isUploading}
 //                       >
@@ -324,15 +324,15 @@
 //                   </div>
 //                 ) : section === 'Authentication' ? (
 //                   <>
-//                     <button className="text-sm text-blue-600 hover:text-blue-800 transition-colors" onClick={handleGetVerified}>
+//                     <button className="text-sm text-blue-600 transition-colors hover:text-blue-800" onClick={handleGetVerified}>
 //                       Get Verified
 //                     </button>
-//                     <div className="w-4 h-4 bg-gray-300 rounded-full flex items-center justify-center">
-//                       <span className="text-xs text-gray-600 font-bold">i</span>
+//                     <div className="flex items-center justify-center w-4 h-4 bg-gray-300 rounded-full">
+//                       <span className="text-xs font-bold text-gray-600">i</span>
 //                     </div>
 //                   </>
 //                 ) : (
-//                   <button className="text-sm text-blue-600 hover:text-blue-800 transition-colors" onClick={() => handleViewEdit(section)}>
+//                   <button className="text-sm text-blue-600 transition-colors hover:text-blue-800" onClick={() => handleViewEdit(section)}>
 //                     {activeSection === section ? 'Close' : 'View/Edit'}
 //                   </button>
 //                 )}    
@@ -348,10 +348,10 @@
 
 // {/* Profile Card */}
 // <aside className="hidden lg:block w-full max-w-[350px] p-2 sticky top-4 h-fit">
-//           <RecruiterRightSide3 />
+//           <RecruiterRightSidebarWithoutJobPost />
 //         </aside>
 //         {/* Right Spacer */}
-//         <div className="hidden lg:block flex-grow"></div>
+//         <div className="flex-grow hidden lg:block"></div>
 //     </div>
 //     </MainLayout>
 //   );
@@ -365,11 +365,11 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaCamera } from "react-icons/fa";
 import MainLayout from "../../../components/layout/MainLayout";
-import RecruiterRightSide3 from './RecruiterRightSide3';
+import RecruiterRightSidebarWithoutJobPost from './RecruiterRightSidebarWithoutJobPost';
 import { useSelector } from "react-redux";
 import axios from "axios";
 
-const UniversityView = () => {
+const RecruiterView = () => {
   const navigate = useNavigate();
   const [profileImage, setProfileImage] = useState(
     "/src/assets/dummyProfile1.jpg"
@@ -434,20 +434,20 @@ const UniversityView = () => {
 
   return (
     <MainLayout>
-      <div className="flex justify-center bg-gray-100 min-h-screen px-2 lg:px-8">
+      <div className="flex justify-center min-h-screen px-2 bg-gray-100 lg:px-8">
         {/* Left Spacer */}
-        <div className="hidden lg:block flex-grow"></div>
+        <div className="flex-grow hidden lg:block"></div>
 
         {/* Main Content */}
         <section className="bg-white rounded-[10px] p-4 sm:p-6 shadow-lg relative overflow-hidden mx-auto mt-2 w-full max-w-[729px] min-h-[1000px]">
           {/* Profile Section */}
           <div className="flex flex-col items-center mb-8">
             <div className="relative">
-              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden border-4 border-gray-200">
+              <div className="w-20 h-20 overflow-hidden border-4 border-gray-200 rounded-full sm:w-24 sm:h-24">
                 <img
                   src={universityDetail?.profile_pic || profileImage}
                   alt="Profile"
-                  className="w-full h-full object-cover"
+                  className="object-cover w-full h-full"
                 />
               </div>
               {/* Camera Icon */}
@@ -472,10 +472,10 @@ const UniversityView = () => {
                 className="hidden"
               />
             </div>
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mt-4">
+            <h1 className="mt-4 text-xl font-bold text-gray-900 sm:text-2xl">
               {universityDetail?.college_name || "University Name"}
             </h1>
-            <p className="text-gray-500 text-sm">
+            <p className="text-sm text-gray-500">
               @{universityDetail?.email_id || "email"}
             </p>
           </div>
@@ -484,16 +484,16 @@ const UniversityView = () => {
           <div className="space-y-6">
             {/* About Section */}
             <div>
-              <div className="flex justify-between items-center mb-2">
+              <div className="flex items-center justify-between mb-2">
                 <h3 className="font-semibold text-gray-900">About</h3>
                 <button
-                  className="text-sm text-blue-600 hover:text-blue-800 transition-colors"
+                  className="text-sm text-blue-600 transition-colors hover:text-blue-800"
                   onClick={() => handleEditSection("About")}
                 >
                   View/Edit
                 </button>
               </div>
-              <div className="text-gray-700 text-sm leading-relaxed">
+              <div className="text-sm leading-relaxed text-gray-700">
                 {universityDetail?.about ||
                   "82 years of Tradition of excellence in Engineering.."}
               </div>
@@ -502,12 +502,12 @@ const UniversityView = () => {
 
             {/* Contact Information Section */}
             <div>
-              <div className="flex justify-between items-center mb-2">
+              <div className="flex items-center justify-between mb-2">
                 <h3 className="font-semibold text-gray-900">
                   Contact Information
                 </h3>
                 <button
-                  className="text-sm text-blue-600 hover:text-blue-800 transition-colors"
+                  className="text-sm text-blue-600 transition-colors hover:text-blue-800"
                   onClick={() => handleEditSection("Contact Information")}
                 >
                   Edit Info
@@ -529,10 +529,10 @@ const UniversityView = () => {
 
             {/* Hiring Preferences Section */}
 <div>
-  <div className="flex justify-between items-center mb-2">
+  <div className="flex items-center justify-between mb-2">
     <h3 className="font-semibold text-gray-900">Hiring Preferences</h3>
     <button
-      className="text-sm text-blue-600 hover:text-blue-800 transition-colors"
+      className="text-sm text-blue-600 transition-colors hover:text-blue-800"
       onClick={() => handleEditSection("Hiring Preferences")}
     >
       Edit/Add
@@ -556,10 +556,10 @@ const UniversityView = () => {
 
 {/* Access & Permissions Section */}
 <div>
-  <div className="flex justify-between items-center mb-2">
+  <div className="flex items-center justify-between mb-2">
     <h3 className="font-semibold text-gray-900">Access & Permissions</h3>
     <button
-      className="text-sm text-blue-600 hover:text-blue-800 transition-colors"
+      className="text-sm text-blue-600 transition-colors hover:text-blue-800"
       onClick={() => handleEditSection("Access & Permissions")}
     >
       Edit/Add
@@ -573,10 +573,10 @@ const UniversityView = () => {
 
 {/* Languages You Know Section */}
 <div>
-  <div className="flex justify-between items-center mb-2">
+  <div className="flex items-center justify-between mb-2">
     <h3 className="font-semibold text-gray-900">Languages you know</h3>
     <button
-      className="text-sm text-blue-600 hover:text-blue-800 transition-colors"
+      className="text-sm text-blue-600 transition-colors hover:text-blue-800"
       onClick={() => handleEditSection("Languages")}
     >
       Edit/Add
@@ -602,17 +602,17 @@ const UniversityView = () => {
 
             {/* Authentication Section */}
             <div>
-              <div className="flex justify-between items-center mb-2">
+              <div className="flex items-center justify-between mb-2">
                 <h3 className="font-semibold text-gray-900">Authentication</h3>
                 <div className="flex items-center gap-2">
                   <button
-                    className="text-sm text-blue-600 hover:text-blue-800 transition-colors"
+                    className="text-sm text-blue-600 transition-colors hover:text-blue-800"
                     onClick={handleGetVerified}
                   >
                     Get Verified
                   </button>
-                  <div className="w-4 h-4 bg-gray-300 rounded-full flex items-center justify-center cursor-pointer">
-                    <span className="text-xs text-gray-600 font-bold">i</span>
+                  <div className="flex items-center justify-center w-4 h-4 bg-gray-300 rounded-full cursor-pointer">
+                    <span className="text-xs font-bold text-gray-600">i</span>
                   </div>
                 </div>
               </div>
@@ -654,14 +654,14 @@ const UniversityView = () => {
 
         {/* Profile Card */}
         <aside className="hidden lg:block w-full max-w-[350px] p-2 sticky top-4 h-fit">
-        <RecruiterRightSide3 />
+        <RecruiterRightSidebarWithoutJobPost />
         </aside>
 
         {/* Right Spacer */}
-        <div className="hidden lg:block flex-grow"></div>
+        <div className="flex-grow hidden lg:block"></div>
       </div>
     </MainLayout>
   );
 };
 
-export default UniversityView;
+export default RecruiterView;

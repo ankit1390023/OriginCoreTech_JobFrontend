@@ -1,5 +1,5 @@
 import axios from "axios";
-const BASE_URL = import.meta.env.VITE_BASE_URL || "http://212.95.51.83:5000/api";
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 // API service functions for user details
 export const userDetailsApi = {

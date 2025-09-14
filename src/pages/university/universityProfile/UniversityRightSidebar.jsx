@@ -38,7 +38,7 @@ const courses = [
   },
 ];
 
-export default function RecruiterRightSide1() {
+export default function Side1() {
   const [followersCount, setFollowersCount] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
   const [loading, setLoading] = useState(true);

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button, Input } from "../../../components/ui";
 import MainLayout from "../../../components/layout/MainLayout";
-import FeedRightSide3 from "../feed/FeedRightSide3";
+import FeedRightSidebarForMyApplication from "../feed/FeedRightSidebarForMyApplication";
 
 const Myapplication2 = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -211,7 +211,7 @@ const Myapplication2 = () => {
 
         {/* Profile Card */}
         <aside className="hidden lg:block w-full max-w-[350px] p-2 sticky top-4 h-fit">
-          <FeedRightSide3 />
+          <FeedRightSidebarForMyApplication />
         </aside>
         {/* Right Spacer */}
         <div className="hidden lg:block flex-grow"></div>

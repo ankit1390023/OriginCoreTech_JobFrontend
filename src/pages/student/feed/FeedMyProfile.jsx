@@ -5,7 +5,7 @@ import { FaEllipsisH } from "react-icons/fa";
 import { FiHeart, FiMessageSquare, FiSend } from "react-icons/fi";
 import { BsBookmarkFill } from "react-icons/bs";
 import MainLayout from "../../../components/layout/MainLayout";
-import FeedRightProfile from "./FeedRightProfile";
+import FeedRightSidebar from "./FeedRightSidebar";
 import { useUserDetailsApi } from "../../../hooks/useUserDetailsApi";
 import useFeedApi from "../../../hooks/useFeedApi";
 import { formatTimeAgo, formatNumber, getImageUrl } from "../../../../utils";
@@ -502,7 +502,7 @@ const FeedMyProfile = () => {
         </section>
         {/* Profile Card */}
         <aside className="hidden lg:block w-full max-w-[350px] p-2 sticky top-4 h-fit">
-          <FeedRightProfile />
+          <FeedRightSidebar />
         </aside>
         {/* Right Spacer */}
         <div className="flex-grow hidden lg:block"></div>

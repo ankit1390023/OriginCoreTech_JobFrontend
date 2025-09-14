@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { Input, Select, Button, Badge } from "../../../components/ui";
 import MainLayout from "../../../components/layout/MainLayout";
-import FeedRightSide1 from "../feed/FeedRightSide1";
+import FeedRightSidebar from "../feed/FeedRightSidebar";
 import { IoIosArrowBack } from "react-icons/io";
 import { useMasterData } from "../../../hooks/master/useMasterData";
 import { userDetailsApi } from "../../../api/userDetailsApi";
@@ -1157,7 +1157,7 @@ const FeedYourExperience = () => {
 
         {/* Profile Card */}
         <aside className="hidden lg:block w-full max-w-[350px] p-2 sticky top-4 h-fit">
-          <FeedRightSide1 />
+          <FeedRightSidebar />
         </aside>
         {/* Right Spacer */}
         <div className="flex-grow hidden lg:block"></div>

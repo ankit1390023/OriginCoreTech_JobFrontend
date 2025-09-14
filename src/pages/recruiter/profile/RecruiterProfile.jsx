@@ -14,10 +14,12 @@ import {
   Shield,
 } from 'lucide-react';
 import { HiOutlineEye } from 'react-icons/hi';
-import RecruiterRightSide3 from './RecruiterRightSide3';   
+import RecruiterRightSidebarWithoutJobPost from './RecruiterRightSidebarWithoutJobPost';   
 import MainLayout from '../../../components/layout/MainLayout';
-import { useDispatch } from 'react-redux';
+import { useDispatch,useSelector } from 'react-redux';
 import { logout } from '../../../redux/feature/authSlice';
+import { getImageUrl } from '../../../../utils';
+import dummyProfile3 from "../../../assets/dummyProfile3.jpg"
 
 
 const  RecruiterProfile = () => {
@@ -28,6 +30,7 @@ const  RecruiterProfile = () => {
   const toggleDropdown = (id) => {
     setActiveDropdown(activeDropdown === id ? null : id);
   };
+  const {user,token}= useSelector((state)=> state.auth);
 
   const profileOptions = [
     {
@@ -36,7 +39,7 @@ const  RecruiterProfile = () => {
       title: 'My Profile',
       subtitle: 'Make changes to your profile',
       hasChevron: true,
-      action: () => navigate('/feed-my-profile'),
+      action: () => navigate('/recruiter-profile-edit'),
     },
     {
       id: 'applications',
@@ -51,7 +54,7 @@ const  RecruiterProfile = () => {
       icon: <Shield size={20} />,
       title: 'Terms & Conditions',
       hasChevron: true,
-      action: () => navigate('/feed-terms'),
+      action: () => navigate('/recruiter-terms'),
     },
     {
       id: 'help',
@@ -98,19 +101,19 @@ const  RecruiterProfile = () => {
           <div className="bg-[#002B6B] text-white p-3 sm:p-4 lg:p-4 flex flex-col sm:flex-row sm:items-center justify-between rounded-[5px] gap-3 sm:gap-4">
             <div className="flex items-center flex-1 min-w-0 gap-3 sm:gap-4">
               <img
-                src="https://i.pravatar.cc/100?img=1"
+                src={user.user_profile_pic ? getImageUrl(user.user_profile_pic) : dummyProfile3}
                 alt="avatar"
                 className="flex-shrink-0 object-cover w-12 h-12 rounded-md sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-18 lg:h-18"
               />
               <div className="flex-1 min-w-0">
-                <h1 className="text-base font-semibold truncate sm:text-lg md:text-xl lg:text-2xl">Aman Gupta</h1>
-                <p className="text-xs text-gray-200 truncate sm:text-sm">@amangupta09</p>
-                <p className="text-xs text-gray-200 truncate sm:text-sm">Visual Designer</p>
+                <h1 className="text-base font-semibold truncate sm:text-lg md:text-xl lg:text-2xl">{user.first_name + " " + user.last_name}</h1>
+                <p className="text-xs text-gray-200 truncate sm:text-sm">{user.email}</p>
+                <p className="text-xs text-gray-200 truncate sm:text-sm">{user.user_role}</p>
               </div>
             </div>
             <button
               className="border border-white rounded-full px-3 py-2 sm:px-4 sm:py-2.5 text-xs sm:text-sm text-[#002B6B] transition-colors flex items-center gap-1.5 sm:gap-2 self-start sm:self-auto whitespace-nowrap min-h-[44px] sm:min-h-[40px]"
-              onClick={() => navigate('/feed-my-profile')}
+              onClick={() => navigate('/recruiter-profile-edit')}
             >
               <HiOutlineEye size={14} className="sm:w-4 sm:h-4" />
               <span className="hidden xs:inline">Profile</span>
@@ -213,7 +216,7 @@ const  RecruiterProfile = () => {
 
         {/* Profile Card */}
         <aside className="hidden lg:block w-full max-w-[350px] p-2 sticky top-4 h-fit">
-          <RecruiterRightSide3 />
+          <RecruiterRightSidebarWithoutJobPost />
         </aside>
         {/* Right Spacer */}
         <div className="flex-grow hidden lg:block"></div>

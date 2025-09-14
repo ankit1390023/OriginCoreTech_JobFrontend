@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import MainLayout from "../../../components/layout/MainLayout";
-import RecruiterRightProfile from "./RecruiterRightProfile";
+import RecruiterRightSidebar from "./RecruiterRightSidebar";
 import { CiSearch } from "react-icons/ci";
 
 const Approvals = () => {
@@ -165,7 +165,7 @@ const Approvals = () => {
       </div>
     </div>
     <aside className="hidden lg:block w-[425px] max-w-[425px] p-2 sticky top-4 h-fit ml-4">
-    <RecruiterRightProfile />
+    <RecruiterRightSidebar />
 </aside>
 {/* Right Spacer */}
 <div className="hidden lg:block flex-grow "></div>

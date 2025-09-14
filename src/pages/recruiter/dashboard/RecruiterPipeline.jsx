@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import MainLayout from "../../../components/layout/MainLayout";
-import RecruiterRightProfile from "./RecruiterRightProfile";
+import RecruiterRightSidebar from "./RecruiterRightSidebar";
 import { CiSearch } from "react-icons/ci";
-import { jobPostApi } from "../../../api/jobPostApi";
+import { recruiterApi } from "../../../api/recuiterApi";
 import { useSelector } from "react-redux";
 import { useNavigate, Navigate } from "react-router-dom";
 
@@ -28,7 +28,7 @@ const PipelineCandidates = () => {
         setLoading(true);
         setError(null);
         
-        const response = await jobPostApi.getPipelineCandidates(token);
+        const response = await recruiterApi.getPipelineCandidates(token);
         
         // Check if response contains pipeline data
         if (response && response.pipeline) {
@@ -230,7 +230,7 @@ const PipelineCandidates = () => {
         </div>
 
         <aside className="hidden lg:block w-[425px] max-w-[425px] p-2 sticky top-4 h-fit ml-4">
-          <RecruiterRightProfile />
+          <RecruiterRightSidebar />
         </aside>
         <div className="flex-grow hidden lg:block"></div>
       </div>

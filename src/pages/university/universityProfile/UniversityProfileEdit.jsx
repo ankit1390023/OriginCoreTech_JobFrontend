@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaCamera, FaSave } from "react-icons/fa";
-import MainLayout from "../../components/layout/MainLayout";
-import FeedRightProfile from "../student/feed/FeedRightProfile";
-import dummyProfile3 from "../../assets/dummyProfile3.jpg";
-import { useMasterData } from "../../hooks/master/useMasterData";
-import useUploadImageApi from "../../hooks/useUploadImageApi";
+import MainLayout from "../../../components/layout/MainLayout";
+import FeedRightSidebar from "../../student/feed/FeedRightSidebar";
+import dummyProfile3 from "../../../assets/dummyProfile3.jpg";
+import { useMasterData } from "../../../hooks/master/useMasterData";
+import useUploadImageApi from "../../../hooks/useUploadImageApi";
 import { useSelector } from "react-redux";
 import Select from 'react-select';
-import { getImageUrl } from "../../../utils";
+import { getImageUrl } from "../../../../utils";
 import { Loader2 } from 'lucide-react'; // Import a loading spinner
-import { universityApi } from "../../api/university/universityApi";
+import { universityApi } from "../../../api/university/universityApi";
 
 const UniversityProfileEdit = () => {
     const navigate = useNavigate();
@@ -83,9 +83,9 @@ const UniversityProfileEdit = () => {
     if (loading) {
         return (
             <MainLayout>
-                <div className="flex justify-center items-center min-h-screen">
+                <div className="flex items-center justify-center min-h-screen">
                     <div className="flex flex-col items-center gap-4">
-                        <Loader2 className="h-12 w-12 animate-spin text-blue-500" />
+                        <Loader2 className="w-12 h-12 text-blue-500 animate-spin" />
                         <p className="text-gray-600">Loading your profile...</p>
                     </div>
                 </div>
@@ -189,12 +189,12 @@ const UniversityProfileEdit = () => {
 
     return (
         <MainLayout>
-            <div className="flex flex-col p-4 lg:flex-row gap-6 max-w-7xl mx-auto w-full">
+            <div className="flex flex-col w-full gap-6 p-4 mx-auto lg:flex-row max-w-7xl">
                 {/* Main Content */}
                 <div className="w-full lg:w-[70%] shadow-md space-y-6">
                     <div>
                         {/* Profile Header */}
-                        <div className="bg-white rounded-lg shadow-sm p-6">
+                        <div className="p-6 bg-white rounded-lg shadow-sm">
                             <div className="flex flex-col items-center">
                                 {/* Profile Image */}
                                 <div className="relative group">
@@ -205,7 +205,7 @@ const UniversityProfileEdit = () => {
                                             getImageUrl(profile?.profile_pic) ||
                                             dummyProfile3
                                         }
-                                        className="w-24 h-24 rounded-full object-cover border-2 border-white shadow-sm"
+                                        className="object-cover w-24 h-24 border-2 border-white rounded-full shadow-sm"
                                     />
                                     <label className="absolute bottom-0 right-0 bg-blue-600 text-white p-1.5 rounded-full text-xs cursor-pointer hover:bg-blue-700">
                                         <FaCamera />
@@ -226,7 +226,7 @@ const UniversityProfileEdit = () => {
 
 
 
-                        <div className="bg-white rounded-lg shadow-sm p-6 space-y-6">
+                        <div className="p-6 space-y-6 bg-white rounded-lg shadow-sm">
                             {/* About Section */}
                             <div>
                                 <div className="flex items-center justify-between mb-2">
@@ -317,13 +317,13 @@ const UniversityProfileEdit = () => {
                                         <div className="relative">
                                             {formValues.university_logo_url ? (
                                                 <img
-                                                    className="h-12 w-12 rounded-full object-cover border border-gray-200"
+                                                    className="object-cover w-12 h-12 border border-gray-200 rounded-full"
                                                     src={formValues.university_logo_url.startsWith('http') ? formValues.university_logo_url : getImageUrl(formValues.university_logo_url)}
                                                     alt="Company logo"
                                                 />
                                             ) : (
-                                                <div className="h-12 w-12 rounded-full bg-gray-200 flex items-center justify-center">
-                                                    <span className="text-gray-500 text-xs">No logo</span>
+                                                <div className="flex items-center justify-center w-12 h-12 bg-gray-200 rounded-full">
+                                                    <span className="text-xs text-gray-500">No logo</span>
                                                 </div>
                                             )}
                                             <label className="absolute -bottom-1 -right-1 bg-blue-600 text-white p-1.5 rounded-full text-xs cursor-pointer hover:bg-blue-700">
@@ -694,7 +694,7 @@ const UniversityProfileEdit = () => {
 
                 {/* Right Sidebar */}
                 <div className="w-full lg:w-[30%]">
-                    <FeedRightProfile />
+                    <FeedRightSidebar />
                 </div>
 
             </div>

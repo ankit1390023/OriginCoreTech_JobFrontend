@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import MainLayout from "../../../components/layout/MainLayout.jsx";
 import profile from "../../../assets/profile.png";
-import FeedRightProfile from "../feed/FeedRightProfile";
+import FeedRightSidebar from "../feed/FeedRightSidebar";
 import { BiCommentDetail, BiLike } from "react-icons/bi";
 import { FaEllipsisH } from "react-icons/fa";
 import { LiaShareSolid } from "react-icons/lia";
@@ -482,7 +482,7 @@ export default function FeedPostDetail() {
 
         {/* Right sidebar */}
         <aside className="hidden xl:block w-full max-w-[350px] p-2 sticky top-4 h-fit">
-          <FeedRightProfile></FeedRightProfile>
+          <FeedRightSidebar></FeedRightSidebar>
         </aside>
 
         {/* Right spacer */}

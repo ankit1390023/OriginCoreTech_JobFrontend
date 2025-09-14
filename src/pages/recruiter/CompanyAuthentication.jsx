@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button, Input, Label } from "../../components/ui";
 import MainLayout from "../../components/layout/MainLayout";
-import RecruiterRightSide2 from "../recruiter/profile/RecruiterRightSide2";
+import RecruiterRightSidebarWithJobPost from "../recruiter/profile/RecruiterRightSidebarWithJobPost";
 
 const CompanyAuthentication = () => {
     const [phoneNumber, setPhoneNumber] = useState("");
@@ -10,16 +10,16 @@ const CompanyAuthentication = () => {
 
     return (
         <MainLayout>
-            <div className="flex justify-center bg-gray-100 min-h-screen px-2 lg:px-8 items-start">
+            <div className="flex items-start justify-center min-h-screen px-2 bg-gray-100 lg:px-8">
                 {/* Left Spacer */}
-                <div className="hidden lg:block flex-grow "></div>
+                <div className="flex-grow hidden lg:block "></div>
 
                 <section className="bg-white rounded-[10px] p-5 shadow-lg mt-2 w-[780px] max-h-[1080px] overflow-y-auto opacity-100 gap-[10px]">
                     {/* Title */}
-                    <h1 className="text-2xl font-bold text-black mb-6">Authentication</h1>
+                    <h1 className="mb-6 text-2xl font-bold text-black">Authentication</h1>
 
                     {/* Phone Number Verification Section */}
-                    <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 mb-4">
+                    <div className="p-4 mb-4 border border-orange-200 rounded-lg bg-orange-50">
                         <div className="flex items-center gap-2 mb-3">
                             <Label
                                 htmlFor="phoneNumber"
@@ -40,7 +40,7 @@ const CompanyAuthentication = () => {
                             <Button
                                 variant="secondary"
                                 size="small"
-                                className="bg-orange-500  h-9 hover:bg-orange-600 text-white px-4"
+                                className="px-4 text-white bg-orange-500 h-9 hover:bg-orange-600"
                             >
                                 Send OTP
                             </Button>
@@ -66,7 +66,7 @@ const CompanyAuthentication = () => {
                             Verify Phone number
                         </Button>
 
-                        <p className="text-xs text-gray-600 text-center">
+                        <p className="text-xs text-center text-gray-600">
                             Resend code in 60 seconds
                         </p>
                     </div>
@@ -74,10 +74,10 @@ const CompanyAuthentication = () => {
                     
 
                     {/* Title */}
-                    <h1 className="text-2xl font-bold text-black mb-6">GST Authentication</h1>
+                    <h1 className="mb-6 text-2xl font-bold text-black">GST Authentication</h1>
 
                     {/* Phone Number Verification Section */}
-                    <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 mb-4">
+                    <div className="p-4 mb-4 border border-orange-200 rounded-lg bg-orange-50">
                         <div className="flex items-center gap-2 mb-3">
                             <Label
                                 htmlFor="gstNumber"
@@ -96,7 +96,7 @@ const CompanyAuthentication = () => {
                             <Button
                                 variant="secondary"
                                 size="small"
-                                className="bg-orange-500  h-9 hover:bg-orange-600 text-white px-4"
+                                className="px-4 text-white bg-orange-500 h-9 hover:bg-orange-600"
                             >
                                 Verify
                             </Button>
@@ -107,11 +107,11 @@ const CompanyAuthentication = () => {
 
                 {/* Profile Card */}
                 <aside className="hidden lg:block w-full max-w-[350px] p-2 sticky top-4 h-fit ml-4">
-                    <RecruiterRightSide2 />
+                    <RecruiterRightSidebarWithJobPost />
                 </aside>
 
                 {/* Right Spacer */}
-                <div className="hidden lg:block flex-grow "></div>
+                <div className="flex-grow hidden lg:block "></div>
             </div>
         </MainLayout>
     );

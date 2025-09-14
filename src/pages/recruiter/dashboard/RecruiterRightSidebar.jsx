@@ -4,7 +4,7 @@ import dummyProfile1 from "../../../assets/dummyProfile1.jpg";
 import dummyProfile2 from "../../../assets/dummyProfile2.jpg";
 import dummyProfile3 from "../../../assets/dummyProfile3.jpg";
 
-const RecruiterRightProfile = () => {
+const RecruiterRightSidebar = () => {
     const navigate = useNavigate();
 
     const profileVisitors = [
@@ -88,4 +88,4 @@ const RecruiterRightProfile = () => {
     );
 };
 
-export default RecruiterRightProfile;
+export default RecruiterRightSidebar;

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Search, Eye } from "lucide-react";
 import MainLayout from "../../../components/layout/MainLayout";
-import RecruiterRightProfile from "./RecruiterRightProfile";
+import RecruiterRightSidebar from "./RecruiterRightSidebar";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useSelector } from "react-redux";
@@ -222,7 +222,7 @@ const TotalJobPosts = () => {
         </div>
 
         <aside className="hidden lg:block w-[425px] max-w-[425px] p-2 sticky top-4 h-fit ml-4">
-          <RecruiterRightProfile />
+          <RecruiterRightSidebar />
         </aside>
 
         {/* Right Spacer */}

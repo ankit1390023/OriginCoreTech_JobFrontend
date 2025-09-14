@@ -2,8 +2,8 @@ import { useSelector } from "react-redux";
 import cover from "../../../assets/cover.png";
 import dummyProfile3 from "../../../assets/dummyProfile3.jpg";
 import { useEffect, useState } from "react";
-import feedApi from "../../../api/feedApi";
-import { userDetailsApi } from "../../../api/userDetailsApi";
+import feedApi from "../../../api/feedApi.js";
+import { userDetailsApi } from "../../../api/userDetailsApi.js";
 import { getImageUrl } from "../../../../utils.js";
 
 import { FaEye } from "react-icons/fa";
@@ -39,7 +39,7 @@ const courses = [
   },
 ];
 
-export default function FeedRightSide1() {
+export default function FeedRightSidebarWithProfileCourse() {
 
 
   console.log("qwertyuiwertyuisdfghjkldfghjk");

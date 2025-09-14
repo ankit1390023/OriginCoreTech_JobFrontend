@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import MainLayout from "../../../components/layout/MainLayout";
-import RecruiterRightProfile from "./RecruiterRightProfile";    
-import { jobPostApi } from "../../../api/jobPostApi";
+import RecruiterRightSidebar from "./RecruiterRightSidebar";    
+import { recruiterApi } from "../../../api/recuiterApi";
 import { useSelector } from "react-redux";
 import { CiSearch } from "react-icons/ci";
 
-const UpcomingInterviews = () => {
+const RecruiterUpcomingInterviews = () => {
   const [activeTab, setActiveTab] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
   const [interviews, setInterviews] = useState([]);
@@ -20,7 +20,7 @@ const UpcomingInterviews = () => {
         try {
             setLoading(true);
 
-            const response = await jobPostApi.getAllUpcomingInterviews(token);
+            const response = await recruiterApi.getAllUpcomingInterviews(token);
             console.log(response);
             
             // Check if response has data property
@@ -54,7 +54,7 @@ const UpcomingInterviews = () => {
     };
 
     fetchInterviews();
-  }, []);
+  }, [token]);
 
   const isSameDay = (d1, d2) =>
     d1.getFullYear() === d2.getFullYear() &&
@@ -193,7 +193,7 @@ const UpcomingInterviews = () => {
       </div>
     </div>
     <aside className="hidden lg:block w-[425px] max-w-[425px] p-2 sticky top-4 h-fit ml-4">
-    <RecruiterRightProfile />
+    <RecruiterRightSidebar />
 </aside>
 {/* Right Spacer */}
 <div className="flex-grow hidden lg:block "></div>
@@ -202,4 +202,4 @@ const UpcomingInterviews = () => {
   );
 };
 
-export default UpcomingInterviews;
+export default RecruiterUpcomingInterviews;

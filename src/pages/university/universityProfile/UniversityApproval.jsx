@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import MainLayout from "../../../components/layout/MainLayout";
-import UniversityRightSide1 from "./UniversityRightSide1";
+import UniversityRightSidebar from "./UniversityRightSidebar";
 
 const Approvals = () => {
   const [activeTab, setActiveTab] = useState("All");
@@ -165,7 +165,7 @@ const Approvals = () => {
       </div>
     </div>
     <aside className="hidden lg:block w-[425px] max-w-[425px] p-2 sticky top-4 h-fit ml-4">
-     <UniversityRightSide1 />
+     <UniversityRightSidebar />
 </aside>
 {/* Right Spacer */}
 <div className="hidden lg:block flex-grow "></div>

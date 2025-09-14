@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Search } from "lucide-react";
 import { Link, useNavigate, useParams, useLocation } from "react-router-dom";
 import MainLayout from "../../../components/layout/MainLayout";
-import RecruiterRightProfile from "./RecruiterRightProfile";
+import RecruiterRightSidebar from "./RecruiterRightSidebar";
 import { useApplications } from "../../../hooks/useApplications";
 import { useUpdateApplicationStatus } from "../../../hooks/useApplications"; 
 
@@ -198,7 +198,7 @@ const RecruiterApplication = () => {
         </div>
 
         <aside className="hidden lg:block w-[425px] max-w-[425px] p-2 sticky top-4 h-fit ml-4">
-          <RecruiterRightProfile />
+          <RecruiterRightSidebar />
         </aside>
         <div className="flex-grow hidden lg:block "></div>
       </div>

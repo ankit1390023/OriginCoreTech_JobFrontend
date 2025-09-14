@@ -2,7 +2,6 @@ import axios from "axios";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL; // replace with your actual base url
 
-// Reusable API function
 // Send OTP
 export const sendOtp = async (phoneNumber, token) => {
   try {

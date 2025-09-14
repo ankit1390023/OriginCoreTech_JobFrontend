@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { Input, RadioGroup, Textarea, Button } from "../../../components/ui";
 import MainLayout from "../../../components/layout/MainLayout";
-import UniversityRightSide1 from "./UniversityRightSide1";
+import UniversityRightSidebar from "./UniversityRightSidebar";
 import { ticketApi } from "../../../api/ticketApi";
 
 const PRIORITY_OPTIONS = [
@@ -137,7 +137,7 @@ const UniversityTicket = () => {
         </section>
         {/* Profile Card */}
         <aside className="hidden lg:block w-full max-w-[350px] p-2 sticky top-4 h-fit">
-          <UniversityRightSide1 />
+          <UniversityRightSidebar />
         </aside>
         {/* Right Spacer */}
         <div className="flex-grow hidden lg:block"></div>

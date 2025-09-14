@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { Input, RadioGroup, Textarea, Button } from "../../../components/ui";
 import MainLayout from "../../../components/layout/MainLayout";
-import FeedRightProfile from "../feed/FeedRightProfile";
+import FeedRightSidebar from "../feed/FeedRightSidebar";
 import { ticketApi } from "../../../api/ticketApi";
 
 const PRIORITY_OPTIONS = [
@@ -135,7 +135,7 @@ const FeedTicket = () => {
         </section>
         {/* Profile Card */}
         <aside className="hidden lg:block w-full max-w-[350px] p-2 sticky top-4 h-fit">
-          <FeedRightProfile />
+          <FeedRightSidebar />
         </aside>
         {/* Right Spacer */}
         <div className="flex-grow hidden lg:block"></div>

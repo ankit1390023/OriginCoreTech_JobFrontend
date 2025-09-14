@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import MainLayout from "../../../components/layout/MainLayout";
-import UniversityRightSide1 from "./UniversityRightSide1";  
+import UniversityRightSidebar from "./UniversityRightSidebar";  
 
 const PaymentPage = () => {
   const [method, setMethod] = useState("card");
@@ -133,7 +133,7 @@ const PaymentPage = () => {
     </div>
       {/* Profile Card */}
       <aside className="hidden lg:block w-full max-w-[350px] p-2 sticky top-4 h-fit">
-                        <UniversityRightSide1 />
+                        <UniversityRightSidebar />
                     </aside>
                     {/* Right Spacer */}
                     <div className="hidden lg:block flex-grow "></div>

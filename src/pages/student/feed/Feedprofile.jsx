@@ -14,7 +14,7 @@ import {
   Shield,
 } from "lucide-react";
 import { HiOutlineEye } from "react-icons/hi";
-import FeedRightProfile from "../feed/FeedRightProfile";
+import FeedRightSidebar from "../feed/FeedRightSidebar";
 import MainLayout from "../../../components/layout/MainLayout";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../../redux/feature/authSlice";
@@ -204,7 +204,7 @@ const Feedprofile = () => {
             </div>
           </section>
           <aside className="hidden lg:block w-full max-w-[350px] p-2 sticky top-4 h-fit">
-            <FeedRightProfile />
+            <FeedRightSidebar />
           </aside>
           <div className="flex-grow hidden lg:block"></div>
         </div>
@@ -352,7 +352,7 @@ const Feedprofile = () => {
 
         {/* Profile Card */}
         <aside className="hidden lg:block w-full max-w-[350px] p-2 sticky top-4 h-fit">
-          <FeedRightProfile />
+          <FeedRightSidebar />
         </aside>
         {/* Right Spacer */}
         <div className="flex-grow hidden lg:block"></div>

@@ -3,12 +3,12 @@ import { useSelector } from "react-redux";
 import { FaEllipsisH } from "react-icons/fa";
 import { FiHeart, FiMessageSquare, FiSend } from "react-icons/fi";
 import { BsBookmarkFill } from "react-icons/bs";
-import MainLayout from "../../components/layout/MainLayout";
-import FeedRightProfile from "../student/feed/FeedRightProfile";
-import { formatTimeAgo, formatNumber, getImageUrl } from "../../../utils";
-import dummyProfile3 from "../../assets/dummyProfile3.jpg";
-import { universityApi } from "../../api/university/universityApi";
-import useFeedApi from "../../hooks/useFeedApi";
+import MainLayout from "../../../components/layout/MainLayout";
+import FeedRightSidebar from "../../student/feed/FeedRightSidebar";
+import { formatTimeAgo, formatNumber, getImageUrl } from "../../../../utils";
+import dummyProfile3 from "../../../assets/dummyProfile3.jpg";
+import { universityApi } from "../../../api/university/universityApi";
+import useFeedApi from "../../../hooks/useFeedApi";
 
 
 const UniversityPublicProfile = () => {
@@ -245,7 +245,7 @@ const UniversityPublicProfile = () => {
                    </section>
                    {/* Profile Card */}
                    <aside className="hidden lg:block w-full max-w-[350px] p-2 sticky top-4 h-fit">
-                     <FeedRightProfile />
+                     <FeedRightSidebar />
                    </aside>
                    {/* Right Spacer */}
                    <div className="flex-grow hidden lg:block"></div>

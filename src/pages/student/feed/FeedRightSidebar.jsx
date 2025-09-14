@@ -5,7 +5,7 @@ import dummyProfile1 from "../../../assets/dummyProfile1.jpg";
 import dummyProfile2 from "../../../assets/dummyProfile2.jpg";
 import { FaCamera } from "react-icons/fa6";
 import { useEffect, useState } from "react";
-import feedApi from "../../../api/feedApi";
+import feedApi from "../../../api/feedApi.js";
 import { getImageUrl } from "../../../../utils.js";
 
  
@@ -21,7 +21,7 @@ const visitors = [
   { name: "Phoenix Baker", img: dummyProfile2 },
 ];
 
-export default function FeedRightProfile() {
+export default function FeedRightSidebar() {
   
   const [followers, setFollowers] = useState([]);
   const [followersCount, setFollowersCount] = useState(0);

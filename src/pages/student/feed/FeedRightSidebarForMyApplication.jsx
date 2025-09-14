@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import feedApi from "../../../api/feedApi";
 import { userDetailsApi } from "../../../api/userDetailsApi";
 
-export default function FeedRightSide3() {
+export default function FeedRightSidebarForMyApplication() {
   const [followersCount, setFollowersCount] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
   const [loading, setLoading] = useState(true);

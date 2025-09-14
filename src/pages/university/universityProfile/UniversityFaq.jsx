@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Button, Badge } from "../../../components/ui";
 import MainLayout from "../../../components/layout/MainLayout";
-import UniversityRightSide1 from "./UniversityRightSide1";
+import UniversityRightSidebar from "./UniversityRightSidebar";
 import { faqApi } from "../../../api/faqApi";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -136,7 +136,7 @@ const FAQSection = () => {
         </div>
         {/* Profile Card */}
         <aside className="hidden lg:block w-full max-w-[350px] p-2 sticky top-4 h-fit">
-          <UniversityRightSide1 />
+          <UniversityRightSidebar />
         </aside>
         {/* Right Spacer */}
         <div className="flex-grow hidden lg:block"></div>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Badge } from '../../../components/ui';
 import MainLayout from '../../../components/layout/MainLayout';
-import FeedRightProfile from './FeedRightProfile';
+import FeedRightSidebar from './FeedRightSidebar';
 
 const FeedDashBoard = () => {
     const [activeFilter, setActiveFilter] = useState('All');
@@ -130,7 +130,7 @@ const FeedDashBoard = () => {
         
          {/* Profile Card */}
     <aside className="hidden lg:block w-full max-w-[350px] p-2 sticky top-4 h-fit ml-4">
-                    <FeedRightProfile />
+                    <FeedRightSidebar />
                 </aside>
                 {/* Right Spacer */}
                 <div className="hidden lg:block flex-grow "></div>

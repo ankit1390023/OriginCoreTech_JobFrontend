@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Search } from "lucide-react";
 import MainLayout from "../../../components/layout/MainLayout";
-import { jobPostApi } from "../../../api/jobPostApi"; 
+import { recruiterApi } from "../../../api/recuiterApi"; 
 import { useSelector } from "react-redux";
-import RecruiterRightProfile from "./RecruiterRightProfile";
+import RecruiterRightSidebar from "./RecruiterRightSidebar";
 import { useNavigate } from "react-router-dom";
 
 const RecruiterDashboard = () => {
@@ -25,7 +25,7 @@ const RecruiterDashboard = () => {
 
     const fetchDashboardStats = async () => {
       try {
-        const data = await jobPostApi.getDashboardStats(token);
+        const data = await recruiterApi.getDashboardStats(token);
         setDashboardStats(data);
       } catch (error) {
         console.error("Error fetching dashboard stats:", error);
@@ -124,7 +124,7 @@ const RecruiterDashboard = () => {
 
           {/* Right Section */}
           <div className="w-full lg:w-[350px]">
-            <RecruiterRightProfile />
+            <RecruiterRightSidebar />
           </div>
         </div>
 

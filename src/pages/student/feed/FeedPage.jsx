@@ -9,7 +9,7 @@ import { LiaShareSolid } from "react-icons/lia";
 import dummyProfile3 from "../../../assets/dummyProfile3.jpg";
 import Button from "../../../components/ui/Button";
 import Input from "../../../components/ui/Input";
-import FeedRightProfile from "./FeedRightProfile.jsx";
+import FeedRightSidebar from "./FeedRightSidebar.jsx";
 import feedApi from "../../../api/feedApi";
 import uploadImageApi from "../../../api/uploadImageApi";
 import useFeedApi from "../../../hooks/useFeedApi";
@@ -547,7 +547,7 @@ export default function FeedPage() {
 
         {/* Right sidebar - hidden on mobile and tablet, visible on large screens */}
         <aside className="hidden xl:block w-full max-w-[350px] p-2 sticky top-4 h-fit">
-          <FeedRightProfile />
+          <FeedRightSidebar />
         </aside>
 
         {/* Right spacer - hidden on mobile, visible on large screens */}

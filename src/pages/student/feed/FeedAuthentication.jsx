@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button, Input, Label } from "../../../components/ui";
 import MainLayout from "../../../components/layout/MainLayout";
-import FeedRightSide1 from "../feed/FeedRightSide1";
+import FeedRightSidebar from "../feed/FeedRightSidebar";
 import { sendOtp, verifyOtp, updateAadhaarDetails } from "../../../api/authenticationApi"; // <-- import your api file
 //import { updateEmail } from "../../../api/authenticationApi";
 import { useSelector } from "react-redux";
@@ -332,7 +332,7 @@ const FeedAuthentication = () => {
         </section>
         {/* Profile Card */}
         <aside className="hidden lg:block w-full max-w-[350px] p-2 sticky top-4 h-fit ml-4">
-          <FeedRightSide1 />
+          <FeedRightSidebar />
         </aside>
         {/* Right Spacer */}
         <div className="hidden lg:block flex-grow "></div>

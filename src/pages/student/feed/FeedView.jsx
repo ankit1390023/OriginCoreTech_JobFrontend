@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaCamera } from "react-icons/fa";
 import MainLayout from "../../../components/layout/MainLayout";
-import FeedRightProfile from "../feed/FeedRightProfile";
+import FeedRightSidebar from "../feed/FeedRightSidebar";
 import { useSelector, useDispatch } from "react-redux";
 import uploadImageApi from "../../../api/uploadImageApi";
 import { userDetailsApi } from "../../../api/userDetailsApi";
@@ -811,7 +811,7 @@ const getFileNameFromUrl = (url) => {
         </section>
 
         <aside className="hidden lg:block w-full max-w-[350px] p-2 sticky top-4 h-fit">
-          <FeedRightProfile />
+          <FeedRightSidebar />
         </aside>
 
         <div className="flex-grow hidden lg:block"></div>

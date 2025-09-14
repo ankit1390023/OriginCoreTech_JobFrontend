@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Input, Button, Badge } from "../../../components/ui";
 import MainLayout from "../../../components/layout/MainLayout";
-import FeedRightSide1 from "../feed/FeedRightSide1";
+import FeedRightSidebar from "../feed/FeedRightSidebar";
 import { IoIosInformationCircleOutline } from "react-icons/io";
 import { IoIosSearch } from "react-icons/io";
 import { IoIosArrowBack } from "react-icons/io";
@@ -700,7 +700,7 @@ const handleSaveChanges = async () => {
         
         {/* Profile Card */}
         <aside className="hidden lg:block w-full max-w-[350px] p-2 sticky top-4 h-fit">
-          <FeedRightSide1 />
+          <FeedRightSidebar />
         </aside>
         
         {/* Right Spacer */}

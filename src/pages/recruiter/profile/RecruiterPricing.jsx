@@ -1,6 +1,6 @@
 import React from "react";
 import MainLayout from "../../../components/layout/MainLayout";
-import RecruiterRightSide2 from "./RecruiterRightSide2";
+import RecruiterRightSidebarWithJobPost from "./RecruiterRightSidebarWithJobPost";
 
 const PremiumJobs = () => {
   const plans = [
@@ -72,7 +72,7 @@ const PremiumJobs = () => {
     </div>
       {/* Profile Card */}
       <aside className="hidden lg:block w-full max-w-[350px] p-2 sticky top-4 h-fit">
-                        <RecruiterRightSide2 />
+                        <RecruiterRightSidebarWithJobPost />
                     </aside>
                     {/* Right Spacer */}
                     <div className="hidden lg:block flex-grow "></div>

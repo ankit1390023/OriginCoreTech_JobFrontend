@@ -38,7 +38,7 @@ const courses = [
   },
 ];
 
-export default function RecruiterRightSide2() {
+export default function RecruiterRightSidebarWithJobPost() {
   const [followersCount, setFollowersCount] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
   const [loading, setLoading] = useState(true);

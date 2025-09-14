@@ -33,33 +33,37 @@ import FeedAuthentication from "../pages/student/feed/FeedAuthentication";
 import FeedFaq from "../pages/student/feed/FeedFaq";
 import MyMassage from "../pages/student/application/MyMassage";
 import MyNotification from "../pages/student/application/MyNotification";
+
+
 import RecruiterDashboard from "../pages/recruiter/dashboard/RecruiterDashboard";
 import RecruiterTotalJobPost from "../pages/recruiter/dashboard/RecruiterTotalJobPost";
 import RecruiterApplication from "../pages/recruiter/dashboard/RecruiterApplication";
-import RecruiterApplicationDetails from "../pages/recruiter/dashboard/RecruiterApplicationDetails";
+import RecruiterViewApplicationDetails from "../pages/recruiter/dashboard/RecruiterViewApplicationDetails";
 import RecruiterApplicationData from "../pages/recruiter/dashboard/RecruiterApplicationData";
 import RecruiterSendAssignment from "../pages/recruiter/dashboard/RecruiterSendAssignment";
-import RecruiterInterview from "../pages/recruiter/dashboard/RecruiterInterview";
+import RecruiterScheduleInterview from "../pages/recruiter/dashboard/RecruiterScheduleInterview";
 import RecruiterApproval from "../pages/recruiter/dashboard/RecruiterApproval";
 import RecruitePipeline from "../pages/recruiter/dashboard/RecruiterPipeline";
-import RecruiterUpcommingInterview from "../pages/recruiter/dashboard/RecruiterUpcommingInterview";
+import RecruiterUpcomingInterviews from "../pages/recruiter/dashboard/RecruiterUpcomingInterviews";
 import RecruiterPendingTask from "../pages/recruiter/dashboard/RecruiterPendingTask";
-import RecruiterProfile from "../pages/recruiter/profile/RecruiterVisitores";
+import RecruiterProfile from "../pages/recruiter/profile/RecruiterProfile";
 import RecruiterTerms from "../pages/recruiter/profile/RecruiterTerms";
 import RecruiterView from "../pages/recruiter/profile/RecruiterView";
 import RecruiterFaq from "../pages/recruiter/profile/RecruiterFaq";
 import RecruiterTicket from "../pages/recruiter/profile/RecruiterTicket";
+import RecruiterPayment from "../pages/recruiter/profile/RecruiterPayment";
+import RecruiterPricing from "../pages/recruiter/profile/RecruiterPricing";
+import RecruiterPaymentMethod from "../pages/recruiter/profile/RecruiterPaymentMethod";
+import RecruiterChangePassword from "../pages/recruiter/profile/RecruiterChangePassword";
+import RecruiterChangeEmail from "../pages/recruiter/profile/RecruiterChangeEmail";
+
+
 import UniversityProfile from "../pages/university/universityProfile/UniversityProfile";
 import UniversityChangeEmail from "../pages/university/universityProfile/UniversityChangeEmail";
 import UniversityChangePassword from "../pages/university/universityProfile/UniversityChangePassword";
 import UniversityFaq from "../pages/university/universityProfile/UniversityFaq";
 import UniversityView from "../pages/university/universityProfile/UniversityView";
 import UniversityTerms from "../pages/university/universityProfile/UniversityTerms";
-import RecruiterPayment from "../pages/recruiter/profile/RecruiterPayment";
-import RecruiterPricing from "../pages/recruiter/profile/RecruiterPricing";
-import RecruiterPaymentMethod from "../pages/recruiter/profile/RecruiterPaymentMethod";
-import RecruiterChangePassword from "../pages/recruiter/profile/RecruiterChangePassword";
-import RecruiterChangeEmail from "../pages/recruiter/profile/RecruiterChangeEmail";
 import UniversityTicket from "../pages/university/universityProfile/UniversityTicket";
 import UniversityPricing from "../pages/university/universityProfile/UniversityPricing";
 import UniversityPayment from "../pages/university/universityProfile/UniversityPayment";
@@ -68,7 +72,7 @@ import UniversityApproval from "../pages/university/universityProfile/University
 import AiProfile from "../pages/aiprediction/AiProfile";
 import AiProfile1 from "../pages/aiprediction/AiProfile1";
 import AllJObsPart from "../pages/aiprediction/AlljobsPart";
-import RecruiterRightProfile from "../pages/recruiter/dashboard/RecruiterRightProfile";
+
 import CompanyProfileEdit from "../pages/recruiter/CompanyProfileEdit";
 import CompanyAuthentication from "../pages/recruiter/CompanyAuthentication";
 import MyApplication6 from "../pages/student/application/Myapplication6";
@@ -78,8 +82,8 @@ import MyApplication3 from "../pages/student/application/Myapplication3";
 import MyApplication2 from "../pages/student/application/Myapplication2";
 import MyApplication1 from "../pages/student/application/Myapplication1";
 import StudentApplications from "../pages/student/application/studentApplications";
-import UniversityProfileEdit from "../pages/university/UniversityProfileEdit";
-import UniversityPublicProfile from "../pages/university/UniversityPublicProfile";
+import UniversityProfileEdit from "../pages/university/universityProfile/UniversityProfileEdit";
+import UniversityPublicProfile from "../pages/university/universityProfile/UniversityPublicProfile";
 
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
@@ -115,7 +119,7 @@ const PublicRoute = ({ children }) => {
       case "STUDENT":
         return <Navigate to="/student-fill-account-details" replace />;
       case "COMPANY":
-        return <Navigate to="/recruiter-profile" replace />;
+        return <Navigate to="/recruiter-fill-account-details" replace />;
       case "UNIVERSITY":
         return <Navigate to="/university-profile" replace />;
       default:
@@ -286,7 +290,7 @@ export const appRouter = createBrowserRouter([
     ),
   },
   {
-    path: "/feed-profile",
+    path: "/student-profile",
     element: (
       <ProtectedRoute allowedRoles={["STUDENT", "COMPANY", "UNIVERSITY"]}>
         <Feedprofile />
@@ -353,7 +357,7 @@ export const appRouter = createBrowserRouter([
   {
     path: "/my-application1",
     element: (
-      <ProtectedRoute allowedRoles={['STUDENT']}>
+      <ProtectedRoute allowedRoles={["STUDENT"]}>
         <MyApplication1 />
       </ProtectedRoute>
     ),
@@ -361,7 +365,7 @@ export const appRouter = createBrowserRouter([
   {
     path: "/my-application2",
     element: (
-      <ProtectedRoute allowedRoles={['STUDENT']}>
+      <ProtectedRoute allowedRoles={["STUDENT"]}>
         <MyApplication2 />
       </ProtectedRoute>
     ),
@@ -369,7 +373,7 @@ export const appRouter = createBrowserRouter([
   {
     path: "/my-application3",
     element: (
-      <ProtectedRoute allowedRoles={['STUDENT']}>
+      <ProtectedRoute allowedRoles={["STUDENT"]}>
         <MyApplication3 />
       </ProtectedRoute>
     ),
@@ -377,7 +381,7 @@ export const appRouter = createBrowserRouter([
   {
     path: "/my-application4",
     element: (
-      <ProtectedRoute allowedRoles={['STUDENT']}>
+      <ProtectedRoute allowedRoles={["STUDENT"]}>
         <MyApplication4 />
       </ProtectedRoute>
     ),
@@ -385,7 +389,7 @@ export const appRouter = createBrowserRouter([
   {
     path: "/my-application5",
     element: (
-      <ProtectedRoute allowedRoles={['STUDENT']}>
+      <ProtectedRoute allowedRoles={["STUDENT"]}>
         <MyApplication5 />
       </ProtectedRoute>
     ),
@@ -393,7 +397,7 @@ export const appRouter = createBrowserRouter([
   {
     path: "/my-application6",
     element: (
-      <ProtectedRoute allowedRoles={['STUDENT']}>
+      <ProtectedRoute allowedRoles={["STUDENT"]}>
         <MyApplication6 />
       </ProtectedRoute>
     ),
@@ -425,16 +429,32 @@ export const appRouter = createBrowserRouter([
   {
     path: "/student-applications",
     element: (
-      <ProtectedRoute allowedRoles={['STUDENT']}>
+      <ProtectedRoute allowedRoles={["STUDENT"]}>
         <StudentApplications />
       </ProtectedRoute>
     ),
   },
 
   // Recruiter related routes
-
+  {
+    path: "/recruiter-view",
+    element: (
+      <ProtectedRoute allowedRoles={["COMPANY"]}>
+        <RecruiterView />
+      </ProtectedRoute>
+    ),
+  },
   {
     path: "/recruiter-profile",
+    element: (
+      <ProtectedRoute allowedRoles={["COMPANY"]}>
+        <RecruiterProfile />
+      </ProtectedRoute>
+    ),
+  },
+
+  {
+    path: "/recruiter-fill-account-details",
     element: (
       <ProtectedRoute allowedRoles={["COMPANY"]}>
         <CompanyRecruiterProfile />
@@ -451,7 +471,7 @@ export const appRouter = createBrowserRouter([
     ),
   },
   {
-    path: "/company-profile-edit",
+    path: "/recruiter-profile-edit",
     element: (
       <ProtectedRoute allowedRoles={["COMPANY"]}>
         <CompanyProfileEdit />
@@ -479,7 +499,7 @@ export const appRouter = createBrowserRouter([
     path: "/recruiter-application-details/:job_id/:application_id",
     element: (
       <ProtectedRoute allowedRoles={["COMPANY"]}>
-        <RecruiterApplicationDetails />
+        <RecruiterViewApplicationDetails />
       </ProtectedRoute>
     ),
   },
@@ -503,7 +523,7 @@ export const appRouter = createBrowserRouter([
     path: "/recruiter-schedule-interview/:job_id/:id",
     element: (
       <ProtectedRoute allowedRoles={["COMPANY"]}>
-        <RecruiterInterview />
+        <RecruiterScheduleInterview />
       </ProtectedRoute>
     ),
   },
@@ -519,7 +539,7 @@ export const appRouter = createBrowserRouter([
     path: "/recruiter-upcoming-interview",
     element: (
       <ProtectedRoute allowedRoles={["COMPANY"]}>
-        <RecruiterUpcommingInterview />
+        <RecruiterUpcomingInterviews />
       </ProtectedRoute>
     ),
   },
@@ -533,7 +553,7 @@ export const appRouter = createBrowserRouter([
   },
 
   {
-    path: "/recruiter-visiter",
+    path: "/recruiter-view",
     element: (
       <ProtectedRoute allowedRoles={["COMPANY"]}>
         <RecruiterProfile />
@@ -613,7 +633,7 @@ export const appRouter = createBrowserRouter([
       <ProtectedRoute allowedRoles={["UNIVERSITY"]}>
         <UniversityFillDetails />
       </ProtectedRoute>
-    )
+    ),
   },
   {
     path: "/university-profile",
@@ -621,7 +641,7 @@ export const appRouter = createBrowserRouter([
       <ProtectedRoute allowedRoles={["UNIVERSITY"]}>
         <UniversityProfile />
       </ProtectedRoute>
-    )
+    ),
   },
   {
     path: "/university-profile-edit",
@@ -629,7 +649,7 @@ export const appRouter = createBrowserRouter([
       <ProtectedRoute allowedRoles={["UNIVERSITY"]}>
         <UniversityProfileEdit />
       </ProtectedRoute>
-    )
+    ),
   },
   {
     path: "/university-public-profile",
@@ -637,15 +657,15 @@ export const appRouter = createBrowserRouter([
       <ProtectedRoute allowedRoles={["UNIVERSITY"]}>
         <UniversityPublicProfile />
       </ProtectedRoute>
-    )
+    ),
   },
   {
     path: "/university-view",
     element: (
-      <ProtectedRoute allowedRoles={['UNIVERSITY']}>
+      <ProtectedRoute allowedRoles={["UNIVERSITY"]}>
         <UniversityView />
       </ProtectedRoute>
-    )
+    ),
   },
   {
     path: "/university-change-email",
@@ -653,7 +673,7 @@ export const appRouter = createBrowserRouter([
       <ProtectedRoute allowedRoles={["UNIVERSITY"]}>
         <UniversityChangeEmail />
       </ProtectedRoute>
-    )
+    ),
   },
   {
     path: "/university-change-password",
@@ -669,7 +689,7 @@ export const appRouter = createBrowserRouter([
       <ProtectedRoute allowedRoles={["UNIVERSITY"]}>
         <UniversityFaq />
       </ProtectedRoute>
-    )
+    ),
   },
   {
     path: "/university-terms",
@@ -693,7 +713,7 @@ export const appRouter = createBrowserRouter([
       <ProtectedRoute allowedRoles={["UNIVERSITY"]}>
         <UniversityTicket />
       </ProtectedRoute>
-    )
+    ),
   },
   {
     path: "/university-pricing",
@@ -752,6 +772,6 @@ export const appRouter = createBrowserRouter([
       <ProtectedRoute allowedRoles={["STUDENT"]}>
         <AllJObsPart />
       </ProtectedRoute>
-    )
-  }
+    ),
+  },
 ]);

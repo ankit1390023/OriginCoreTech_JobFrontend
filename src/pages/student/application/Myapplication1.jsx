@@ -3,7 +3,7 @@ import { Badge, Button } from '../../../components/ui';
 import uberLogo from '../../../assets/uber-logo.png';
 import carDashboard from '../../../assets/car-dashboard.png';
 import MainLayout from '../../../components/layout/MainLayout';
-import FeedRightSide3 from '../feed/FeedRightSide3';
+import FeedRightSidebarForMyApplication from '../feed/FeedRightSidebarForMyApplication';
 
 
 const pathwayData = [
@@ -211,7 +211,7 @@ const Myapplication1 = () => {
     
         {/* Profile Card */}
         <aside className="hidden lg:block w-full max-w-[350px] p-2 sticky top-4 h-fit">
-          <FeedRightSide3 />
+          <FeedRightSidebarForMyApplication />
         </aside>
         {/* Right Spacer */}
         <div className="hidden lg:block flex-grow"></div>

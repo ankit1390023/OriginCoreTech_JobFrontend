@@ -155,12 +155,12 @@ export default function Header() {
               onClick={() =>
                 navigate(
                   userRole === "student"
-                    ? "/feed-profile"
+                    ? "/student-profile"
                     : userRole === "company"
-                    ? "/recruiter-dashboard"
+                    ? "/recruiter-profile"
                     : userRole === "university"
                     ? "/university-profile"
-                    : "/feed-profile" // fallback to student profile
+                    : "/student-profile" // fallback to student profile
                 )
               }
               className="flex items-center justify-center transition bg-white rounded-full shadow cursor-pointer w-7 h-7 md:w-8 md:h-8 hover:bg-gray-100 active:bg-gray-200"
@@ -310,12 +310,12 @@ export default function Header() {
                 onClick={() =>
                   navigate(
                     userRole === "student"
-                      ? "/feed-profile"
+                      ? "/student-profile"
                       : userRole === "company"
-                      ? "/recruiter-dashboard"
+                      ? "/recruiter-profile"
                       : userRole === "university"
                       ? "/university-profile"
-                      : "/feed-profile" // fallback to student profile
+                      : "/student-profile" // fallback to student profile
                   )
                 }
                 className="flex items-center justify-center w-8 h-8 transition bg-gray-100 rounded-full cursor-pointer md:w-10 md:h-10 hover:bg-gray-200 active:bg-gray-300"

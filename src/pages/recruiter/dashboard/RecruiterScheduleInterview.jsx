@@ -4,7 +4,7 @@ import MainLayout from "../../../components/layout/MainLayout";
 import RecruiterApplicationData from "./RecruiterApplicationData";
 import { useScheduleInterview } from "../../../hooks/useApplications";
 
-const ScheduleInterview = () => {
+const RecruiterScheduleInterview = () => {
   const { job_id,id:application_id } = useParams();
   const navigate = useNavigate();
   const { scheduleInterview } = useScheduleInterview();
@@ -238,4 +238,4 @@ Recruiter`}
   );
 };
 
-export default ScheduleInterview;
+export default RecruiterScheduleInterview;

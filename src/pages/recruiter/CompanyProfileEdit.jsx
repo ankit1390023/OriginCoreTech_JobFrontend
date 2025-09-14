@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaCamera, FaSave } from "react-icons/fa";
 import MainLayout from "../../components/layout/MainLayout";
-import FeedRightProfile from "../student/feed/FeedRightProfile";
+import FeedRightSidebar from "../student/feed/FeedRightSidebar";
 import dummyProfile3 from "../../assets/dummyProfile3.jpg";
 import { useMasterData } from "../../hooks/master/useMasterData";
 import useUploadImageApi from "../../hooks/useUploadImageApi";
@@ -498,7 +498,7 @@ const CompanyProfileEdit = () => {
 
                 {/* Right Sidebar */}
                 <div className="w-full lg:w-[30%]">
-                    <FeedRightProfile />
+                    <FeedRightSidebar />
                 </div>
 
             </div>

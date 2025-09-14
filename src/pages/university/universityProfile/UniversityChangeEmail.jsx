@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { Input, Button } from "../../../components/ui";
 import MainLayout from "../../../components/layout/MainLayout";
 import { HiOutlineEye, HiOutlineEyeOff } from "react-icons/hi";
-import UniversityRightSide1 from "./UniversityRightSide1";
+import UniversityRightSidebar from "./UniversityRightSidebar";
 import { userProfileApi } from "../../../api/userProfileApi";
 import { updateUser } from "../../../redux/feature/authSlice";
 
@@ -124,7 +124,7 @@ const UniversityChangeEmail = () => {
 
         {/* Profile Card (only on large screens) */}
         <aside className="hidden lg:block w-full max-w-[350px] p-2 sticky top-4 h-fit">
-          <UniversityRightSide1 />
+          <UniversityRightSidebar />
         </aside>
 
         {/* Right Spacer */}

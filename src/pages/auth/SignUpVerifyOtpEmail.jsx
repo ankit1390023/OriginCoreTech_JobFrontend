@@ -95,7 +95,7 @@ export default function SignUpVerifyOtpEmail() {
           navigate("/student-fill-account-details");
           break;
         case "COMPANY":
-          navigate("/recruiter-profile");
+          navigate("/recruiter-fill-account-details");
           break;
         case "UNIVERSITY":
           navigate("/university-fill-details");
