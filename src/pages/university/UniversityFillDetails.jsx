@@ -12,8 +12,9 @@ import {
 import { useMasterData } from "../../hooks/master/useMasterData";
 import useUploadImageApi from "../../hooks/useUploadImageApi";
 import Select from "react-select";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { universityApi } from "../../api/university/universityApi";
+import {updateUser} from "../../redux/feature/authSlice"
 
 export default function UniversityFillDetails() {
   const [isSmallDevice, setIsSmallDevice] = useState(false);
@@ -25,6 +26,7 @@ export default function UniversityFillDetails() {
   const navigate = useNavigate();
   const { courses } = useMasterData();
   const { uploadImage, loading: uploading } = useUploadImageApi();
+  const dispatch= useDispatch();
 
   // ✅ useForm setup
   const {
@@ -95,8 +97,19 @@ export default function UniversityFillDetails() {
       console.log("=== FORM DATA ===", JSON.stringify(data, null, 2));
 
       const response = await universityApi.createUniversityProfile(data, token);
+      console.log("the api response", response);
       if(response.success){
        alert(response.message);
+       //update the redux storing certain basic details
+       dispatch(updateUser({
+          user_profile_pic: response.data.profile_pic || null,
+          about_us: response.data.about || null,
+          organization_name: response.data.college_name || null,
+          organization_logo: response.data.university_logo_url || null,
+          email: response.data.User?.email ,
+          phone: response.data.User?.phone,
+       })) 
+       
       }
       console.log("Server response:", response.data);
 
@@ -129,7 +142,7 @@ export default function UniversityFillDetails() {
   };
 
   const FormContent = () => (
-    <div className="bg-white rounded-lg shadow-md p-6">
+    <div className="p-6 bg-white rounded-lg shadow-md">
       {error && <ErrorMessage onClose={() => setError("")}>{error}</ErrorMessage>}
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">

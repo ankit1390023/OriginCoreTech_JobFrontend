@@ -10,6 +10,7 @@ import { useUserDetailsApi } from "../../../hooks/useUserDetailsApi";
 import useFeedApi from "../../../hooks/useFeedApi";
 import { formatTimeAgo, formatNumber, getImageUrl } from "../../../../utils";
 import dummyProfile3 from "../../../assets/dummyProfile3.jpg";
+import websiteLogo from "../../../assets/WebsiteLogo.svg"
 
 const FeedMyProfile = () => {
   const { user, token } = useSelector((state) => state.auth);
@@ -275,14 +276,12 @@ const FeedMyProfile = () => {
                     >
                       <div className="flex items-start gap-3">
                         <img
-                          src={
-                            getImageUrl(experience.logo) ||
-                            "/src/assets/WebsiteLogo.svg"
+                          src={ experience?.logo? getImageUrl(experience.logo) : websiteLogo
                           }
                           alt={experience.company}
                           className="object-contain w-12 h-12"
                           onError={(e) => {
-                            e.target.src = "/src/assets/WebsiteLogo.svg";
+                            e.target.src = websiteLogo;
                           }}
                         />
                         <div className="flex-1">
@@ -352,14 +351,11 @@ const FeedMyProfile = () => {
                     >
                       <div className="flex items-start gap-3">
                         <img
-                          src={
-                            getImageUrl(education.logo) ||
-                            "/src/assets/WebsiteLogo.svg"
-                          }
+                          src={ education?.logo? getImageUrl(education.logo): websiteLogo }
                           alt={education.institution}
                           className="object-cover w-10 h-10 rounded-full"
                           onError={(e) => {
-                            e.target.src = "/src/assets/WebsiteLogo.svg";
+                            e.target.src = websiteLogo;
                           }}
                         />
                         <div className="flex-1">
@@ -448,7 +444,7 @@ const FeedMyProfile = () => {
                       >
                         <div className="flex items-start gap-3">
                           <img
-                            src={getImageUrl(skill.logo) || "/src/assets/WebsiteLogo.svg"}
+                            src={skill?.logo? getImageUrl(skill.logo): websiteLogo}
                             alt={skill.skill || skill.domain || "Skill"}
                             className="object-cover w-10 h-10 rounded-full"
                             onError={(e) => {

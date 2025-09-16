@@ -34,6 +34,7 @@ export const useApplications = (job_id) => {
         }
 
         const res = await applicationApi.getAllApplicantsByJob(job_id, token);
+        console.log("use applications hook", res);
 
         const formatted = res.applicants.map((app) => {
           let match = "Low";
@@ -56,6 +57,7 @@ export const useApplications = (job_id) => {
             applied: formatAppliedDate(app.appliedDate),
             match,
             matchColor,
+            status:app.status
           };
         });
 

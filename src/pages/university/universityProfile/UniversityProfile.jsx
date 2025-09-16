@@ -21,6 +21,8 @@ import MainLayout from "../../../components/layout/MainLayout";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../../redux/feature/authSlice";
 import feedApi from "../../../api/feedApi";
+import {getImageUrl} from "../../../../utils"
+import dummyProfile3 from "../../../assets/dummyProfile3.jpg"
 
 const UniversityProfile = () => {
   const [activeDropdown, setActiveDropdown] = useState(null);
@@ -143,18 +145,18 @@ const UniversityProfile = () => {
           <div className="bg-[#002B6B] text-white p-3 sm:p-4 lg:p-4 flex flex-col sm:flex-row sm:items-center justify-between rounded-[5px] gap-3 sm:gap-4">
             <div className="flex items-center flex-1 min-w-0 gap-3 sm:gap-4">
               <img
-                src={
-                  universityDetail?.profile_pic || "https://i.pravatar.cc/100"
+                src={ 
+                  user.user_profile_pic? getImageUrl(user.user_profile_pic) : dummyProfile3
                 }
                 alt="avatar"
                 className="flex-shrink-0 object-cover w-12 h-12 rounded-full sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-18 lg:h-18"
               />
               <div className="flex-1 min-w-0">
                 <h1 className="text-base font-semibold truncate sm:text-lg md:text-xl lg:text-2xl">
-                  {universityDetail?.college_name || "Unknown University"}
+                  {user?.organization_name || "Unknown University"}
                 </h1>
                 <p className="text-xs text-gray-200 truncate sm:text-sm">
-                  @{user?.email}
+                  {user?.email}
                 </p>
                 <p className="text-xs text-gray-200 truncate sm:text-sm">
                   {user?.user_role}

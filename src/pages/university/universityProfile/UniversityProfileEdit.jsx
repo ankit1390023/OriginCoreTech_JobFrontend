@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import {useDispatch} from "react-redux";
 import { FaCamera, FaSave } from "react-icons/fa";
 import MainLayout from "../../../components/layout/MainLayout";
 import FeedRightSidebar from "../../student/feed/FeedRightSidebar";
@@ -11,9 +12,11 @@ import Select from 'react-select';
 import { getImageUrl } from "../../../../utils";
 import { Loader2 } from 'lucide-react'; // Import a loading spinner
 import { universityApi } from "../../../api/university/universityApi";
+import {updateUser} from "../../../redux/feature/authSlice"
 
 const UniversityProfileEdit = () => {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     const { user, token } = useSelector((state) => state.auth);
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(true); // Add loading state
@@ -122,6 +125,15 @@ const UniversityProfileEdit = () => {
                     profile_pic: response.data.profile_pic || "",
                     university_logo_url: response.data.university_logo_url || ""
                 });
+                //update the redux state also
+                dispatch(updateUser({
+                    user_profile_pic: response.data.profile_pic || null,
+                    about_us: response.data.about || null,
+                    organization_name: response.data.college_name || null,
+                    organization_logo: response.data.university_logo_url || null,
+                    email: response.data.User?.email || formValues.email,
+                    phone: response.data.User?.phone || formValues.phone,
+                    }));
                 alert('Profile updated successfully!');
                 toggleEdit(section);
             } else {
@@ -155,6 +167,12 @@ const UniversityProfileEdit = () => {
         console.log("response is from handleImageUpload rtrt",response)
         if (response.success) {
             setUserData(response.data);
+            
+            dispatch(updateUser(
+                type === 'profilePic'
+                    ? { user_profile_pic: result }
+                    : { organization_logo: result }
+                ));
             console.log("response is from handleImageUpload",response.data)
             alert(type === 'profilePic' ? 'Profile picture updated successfully!' : 'Logo updated successfully!');
         } else {

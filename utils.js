@@ -1,4 +1,4 @@
-const API_BASE = import.meta.env.VITE_BASE_URL; // "http://localhost:5000/api"
+const API_BASE = import.meta.env.VITE_BASE_URL;
 
 // Utility function to get image url
 export function getImageUrl(filePath) {

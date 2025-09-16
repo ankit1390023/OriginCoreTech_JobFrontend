@@ -268,7 +268,7 @@ export default function FeedPostDetail() {
             {/* Post image */}
             {post.image && (
               <img
-                src={getImageUrl(post.image)}
+                src={getImageUrl(post.image) }
                 alt="Post"
                 className="object-cover w-full h-auto mb-3 rounded-lg max-h-96"
               />

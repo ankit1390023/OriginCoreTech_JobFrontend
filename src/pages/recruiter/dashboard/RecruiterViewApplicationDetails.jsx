@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useLocation } from "react-router-dom";
 import MainLayout from "../../../components/layout/MainLayout";
 import RecruiterApplicationData from "./RecruiterApplicationData";
@@ -7,12 +7,60 @@ import { useNavigate } from "react-router-dom";
 import { useUpdateApplicationStatus } from "../../../hooks/useApplications";
 import { getImageUrl } from "../../../../utils";
 
+//  Status-to-Actions Configuration (Flexible & Maintainable)
+const STATUS_ACTIONS = {
+  Applied: {
+    primary: ["NotInterested", "ShortList"],
+    dropdown: ["Send Assignment", "Schedule Interview", "Hire"],
+  },
+  Screening: {
+    primary: ["NotInterested", "ShortList"],
+    dropdown: ["Send Assignment", "Schedule Interview", "Hire"],
+  },
+  "Send Assignment": {
+    primary: ["NotInterested"],
+    dropdown: ["Schedule Interview", "Hire"],
+  },
+  Interview: {
+    primary: ["NotInterested"],
+    dropdown: ["Hire"],
+  },
+  Offered: {
+    primary: [],
+    dropdown: ["Hire"],
+  },
+  Hired: {
+    primary: [],
+    dropdown: [],
+    message: "Candidate Hired",
+  },
+  ShortList: {
+    primary: ["NotInterested"],
+    dropdown: ["Send Assignment", "Schedule Interview", "Hire"],
+  },
+  NotInterested: {
+    primary: [],
+    dropdown: [],
+    message: "Not Interested",
+  },
+};
+
 const ApplicationDetail = () => {
   const { job_id, application_id } = useParams();
-  const { applicant, loading, error } = useApplicantDetail(
-    job_id,
-    application_id
-  );
+
+  const {
+    applicant: rawApplicant,
+    loading,
+    error,
+  } = useApplicantDetail(job_id, application_id);
+  const [applicant, setApplicant] = useState(null);
+
+  // Sync raw applicant to local state
+  useEffect(() => {
+    if (rawApplicant) {
+      setApplicant({ ...rawApplicant });
+    }
+  }, [rawApplicant]);
   const location = useLocation();
   const app = location.state?.app;
   const navigate = useNavigate();
@@ -25,15 +73,123 @@ const ApplicationDetail = () => {
 
   // Handler for updating status
   const handleStatusChange = async (newStatus) => {
+    //update ui instantly
+    setApplicant((prev) => ({
+      ...prev,
+      status: newStatus,
+    }));
+
     try {
       await updateStatus(application_id, job_id, newStatus);
-      alert(`Status updated to ${newStatus}`);
-      // Optionally: navigate back or refresh applicant detail
-      // navigate(-1);
+      console.log(`Status updated to ${newStatus}`);
     } catch (err) {
-      console.error("Failed to update status:", err);
+      // undo change if any issue
+      setApplicant((prev) => ({
+        ...prev,
+        status: rawApplicant?.status || prev.status, // revert to server state
+      }));
       alert(err.message || "Failed to update status");
     }
+  };
+
+  // Helper to render dynamic action buttons based on status (Detail Page)
+  const getActionButtons = (
+    status,
+    updating,
+    handleStatusChange,
+    navigate,
+    job_id,
+    application_id
+  ) => {
+    const config = STATUS_ACTIONS[status] || { primary: [], dropdown: [] };
+    const { primary = [], dropdown = [], message } = config;
+
+    if (message) {
+      return (
+        <div className="w-full p-4 text-center rounded-md bg-gray-50">
+          <span className="text-sm font-medium text-gray-600">{message}</span>
+        </div>
+      );
+    }
+
+    return (
+      <div className="flex flex-wrap gap-3">
+        {/* Primary Buttons */}
+        {primary.map((action) => (
+          <button
+            key={action}
+            onClick={() => handleStatusChange(action)}
+            disabled={updating}
+            className={`px-4 py-2 text-sm text-white transition rounded-md flex-1 min-w-[100px] ${
+              action === "NotInterested"
+                ? "bg-red-500 hover:bg-red-600"
+                : action === "ShortList"
+                ? "bg-green-500 hover:bg-green-600"
+                : "bg-blue-500 hover:bg-blue-600"
+            }`}
+          >
+            {updating
+              ? "Updating..."
+              : action === "NotInterested"
+              ? "Not Interested"
+              : action}
+          </button>
+        ))}
+
+        {/* Dropdown or Direct Buttons for Secondary Actions */}
+        {dropdown.map((action) => {
+          if (action === "Send Assignment") {
+            return (
+              <button
+                key={action}
+                onClick={() =>
+                  navigate(
+                    `/recruiter-send-assignment/${job_id}/${application_id}`,
+                    {
+                      state: { applicant },
+                    }
+                  )
+                }
+                className="px-4 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-100 flex-1 min-w-[120px]"
+              >
+                Send Assignment
+              </button>
+            );
+          }
+          if (action === "Schedule Interview") {
+            return (
+              <button
+                key={action}
+                onClick={() =>
+                  navigate(
+                    `/recruiter-schedule-interview/${job_id}/${application_id}`,
+                    {
+                      state: { applicationData: applicant },
+                    }
+                  )
+                }
+                className="px-4 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-100 flex-1 min-w-[120px]"
+              >
+                Schedule Interview
+              </button>
+            );
+          }
+          if (action === "Hire") {
+            return (
+              <button
+                key={action}
+                onClick={() => handleStatusChange("Hired")}
+                disabled={updating}
+                className="px-4 py-2 text-sm text-white bg-green-500 rounded-md hover:bg-green-600 flex-1 min-w-[80px]"
+              >
+                {updating ? "Updating..." : "Hire"}
+              </button>
+            );
+          }
+          return null;
+        })}
+      </div>
+    );
   };
 
   if (loading)
@@ -63,33 +219,32 @@ const ApplicationDetail = () => {
       </MainLayout>
     );
 
-    //To show few skills and show more 
+  //To show few skills and show more
 
-    const SkillList = ({ skills = [] }) => {
-      const [expanded, setExpanded] = useState(false);
-      const skillNames = [...new Set(skills.map(skill => skill.name))];
+  const SkillList = ({ skills = [] }) => {
+    const [expanded, setExpanded] = useState(false);
+    const skillNames = [...new Set(skills.map((skill) => skill.name))];
 
-      if (skillNames.length === 0) {
-        return <p className="mt-2 text-sm">Skills: No skills specified</p>;
-      }
+    if (skillNames.length === 0) {
+      return <p className="mt-2 text-sm">Skills: No skills specified</p>;
+    }
 
-      const displayedSkills = expanded ? skillNames : skillNames.slice(0, 3);
+    const displayedSkills = expanded ? skillNames : skillNames.slice(0, 3);
 
-      return (
-        <p className="mt-2 text-sm">
-          Skills: {displayedSkills.join(", ")}
-          {skillNames.length > 3 && (
-            <button
-              onClick={() => setExpanded(!expanded)}
-              className="ml-2 text-blue-500 hover:underline"
-            >
-              {expanded ? "Show less" : `+${skillNames.length - 3} more`}
-            </button>
-          )}
-        </p>
-      );
-    };
-
+    return (
+      <p className="mt-2 text-sm">
+        Skills: {displayedSkills.join(", ")}
+        {skillNames.length > 3 && (
+          <button
+            onClick={() => setExpanded(!expanded)}
+            className="ml-2 text-blue-500 hover:underline"
+          >
+            {expanded ? "Show less" : `+${skillNames.length - 3} more`}
+          </button>
+        )}
+      </p>
+    );
+  };
 
   //Format Education
   const transformedEducation =
@@ -107,63 +262,65 @@ const ApplicationDetail = () => {
     })) || [];
 
   const transformedExperiences = (
-  applicant.applicationDetails.experiences || []
-).map((exp) => {
-  let responsibilities = [];
+    applicant.applicationDetails.experiences || []
+  ).map((exp) => {
+    let responsibilities = [];
 
-  // Parse responsibilities if present (can be stringified JSON or array)
-  try {
-    if (Array.isArray(exp.responsibilities)) {
-      responsibilities = exp.responsibilities;
-    } else if (typeof exp.responsibilities === "string") {
-      responsibilities = JSON.parse(exp.responsibilities);
-      if (!Array.isArray(responsibilities)) responsibilities = [];
-    }
-  } catch (e) {
-    responsibilities = [];
-  }
-
-  // Determine if the experience is current
-  const isCurrent = !exp.end_date;
-
-  // Format duration
-  let duration = "";
-  if (exp.start_date) {
-    const start = new Date(exp.start_date);
-    const end = exp.end_date ? new Date(exp.end_date) : new Date(); // use current date if still working
-
-    let years = end.getFullYear() - start.getFullYear();
-    let months = end.getMonth() - start.getMonth();
-
-    if (months < 0) {
-      years -= 1;
-      months += 12;
+    // Parse responsibilities if present (can be stringified JSON or array)
+    try {
+      if (Array.isArray(exp.responsibilities)) {
+        responsibilities = exp.responsibilities;
+      } else if (typeof exp.responsibilities === "string") {
+        responsibilities = JSON.parse(exp.responsibilities);
+        if (!Array.isArray(responsibilities)) responsibilities = [];
+      }
+    } catch (e) {
+      responsibilities = [];
     }
 
-    if (years > 0) duration += `${years} yr${years > 1 ? "s" : ""}`;
-    if (months > 0) duration += ` ${months} mo`;
-    duration = duration.trim();
-  }
+    // Determine if the experience is current
+    const isCurrent = !exp.end_date;
 
-  return {
-    title: exp.jobRole?.title || "—",
-    company: exp.companyRecruiterProfile?.company_name || `Company ${exp.company_id}` || "—",
-    location: exp.companyRecruiterProfile?.companyLocation?.name || null,
-    startDate: exp.start_date || null,
-    endDate: exp.end_date || null,
-    isCurrent,
-    duration: duration || null,
-    description: exp.description || exp.jobRole?.description || null,
-    responsibilities,
-    isInternship: false, 
-  };
-});
+    // Format duration
+    let duration = "";
+    if (exp.start_date) {
+      const start = new Date(exp.start_date);
+      const end = exp.end_date ? new Date(exp.end_date) : new Date(); // use current date if still working
 
+      let years = end.getFullYear() - start.getFullYear();
+      let months = end.getMonth() - start.getMonth();
 
+      if (months < 0) {
+        years -= 1;
+        months += 12;
+      }
+
+      if (years > 0) duration += `${years} yr${years > 1 ? "s" : ""}`;
+      if (months > 0) duration += ` ${months} mo`;
+      duration = duration.trim();
+    }
+
+    return {
+      title: exp.jobRole?.title || "—",
+      company:
+        exp.companyRecruiterProfile?.company_name ||
+        `Company ${exp.company_id}` ||
+        "—",
+      location: exp.companyRecruiterProfile?.companyLocation?.name || null,
+      startDate: exp.start_date || null,
+      endDate: exp.end_date || null,
+      isCurrent,
+      duration: duration || null,
+      description: exp.description || exp.jobRole?.description || null,
+      responsibilities,
+      isInternship: false,
+    };
+  });
 
   //calculate total experience
   const calculateTotalExperience = (experiences) => {
-    if (!Array.isArray(experiences) || experiences.length === 0) return "0 years";
+    if (!Array.isArray(experiences) || experiences.length === 0)
+      return "0 years";
 
     let totalMonths = 0;
 
@@ -186,12 +343,15 @@ const ApplicationDetail = () => {
     const totalYears = Math.floor(totalMonths / 12);
     const remainingMonths = totalMonths % 12;
 
-    const yearStr = totalYears > 0 ? `${totalYears} year${totalYears > 1 ? "s" : ""}` : "";
-    const monthStr = remainingMonths > 0 ? `${remainingMonths} month${remainingMonths > 1 ? "s" : ""}` : "";
+    const yearStr =
+      totalYears > 0 ? `${totalYears} year${totalYears > 1 ? "s" : ""}` : "";
+    const monthStr =
+      remainingMonths > 0
+        ? `${remainingMonths} month${remainingMonths > 1 ? "s" : ""}`
+        : "";
 
     return [yearStr, monthStr].filter(Boolean).join(" ");
   };
-
 
   console.log("applicant detail are", applicant);
   const appDetails = applicant?.applicationDetails;
@@ -246,6 +406,24 @@ const ApplicationDetail = () => {
                   : "Low"}{" "}
                 ({applicant.skillMatchPercentage || 0}%)
               </span>
+
+              {/*Show the current status of the application */}
+              <div className="mt-2">
+                <span
+                  className={`px-3 py-1 text-xs font-medium rounded-full ${
+                    applicant.status === "Hired"
+                      ? "bg-green-100 text-green-800"
+                      : applicant.status === "NotInterested"
+                      ? "bg-red-100 text-red-800"
+                      : applicant.status === "ShortList"
+                      ? "bg-yellow-100 text-yellow-800"
+                      : "bg-blue-100 text-blue-800"
+                  }`}
+                >
+                  Status: {applicant.status}
+                </span>
+              </div>
+
               <p className="mt-1 text-xs text-gray-400">
                 Applied{" "}
                 {applicant.appliedDate
@@ -384,10 +562,7 @@ const ApplicationDetail = () => {
                     {" "}
                     {/* Better vertical rhythm than mb-3 on each */}
                     {transformedExperiences.map((exp, index) => (
-                      <div
-                        key={index}
-                        className=""
-                      >
+                      <div key={index} className="">
                         {" "}
                         {/* Optional: left accent bar like resume */}
                         <p className="font-medium text-gray-900">
@@ -609,54 +784,16 @@ const ApplicationDetail = () => {
               )}
             </div>
           </div>
-          {/* Action Buttons */}
-          <div className="flex flex-wrap gap-3 pt-4 mt-6 border-t border-gray-200">
-            <button
-              onClick={() =>
-                navigate("/recruiter-send-assignment/" + app.application_id, {
-                  state: { applicant: app },
-                })
-              }
-              className="px-4 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-100 flex-1 min-w-[120px]"
-            >
-              Send Assignment
-            </button>
-
-            <button
-              onClick={() =>
-                navigate(
-                  "/recruiter-schedule-interview/" + app.application_id,
-                  { state: { applicationData: app } }
-                )
-              }
-              className="px-4 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-100 flex-1 min-w-[120px]"
-            >
-              Schedule Interview
-            </button>
-
-            <button
-              onClick={() => handleStatusChange("Hired")}
-              disabled={updating}
-              className="px-4 py-2 text-sm text-white bg-green-500 rounded-md hover:bg-green-600 flex-1 min-w-[80px]"
-            >
-              {updating ? "Updating..." : "Hire"}
-            </button>
-
-            <button
-              onClick={() => handleStatusChange("NotInterested")}
-              disabled={updating}
-              className="px-4 py-2 text-sm text-white bg-red-500 rounded-md hover:bg-red-600 flex-1 min-w-[120px]"
-            >
-              {updating ? "Updating..." : "Not Interested"}
-            </button>
-
-            <button
-              onClick={() => handleStatusChange("ShortList")}
-              disabled={updating}
-              className="px-4 py-2 text-sm text-white bg-blue-500 rounded-md hover:bg-blue-600 flex-1 min-w-[100px]"
-            >
-              {updating ? "Updating..." : "Shortlist"}
-            </button>
+          {/* Dynamic Action Buttons Based on Status */}
+          <div className="pt-4 mt-6 border-t border-gray-200">
+            {getActionButtons(
+              applicant.status,
+              updating,
+              handleStatusChange,
+              navigate,
+              job_id,
+              application_id
+            )}
           </div>
         </div>
       </div>

@@ -14,6 +14,7 @@ import feedApi from "../../../api/feedApi";
 import uploadImageApi from "../../../api/uploadImageApi";
 import useFeedApi from "../../../hooks/useFeedApi";
 import { getImageUrl } from "../../../../utils.js";
+import imageUnavailable from "../../../assets/image_not_available.jpg"
 
 export default function FeedPage() {
   const { token, user } = useSelector((state) => state.auth);
@@ -293,7 +294,7 @@ export default function FeedPage() {
                 {/* Post image */}
                 {post.image && (
                   <img
-                    src={getImageUrl(post.image)}
+                    src={post.image? getImageUrl(post.image) : imageUnavailable}
                     alt="Post"
                     className="rounded-lg object-cover w-[80%] h-80 sm:h-64 mb-3"
                   />

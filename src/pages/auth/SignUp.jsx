@@ -135,14 +135,20 @@ export default function SignUp() {
               {...register("user_role")}
               value={selectedRole}
             />
-
+            {/* Name fill hint
+            {(selectedRole === "COMPANY" || selectedRole=== "UNIVERSITY" )&& (
+              <p className="text-xs text-gray-500 mt-0.5 mb-2">
+                {`Enter details of the ${selectedRole} Contact Person`} 
+              </p>
+              
+            )} */}
             {/* First + Last Name */}
             <div className="flex gap-1 sm:gap-2">
               <div className="flex-1">
                 <Input
                   label={
                     selectedRole === "COMPANY" || selectedRole === "UNIVERSITY"
-                      ? "Representative’s First Name"
+                      ? "Representative First Name"
                       : "First Name"
                   }
                   type="text"
@@ -160,7 +166,7 @@ export default function SignUp() {
                 <Input
                   label={
                     selectedRole === "COMPANY" || selectedRole === "UNIVERSITY"
-                      ? "Representative’s Last Name"
+                      ? "Representative Last Name"
                       : "Last Name"
                   }
                   type="text"
@@ -186,7 +192,11 @@ export default function SignUp() {
 
             {/* Email */}
             <Input
-              label={(selectedRole === "COMPANY" ||selectedRole ==="UNIVERSITY")? "Official Email ID": "Email ID"}
+              label={
+                selectedRole === "COMPANY" || selectedRole === "UNIVERSITY"
+                  ? "Official Email ID"
+                  : "Email ID"
+              }
               type="email"
               placeholder="Email"
               error={errors.email?.message}
@@ -194,10 +204,10 @@ export default function SignUp() {
               {...register("email")}
             />
 
-            {/* Company hint */}
-            {selectedRole === "COMPANY" && (
+            {/* Valid domain hint */}
+            {(selectedRole === "COMPANY" || selectedRole === "UNIVERSITY") && (
               <p className="text-xs text-gray-500 mt-0.5 mb-2">
-                Company emails must use official domains
+                 Emails must use official organization domains
               </p>
             )}
 
