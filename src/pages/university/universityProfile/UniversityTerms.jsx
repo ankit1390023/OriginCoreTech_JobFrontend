@@ -26,7 +26,7 @@ const UniversityTerms = () => {
           throw new Error("No authentication token found. Please login again.");
         }
 
-        const response = await termsApi.getTermsAndCondition(token);
+        const response = await termsApi.getTermsAndCondition();
         setTermsData(response.terms_and_condition);
         setEditData(response.terms_and_condition);
         setError(null);

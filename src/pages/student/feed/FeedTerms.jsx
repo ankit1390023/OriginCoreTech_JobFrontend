@@ -14,14 +14,13 @@ const FeedTerms = () => {
   // Get token and user from Redux state
   const { token, isAuthenticated } = useSelector((state) => state.auth);
 
-  const getTermsAndCondition = async (token) => {
+  const getTermsAndCondition = async () => {
     try {
       const response = await axios.get(
         `${BASE_URL}/user-details/getterms_and_condition`, 
         {
           headers: {
             "Content-Type": "application/json",
-            // Authorization: `Bearer ${token}`, //currently token is not required
           },
         }
       );
@@ -41,7 +40,7 @@ const FeedTerms = () => {
           throw new Error("No authentication token found. Please login again.");
         }
 
-        const response = await getTermsAndCondition(token);
+        const response = await getTermsAndCondition();
         // console.log(response);
         setTermsData(response.terms_and_condition); 
         setError(null);

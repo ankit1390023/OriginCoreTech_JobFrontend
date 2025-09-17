@@ -114,12 +114,24 @@ const PublicRoute = ({ children }) => {
   }
 
   // Redirect authenticated users as before
-  if (isAuthenticated) {
+  if (isAuthenticated && user.profile_status===1) {
     switch (user?.user_role) {
       case "STUDENT":
         return <Navigate to="/student-fill-account-details" replace />;
       case "COMPANY":
         return <Navigate to="/recruiter-fill-account-details" replace />;
+      case "UNIVERSITY":
+        return <Navigate to="/university-profile" replace />;
+      default:
+        return <Navigate to="/" replace />;
+    }
+  }
+  if (isAuthenticated && user.profile_status===2) {
+    switch (user?.user_role) {
+      case "STUDENT":
+        return <Navigate to="/all-jobs" replace />;
+      case "COMPANY":
+        return <Navigate to="/recruiter-dashboard" replace />;
       case "UNIVERSITY":
         return <Navigate to="/university-profile" replace />;
       default:

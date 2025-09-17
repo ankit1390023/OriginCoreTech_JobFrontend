@@ -9,6 +9,9 @@ import { useDispatch, useSelector } from "react-redux";
 import AuthLayout from "../../components/layout/AuthLayout";
 import { Input, Button, Link } from "../../components/ui";
 import { login } from "../../redux/feature/authSlice";
+import axios from "axios";
+
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 // ✅ Validation schema
 const schema = z.object({
@@ -50,26 +53,24 @@ export default function Login() {
     }
   }, [setValue, location.state]);
 
-  // Redirect after login success
+  
   useEffect(() => {
-    if (isAuthenticated && user) {
-      switch (user.user_role) {
-        case "STUDENT":
-          navigate("/student-fill-account-details");
-          break;
-        case "COMPANY":
-          navigate("/recruiter-dashboard");
-          break;
-        case "UNIVERSITY":
-          navigate("/university-fill-details");
-          break;
-        default:
-          navigate("/student-fill-account-details");
-      }
+    if (user?.profile_status === 0) {
+      // Send OTP and redirect to verify page
+      axios.post(`${BASE_URL}/otp/send-otp`, { email: user.email })
+        .then(() => {
+          navigate('/login-verify-otp-email', { 
+            state: { email: user.email, user_role: user.user_role }, 
+            replace: true 
+          });
+        })
+        .catch(() => alert('Failed to send OTP'));
     }
   }, [isAuthenticated, user, navigate]);
+ 
 
-  // ✅ Handle submit
+
+//  Handle submit
   const onSubmit = (data) => {
     if (data.remember) {
       localStorage.setItem("userEmail", data.email);
@@ -79,16 +80,20 @@ export default function Login() {
     dispatch(login({ email: data.email, password: data.password }));
   };
 
+  const showSignUpLink = !isAuthenticated || user?.profile_status === 0;
+  
   return (
     <AuthLayout
       title="Sign in to your account"
       subtitle={
-        <>
-          Don&apos;t have an account?{" "}
-          <Link to="/signup-choose-role" variant="primary">
-            Sign Up
-          </Link>
-        </>
+        showSignUpLink ? (
+          <>
+            Don&apos;t have an account?{" "}
+            <Link to="/signup-choose-role" variant="primary">
+              Sign Up
+            </Link>
+          </>
+        ) : null
       }
     >
       <form

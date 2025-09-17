@@ -1,5 +1,10 @@
 import React, { useState, useRef } from "react";
-import { FaCheckCircle, FaEnvelope, FaSpinner } from "react-icons/fa";
+import {
+  FaCheckCircle,
+  FaEnvelope,
+  FaSpinner,
+  FaPencilAlt,
+} from "react-icons/fa";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -10,7 +15,8 @@ import { Input, Button, Link } from "../../components/ui";
 import SignUpLayoutForLarge from "../../components/layout/SignUpLayoutForLarge";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { login } from "../../redux/feature/authSlice";
+import { verifyOtpAndLogin } from "../../redux/feature/authSlice";
+
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 // Zod schema for OTP validation
 const otpSchema = z.object({
@@ -71,52 +77,16 @@ export default function SignUpVerifyOtpEmail() {
     setLoading(true);
     setOtpError("");
     try {
-      const response = await axios.post(`${BASE_URL}/otp/verify-otp`, {
-        email: email,
-        otp: getFullOtp(),
-      });
-
-      // Store user and token in Redux if present
-      if (response.data.user && response.data.token) {
-        localStorage.setItem('authToken', response.data.token);
-        localStorage.setItem('user', JSON.stringify(response.data.user));
-        dispatch(
-          login.fulfilled({
-            user: response.data.user,
-            token: response.data.token,
-          })
-        );
-      }
-
-      // Role-based redirection
-      const user_role = response.data.user.user_role;
-      switch (user_role) {
-        case "STUDENT":
-          navigate("/student-fill-account-details");
-          break;
-        case "COMPANY":
-          navigate("/recruiter-fill-account-details");
-          break;
-        case "UNIVERSITY":
-          navigate("/university-fill-details");
-          break;
-        default:
-          // Fallback to student page if role is not recognized
-          navigate("/student-fill-account-details");
-      }
+        await dispatch(verifyOtpAndLogin({
+              email: email,
+              otp: getFullOtp(),
+            })).unwrap();
+          navigate("/", { replace: true });
+      
     } catch (error) {
-      if (
-        error.response &&
-        error.response.data &&
-        error.response.data.message
-      ) {
-        setOtpError(error.response.data.message);
-      } else {
-        setOtpError("Network error");
-      }
-      console.log(error);
+        setOtpError(typeof error === 'string' ? error : "Verification failed. Please try again.");
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
   };
 
@@ -151,6 +121,29 @@ export default function SignUpVerifyOtpEmail() {
               <span className="ml-1 font-bold text-blue-500">
                 {email ? email : "amangupta@gmail.com"}
               </span>
+              <button
+                type="button"
+                onClick={() => {
+                  navigate("/signup", {
+                    state: {
+                      // Preserve all form data so user doesn't retype
+                      prefilledData: {
+                        first_name: location.state?.first_name || "",
+                        last_name: location.state?.last_name || "",
+                        phone: location.state?.phone || "",
+                        email: location.state?.email || "",
+                        password: location.state?.password || "",
+                        user_role: location.state?.user_role || "STUDENT",
+                      },
+                      selectedRole: location.state?.user_role || "STUDENT", // for consistency
+                    },
+                  });
+                }}
+                className="ml-2 text-blue-500 hover:text-blue-700 focus:outline-none"
+                aria-label="Edit email"
+              >
+                <FaPencilAlt size={12} />
+              </button>
             </p>
             {/* OTP Input - 4 separate boxes */}
             <div className="mb-2">
@@ -165,14 +158,17 @@ export default function SignUpVerifyOtpEmail() {
                       type="text"
                       maxLength={1}
                       disabled={loading}
-                      className={`w-full h-12 text-center text-lg font-semibold border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${errors[`otp${index + 1}`]
-                        ? "border-red-500 bg-red-50"
-                        : "border-gray-300 hover:border-gray-400"
-                        }`}
+                      className={`w-full h-12 text-center text-lg font-semibold border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                        errors[`otp${index + 1}`]
+                          ? "border-red-500 bg-red-50"
+                          : "border-gray-300 hover:border-gray-400"
+                      }`}
                       placeholder="0"
                       value={watch(`otp${index + 1}`) || ""}
                       onChange={(e) => {
-                        const value = e.target.value.replace(/[^0-9]/g, '').slice(-1);
+                        const value = e.target.value
+                          .replace(/[^0-9]/g, "")
+                          .slice(-1);
                         if (value) {
                           setValue(`otp${index + 1}`, value);
                           // Move focus to next input if value is entered and not the last box
@@ -211,9 +207,9 @@ export default function SignUpVerifyOtpEmail() {
                   </div>
                 ))}
               </div>
-              {(otpError) && (<p className="mt-1 text-xs text-red-500">
-                {otpError}
-              </p>)}
+              {otpError && (
+                <p className="mt-1 text-xs text-red-500">{otpError}</p>
+              )}
               {(errors.otp1 || errors.otp2 || errors.otp3 || errors.otp4) && (
                 <p className="mt-1 text-xs text-red-500">
                   Please enter a valid 4-digit OTP

@@ -6,9 +6,8 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import AuthLayout from "../../components/layout/AuthLayout";
 import { Input, Button, Link, ErrorMessage } from "../../components/ui";
-import { userDetailsApi } from "../../api/userDetailsApi";
 import { useDispatch } from "react-redux";
-import { login } from "../../redux/feature/authSlice";
+import { verifyOtpAndLogin } from "../../redux/feature/authSlice";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
@@ -76,7 +75,7 @@ export default function LoginVerifyOtpEmail() {
       await axios.post(`${BASE_URL}/otp/send-otp`, {
         email: email,
       });
-      setResendTimer(15);
+      setResendTimer(30);
       setOtpError(""); // Clear any previous errors
     } catch (error) {
       if (
@@ -128,56 +127,24 @@ export default function LoginVerifyOtpEmail() {
   };
 
   const onSubmit = async (data) => {
-    setLoading(true);
-    setOtpError("");
-    try {
-      const response = await axios.post(`${BASE_URL}/otp/verify-otp`, {
-        email: data.email,
-        otp: data.otp,
-      });
+  setLoading(true);
+  setOtpError("");
 
-      // Store user and token in Redux if present
-      if (response.data.user && response.data.token) {
-        dispatch(
-          login.fulfilled({
-            user: response.data.user,
-            token: response.data.token,
-          })
-        );
-      }
+  try {
+    await dispatch(verifyOtpAndLogin({
+      email: data.email,
+      otp: data.otp
+    })).unwrap();
 
-      // Role-based redirection
-      const user_role = response.data.user_role;
-      console.log("User role:", user_role);
-      switch (user_role) {
-        case "STUDENT":
-          navigate("/student-fill-account-details");
-          break;
-        case "COMPANY":
-          navigate("/recruiter-dashboard");
-          break;
-        case "UNIVERSITY":
-          navigate("/university-fill-details");
-          break;
-        default:
-          // Fallback to student page if role is not recognized
-          navigate("/student-fill-account-details");
-      }
-    } catch (error) {
-      if (
-        error.response &&
-        error.response.data &&
-        error.response.data.message
-      ) {
-        setOtpError(error.response.data.message);
-      } else {
-        setOtpError("Network error");
-      }
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    // Optional: Force route evaluation
+    // navigate("/", { replace: true 
+
+  } catch (error) {
+    setOtpError(typeof error === 'string' ? error : "Verification failed. Please try again.");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <AuthLayout
@@ -191,10 +158,10 @@ export default function LoginVerifyOtpEmail() {
         </>
       }
     >
-      <div className="flex-1 w-full flex justify-center">
+      <div className="flex justify-center flex-1 w-full">
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="bg-white rounded-lg shadow-md p-2 sm:p-4 md:p-5 w-full max-w-xs sm:max-w-sm md:max-w-md"
+          className="w-full max-w-xs p-2 bg-white rounded-lg shadow-md sm:p-4 md:p-5 sm:max-w-sm md:max-w-md"
         >
           {/* Email Input - Using new UI component */}
           <Input
@@ -246,17 +213,17 @@ export default function LoginVerifyOtpEmail() {
 
           {/* Timer Display */}
           {resendTimer > 0 && (
-            <div className="text-center mb-2 sm:mb-3 p-2 bg-blue-50 border border-blue-200 rounded-md">
+            <div className="p-2 mb-2 text-center border border-blue-200 rounded-md sm:mb-3 bg-blue-50">
               <div className="flex items-center justify-center space-x-2">
-                <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                <div className="w-4 h-4 border-2 border-blue-500 rounded-full border-t-transparent animate-spin"></div>
                 <p className="text-sm text-gray-700">
                   Resend OTP available in{" "}
-                  <span className="font-bold text-blue-600 text-lg">
+                  <span className="text-lg font-bold text-blue-600">
                     {resendTimer}s
                   </span>
                 </p>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-1 mt-2"></div>
+              <div className="w-full h-1 mt-2 bg-gray-200 rounded-full"></div>
             </div>
           )}
 
