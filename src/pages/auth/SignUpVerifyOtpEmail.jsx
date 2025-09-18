@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   FaCheckCircle,
   FaEnvelope,
@@ -47,6 +47,9 @@ export default function SignUpVerifyOtpEmail() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const [resendTimer, setResendTimer] = useState(0);
+  const [resendLoading, setResendLoading] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -73,20 +76,71 @@ export default function SignUpVerifyOtpEmail() {
     return watchedOtp1 + watchedOtp2 + watchedOtp3 + watchedOtp4;
   };
 
+  // useEffect for timer countdown
+  useEffect(() => {
+    let interval;
+    if (resendTimer > 0) {
+      interval = setInterval(() => {
+        setResendTimer((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [resendTimer]);
+
   const onSubmit = async (data) => {
     setLoading(true);
     setOtpError("");
     try {
-        await dispatch(verifyOtpAndLogin({
-              email: email,
-              otp: getFullOtp(),
-            })).unwrap();
-          navigate("/", { replace: true });
-      
+      await dispatch(
+        verifyOtpAndLogin({ email: email, otp: getFullOtp() })
+      ).unwrap();
+      navigate("/login", { replace: true });
     } catch (error) {
-        setOtpError(typeof error === 'string' ? error : "Verification failed. Please try again.");
+      setOtpError(
+        typeof error === "string"
+          ? error
+          : "Verification failed. Please try again."
+      );
     } finally {
-        setLoading(false);
+      setLoading(false);
+    }
+  };
+
+  const handleResendOtp = async () => {
+    if (!email) {
+      setOtpError("Email not found. Please go back and try again.");
+      return;
+    }
+
+    setResendLoading(true);
+    setOtpError("");
+
+    try {
+      await axios.post(`${BASE_URL}/otp/send-otp`, {
+        email: email,
+      });
+      setResendTimer(30);
+    } catch (error) {
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
+        const errorMessage = error.response.data.message;
+        const timeMatch = errorMessage.match(/(\d+)\s*seconds?/i);
+        if (timeMatch) {
+          const waitTime = parseInt(timeMatch[1]);
+          setResendTimer(waitTime);
+        } else {
+          setOtpError(errorMessage);
+        }
+      } else {
+        setOtpError("Failed to resend OTP. Please try again.");
+      }
+    } finally {
+      setResendLoading(false);
     }
   };
 
@@ -149,6 +203,27 @@ export default function SignUpVerifyOtpEmail() {
             <div className="mb-2">
               <label className="block mb-2 text-sm font-medium text-gray-700">
                 Enter OTP to verify your email
+              {/* </label> */}
+              {/* Minimal Resend OTP - Top Right */}
+              <div className="text-right">
+                {resendTimer > 0 ? (
+                  <p className="text-xs text-gray-500">
+                    Resend in{" "}
+                    <span className="font-medium text-gray-700">
+                      {resendTimer}s
+                    </span>
+                  </p>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={handleResendOtp}
+                    disabled={resendLoading}
+                    className="text-xs text-blue-600 hover:text-blue-800 font-medium focus:outline-none disabled:opacity-60"
+                  >
+                    {resendLoading ? "Sending..." : "Resend OTP"}
+                  </button>
+                )}
+              </div>
               </label>
               <div className="flex justify-center gap-2">
                 {[0, 1, 2, 3].map((index) => (
@@ -220,6 +295,22 @@ export default function SignUpVerifyOtpEmail() {
                   Enter the 4-digit verification code
                 </span>
               )}
+              {/* <div className="mt-2 text-center">
+  {resendTimer > 0 ? (
+    <p className="text-xs text-gray-500">
+      Resend available in <span className="font-medium text-gray-700">{resendTimer}s</span>
+    </p>
+  ) : (
+    <button
+      type="button"
+      onClick={handleResendOtp}
+      disabled={resendLoading}
+      className="text-xs text-blue-600 hover:text-blue-800 font-medium focus:outline-none disabled:opacity-60"
+    >
+      {resendLoading ? "Sending..." : "Resend OTP"}
+    </button>
+  )}
+</div> */}
             </div>
           </div>
           {/* Submit Button - Using new UI component */}

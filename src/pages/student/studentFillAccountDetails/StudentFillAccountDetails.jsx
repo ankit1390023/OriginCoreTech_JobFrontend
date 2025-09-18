@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useSelector } from "react-redux";
+import { useSelector,useDispatch } from "react-redux";
 import PersonalInfo from "./PersonalInfo";
 import EducationInfo from "./EducationInfo";
 import ProgressBar from "./ProgressBar";
@@ -12,6 +12,7 @@ import Button from "../../../components/ui/Button";
 import SignUpLayoutForLarge from "../../../components/layout/SignUpLayoutForLarge";
 import { useNavigate } from "react-router-dom";
 import { useUserDetailsApi } from "../../../hooks/useUserDetailsApi";
+import {updateUser} from "../../../redux/feature/authSlice"
 import { userDetailsApi } from "../../../api/userDetailsApi";
 
 const steps = ["Personal Info", "Education Info", "Your Skills", "Your Preferences"];
@@ -87,6 +88,7 @@ const formSchema = z.object({
 export default function StudentFillAccountDetails() {
   const { createUserDetails } = useUserDetailsApi();
   const { user } = useSelector((state) => state.auth);
+  const dispatch= useDispatch();
 
   const methods = useForm({
     mode: "onTouched",
@@ -296,6 +298,9 @@ export default function StudentFillAccountDetails() {
 
       console.log("API response:", response);
       alert("Form submitted successfully!");
+      dispatch(updateUser({
+                profile_status: 2
+             }))
       navigate("/all-jobs");
     } catch (error) {
       console.error("Form submission error:", error);

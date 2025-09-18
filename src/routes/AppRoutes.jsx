@@ -5,6 +5,7 @@ import Login from "../pages/auth/Login";
 import ForgotPassword from "../pages/auth/ForgotPassword";
 import SignUpChooseRole from "../pages/auth/SignUpChooseRole";
 import SignUp from "../pages/auth/SignUp";
+import TermsAndConditions from "../pages/auth/TermsAndConditions";
 import SignUpVerifyOtpEmail from "../pages/auth/SignUpVerifyOtpEmail";
 import StudentFillAccountDetails from "../pages/student/studentFillAccountDetails/StudentFillAccountDetails";
 import RecruiterPostJobInternDetails from "../pages/recruiter/RecruiterPostJobInternDetails";
@@ -196,6 +197,14 @@ export const appRouter = createBrowserRouter([
     element: (
       <PublicRoute>
         <SignUp />,
+      </PublicRoute>
+    ),
+  },
+  {
+    path: "/terms-and-conditions",
+    element: (
+      <PublicRoute>
+        <TermsAndConditions />,
       </PublicRoute>
     ),
   },

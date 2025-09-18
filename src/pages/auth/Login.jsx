@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import AuthLayout from "../../components/layout/AuthLayout";
 import { Input, Button, Link } from "../../components/ui";
-import { login } from "../../redux/feature/authSlice";
+import { login, loginWithGoogle } from "../../redux/feature/authSlice";
 import axios from "axios";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -53,24 +53,22 @@ export default function Login() {
     }
   }, [setValue, location.state]);
 
-  
   useEffect(() => {
     if (user?.profile_status === 0) {
       // Send OTP and redirect to verify page
-      axios.post(`${BASE_URL}/otp/send-otp`, { email: user.email })
+      axios
+        .post(`${BASE_URL}/otp/send-otp`, { email: user.email })
         .then(() => {
-          navigate('/login-verify-otp-email', { 
-            state: { email: user.email, user_role: user.user_role }, 
-            replace: true 
+          navigate("/login-verify-otp-email", {
+            state: { email: user.email, user_role: user.user_role },
+            replace: true,
           });
         })
-        .catch(() => alert('Failed to send OTP'));
+        .catch(() => alert("Failed to send OTP"));
     }
   }, [isAuthenticated, user, navigate]);
- 
 
-
-//  Handle submit
+  //  Handle submit
   const onSubmit = (data) => {
     if (data.remember) {
       localStorage.setItem("userEmail", data.email);
@@ -80,8 +78,33 @@ export default function Login() {
     dispatch(login({ email: data.email, password: data.password }));
   };
 
+
+useEffect(() => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const googleToken = urlParams.get('google_token');
+  const googleUser = urlParams.get('google_user');
+
+  if (googleToken && googleUser) {
+    try {
+      const user = JSON.parse(decodeURIComponent(googleUser));
+
+      // Save to localStorage — same keys as your login thunk
+      localStorage.setItem("authToken", googleToken);
+      localStorage.setItem("user", JSON.stringify(user));
+
+      dispatch(loginWithGoogle({ token: googleToken, user }));
+
+      // PublicRoute handle redirect
+      navigate("/", { replace: true });
+
+    } catch (err) {
+      console.error("Google login parse error:", err);
+      navigate('/login', { replace: true });
+    }
+  }
+}, [navigate,dispatch]);
   const showSignUpLink = !isAuthenticated || user?.profile_status === 0;
-  
+
   return (
     <AuthLayout
       title="Sign in to your account"
@@ -148,9 +171,7 @@ export default function Login() {
 
         {/* Error */}
         {error && (
-          <div
-            className="p-2 mb-2 text-xs text-center text-red-500 rounded-md sm:mb-3 bg-red-50 sm:p-3"
-          >
+          <div className="p-2 mb-2 text-xs text-center text-red-500 rounded-md sm:mb-3 bg-red-50 sm:p-3">
             {error}
           </div>
         )}
@@ -169,6 +190,9 @@ export default function Login() {
           type="button"
           variant="outline"
           disabled={loading}
+          onClick={() => {
+            window.location.href = `${BASE_URL}/users/google`;
+          }}
           className="flex items-center justify-center w-full shadow-none hover:shadow-none"
         >
           <FcGoogle size={14} className="mr-1.5" />

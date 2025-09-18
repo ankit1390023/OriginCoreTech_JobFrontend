@@ -108,6 +108,7 @@ export default function UniversityFillDetails() {
           organization_logo: response.data.university_logo_url || null,
           email: response.data.User?.email ,
           phone: response.data.User?.phone,
+          profile_status: 2
        })) 
        
       }

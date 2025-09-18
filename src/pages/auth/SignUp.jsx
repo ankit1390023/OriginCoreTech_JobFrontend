@@ -4,11 +4,12 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FcGoogle } from "react-icons/fc";
-import { Input, Button, Link, PhoneInput } from "../../components/ui";
+import { Input, Button, Link, PhoneInput, Checkbox } from "../../components/ui";
 import SignUpLayoutForLarge from "../../components/layout/SignUpLayoutForLarge";
 import { useDispatch, useSelector } from "react-redux";
 import { signup } from "../../redux/feature/authSlice";
-import { toast } from 'react-hot-toast';
+import { toast } from "react-hot-toast";
+import termsApi from "../../api/termsApi";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
@@ -56,6 +57,11 @@ const schema = z
     user_role: z.enum(["COMPANY", "STUDENT", "UNIVERSITY"], {
       required_error: "Role is required",
     }),
+    accepted_terms: z.literal(true, {
+      errorMap: () => ({
+        message: "You must accept the Terms and Conditions to register.",
+      }),
+    }),
   })
   .refine(
     (data) => {
@@ -98,6 +104,39 @@ export default function SignUp() {
     defaultValues: prefilledData,
   });
 
+  const [termsContent, setTermsContent] = useState("");
+
+  useEffect(() => {
+    const loadTerms = async () => {
+      try {
+        const data = await termsApi.getTermsAndCondition();
+        setTermsContent(
+          data.terms_and_condition || "No terms available at the moment."
+        );
+      } catch (error) {
+        console.error("Failed to preload terms:", error);
+        setTermsContent(
+          "Failed to load Terms and Conditions. Please try again later."
+        );
+      }
+    };
+
+    loadTerms();
+  }, []);
+
+  const [showTermsModal, setShowTermsModal] = useState(false);
+
+  useEffect(() => {
+    const handleEsc = (e) => {
+      if (e.key === "Escape" && showTermsModal) {
+        setShowTermsModal(false);
+      }
+    };
+
+    window.addEventListener("keydown", handleEsc);
+    return () => window.removeEventListener("keydown", handleEsc);
+  }, [showTermsModal]);
+
   const onSubmit = async (data) => {
     try {
       const resultAction = await dispatch(
@@ -108,6 +147,8 @@ export default function SignUp() {
           email: data.email,
           password: data.password,
           user_role: data.user_role,
+          // accepted_terms_at: new Date().toISOString(),
+          accepted_terms: true,
         })
       );
       if (signup.rejected.match(resultAction)) {
@@ -116,7 +157,7 @@ export default function SignUp() {
       toast.success("OTP sent to your email!", { duration: 3000 });
       navigate("/signup-verify-otp-email", {
         state: {
-          ...data, 
+          ...data,
         },
       });
     } catch (err) {
@@ -167,6 +208,15 @@ export default function SignUp() {
       textColor: "text-green-600",
     };
   };
+
+  //Google Signup use efefect
+  useEffect(() => {
+    const error = new URLSearchParams(window.location.search).get("error");
+    if (error === "google_signup_failed") {
+      toast.error("Google signup failed. Please try again.");
+      navigate("/signup", { replace: true });
+    }
+  }, [navigate]);
 
   return (
     <SignUpLayoutForLarge
@@ -349,20 +399,48 @@ export default function SignUp() {
               )}
             </div>
 
-            {/* Terms */}
-            <p className="mb-2 text-xs text-gray-500">
-              By signing up, you agree to our{" "}
-              <span className="font-semibold text-gray-700">
-                Terms and Conditions
-              </span>
-            </p>
+            {/* Terms & Conditions Checkbox — Mandatory */}
+            <div className="mt-4 mb-2">
+              <label className="flex items-start space-x-2">
+                <input
+                  type="checkbox"
+                  className="w-4 h-4 mt-1 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                  {...register("accepted_terms")}
+                />
+                <span className="text-sm text-gray-700">
+                  I agree to the{" "}
+                  {/* <Link
+                    to="/terms-and-conditions"
+                    // target="_blank"
+                    // rel="noopener noreferrer"
+                    className="font-medium text-blue-600 hover:underline"
+                    onClick={(e) => e.stopPropagation()} // Prevent checkbox toggle
+                    state={{ content: termsContent }} 
+                  >
+                    Terms and Conditions
+                  </Link> */}
+                  <button
+                    type="button"
+                    onClick={() => setShowTermsModal(true)}
+                    className="font-medium text-blue-600 hover:underline bg-transparent border-none cursor-pointer p-0 text-sm"
+                  >
+                    Terms and Conditions
+                  </button>
+                </span>
+              </label>
+              {errors.accepted_terms && (
+                <p className="mt-1 text-xs text-red-500">
+                  {errors.accepted_terms.message}
+                </p>
+              )}
+            </div>
 
             {/* Submit */}
             <Button
               type="submit"
               loading={loading}
               disabled={loading}
-              className="w-full mb-2"
+              className="w-full mt-2"
             >
               {loading ? "Creating Account..." : "Register"}
             </Button>
@@ -385,6 +463,9 @@ export default function SignUp() {
               type="button"
               variant="outline"
               disabled={loading}
+              onClick={() => {
+                window.location.href = `${BASE_URL}/users/google?state=signup_${selectedRole}`;
+              }}
               className="flex items-center justify-center w-full"
             >
               <FcGoogle size={14} className="mr-1.5" />
@@ -400,6 +481,57 @@ export default function SignUp() {
           </form>
         </div>
       </div>
+
+      {/* Terms Modal */}
+      {showTermsModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
+          <div className="relative w-full max-w-3xl p-6 bg-white rounded-lg shadow-lg max-h-[90vh] overflow-y-auto">
+            {/* Close Button */}
+            <button
+              onClick={() => setShowTermsModal(false)}
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-6 h-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+
+            {/* Title */}
+            <h2 className="mb-4 text-xl font-bold text-gray-800">
+              Terms and Conditions
+            </h2>
+
+            {/* Content */}
+            <div
+              className="text-gray-700 leading-relaxed"
+              dangerouslySetInnerHTML={{
+                __html: termsContent.replace(/\n/g, "<br />"),
+              }}
+            />
+
+            {/* Close Button (Bottom) */}
+            <div className="mt-6 text-center">
+              <Button
+                onClick={() => setShowTermsModal(false)}
+                variant="outline"
+              >
+                Close
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </SignUpLayoutForLarge>
   );
 }

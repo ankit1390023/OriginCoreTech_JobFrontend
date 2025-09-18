@@ -118,7 +118,9 @@ export default function CompanyRecruiterProfile() {
       console.log("recruiter update profile",response);
 
       if (response && response.profile) {
-        dispatch(updateUser({user_profile_pic:response.profile.profile_picUrl}));
+        dispatch(updateUser({user_profile_pic:response.profile.profile_picUrl,
+          profile_status:2
+        }));
         alert("Profile created successfully");
         reset();
         navigate("/recruiter-dashboard");

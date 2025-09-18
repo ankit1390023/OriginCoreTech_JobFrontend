@@ -29,13 +29,13 @@ export const login = createAsyncThunk(
 
       const data = response.data;
       const user = data.user || data.data?.user;
-      const token= data.token || data.data?.token;
+      const token = data.token || data.data?.token;
 
       // Handle profile_status: 0 → no token, just email + user_role
       if (user.profile_status === 0) {
         console.log("in handle profile", data);
         return { user };
-      } 
+      }
 
       if (!user || !token) {
         throw new Error("Invalid response format from server");
@@ -44,8 +44,8 @@ export const login = createAsyncThunk(
       //  Persist token + user
       localStorage.setItem("authToken", token);
       localStorage.setItem("user", JSON.stringify(user));
-        console.log("in auth slice", user);
-      return {  user, token };
+      console.log("in auth slice", user);
+      return { user, token };
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message ||
@@ -55,7 +55,6 @@ export const login = createAsyncThunk(
     }
   }
 );
-
 
 // 🆕 Async thunk for signup
 export const signup = createAsyncThunk(
@@ -91,7 +90,6 @@ export const signup = createAsyncThunk(
   }
 );
 
-
 // ✅ NEW: Async thunk for OTP verification + login
 export const verifyOtpAndLogin = createAsyncThunk(
   "auth/verifyOtpAndLogin",
@@ -117,9 +115,30 @@ export const verifyOtpAndLogin = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message ||
-        error.message ||
-        "OTP verification failed"
+          error.message ||
+          "OTP verification failed"
       );
+    }
+  }
+);
+
+export const loginWithGoogle = createAsyncThunk(
+  "auth/loginWithGoogle",
+  async ({ token, user }, { rejectWithValue }) => {
+    try {
+      // Validate
+      if (!user || !token) {
+        throw new Error("Invalid Google login response");
+      }
+
+      // Save to localStorage (same as regular login)
+      localStorage.setItem("authToken", token);
+      localStorage.setItem("user", JSON.stringify(user));
+
+      // Return same shape as regular login
+      return { user, token };
+    } catch (error) {
+      return rejectWithValue(error.message || "Google login failed");
     }
   }
 );
@@ -196,35 +215,59 @@ const authSlice = createSlice({
         state.isAuthenticated = false;
       })
 
-
       // OTP Verify + Login
       .addCase(verifyOtpAndLogin.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-    .addCase(verifyOtpAndLogin.fulfilled, (state, action) => {
-      state.loading = false;
-      state.error = null;
-      const { user, token } = action.payload;
-      if (user.profile_status === 0) {
-        state.user = user;
-        state.token = null;
+      .addCase(verifyOtpAndLogin.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = null;
+        const { user, token } = action.payload;
+        if (user.profile_status === 0) {
+          state.user = user;
+          state.token = null;
+          state.isAuthenticated = false;
+        } else {
+          state.user = user;
+          state.token = token;
+          state.isAuthenticated = true;
+        }
+      })
+      .addCase(verifyOtpAndLogin.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
         state.isAuthenticated = false;
-      } else {
-        state.user = user;
-        state.token = token;
-        state.isAuthenticated = true;
-      }
-    })
-    .addCase(verifyOtpAndLogin.rejected, (state, action) => {
-      state.loading = false;
-      state.error = action.payload;
-      state.isAuthenticated = false;
-    })
+      })
+      .addCase(loginWithGoogle.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(loginWithGoogle.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = null;
+        const { user, token } = action.payload;
+
+        if (user.profile_status === 0) {
+          state.user = user;
+          state.token = null;
+          state.isAuthenticated = false;
+        } else {
+          state.user = user;
+          state.token = token;
+          state.isAuthenticated = true;
+        }
+      })
+      .addCase(loginWithGoogle.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+        state.isAuthenticated = false;
+      });
   },
 });
 
-// ✅ Export both actions
-export const { logout, updateUser, updateEmail, clearPartialLoginData } = authSlice.actions;
+// Export both actions
+export const { logout, updateUser, updateEmail } =
+  authSlice.actions;
 
 export default authSlice.reducer;
