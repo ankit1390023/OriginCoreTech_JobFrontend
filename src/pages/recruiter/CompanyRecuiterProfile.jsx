@@ -118,8 +118,11 @@ export default function CompanyRecruiterProfile() {
       console.log("recruiter update profile",response);
 
       if (response && response.profile) {
-        dispatch(updateUser({user_profile_pic:response.profile.profile_picUrl,
-          profile_status:2
+        dispatch(updateUser({
+          user_profile_pic:response.profile.profile_picUrl,
+          profile_status:2,
+          organization_name:response.profile.company_name,
+          organization_logo:response.profile.logo_url
         }));
         alert("Profile created successfully");
         reset();

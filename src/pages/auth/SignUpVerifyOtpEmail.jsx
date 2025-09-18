@@ -121,7 +121,7 @@ export default function SignUpVerifyOtpEmail() {
       await axios.post(`${BASE_URL}/otp/send-otp`, {
         email: email,
       });
-      setResendTimer(30);
+      setResendTimer(15);
     } catch (error) {
       if (
         error.response &&
@@ -200,88 +200,105 @@ export default function SignUpVerifyOtpEmail() {
               </button>
             </p>
             {/* OTP Input - 4 separate boxes */}
+            {/* OTP Section — Cleanly Separated */}
             <div className="mb-2">
-              <label className="block mb-2 text-sm font-medium text-gray-700">
-                Enter OTP to verify your email
-              {/* </label> */}
-              {/* Minimal Resend OTP - Top Right */}
-              <div className="text-right">
-                {resendTimer > 0 ? (
-                  <p className="text-xs text-gray-500">
-                    Resend in{" "}
-                    <span className="font-medium text-gray-700">
-                      {resendTimer}s
-                    </span>
-                  </p>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={handleResendOtp}
-                    disabled={resendLoading}
-                    className="text-xs text-blue-600 hover:text-blue-800 font-medium focus:outline-none disabled:opacity-60"
-                  >
-                    {resendLoading ? "Sending..." : "Resend OTP"}
-                  </button>
-                )}
+              {/* 👇 ROW: Label + Resend Button */}
+              <div className="flex items-center justify-between mb-4">
+                {/* Label */}
+                <div>
+                  <label className="text-sm font-medium text-gray-700">
+                    Enter OTP to verify your email
+                  </label>
+                </div>
+
+                {/* Resend OTP Button/Timer — isolated in its own div */}
+                <div className="text-right">
+                  {resendTimer > 0 ? (
+                    <p className="text-xs text-gray-500">
+                      Resend in{" "}
+                      <span className="font-medium text-gray-700">
+                        {resendTimer}s
+                      </span>
+                    </p>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={handleResendOtp}
+                      disabled={resendLoading}
+                      className="text-xs text-blue-600 hover:text-blue-800 font-medium focus:outline-none disabled:opacity-60"
+                    >
+                      {resendLoading ? "Sending..." : "Resend OTP"}
+                    </button>
+                  )}
+                </div>
               </div>
-              </label>
-              <div className="flex justify-center gap-2">
-                {[0, 1, 2, 3].map((index) => (
-                  <div key={index} className="flex-1">
-                    <input
-                      ref={inputRefs[index]}
-                      type="text"
-                      maxLength={1}
-                      disabled={loading}
-                      className={`w-full h-12 text-center text-lg font-semibold border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                        errors[`otp${index + 1}`]
-                          ? "border-red-500 bg-red-50"
-                          : "border-gray-300 hover:border-gray-400"
-                      }`}
-                      placeholder="0"
-                      value={watch(`otp${index + 1}`) || ""}
-                      onChange={(e) => {
-                        const value = e.target.value
-                          .replace(/[^0-9]/g, "")
-                          .slice(-1);
-                        if (value) {
-                          setValue(`otp${index + 1}`, value);
-                          // Move focus to next input if value is entered and not the last box
-                          if (index < 3) {
-                            setTimeout(() => {
+
+              {/* 👇 OTP Input Grid — Isolated in its own div, wrapped in useMemo */}
+              {React.useMemo(
+                () => (
+                  <div className="flex justify-center gap-2">
+                    {[0, 1, 2, 3].map((index) => (
+                      <div key={`otp-input-${index}`} className="flex-1">
+                        <input
+                          ref={inputRefs[index]}
+                          type="text"
+                          maxLength={1}
+                          disabled={loading}
+                          className={`w-full h-12 text-center text-lg font-semibold border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                            errors[`otp${index + 1}`]
+                              ? "border-red-500 bg-red-50"
+                              : "border-gray-300 hover:border-gray-400"
+                          }`}
+                          placeholder="0"
+                          value={watch(`otp${index + 1}`) || ""}
+                          onChange={(e) => {
+                            const value = e.target.value
+                              .replace(/[^0-9]/g, "")
+                              .slice(-1);
+                            if (value) {
+                              setValue(`otp${index + 1}`, value);
+                              if (index < 3) {
+                                setTimeout(() => {
+                                  inputRefs[index + 1].current?.focus();
+                                }, 0);
+                              }
+                            }
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === "Backspace") {
+                              e.preventDefault();
+                              const currentVal = watch(`otp${index + 1}`);
+                              if (currentVal) {
+                                setValue(`otp${index + 1}`, "");
+                              } else if (index > 0) {
+                                setValue(`otp${index}`, "");
+                                setTimeout(() => {
+                                  inputRefs[index - 1].current?.focus();
+                                }, 0);
+                              }
+                            }
+                            if (e.key === "ArrowLeft" && index > 0) {
+                              e.preventDefault();
+                              inputRefs[index - 1].current?.focus();
+                            }
+                            if (e.key === "ArrowRight" && index < 3) {
+                              e.preventDefault();
                               inputRefs[index + 1].current?.focus();
-                            }, 0);
-                          }
-                        }
-                      }}
-                      onKeyDown={(e) => {
-                        // Handle backspace
-                        if (e.key === "Backspace") {
-                          if (!watch(`otp${index + 1}`) && index > 0) {
-                            e.preventDefault();
-                            setValue(`otp${index + 1}`, "");
-                            inputRefs[index - 1].current?.focus();
-                          } else {
-                            setValue(`otp${index + 1}`, "");
-                          }
-                        }
-                        // Handle left arrow
-                        if (e.key === "ArrowLeft" && index > 0) {
-                          e.preventDefault();
-                          inputRefs[index - 1].current?.focus();
-                        }
-                        // Handle right arrow
-                        if (e.key === "ArrowRight" && index < 3) {
-                          e.preventDefault();
-                          inputRefs[index + 1].current?.focus();
-                        }
-                      }}
-                      onFocus={(e) => e.target.select()}
-                      onPaste={handlePaste}
-                    />
+                            }
+                          }}
+                          onFocus={(e) => e.target.select()}
+                          onPaste={handlePaste}
+                        />
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
+                ),
+                [
+                  
+                ]
+              )}
+
+              {/* Error & Hint Messages */}
               {otpError && (
                 <p className="mt-1 text-xs text-red-500">{otpError}</p>
               )}
@@ -295,7 +312,8 @@ export default function SignUpVerifyOtpEmail() {
                   Enter the 4-digit verification code
                 </span>
               )}
-              {/* <div className="mt-2 text-center">
+            </div>
+            {/* <div className="mt-2 text-center">
   {resendTimer > 0 ? (
     <p className="text-xs text-gray-500">
       Resend available in <span className="font-medium text-gray-700">{resendTimer}s</span>
@@ -310,8 +328,8 @@ export default function SignUpVerifyOtpEmail() {
       {resendLoading ? "Sending..." : "Resend OTP"}
     </button>
   )}
-</div> */}
-            </div>
+</div> 
+            </div> */}
           </div>
           {/* Submit Button - Using new UI component */}
           <Button

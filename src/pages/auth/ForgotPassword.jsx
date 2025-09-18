@@ -242,7 +242,7 @@ export default function ForgotPassword() {
           error={errors.email?.message}
           variant={errors.email ? "error" : "default"}
           {...register("email")}
-          disabled={!!user?.email} // ✅ lock if from Redux
+          disabled={!!user?.email} // lock if from Redux
         />
 
         {/* Get OTP Button */}

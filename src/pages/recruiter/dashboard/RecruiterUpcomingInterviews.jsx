@@ -32,10 +32,12 @@ const RecruiterUpcomingInterviews = () => {
                 name: interview.name ,    
                 role: interview.jobProfile || "Not specified",
                 mode: interview.interview_type || "Zoom",
-                date: interview.interview_date ? new Date(interview.interview_date).toLocaleString() : null,
+                // date: interview.interview_date ? new Date(interview.interview_date).toLocaleString() : null,
+                date: interview.interview_date || null,
                 start_time: interview.start_time || "Not specified",
                 status: interview.status || "Pending"
             }));
+            console.log("these are formatted intevries",formattedInterviews);
             
             setInterviews(formattedInterviews);
         } catch (error) {
@@ -159,7 +161,7 @@ const RecruiterUpcomingInterviews = () => {
               <p className="text-sm text-gray-600">{i.role}</p>
               <p className="text-xs text-gray-500">Mode: {i.mode}</p>
               {i.date ? (
-                <p className="text-xs text-gray-500">{i.date}</p>
+                <p className="text-xs text-gray-500">{i.date + ", "+ i.start_time}</p>
               ) : (
                 <p className="text-xs text-gray-400">Pending</p>
               )}

@@ -7,7 +7,7 @@ import dummyProfile3 from "../../assets/dummyProfile3.jpg";
 import { useMasterData } from "../../hooks/master/useMasterData";
 import useUploadImageApi from "../../hooks/useUploadImageApi";
 import { recruiterApi } from "../../api/recuiterApi";
-import { useSelector } from "react-redux";
+import { useSelector,useDispatch } from "react-redux";
 import Select from 'react-select';
 import { getImageUrl } from "../../../utils";
 import { Loader2 } from 'lucide-react'; // Import a loading spinner
@@ -131,8 +131,14 @@ const CompanyProfileEdit = () => {
         setFormValues(updatedValues);
 
         const response = await recruiterApi.updateProfile(updatedValues, token);
-        if (response.success) {
+        if (response.success || response.message== "Company recruiter profile updated successfully") {
             setUserData(response.data);
+            if(type==='profilePic'){
+                useDispatch(updateUser({user_profile_pic:response.profile.profile_picUrl}));
+            }else{
+                useDispatch(updateUser({organization_logo:response.profile.logo_url}));
+            }
+            
             alert(type === 'profilePic' ? 'Profile picture updated successfully!' : 'Logo updated successfully!');
         } else {
             alert('Failed to update image. Please try again.');

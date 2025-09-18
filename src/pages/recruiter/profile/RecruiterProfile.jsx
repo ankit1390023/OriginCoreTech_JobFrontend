@@ -45,9 +45,9 @@ const  RecruiterProfile = () => {
       id: 'applications',
       icon: <FileText size={20} />,
       title: 'My Applications',
-      subtitle: 'Manage your applications',
+      subtitle: 'Manage your Jobs Postings',
       hasChevron: true,
-      action: () => navigate('/feed-application'),
+      action: () => navigate('/recruiter-dashboard'),
     },
     {
       id: 'terms',
@@ -166,7 +166,7 @@ const  RecruiterProfile = () => {
                             {
                               icon: <Settings size={16} />,
                               label: 'Raise a ticket',
-                              action: () => navigate('/feed-ticket'),
+                              action: () => navigate('/recruiter-ticket'),
                             },
                             {
                               icon: <Settings size={16} />,
@@ -178,7 +178,7 @@ const  RecruiterProfile = () => {
                             {
                               icon: <Mail size={16} />,
                               label: 'Change email',
-                              action: () => navigate('/feed-change-email'),
+                              action: () => navigate('/recruiter-change-email'),
                             },
                             {
                               icon: <Lock size={16} />,
