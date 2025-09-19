@@ -12,7 +12,6 @@ import Input from "../../../components/ui/Input";
 import feedApi from "../../../api/feedApi.js";
 import { getImageUrl } from "../../../../utils.js";
 import { useParams } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
 import useFeedApi from "../../../hooks/useFeedApi"; 
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
