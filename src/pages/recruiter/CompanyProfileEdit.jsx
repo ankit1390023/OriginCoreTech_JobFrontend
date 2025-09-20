@@ -16,7 +16,7 @@ import { updateUser } from "../../redux/feature/authSlice";
 const CompanyProfileEdit = () => {
     const navigate = useNavigate();
     const dispatch= useDispatch();
-    const { token } = useSelector((state) => state.auth);
+    const { token,user } = useSelector((state) => state.auth);
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(true); // Add loading state
     const [editingSections, setEditingSections] = useState({});
@@ -53,7 +53,7 @@ const CompanyProfileEdit = () => {
                     profile_pic: response?.profile_picUrl || "",
                     logo_url: response?.logo_url || ""
                 };
-
+                
                 setFormValues(initialValues);
                 setIsDirty(false);
             } catch (error) {
@@ -72,9 +72,9 @@ const CompanyProfileEdit = () => {
     if (loading) {
         return (
             <MainLayout>
-                <div className="flex justify-center items-center min-h-screen">
+                <div className="flex items-center justify-center min-h-screen">
                     <div className="flex flex-col items-center gap-4">
-                        <Loader2 className="h-12 w-12 animate-spin text-blue-500" />
+                        <Loader2 className="w-12 h-12 text-blue-500 animate-spin" />
                         <p className="text-gray-600">Loading your profile...</p>
                     </div>
                 </div>
@@ -90,6 +90,11 @@ const CompanyProfileEdit = () => {
             newEditingSections[section] = true;
         }
         setEditingSections(newEditingSections);
+        
+        // setEditingSections(prev => ({
+        // ...prev,
+        // [section]: !prev[section]
+        // }));   
     };
 
     const handleSaveSection = async (section) => {
@@ -107,7 +112,17 @@ const CompanyProfileEdit = () => {
                     profile_pic: response.data.profile_pic || "",
                     logo_url: response.data.logo_url || ""
                 });
+                dispatch(updateUser({
+                                    user_profile_pic: response.data.profile_pic || null,
+                                    about_us: response.data.about || null,
+                                    organization_name: response.data.company_name || null,
+                                    organization_logo: response.data.university_logo_url || null,
+                                    email: response.data.User?.email || formValues.email,
+                                    phone: response.data.User?.phone || formValues.phone,
+                                    }));
+                    
                 alert('Profile updated successfully!');
+                
                 toggleEdit(section);
             } else {
                 alert(response.message || 'Failed to update profile');
@@ -170,12 +185,12 @@ const CompanyProfileEdit = () => {
 
     return (
         <MainLayout>
-            <div className="flex flex-col p-4 lg:flex-row gap-6 max-w-7xl mx-auto w-full">
+            <div className="flex flex-col w-full gap-6 p-4 mx-auto lg:flex-row max-w-7xl">
                 {/* Main Content */}
                 <div className="w-full lg:w-[70%] shadow-md space-y-6">
                     <div>
                         {/* Profile Header */}
-                        <div className="bg-white rounded-lg shadow-sm p-6">
+                        <div className="p-6 bg-white rounded-lg shadow-sm">
                             <div className="flex flex-col items-center">
                                 {/* Profile Image */}
                                 <div className="relative group">
@@ -186,7 +201,7 @@ const CompanyProfileEdit = () => {
                                             getImageUrl(profile?.profile_pic) ||
                                             dummyProfile3
                                         }
-                                        className="w-24 h-24 rounded-full object-cover border-2 border-white shadow-sm"
+                                        className="object-cover w-24 h-24 border-2 border-white rounded-full shadow-sm"
                                     />
                                     <label className="absolute bottom-0 right-0 bg-blue-600 text-white p-1.5 rounded-full text-xs cursor-pointer hover:bg-blue-700">
                                         <FaCamera />
@@ -207,7 +222,7 @@ const CompanyProfileEdit = () => {
 
 
 
-                        <div className="bg-white rounded-lg shadow-sm p-6 space-y-6">
+                        <div className="p-6 space-y-6 bg-white rounded-lg shadow-sm">
                             {/* About Section */}
                             <div>
                                 <div className="flex items-center justify-between mb-2">
@@ -298,13 +313,13 @@ const CompanyProfileEdit = () => {
                                         <div className="relative">
                                             {formValues.logo_url ? (
                                                 <img
-                                                    className="h-12 w-12 rounded-full object-cover border border-gray-200"
+                                                    className="object-cover w-12 h-12 border border-gray-200 rounded-full"
                                                     src={formValues.logo_url.startsWith('http') ? formValues.logo_url : getImageUrl(formValues.logo_url)}
                                                     alt="Company logo"
                                                 />
                                             ) : (
-                                                <div className="h-12 w-12 rounded-full bg-gray-200 flex items-center justify-center">
-                                                    <span className="text-gray-500 text-xs">No logo</span>
+                                                <div className="flex items-center justify-center w-12 h-12 bg-gray-200 rounded-full">
+                                                    <span className="text-xs text-gray-500">No logo</span>
                                                 </div>
                                             )}
                                             <label className="absolute -bottom-1 -right-1 bg-blue-600 text-white p-1.5 rounded-full text-xs cursor-pointer hover:bg-blue-700">
