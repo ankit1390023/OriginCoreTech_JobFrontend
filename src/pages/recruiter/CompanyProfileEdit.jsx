@@ -11,9 +11,11 @@ import { useSelector,useDispatch } from "react-redux";
 import Select from 'react-select';
 import { getImageUrl } from "../../../utils";
 import { Loader2 } from 'lucide-react'; // Import a loading spinner
+import { updateUser } from "../../redux/feature/authSlice";
 
 const CompanyProfileEdit = () => {
     const navigate = useNavigate();
+    const dispatch= useDispatch();
     const { token } = useSelector((state) => state.auth);
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(true); // Add loading state
@@ -95,6 +97,7 @@ const CompanyProfileEdit = () => {
             const response = await recruiterApi.updateProfile(formValues, token);
             if (response.success) {
                 setUserData(response.data);
+                console.log("update profile response", response.data);
                 setFormValues({
                     ...formValues,
                     company_name: response.data.company_name || "",
@@ -134,9 +137,9 @@ const CompanyProfileEdit = () => {
         if (response.success || response.message== "Company recruiter profile updated successfully") {
             setUserData(response.data);
             if(type==='profilePic'){
-                useDispatch(updateUser({user_profile_pic:response.profile.profile_picUrl}));
+                dispatch(updateUser({user_profile_pic:response.profile.profile_picUrl}));
             }else{
-                useDispatch(updateUser({organization_logo:response.profile.logo_url}));
+                dispatch(updateUser({organization_logo:response.profile.logo_url}));
             }
             
             alert(type === 'profilePic' ? 'Profile picture updated successfully!' : 'Logo updated successfully!');

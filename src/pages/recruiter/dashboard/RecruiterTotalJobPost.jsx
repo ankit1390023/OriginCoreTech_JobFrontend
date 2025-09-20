@@ -164,12 +164,12 @@ const TotalJobPosts = () => {
                     <div className="flex flex-col items-end gap-2">
                       <span
                         className={`px-4 py-1 rounded-full text-sm font-medium ${
-                          job.number_of_openings > 0
+                          job.active_status == 1
                             ? "bg-green-500 text-white"
                             : "bg-gray-200 text-gray-600"
                         }`}
                       >
-                        {job.number_of_openings > 0 ? "Active" : "Closed"}
+                        {job.active_status ==1 ? "Active" : "Draft"}
                       </span>
                       <div className="flex items-center gap-1 text-sm text-gray-500">
                         <Eye size={16} /> {job.views?.toLocaleString() || 0}{" "}

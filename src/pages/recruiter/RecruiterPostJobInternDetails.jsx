@@ -1,5 +1,10 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { useForm, FormProvider, useFormContext, Controller } from "react-hook-form";
+import {
+  useForm,
+  FormProvider,
+  useFormContext,
+  Controller,
+} from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
@@ -24,20 +29,25 @@ import { useSelector } from "react-redux";
 // Base schema with common fields
 const baseJobPostSchema = z.object({
   opportunity_type: z.enum(["Internship", "Job", "Project"]),
-  job_role_id: z.number({ invalid_type_error: "Job role is required" }).positive("Job role is required"),
+  job_role_id: z
+    .number({ invalid_type_error: "Job role is required" })
+    .positive("Job role is required"),
   skill_ids: z.array(z.number()).min(1, "At least one skill is required"),
   job_type: z.enum(["In office", "Hybrid", "Remote"], {
     required_error: "Job type is required",
-    invalid_type_error: "Job type is required"
+    invalid_type_error: "Job type is required",
   }),
   days_in_office: z.number().nullable().optional(),
   job_time: z.enum(["Day Shift", "Night Shift", "Part-time"], {
     required_error: "Work schedule is required",
-    invalid_type_error: "Work schedule is required"
+    invalid_type_error: "Work schedule is required",
   }),
-  number_of_openings: z.number({ invalid_type_error: "Number of openings must be a number" })
+  number_of_openings: z
+    .number({ invalid_type_error: "Number of openings must be a number" })
     .positive("Number of openings must be at least 1"),
-  job_description: z.string().min(10, "Description is required (minimum 10 characters)"),
+  job_description: z
+    .string()
+    .min(10, "Description is required (minimum 10 characters)"),
   candidate_preferences: z.string().optional(),
   women_preferred: z.boolean().optional(),
   stipend_type: z.enum(["Paid", "Unpaid", "Fixed"]).optional(),
@@ -53,7 +63,9 @@ const baseJobPostSchema = z.object({
 
 // Internship-specific extensions
 const internshipSchema = baseJobPostSchema.extend({
-  duration_id: z.number({ invalid_type_error: "Duration is required" }).positive("Duration is required"),
+  duration_id: z
+    .number({ invalid_type_error: "Duration is required" })
+    .positive("Duration is required"),
   internship_start_date: z.string().optional(),
   internship_from_date: z.string().optional(),
   internship_to_date: z.string().optional(),
@@ -73,112 +85,131 @@ const projectSchema = baseJobPostSchema.extend({
 });
 
 // Main schema with conditional validation
-const jobPostSchema = z.object({
-  opportunity_type: z.enum(["Internship", "Job", "Project"]),
-  job_role_id: z.number().positive("Job role is required"),
-  skill_ids: z.array(z.number()).min(1, "At least one skill is required"),
-  job_type: z.enum(["In office", "Hybrid", "Remote"]),
-  days_in_office: z.number().nullable().optional(),
-  job_time: z.enum(["Day Shift", "Night Shift", "Part-time"]),
-  number_of_openings: z.number().positive("Number of openings is required"),
-  job_description: z.string().min(10, "Description is required (minimum 10 characters)"),
-  candidate_preferences: z.string().optional(),
-  women_preferred: z.boolean().optional(),
-  stipend_type: z.enum(["Paid", "Unpaid", "Fixed"]).optional(),
-  stipend_min: z.number().nullable().optional(),
-  stipend_max: z.number().nullable().optional(),
-  incentive_per_year: z.string().optional(),
-  perks: z.array(z.string()).optional(),
-  screening_questions: z.union([z.string(), z.array(z.string())]).optional(),
-  phone_contact: z.string().min(10, "Phone number is required"),
-  alternate_phone_number: z.string().optional().nullable(),
-  eligiblecity_ids: z.array(z.number()).min(1, "At least one city is required"),
-  duration_id: z.union([z.number(), z.string(), z.undefined()]).optional(),
-  internship_start_date: z.string().optional(),
-  internship_from_date: z.string().optional(),
-  internship_to_date: z.string().optional(),
-  is_custom_internship_date: z.boolean().optional(),
-  eligiblecollege_ids: z.array(z.number()).optional(),
-  eligiblecourse_ids: z.array(z.number()).optional(),
-}).superRefine((data, ctx) => {
-  // Conditional validations based on opportunity type
-  if (data.opportunity_type === "Internship") {
-    // Duration is required for internships only
-    if (!data.duration_id || (typeof data.duration_id === 'number' && data.duration_id <= 0) || data.duration_id === "") {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Internship duration is required",
-        path: ["duration_id"],
-      });
-    }
+const jobPostSchema = z
+  .object({
+    opportunity_type: z.enum(["Internship", "Job", "Project"]),
+    job_role_id: z.number().positive("Job role is required"),
+    skill_ids: z.array(z.number()).min(1, "At least one skill is required"),
+    job_type: z.enum(["In office", "Hybrid", "Remote"]),
+    days_in_office: z.number().nullable().optional(),
+    job_time: z.enum(["Day Shift", "Night Shift", "Part-time"]),
+    number_of_openings: z.number().positive("Number of openings is required"),
+    job_description: z
+      .string()
+      .min(10, "Description is required (minimum 10 characters)"),
+    candidate_preferences: z.string().optional(),
+    women_preferred: z.boolean().optional(),
+    stipend_type: z.enum(["Paid", "Unpaid", "Fixed"]).optional(),
+    stipend_min: z.number().nullable().optional(),
+    stipend_max: z.number().nullable().optional(),
+    incentive_per_year: z.string().optional(),
+    perks: z.array(z.string()).optional(),
+    screening_questions: z.union([z.string(), z.array(z.string())]).optional(),
+    phone_contact: z.string().min(10, "Phone number is required"),
+    alternate_phone_number: z.string().optional().nullable(),
+    eligiblecity_ids: z
+      .array(z.number())
+      .min(1, "At least one city is required"),
+    duration_id: z.union([z.number(), z.string(), z.undefined()]).optional(),
+    internship_start_date: z.string().optional(),
+    internship_from_date: z.string().optional(),
+    internship_to_date: z.string().optional(),
+    is_custom_internship_date: z.boolean().optional(),
+    eligiblecollege_ids: z.array(z.number()).optional(),
+    eligiblecourse_ids: z.array(z.number()).optional(),
+  })
+  .superRefine((data, ctx) => {
+    // Conditional validations based on opportunity type
+    if (data.opportunity_type === "Internship") {
+      // Duration is required for internships only
+      if (
+        !data.duration_id ||
+        (typeof data.duration_id === "number" && data.duration_id <= 0) ||
+        data.duration_id === ""
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Internship duration is required",
+          path: ["duration_id"],
+        });
+      }
 
-    if (data.is_custom_internship_date) {
-      if (!data.internship_from_date) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Start date is required",
-          path: ["internship_from_date"],
-        });
-      }
-      if (!data.internship_to_date) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "End date is required",
-          path: ["internship_to_date"],
-        });
-      }
-      if (data.internship_from_date && data.internship_to_date) {
-        const fromDate = new Date(data.internship_from_date);
-        const toDate = new Date(data.internship_to_date);
-        if (fromDate > toDate) {
+      if (data.is_custom_internship_date) {
+        if (!data.internship_from_date) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
-            message: "End date must be after start date",
+            message: "Start date is required",
+            path: ["internship_from_date"],
+          });
+        }
+        if (!data.internship_to_date) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "End date is required",
             path: ["internship_to_date"],
           });
         }
+        if (data.internship_from_date && data.internship_to_date) {
+          const fromDate = new Date(data.internship_from_date);
+          const toDate = new Date(data.internship_to_date);
+          if (fromDate > toDate) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: "End date must be after start date",
+              path: ["internship_to_date"],
+            });
+          }
+        }
       }
     }
-  }
 
-  // Stipend validation
-  if ((data.opportunity_type === "Internship" && data.stipend_type === "Paid") ||
-    (data.opportunity_type === "Job" && data.stipend_type === "Fixed") ||
-    (data.opportunity_type === "Project")) {
+    // Stipend validation
+    if (
+      (data.opportunity_type === "Internship" &&
+        data.stipend_type === "Paid") ||
+      (data.opportunity_type === "Job" && data.stipend_type === "Fixed") ||
+      data.opportunity_type === "Project"
+    ) {
+      if (data.stipend_min == null || data.stipend_max == null) {
+        const fieldType =
+          data.opportunity_type === "Internship"
+            ? "stipend"
+            : data.opportunity_type === "Job"
+            ? "salary"
+            : "budget";
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `${fieldType} range is required`,
+          path: ["stipend_min"],
+        });
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `${fieldType} range is required`,
+          path: ["stipend_max"],
+        });
+      } else if (data.stipend_min > data.stipend_max) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Maximum amount must be greater than minimum",
+          path: ["stipend_max"],
+        });
+      }
+    }
 
-    if (data.stipend_min == null || data.stipend_max == null) {
-      const fieldType = data.opportunity_type === "Internship" ? "stipend" :
-        data.opportunity_type === "Job" ? "salary" : "budget";
+    // Removed duplicate validation - handled in the consolidated block above
+
+    // Hybrid job type requires days in office
+    if (
+      data.job_type === "Hybrid" &&
+      (!data.days_in_office || data.days_in_office <= 0)
+    ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: `${fieldType} range is required`,
-        path: ["stipend_min"],
-      });
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: `${fieldType} range is required`,
-        path: ["stipend_max"],
-      });
-    } else if (data.stipend_min > data.stipend_max) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Maximum amount must be greater than minimum",
-        path: ["stipend_max"],
+        message: "Number of in-office days is required for hybrid positions",
+        path: ["days_in_office"],
       });
     }
-  }
-
-  // Removed duplicate validation - handled in the consolidated block above
-
-  // Hybrid job type requires days in office
-  if (data.job_type === "Hybrid" && (!data.days_in_office || data.days_in_office <= 0)) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: "Number of in-office days is required for hybrid positions",
-      path: ["days_in_office"],
-    });
-  }
-});
+  });
 
 // ==================== REUSABLE COMPONENTS ====================
 
@@ -190,13 +221,14 @@ const SearchableSelect = ({
   placeholder = "Search...",
   error,
   isMulti = false,
-  getOptionLabel = (option) => option.label || option.name || option.title || String(option),
+  getOptionLabel = (option) =>
+    option.label || option.name || option.title || String(option),
   getOptionValue = (option) => option.value || option.id,
 }) => {
   const [searchInput, setSearchInput] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
 
-  const filteredOptions = options.filter(option =>
+  const filteredOptions = options.filter((option) =>
     getOptionLabel(option).toLowerCase().includes(searchInput.toLowerCase())
   );
 
@@ -208,7 +240,7 @@ const SearchableSelect = ({
       // For multi-select, toggle the value
       const currentValues = Array.isArray(value) ? value : [];
       const newValue = currentValues.includes(optionValue)
-        ? currentValues.filter(v => v !== optionValue)
+        ? currentValues.filter((v) => v !== optionValue)
         : [...currentValues, optionValue];
       onChange(newValue);
     } else {
@@ -223,7 +255,7 @@ const SearchableSelect = ({
   const handleRemove = (optionValue) => {
     if (isMulti) {
       const currentValues = Array.isArray(value) ? value : [];
-      onChange(currentValues.filter(v => v !== optionValue));
+      onChange(currentValues.filter((v) => v !== optionValue));
     }
   };
 
@@ -231,10 +263,10 @@ const SearchableSelect = ({
   const getSelectedOptions = () => {
     if (isMulti) {
       return Array.isArray(value)
-        ? options.filter(opt => value.includes(getOptionValue(opt)))
+        ? options.filter((opt) => value.includes(getOptionValue(opt)))
         : [];
     } else {
-      return options.find(opt => getOptionValue(opt) === value) || null;
+      return options.find((opt) => getOptionValue(opt) === value) || null;
     }
   };
 
@@ -248,12 +280,12 @@ const SearchableSelect = ({
           className="flex-1 text-sm outline-none"
           placeholder={
             isMulti
-              ? (Array.isArray(selectedOptions) && selectedOptions.length
+              ? Array.isArray(selectedOptions) && selectedOptions.length
                 ? `${selectedOptions.length} selected`
-                : placeholder)
-              : (selectedOptions
-                ? getOptionLabel(selectedOptions)
-                : placeholder)
+                : placeholder
+              : selectedOptions
+              ? getOptionLabel(selectedOptions)
+              : placeholder
           }
           value={searchInput}
           onChange={(e) => {
@@ -261,7 +293,7 @@ const SearchableSelect = ({
             setShowDropdown(true);
           }}
           onFocus={() => setShowDropdown(true)}
-        // onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
+          // onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
         />
       </div>
 
@@ -277,8 +309,9 @@ const SearchableSelect = ({
               <button
                 key={optionValue}
                 type="button"
-                className={`w-full text-left px-3 py-2 text-sm hover:bg-blue-50 hover:text-blue-800 transition-colors ${isSelected ? 'bg-blue-100 text-blue-800' : ''
-                  }`}
+                className={`w-full text-left px-3 py-2 text-sm hover:bg-blue-50 hover:text-blue-800 transition-colors ${
+                  isSelected ? "bg-blue-100 text-blue-800" : ""
+                }`}
                 onClick={() => handleSelect(option)}
               >
                 {getOptionLabel(option)}
@@ -292,31 +325,37 @@ const SearchableSelect = ({
       )}
 
       {/* Display selected items for multi-select */}
-      {isMulti && Array.isArray(selectedOptions) && selectedOptions.length > 0 && (
-        <div className="flex flex-wrap gap-1 mt-1">
-          {selectedOptions.map((option) => (
-            <span key={getOptionValue(option)} className="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-800 bg-blue-100 rounded-full">
-              {getOptionLabel(option)}
-              <button
-                type="button"
-                className="ml-1 text-blue-600 hover:text-blue-800"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  e.preventDefault();
-                  handleRemove(getOptionValue(option));
-                }}
+      {isMulti &&
+        Array.isArray(selectedOptions) &&
+        selectedOptions.length > 0 && (
+          <div className="flex flex-wrap gap-1 mt-1">
+            {selectedOptions.map((option) => (
+              <span
+                key={getOptionValue(option)}
+                className="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-800 bg-blue-100 rounded-full"
               >
-                <FaTimes className="w-2 h-2" />
-              </button>
-            </span>
-          ))}
-        </div>
-      )}
+                {getOptionLabel(option)}
+                <button
+                  type="button"
+                  className="ml-1 text-blue-600 hover:text-blue-800"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    handleRemove(getOptionValue(option));
+                  }}
+                >
+                  <FaTimes className="w-2 h-2" />
+                </button>
+              </span>
+            ))}
+          </div>
+        )}
 
       {/* Display selected item for single-select */}
       {!isMulti && selectedOptions && (
         <div className="mt-1 text-sm text-gray-600">
-          Selected: <span className="font-medium">{getOptionLabel(selectedOptions)}</span>
+          Selected:{" "}
+          <span className="font-medium">{getOptionLabel(selectedOptions)}</span>
           <button
             type="button"
             className="ml-2 text-xs text-red-500 hover:text-red-700"
@@ -336,431 +375,22 @@ const SearchableSelect = ({
   );
 };
 
-
-// // Domain and Skills Selector Component
-// const DomainSkillsSelector = ({ 
-//   domains = [], 
-//   getSkillsForDomain,
-//   onSkillsChange,
-//   error
-// }) => {
-//   const [selectedDomains, setSelectedDomains] = useState([]);
-//   const [domainSkillsMap, setDomainSkillsMap] = useState({});
-//   const [selectedSkillsByDomain, setSelectedSkillsByDomain] = useState({});
-//   const [searchInput, setSearchInput] = useState("");
-
-//   // Filter domains based on search
-//   const filteredDomains = domains.filter(domain =>
-//     (domain.domain_name || domain.name || '').toLowerCase().includes(searchInput.toLowerCase())
-//   );
-
-//   // Add domain function
-//   const handleAddDomain = (domain) => {
-//     const domainId = domain.domain_id || domain.id;
-//     const domainName = domain.domain_name || domain.name || `Domain ${domainId}`;
-
-//     // Check if already selected
-//     if (!selectedDomains.find(d => (d.domain_id || d.id) === domainId)) {
-//       // Get skills for this domain
-//       const skills = getSkillsForDomain(domainId) || [];
-
-//       // Update all states
-//       setSelectedDomains(prev => [...prev, { ...domain, id: domainId, name: domainName }]);
-//       setDomainSkillsMap(prev => ({ ...prev, [domainId]: skills }));
-//       setSelectedSkillsByDomain(prev => ({ ...prev, [domainId]: [] }));
-//     }
-
-//     setSearchInput("");
-//   };
-
-//   // Remove domain function
-//   const handleRemoveDomain = (domainId) => {
-//     // Remove domain from selected list
-//     setSelectedDomains(prev => prev.filter(d => (d.domain_id || d.id) !== domainId));
-
-//     // Remove from skills map
-//     setDomainSkillsMap(prev => {
-//       const newMap = { ...prev };
-//       delete newMap[domainId];
-//       return newMap;
-//     });
-
-//     // Remove from selected skills and notify parent
-//     setSelectedSkillsByDomain(prev => {
-//       const newMap = { ...prev };
-//       delete newMap[domainId];
-
-//       // Notify parent of remaining skills
-//       const allRemainingSkills = Object.values(newMap).flat();
-//       onSkillsChange(allRemainingSkills.map(s => s.skill_id));
-
-//       return newMap;
-//     });
-//   };
-
-//   // Toggle skill selection
-//   const toggleSkill = (domainId, skill) => {
-//     setSelectedSkillsByDomain(prev => {
-//       const currentSkills = prev[domainId] || [];
-//       const skillExists = currentSkills.some(s => s.skill_id === skill.skill_id);
-
-//       // Toggle the skill
-//       const updatedSkills = skillExists
-//         ? currentSkills.filter(s => s.skill_id !== skill.skill_id)
-//         : [...currentSkills, { skill_id: skill.skill_id, skill_name: skill.skill_name }];
-
-//       // Update state for this domain
-//       const newSelection = {
-//         ...prev,
-//         [domainId]: updatedSkills,
-//       };
-
-//       // Collect ALL selected skills and notify parent
-//       const allSelectedSkills = Object.values(newSelection).flat();
-//       onSkillsChange(allSelectedSkills.map(s => s.skill_id));
-
-//       return newSelection;
-//     });
-//   };
-
-//   return (
-//     <div>
-//       <Label htmlFor="skills">Skills Required</Label>
-
-//       {/* Domain Search */}
-//       <div className="flex items-center px-2 py-2 mb-2 transition-all duration-200 border border-gray-300 rounded-md focus-within:ring-1 focus-within:ring-blue-400 focus-within:border-transparent hover:border-gray-400">
-//         <input
-//           type="text"
-//           className="flex-1 text-sm outline-none"
-//           placeholder="Search and add domains..."
-//           value={searchInput}
-//           onChange={(e) => setSearchInput(e.target.value)}
-//         />
-//       </div>
-
-//       {/* Matched Domains */}
-//       {searchInput.trim() && filteredDomains.length > 0 && (
-//         <div className="mb-3">
-//           <div className="mb-2 text-xs text-gray-500">Matched domains</div>
-//           <div className="flex flex-wrap gap-2">
-//             {filteredDomains.slice(0, 8).map((domain) => {
-//               const domainId = domain.domain_id || domain.id;
-//               const domainName = domain.domain_name || domain.name || `Domain ${domainId}`;
-//               return (
-//                 <button
-//                   key={domainId}
-//                   type="button"
-//                   onClick={(e) => {
-//                     e.preventDefault();
-//                     e.stopPropagation();
-//                     handleAddDomain(domain);
-//                   }}
-//                   className="px-2 py-1 text-xs text-blue-800 transition-all duration-200 bg-blue-100 border border-blue-300 rounded-md hover:border-blue-400"
-//                 >
-//                   {domainName} +
-//                 </button>
-//               );
-//             })}
-//           </div>
-//         </div>
-//       )}
-
-//       {/* Selected Domains + Skills */}
-//       <div className="space-y-3">
-//         {selectedDomains.map((domain) => {
-//           const domainId = domain.domain_id || domain.id;
-//           const domainName = domain.domain_name || domain.name || `Domain ${domainId}`;
-//           const skills = domainSkillsMap[domainId] || [];
-//           const selectedSkills = selectedSkillsByDomain[domainId] || [];
-
-//           return (
-//             <div key={domainId} className="flex flex-col gap-2 p-3 border rounded-md">
-//               <div className="flex items-center justify-between">
-//                 <span className="px-2 py-1 text-xs font-medium text-white bg-blue-600 rounded-md">
-//                   {domainName}
-//                 </span>
-//                 <button
-//                   type="button"
-//                   className="text-xs text-red-500 hover:text-red-700"
-//                   onClick={(e) => {
-//                     e.preventDefault();
-//                     e.stopPropagation();
-//                     handleRemoveDomain(domainId);
-//                   }}
-//                 >
-//                   Remove
-//                 </button>
-//               </div>
-
-//               {/* Skills for this domain */}
-//               {skills.length > 0 && (
-//                 <div>
-//                   <div className="mb-2 text-xs text-gray-500">
-//                     Select skills for {domainName}:
-//                   </div>
-//                   <div className="flex flex-wrap gap-1">
-//                     {skills.map((skill) => {
-//                       const isSelected = selectedSkills.some(s => s.skill_id === skill.skill_id);
-//                       return (
-//                         <button
-//                           key={`${domainId}-${skill.skill_id}`} // UNIQUE KEY
-//                           type="button"
-//                           onClick={(e) => {
-//                             e.preventDefault();
-//                             e.stopPropagation();
-//                             toggleSkill(domainId, skill);
-//                           }}
-//                           className={`rounded-md px-2 py-1 text-xs border transition-all duration-200 ${
-//                             isSelected
-//                               ? "bg-blue-600 text-white border-blue-600"
-//                               : "bg-gray-100 text-gray-800 border-gray-300 hover:border-gray-400"
-//                           }`}
-//                         >
-//                           {skill.skill_name}
-//                         </button>
-//                       );
-//                     })}
-//                   </div>
-
-//                   {selectedSkills.length > 0 && (
-//                     <div className="mt-2 text-xs text-green-600">
-//                       Selected: {selectedSkills.length} skill(s)
-//                     </div>
-//                   )}
-//                 </div>
-//               )}
-//             </div>
-//           );
-//         })}
-//       </div>
-
-//       {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
-//     </div>
-//   );
-// };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// const DomainSkillsSelector = ({ 
-//   domains = [], 
-//   getSkillsForDomain,
-//   onSkillsChange,
-//   error
-// }) => {
-//   const [searchInput, setSearchInput] = useState("");
-//   const [selectedDomains, setSelectedDomains] = useState([]);
-//   const [domainSkillsCache, setDomainSkillsCache] = useState({}); // Cache skills by domain ID
-
-//   // Filter domains based on search
-//   const filteredDomains = domains.filter(domain =>
-//     (domain.domain_name || domain.name || '').toLowerCase().includes(searchInput.toLowerCase())
-//   );
-
-//   // Add domain
-//   const handleAddDomain = (domain) => {
-//     const domainId = domain.domain_id || domain.id;
-//     const domainName = domain.domain_name || domain.name || `Domain ${domainId}`;
-
-//     // Check if already selected
-//     if (!selectedDomains.find(d => (d.domain_id || d.id) === domainId)) {
-//       // Get skills for this domain (cache them)
-//       const skills = getSkillsForDomain(domainId) || [];
-
-//       setSelectedDomains(prev => [...prev, { ...domain, id: domainId, name: domainName }]);
-//       setDomainSkillsCache(prev => ({ ...prev, [domainId]: skills }));
-//     }
-
-//     setSearchInput("");
-//   };
-
-//   // Remove domain
-//   const handleRemoveDomain = (domainId) => {
-//     const newSelectedDomains = selectedDomains.filter(d => (d.domain_id || d.id) !== domainId);
-//     setSelectedDomains(newSelectedDomains);
-
-//     // Remove from cache
-//     setDomainSkillsCache(prev => {
-//       const newCache = { ...prev };
-//       delete newCache[domainId];
-//       return newCache;
-//     });
-
-//     // Recalculate all selected skills
-//     const allSelectedSkills = newSelectedDomains
-//       .flatMap(domain => domain.selectedSkills || [])
-//       .map(skill => skill.skill_id);
-//     onSkillsChange(allSelectedSkills);
-//   };
-
-//   // Toggle skill for a domain
-//   const toggleSkill = (domainId, skill) => {
-//     setSelectedDomains(prev => {
-//       return prev.map(domain => {
-//         if ((domain.domain_id || domain.id) === domainId) {
-//           const currentSkills = domain.selectedSkills || [];
-//           const skillExists = currentSkills.some(s => s.skill_id === skill.skill_id);
-
-//           const updatedSkills = skillExists
-//             ? currentSkills.filter(s => s.skill_id !== skill.skill_id)
-//             : [...currentSkills, { skill_id: skill.skill_id, skill_name: skill.skill_name }];
-
-//           // Update the domain with selected skills
-//           const updatedDomain = { ...domain, selectedSkills: updatedSkills };
-
-//           // Notify parent of all selected skills
-//           const allSelectedSkills = [...selectedDomains]
-//             .map(d => d.id === domainId ? updatedDomain : d)
-//             .flatMap(d => d.selectedSkills || [])
-//             .map(s => s.skill_id);
-//           onSkillsChange(allSelectedSkills);
-
-//           return updatedDomain;
-//         }
-//         return domain;
-//       });
-//     });
-//   };
-
-//   return (
-//     <div>
-//       <Label htmlFor="skills">Skills Required</Label>
-
-//       {/* Domain Search */}
-//       <div className="flex items-center px-2 py-2 mb-2 transition-all duration-200 border border-gray-300 rounded-md focus-within:ring-1 focus-within:ring-blue-400 focus-within:border-transparent hover:border-gray-400">
-//         <input
-//           type="text"
-//           className="flex-1 text-sm outline-none"
-//           placeholder="Search and add domains..."
-//           value={searchInput}
-//           onChange={(e) => setSearchInput(e.target.value)}
-//         />
-//       </div>
-
-//       {/* Matched Domains */}
-//       {searchInput.trim() && filteredDomains.length > 0 && (
-//         <div className="mb-3">
-//           <div className="mb-2 text-xs text-gray-500">Matched domains</div>
-//           <div className="flex flex-wrap gap-2">
-//             {filteredDomains.slice(0, 8).map((domain) => {
-//               const domainId = domain.domain_id || domain.id;
-//               const domainName = domain.domain_name || domain.name || `Domain ${domainId}`;
-//               return (
-//                 <button
-//                   key={domainId}
-//                   type="button"
-//                   onClick={(e) => {
-//                     e.preventDefault();
-//                     handleAddDomain(domain);
-//                   }}
-//                   className="px-2 py-1 text-xs text-blue-800 transition-all duration-200 bg-blue-100 border border-blue-300 rounded-md hover:border-blue-400"
-//                 >
-//                   {domainName} +
-//                 </button>
-//               );
-//             })}
-//           </div>
-//         </div>
-//       )}
-
-//       {/* Selected Domains + Skills */}
-//       <div className="space-y-3">
-//         {selectedDomains.map((domain) => {
-//           const domainId = domain.domain_id || domain.id;
-//           const domainName = domain.domain_name || domain.name || `Domain ${domainId}`;
-//           const skills = domainSkillsCache[domainId] || [];
-//           const selectedSkills = domain.selectedSkills || [];
-
-//           return (
-//             <div key={domainId} className="flex flex-col gap-2 p-3 border rounded-md">
-//               <div className="flex items-center justify-between">
-//                 <span className="px-2 py-1 text-xs font-medium text-white bg-blue-600 rounded-md">
-//                   {domainName}
-//                 </span>
-//                 <button
-//                   type="button"
-//                   className="text-xs text-red-500 hover:text-red-700"
-//                   onClick={(e) => {
-//                     e.preventDefault();
-//                     handleRemoveDomain(domainId);
-//                   }}
-//                 >
-//                   Remove
-//                 </button>
-//               </div>
-
-//               {/* Skills for this domain */}
-//               {skills.length > 0 && (
-//                 <div>
-//                   <div className="mb-2 text-xs text-gray-500">
-//                     Select skills for {domainName}:
-//                   </div>
-//                   <div className="flex flex-wrap gap-1">
-//                     {skills.map((skill) => {
-//                       const isSelected = selectedSkills.some(s => s.skill_id === skill.skill_id);
-//                       return (
-//                         <button
-//                           key={skill.skill_id}
-//                           type="button"
-//                           onClick={(e) => {
-//                             e.preventDefault();
-//                             toggleSkill(domainId, skill);
-//                           }}
-//                           className={`rounded-md px-2 py-1 text-xs border transition-all duration-200 ${
-//                             isSelected
-//                               ? "bg-blue-600 text-white border-blue-600"
-//                               : "bg-gray-100 text-gray-800 border-gray-300 hover:border-gray-400"
-//                           }`}
-//                         >
-//                           {skill.skill_name}
-//                         </button>
-//                       );
-//                     })}
-//                   </div>
-
-//                   {selectedSkills.length > 0 && (
-//                     <div className="mt-2 text-xs text-green-600">
-//                       Selected: {selectedSkills.length} skill(s)
-//                     </div>
-//                   )}
-//                 </div>
-//               )}
-//             </div>
-//           );
-//         })}
-//       </div>
-
-//       {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
-//     </div>
-//   );
-// };
-
-
 const DomainSkillsSelector = ({
   domains = [],
   getSkillsForDomain,
   onSkillsChange,
   error,
   selectedDomainSkills = [], // Controlled by parent
-  onDomainSkillsChange // Update parent state
+  onDomainSkillsChange, // Update parent state
 }) => {
   const [searchInput, setSearchInput] = useState("");
   const [domainSkillsCache, setDomainSkillsCache] = useState({});
 
   // Filter domains based on search
-  const filteredDomains = domains.filter(domain =>
-    (domain.domain_name || domain.name || '').toLowerCase().includes(searchInput.toLowerCase())
+  const filteredDomains = domains.filter((domain) =>
+    (domain.domain_name || domain.name || "")
+      .toLowerCase()
+      .includes(searchInput.toLowerCase())
   );
 
   // Add domain
@@ -768,21 +398,25 @@ const DomainSkillsSelector = ({
     // console.log("🔵 handleAddDomain called with:", domain);
 
     const domainId = domain.domain_id || domain.id;
-    const domainName = domain.domain_name || domain.name || `Domain ${domainId}`;
+    const domainName =
+      domain.domain_name || domain.name || `Domain ${domainId}`;
 
     // console.log("🔵 Processing - domainId:", domainId, "domainName:", domainName);
 
     // Check if already selected
-    if (!selectedDomainSkills.find(d => (d.domain_id || d.id) === domainId)) {
+    if (!selectedDomainSkills.find((d) => (d.domain_id || d.id) === domainId)) {
       // console.log("🔵 Domain not found in selected, adding...");
 
       // Get skills for this domain (cache them)
       const skills = getSkillsForDomain(domainId) || [];
       // console.log("🔵 Got skills for domain:", skills.length, "skills");
 
-      const newDomainSkills = [...selectedDomainSkills, { ...domain, id: domainId, name: domainName, selectedSkills: [] }];
+      const newDomainSkills = [
+        ...selectedDomainSkills,
+        { ...domain, id: domainId, name: domainName, selectedSkills: [] },
+      ];
       onDomainSkillsChange(newDomainSkills);
-      setDomainSkillsCache(prev => ({ ...prev, [domainId]: skills }));
+      setDomainSkillsCache((prev) => ({ ...prev, [domainId]: skills }));
 
       // console.log("🔵 Domain added successfully");
     } else {
@@ -796,17 +430,21 @@ const DomainSkillsSelector = ({
   const handleRemoveDomain = (domainId) => {
     // console.log("🟡 Removing domain:", domainId);
 
-    const remainingDomains = selectedDomainSkills.filter(d => (d.domain_id || d.id) !== domainId);
+    const remainingDomains = selectedDomainSkills.filter(
+      (d) => (d.domain_id || d.id) !== domainId
+    );
     onDomainSkillsChange(remainingDomains);
 
-    setDomainSkillsCache(prev => {
+    setDomainSkillsCache((prev) => {
       const newCache = { ...prev };
       delete newCache[domainId];
       return newCache;
     });
 
     // Notify parent with remaining skills
-    const allSkills = remainingDomains.flatMap(d => d.selectedSkills || []).map(s => s.skill_id);
+    const allSkills = remainingDomains
+      .flatMap((d) => d.selectedSkills || [])
+      .map((s) => s.skill_id);
     onSkillsChange(allSkills);
   };
 
@@ -814,16 +452,21 @@ const DomainSkillsSelector = ({
   const toggleSkill = (domainId, skill) => {
     // console.log("🔴 Toggling skill:", skill.skill_name, "for domain:", domainId);
 
-    const updatedDomains = selectedDomainSkills.map(domain => {
+    const updatedDomains = selectedDomainSkills.map((domain) => {
       const currentDomainId = domain.domain_id || domain.id;
 
       if (currentDomainId === domainId) {
         const currentSkills = domain.selectedSkills || [];
-        const skillExists = currentSkills.some(s => s.skill_id === skill.skill_id);
+        const skillExists = currentSkills.some(
+          (s) => s.skill_id === skill.skill_id
+        );
 
         const updatedSkills = skillExists
-          ? currentSkills.filter(s => s.skill_id !== skill.skill_id)
-          : [...currentSkills, { skill_id: skill.skill_id, skill_name: skill.skill_name }];
+          ? currentSkills.filter((s) => s.skill_id !== skill.skill_id)
+          : [
+              ...currentSkills,
+              { skill_id: skill.skill_id, skill_name: skill.skill_name },
+            ];
 
         const updatedDomain = { ...domain, selectedSkills: updatedSkills };
         // console.log("🔴 Updated domain with skills:", updatedDomain);
@@ -837,7 +480,9 @@ const DomainSkillsSelector = ({
     onDomainSkillsChange(updatedDomains);
 
     // Notify parent of skill changes
-    const allSkills = updatedDomains.flatMap(d => d.selectedSkills || []).map(s => s.skill_id);
+    const allSkills = updatedDomains
+      .flatMap((d) => d.selectedSkills || [])
+      .map((s) => s.skill_id);
     onSkillsChange(allSkills);
   };
 
@@ -863,7 +508,8 @@ const DomainSkillsSelector = ({
           <div className="flex flex-wrap gap-2">
             {filteredDomains.slice(0, 8).map((domain) => {
               const domainId = domain.domain_id || domain.id;
-              const domainName = domain.domain_name || domain.name || `Domain ${domainId}`;
+              const domainName =
+                domain.domain_name || domain.name || `Domain ${domainId}`;
               return (
                 <button
                   key={domainId}
@@ -887,14 +533,19 @@ const DomainSkillsSelector = ({
       <div className="space-y-3">
         {selectedDomainSkills.map((domain, index) => {
           const domainId = domain.domain_id || domain.id;
-          const domainName = domain.domain_name || domain.name || `Domain ${domainId}`;
+          const domainName =
+            domain.domain_name || domain.name || `Domain ${domainId}`;
 
           // Get skills for this domain - fetch directly without causing re-renders
-          const skills = domainSkillsCache[domainId] || getSkillsForDomain(domainId) || [];
+          const skills =
+            domainSkillsCache[domainId] || getSkillsForDomain(domainId) || [];
           const selectedSkills = domain.selectedSkills || [];
 
           return (
-            <div key={domainId} className="flex flex-col gap-2 p-3 border rounded-md">
+            <div
+              key={domainId}
+              className="flex flex-col gap-2 p-3 border rounded-md"
+            >
               <div className="flex items-center justify-between">
                 <span className="px-2 py-1 text-xs font-medium text-white bg-blue-600 rounded-md">
                   {domainName}
@@ -919,7 +570,9 @@ const DomainSkillsSelector = ({
                   </div>
                   <div className="flex flex-wrap gap-1">
                     {skills.map((skill) => {
-                      const isSelected = selectedSkills.some(s => s.skill_id === skill.skill_id);
+                      const isSelected = selectedSkills.some(
+                        (s) => s.skill_id === skill.skill_id
+                      );
                       return (
                         <button
                           key={skill.skill_id}
@@ -928,10 +581,11 @@ const DomainSkillsSelector = ({
                             e.preventDefault();
                             toggleSkill(domainId, skill);
                           }}
-                          className={`rounded-md px-2 py-1 text-xs border transition-all duration-200 ${isSelected
-                            ? "bg-blue-600 text-white border-blue-600"
-                            : "bg-gray-100 text-gray-800 border-gray-300 hover:border-gray-400"
-                            }`}
+                          className={`rounded-md px-2 py-1 text-xs border transition-all duration-200 ${
+                            isSelected
+                              ? "bg-blue-600 text-white border-blue-600"
+                              : "bg-gray-100 text-gray-800 border-gray-300 hover:border-gray-400"
+                          }`}
                         >
                           {skill.skill_name}
                         </button>
@@ -955,12 +609,6 @@ const DomainSkillsSelector = ({
     </div>
   );
 };
-
-
-
-
-
-
 
 // ==================== MAIN COMPONENT ====================
 export default function RecruiterPostJobInternDetails() {
@@ -1109,7 +757,7 @@ export default function RecruiterPostJobInternDetails() {
       screening_questions: Array.isArray(formData.screening_questions)
         ? formData.screening_questions
         : formData.screening_questions?.split("\n").filter((q) => q.trim()) ||
-        [],
+          [],
       phone_contact: formData.phone_contact,
       alternate_phone_number: formData.alternate_phone_number,
       eligiblecity_ids: formData.eligiblecity_ids,
@@ -1150,7 +798,6 @@ export default function RecruiterPostJobInternDetails() {
   };
 
   const onSubmit = async (data) => {
-
     setIsSubmitting(true);
     setErrorMessage("");
     setSuccessMessage("");
@@ -1175,16 +822,62 @@ export default function RecruiterPostJobInternDetails() {
       // Redirect to recruiter dashboard after successful posting
       setTimeout(() => {
         console.log("🚀 Redirecting to dashboard...");
-        navigate('/recruiter-dashboard');
+        navigate("/recruiter-dashboard");
       }, 2000);
-
     } catch (error) {
       console.log("=== API ERROR ===");
       console.log("❌ Error:", error);
       console.log("❌ Error response:", error.response);
       console.log("❌ Error message:", error.message);
 
-      const errorMsg = error.response?.data?.message || error.message || "Failed to post. Please try again.";
+      const errorMsg =
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to post. Please try again.";
+      setErrorMessage(errorMsg);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const onSaveDraft = async (data) => {
+    setIsSubmitting(true);
+    setErrorMessage("");
+    setSuccessMessage("");
+
+    try {
+      // Transform form data to match backend API
+      const jobPostData = transformFormDataToAPI(data);
+      jobPostData.active_status = 0;
+
+      if (!token) {
+        throw new Error("Authentication token not found. Please log in again.");
+      }
+
+      // Call the API
+      const response = await jobPostApi.createJobPost(jobPostData, token);
+    
+      setSuccessMessage(`${data.opportunity_type} draft saved successfully!`);
+
+      // Clear domain skills state and reset form
+      setSelectedDomainSkills([]);
+      methods.reset();
+
+      // Redirect to recruiter dashboard after successful posting
+      setTimeout(() => {
+        console.log("🚀 Redirecting to dashboard...");
+        navigate("/recruiter-dashboard");
+      }, 2000);
+    } catch (error) {
+      console.log("=== API ERROR ===");
+      console.log("❌ Error:", error);
+      console.log("❌ Error response:", error.response);
+      console.log("❌ Error message:", error.message);
+
+      const errorMsg =
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to save draft. Please try again.";
       setErrorMessage(errorMsg);
     } finally {
       setIsSubmitting(false);
@@ -1192,25 +885,31 @@ export default function RecruiterPostJobInternDetails() {
   };
 
   // Common input styles
-  const radioStyles = "w-3 h-3 text-blue-600 border-gray-300 focus:outline-none focus:ring-0";
-  const checkboxStyles = "w-3 h-3 text-blue-600 border-gray-300 rounded focus:outline-none focus:ring-0";
-  const radioContainerStyles = "flex gap-3 p-2 border border-gray-300 rounded-lg bg-white";
+  const radioStyles =
+    "w-3 h-3 text-blue-600 border-gray-300 focus:outline-none focus:ring-0";
+  const checkboxStyles =
+    "w-3 h-3 text-blue-600 border-gray-300 rounded focus:outline-none focus:ring-0";
+  const radioContainerStyles =
+    "flex gap-3 p-2 border border-gray-300 rounded-lg bg-white";
 
   const FormContent = () => {
     return (
       <div className="w-full max-w-full p-6 mt-4 bg-white shadow-none rounded-xl sm:shadow-xl sm:max-w-2xl sm:p-8">
         <FormProvider {...methods}>
-          <form onSubmit={(e) => {
-            methods.handleSubmit(
-              (data) => {
-                onSubmit(data);
-              },
-              (errors) => {
-                console.log("❌ Validation failed:");
-                console.log("Errors:", errors);
-              }
-            )(e);
-          }} className="space-y-4">
+          <form
+            onSubmit={(e) => {
+              methods.handleSubmit(
+                (data) => {
+                  onSubmit(data);
+                },
+                (errors) => {
+                  console.log("❌ Validation failed:");
+                  console.log("Errors:", errors);
+                }
+              )(e);
+            }}
+            className="space-y-4"
+          >
             {/* Success Message */}
             {successMessage && (
               <div className="relative">
@@ -1264,13 +963,18 @@ export default function RecruiterPostJobInternDetails() {
               <Label htmlFor="opportunity_type">Opportunity type</Label>
               <div className={radioContainerStyles}>
                 {["Internship", "Job", "Project"].map((type) => (
-                  <label key={type} className="flex items-center gap-2 cursor-pointer">
+                  <label
+                    key={type}
+                    className="flex items-center gap-2 cursor-pointer"
+                  >
                     <input
                       type="radio"
                       value={type}
                       className={radioStyles}
                       checked={opportunity_type === type}
-                      onChange={(e) => handleOpportunityTypeChange(e.target.value)}
+                      onChange={(e) =>
+                        handleOpportunityTypeChange(e.target.value)
+                      }
                     />
                     <span className="text-sm text-gray-700">{type}</span>
                   </label>
@@ -1284,15 +988,17 @@ export default function RecruiterPostJobInternDetails() {
                 {opportunity_type === "Internship"
                   ? "Internship Profile"
                   : opportunity_type === "Job"
-                    ? "Job Title"
-                    : "Project Title"}
+                  ? "Job Title"
+                  : "Project Title"}
               </Label>
               <SearchableSelect
                 options={jobRoles || []}
                 value={methods.watch("job_role_id")}
                 onChange={(value) => {
                   console.log("💼 Job role changed to:", value);
-                  methods.setValue("job_role_id", value, { shouldValidate: true });
+                  methods.setValue("job_role_id", value, {
+                    shouldValidate: true,
+                  });
                   console.log("💼 Job role setValue completed");
                 }}
                 placeholder={`Search ${opportunity_type.toLowerCase()} roles...`}
@@ -1321,7 +1027,11 @@ export default function RecruiterPostJobInternDetails() {
                   <SearchableSelect
                     options={durations || []}
                     value={methods.watch("duration_id")}
-                    onChange={(value) => methods.setValue("duration_id", value, { shouldValidate: true })}
+                    onChange={(value) =>
+                      methods.setValue("duration_id", value, {
+                        shouldValidate: true,
+                      })
+                    }
                     placeholder="Select duration"
                     error={methods.formState.errors.duration_id?.message}
                     getOptionLabel={(option) => option.value}
@@ -1331,7 +1041,9 @@ export default function RecruiterPostJobInternDetails() {
 
                 {/* Internship Start Date */}
                 <div>
-                  <Label htmlFor="internship_start_date">Internship start date</Label>
+                  <Label htmlFor="internship_start_date">
+                    Internship start date
+                  </Label>
                   <div className={radioContainerStyles}>
                     <label className="flex items-center gap-2 cursor-pointer">
                       <input
@@ -1339,9 +1051,13 @@ export default function RecruiterPostJobInternDetails() {
                         value="false"
                         className={radioStyles}
                         checked={!is_custom_internship_date}
-                        onChange={() => methods.setValue("is_custom_internship_date", false)}
+                        onChange={() =>
+                          methods.setValue("is_custom_internship_date", false)
+                        }
                       />
-                      <span className="text-sm text-gray-700">Immediately (within 30 days)</span>
+                      <span className="text-sm text-gray-700">
+                        Immediately (within 30 days)
+                      </span>
                     </label>
                     <label className="flex items-center gap-2 cursor-pointer">
                       <input
@@ -1349,7 +1065,9 @@ export default function RecruiterPostJobInternDetails() {
                         value="true"
                         className={radioStyles}
                         checked={is_custom_internship_date}
-                        onChange={() => methods.setValue("is_custom_internship_date", true)}
+                        onChange={() =>
+                          methods.setValue("is_custom_internship_date", true)
+                        }
                       />
                       <span className="text-sm text-gray-700">Custom</span>
                     </label>
@@ -1363,7 +1081,9 @@ export default function RecruiterPostJobInternDetails() {
                       <Input
                         type="date"
                         {...methods.register("internship_from_date")}
-                        error={methods.formState.errors.internship_from_date?.message}
+                        error={
+                          methods.formState.errors.internship_from_date?.message
+                        }
                       />
                     </div>
                     <div className="flex-1">
@@ -1371,7 +1091,9 @@ export default function RecruiterPostJobInternDetails() {
                       <Input
                         type="date"
                         {...methods.register("internship_to_date")}
-                        error={methods.formState.errors.internship_to_date?.message}
+                        error={
+                          methods.formState.errors.internship_to_date?.message
+                        }
                       />
                     </div>
                   </div>
@@ -1385,20 +1107,26 @@ export default function RecruiterPostJobInternDetails() {
                 {opportunity_type === "Internship"
                   ? "Internship Type"
                   : opportunity_type === "Job"
-                    ? "Job Type"
-                    : "Project Type"}
+                  ? "Job Type"
+                  : "Project Type"}
               </Label>
               <div className={radioContainerStyles}>
                 {["In office", "Hybrid", "Remote"].map((type) => (
-                  <label key={type} className="flex items-center gap-2 cursor-pointer">
+                  <label
+                    key={type}
+                    className="flex items-center gap-2 cursor-pointer"
+                  >
                     <input
                       type="radio"
                       value={type}
                       className={radioStyles}
                       {...methods.register("job_type", {
                         onChange: (e) => {
-                          console.log("🏢 Job type changed to:", e.target.value);
-                        }
+                          console.log(
+                            "🏢 Job type changed to:",
+                            e.target.value
+                          );
+                        },
                       })}
                     />
                     <span className="text-sm text-gray-700">{type}</span>
@@ -1419,10 +1147,11 @@ export default function RecruiterPostJobInternDetails() {
                       key={day}
                       type="button"
                       className={`w-10 h-10 rounded-full border text-sm font-semibold flex items-center justify-center
-                          ${methods.getValues("days_in_office") === day
-                          ? "bg-blue-600 text-white border-blue-600"
-                          : "bg-white text-gray-700 border-gray-300"
-                        }
+                          ${
+                            methods.getValues("days_in_office") === day
+                              ? "bg-blue-600 text-white border-blue-600"
+                              : "bg-white text-gray-700 border-gray-300"
+                          }
                           hover:border-blue-400 transition`}
                       onClick={() =>
                         methods.setValue("days_in_office", day, {
@@ -1435,7 +1164,9 @@ export default function RecruiterPostJobInternDetails() {
                   ))}
                 </div>
                 {methods.formState.errors.days_in_office?.message && (
-                  <p className="mt-1 text-sm text-red-600">{methods.formState.errors.days_in_office?.message}</p>
+                  <p className="mt-1 text-sm text-red-600">
+                    {methods.formState.errors.days_in_office?.message}
+                  </p>
                 )}
               </div>
             )}
@@ -1445,7 +1176,10 @@ export default function RecruiterPostJobInternDetails() {
               <Label htmlFor="job_time">Work Schedule</Label>
               <div className={radioContainerStyles}>
                 {["Day Shift", "Night Shift", "Part-time"].map((schedule) => (
-                  <label key={schedule} className="flex items-center gap-2 cursor-pointer">
+                  <label
+                    key={schedule}
+                    className="flex items-center gap-2 cursor-pointer"
+                  >
                     <input
                       type="radio"
                       value={schedule}
@@ -1465,7 +1199,9 @@ export default function RecruiterPostJobInternDetails() {
                 type="number"
                 placeholder="e.g. 4"
                 min="1"
-                {...methods.register("number_of_openings", { valueAsNumber: true })}
+                {...methods.register("number_of_openings", {
+                  valueAsNumber: true,
+                })}
                 error={methods.formState.errors.number_of_openings?.message}
               />
             </div>
@@ -1476,8 +1212,8 @@ export default function RecruiterPostJobInternDetails() {
                 {opportunity_type === "Internship"
                   ? "Intern's responsibility"
                   : opportunity_type === "Job"
-                    ? "Job description"
-                    : "Project description"}
+                  ? "Job description"
+                  : "Project description"}
               </Label>
               <Textarea
                 rows={4}
@@ -1485,8 +1221,8 @@ export default function RecruiterPostJobInternDetails() {
                   opportunity_type === "Internship"
                     ? "Selected intern day-to-day responsibilities include..."
                     : opportunity_type === "Job"
-                      ? "Key responsibilities:\n1.\n2.\n3."
-                      : "Project requirements:\n1.\n2.\n3."
+                    ? "Key responsibilities:\n1.\n2.\n3."
+                    : "Project requirements:\n1.\n2.\n3."
                 }
                 {...methods.register("job_description")}
                 error={methods.formState.errors.job_description?.message}
@@ -1495,15 +1231,17 @@ export default function RecruiterPostJobInternDetails() {
 
             {/* Candidate Preferences */}
             <div>
-              <Label htmlFor="candidate_preferences">Additional candidate preferences</Label>
+              <Label htmlFor="candidate_preferences">
+                Additional candidate preferences
+              </Label>
               <Textarea
                 rows={3}
                 placeholder={
                   opportunity_type === "Internship"
                     ? "e.g. Candidates pursuing B.Tech. preferred"
                     : opportunity_type === "Job"
-                      ? "e.g. Experience with similar roles preferred"
-                      : "e.g. Experience with similar projects preferred"
+                    ? "e.g. Experience with similar roles preferred"
+                    : "e.g. Experience with similar projects preferred"
                 }
                 {...methods.register("candidate_preferences")}
               />
@@ -1517,7 +1255,8 @@ export default function RecruiterPostJobInternDetails() {
                 {...methods.register("women_preferred")}
               />
               <span className="text-sm text-gray-700">
-                Allow applications from women who are willing to start/restart their career.
+                Allow applications from women who are willing to start/restart
+                their career.
               </span>
             </div>
 
@@ -1527,15 +1266,18 @@ export default function RecruiterPostJobInternDetails() {
                 {opportunity_type === "Internship"
                   ? "Stipend"
                   : opportunity_type === "Job"
-                    ? "Fixed Pay"
-                    : "Project Budget"}
+                  ? "Fixed Pay"
+                  : "Project Budget"}
               </Label>
               <div className={radioContainerStyles}>
                 {(opportunity_type === "Internship"
                   ? ["Paid", "Unpaid"]
                   : ["Fixed"]
                 ).map((type) => (
-                  <label key={type} className="flex items-center gap-2 cursor-pointer">
+                  <label
+                    key={type}
+                    className="flex items-center gap-2 cursor-pointer"
+                  >
                     <input
                       type="radio"
                       value={type}
@@ -1551,38 +1293,44 @@ export default function RecruiterPostJobInternDetails() {
             {/* Stipend Amount */}
             {((opportunity_type === "Internship" && stipend_type === "Paid") ||
               (opportunity_type === "Job" && stipend_type === "Fixed") ||
-              (opportunity_type === "Project")) && (
-                <div>
-                  <Label htmlFor="stipend_range">
-                    {opportunity_type === "Internship"
-                      ? "Stipend Range"
-                      : opportunity_type === "Job"
-                        ? "Fixed Pay Range"
-                        : "Project Budget Range"}
-                  </Label>
-                  <div className="flex flex-col gap-2 sm:flex-row sm:gap-3">
-                    <Input
-                      type="number"
-                      placeholder="₹ Min"
-                      min="0"
-                      {...methods.register("stipend_min", { valueAsNumber: true })}
-                      error={methods.formState.errors.stipend_min?.message}
-                    />
-                    <Input
-                      type="number"
-                      placeholder="₹ Max"
-                      min="0"
-                      {...methods.register("stipend_max", { valueAsNumber: true })}
-                      error={methods.formState.errors.stipend_max?.message}
-                    />
-                  </div>
+              opportunity_type === "Project") && (
+              <div>
+                <Label htmlFor="stipend_range">
+                  {opportunity_type === "Internship"
+                    ? "Stipend Range"
+                    : opportunity_type === "Job"
+                    ? "Fixed Pay Range"
+                    : "Project Budget Range"}
+                </Label>
+                <div className="flex flex-col gap-2 sm:flex-row sm:gap-3">
+                  <Input
+                    type="number"
+                    placeholder="₹ Min"
+                    min="0"
+                    {...methods.register("stipend_min", {
+                      valueAsNumber: true,
+                    })}
+                    error={methods.formState.errors.stipend_min?.message}
+                  />
+                  <Input
+                    type="number"
+                    placeholder="₹ Max"
+                    min="0"
+                    {...methods.register("stipend_max", {
+                      valueAsNumber: true,
+                    })}
+                    error={methods.formState.errors.stipend_max?.message}
+                  />
                 </div>
-              )}
+              </div>
+            )}
 
             {/* Incentives (Internship only) */}
             {opportunity_type === "Internship" && stipend_type === "Paid" && (
               <div>
-                <Label htmlFor="incentive_per_year">Incentives (per year)</Label>
+                <Label htmlFor="incentive_per_year">
+                  Incentives (per year)
+                </Label>
                 <Input
                   type="text"
                   placeholder="e.g. Performance based, ₹5000-10000"
@@ -1601,19 +1349,19 @@ export default function RecruiterPostJobInternDetails() {
               <div className="grid grid-cols-1 gap-2 p-3 rounded-lg sm:grid-cols-2 sm:gap-3 bg-gray-50">
                 {(opportunity_type === "Internship"
                   ? [
-                    "Certificate of completion",
-                    "Letter of recommendation",
-                    "Flexible work hours",
-                    "5 days a week",
-                    "Informal dress code",
-                    "Free snacks & beverages",
-                  ]
+                      "Certificate of completion",
+                      "Letter of recommendation",
+                      "Flexible work hours",
+                      "5 days a week",
+                      "Informal dress code",
+                      "Free snacks & beverages",
+                    ]
                   : [
-                    "5 days a week",
-                    "Health Insurance",
-                    "Life Insurance",
-                    "Flexible work hours",
-                  ]
+                      "5 days a week",
+                      "Health Insurance",
+                      "Life Insurance",
+                      "Flexible work hours",
+                    ]
                 ).map((perk) => (
                   <label
                     key={perk}
@@ -1640,13 +1388,14 @@ export default function RecruiterPostJobInternDetails() {
                   opportunity_type === "Internship"
                     ? "Add screening questions (one per line):\n1. Please confirm your availability for this internship\n2. Share your relevant experience\n3. Add your own questions..."
                     : opportunity_type === "Job"
-                      ? "Add screening questions (one per line):\n1. Please confirm your availability for this job\n2. How early would you be able to join?\n3. Add your own questions..."
-                      : "Add screening questions (one per line):\n1. Please confirm your availability for this project\n2. Share your relevant project experience\n3. Add your own questions..."
+                    ? "Add screening questions (one per line):\n1. Please confirm your availability for this job\n2. How early would you be able to join?\n3. Add your own questions..."
+                    : "Add screening questions (one per line):\n1. Please confirm your availability for this project\n2. Share your relevant project experience\n3. Add your own questions..."
                 }
                 {...methods.register("screening_questions")}
               />
               <p className="mt-1 text-xs text-gray-500">
-                Enter each question on a new line. Each line will be treated as a separate question.
+                Enter each question on a new line. Each line will be treated as
+                a separate question.
               </p>
             </div>
 
@@ -1673,7 +1422,9 @@ export default function RecruiterPostJobInternDetails() {
                   options={locations || []}
                   value={methods.watch("eligiblecity_ids")}
                   onChange={(value) => {
-                    methods.setValue("eligiblecity_ids", value, { shouldValidate: true });
+                    methods.setValue("eligiblecity_ids", value, {
+                      shouldValidate: true,
+                    });
                   }}
                   placeholder="Search and select cities..."
                   error={methods.formState.errors.eligiblecity_ids?.message}
@@ -1704,7 +1455,9 @@ export default function RecruiterPostJobInternDetails() {
                 />
               </div>
               {methods.formState.errors.phone_contact?.message && (
-                <p className="mt-1 text-sm text-red-600">{methods.formState.errors.phone_contact?.message}</p>
+                <p className="mt-1 text-sm text-red-600">
+                  {methods.formState.errors.phone_contact?.message}
+                </p>
               )}
             </div>
 
@@ -1759,7 +1512,11 @@ export default function RecruiterPostJobInternDetails() {
                   <SearchableSelect
                     options={schoolColleges || []}
                     value={methods.watch("eligiblecollege_ids")}
-                    onChange={(value) => methods.setValue("eligiblecollege_ids", value, { shouldValidate: true })}
+                    onChange={(value) =>
+                      methods.setValue("eligiblecollege_ids", value, {
+                        shouldValidate: true,
+                      })
+                    }
                     placeholder="Search and select colleges..."
                     isMulti={true}
                     getOptionLabel={(option) => option.name}
@@ -1775,7 +1532,9 @@ export default function RecruiterPostJobInternDetails() {
                     </div>
                   ) : masterDataError ? (
                     <div className="p-3 border border-red-200 rounded-lg bg-red-50">
-                      <p className="text-sm text-red-800">{masterDataErrorMsg}</p>
+                      <p className="text-sm text-red-800">
+                        {masterDataErrorMsg}
+                      </p>
                       <button
                         type="button"
                         onClick={() => refetchMasterData()}
@@ -1788,7 +1547,11 @@ export default function RecruiterPostJobInternDetails() {
                     <SearchableSelect
                       options={courses || []}
                       value={methods.watch("eligiblecourse_ids")}
-                      onChange={(value) => methods.setValue("eligiblecourse_ids", value, { shouldValidate: true })}
+                      onChange={(value) =>
+                        methods.setValue("eligiblecourse_ids", value, {
+                          shouldValidate: true,
+                        })
+                      }
                       placeholder="Search and select courses..."
                       isMulti={true}
                       getOptionLabel={(option) => option.name}
@@ -1804,20 +1567,23 @@ export default function RecruiterPostJobInternDetails() {
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => alert("Draft saved (not implemented)")}
+                onClick={methods.handleSubmit(onSaveDraft, (errors) => {
+                  console.log("Draft save validation failed:", errors);
+                })}
+                disabled={isSubmitting}
               >
-                Save Draft
+                {isSubmitting ? "Saving..." : "Save Draft"}
               </Button>
               <Button
                 type="submit"
                 loading={isSubmitting}
                 variant="primary"
                 onClick={() => {
-                  console.log("🔘 Post button clicked");
-                  console.log("📊 Form values:", methods.getValues());
-                  console.log("❌ Form errors:", methods.formState.errors);
-                  console.log("✅ Form isValid:", methods.formState.isValid);
-                  console.log("🎯 Selected domain skills:", selectedDomainSkills);
+                  console.log("Post button clicked");
+                  console.log(" Form values:", methods.getValues());
+                  console.log(" Form errors:", methods.formState.errors);
+                  console.log(" Form isValid:", methods.formState.isValid);
+                  console.log("Selected domain skills:", selectedDomainSkills);
                 }}
               >
                 {isSubmitting ? "Posting..." : `Post ${opportunity_type}`}

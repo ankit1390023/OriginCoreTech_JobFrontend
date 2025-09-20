@@ -22,13 +22,12 @@ import {
   FaVenus,
   FaChevronDown,
   FaChevronUp,
- 
 } from "react-icons/fa";
 import Header from "../../../components/shared/Header";
 import { useGetJobApi } from "../../../hooks/useGetJobApi";
 import { useGetJobById } from "../../../hooks/useGetJobApi";
 import { Button, Loader, Badge } from "../../../components/ui";
-import ApplyForm from './applyForm';
+import ApplyForm from "./applyForm";
 import { getImageUrl } from "../../../../utils.js";
 
 export default function JobDetailsPage() {
@@ -46,12 +45,10 @@ export default function JobDetailsPage() {
     error: jobDetailsError,
   } = useGetJobById(job_id);
 
-
   const [selectedId, setSelectedId] = useState(job_id);
   const [isJobListOpen, setIsJobListOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false); // New state for show more/less
   const [showApplyForm, setShowApplyForm] = useState(false); // State for ApplyForm popup
-  
 
   const handleSelect = (id) => {
     setSelectedId(id);
@@ -59,7 +56,7 @@ export default function JobDetailsPage() {
     // Close mobile job list after selection
     setIsJobListOpen(false);
   };
-  
+
   const toggleJobList = () => {
     setIsJobListOpen(!isJobListOpen);
   };
@@ -137,12 +134,12 @@ export default function JobDetailsPage() {
 
       {/* Desktop Job List */}
       <div className="px-2 pt-1 pb-2 mx-auto max-w-7xl sm:pt-2 md:pt-4 lg:pt-6 sm:pb-3 sm:px-3 md:px-4 lg:px-6">
-
         <div className="grid grid-cols-1 lg:grid-cols-[380px_1fr] gap-2">
           {/* Left: Job List */}
           <aside
-            className={`bg-white rounded-2xl shadow border border-gray-100 flex flex-col self-start min-h-[80vh] sm:min-h-[100vh] lg:min-h-[120vh] p-2 ${isJobListOpen ? "block" : "hidden lg:flex"
-              }`}
+            className={`bg-white rounded-2xl shadow border border-gray-100 flex flex-col self-start min-h-[80vh] sm:min-h-[100vh] lg:min-h-[120vh] p-2 ${
+              isJobListOpen ? "block" : "hidden lg:flex"
+            }`}
           >
             <div className="mb-2 sm:mb-3">
               <h2 className="mb-1 text-lg font-extrabold sm:text-xl lg:text-2xl">
@@ -157,10 +154,11 @@ export default function JobDetailsPage() {
                     <button
                       key={job.job_id}
                       onClick={() => handleSelect(job.job_id)}
-                      className={`flex items-center gap-1.5 sm:gap-2 md:gap-3 rounded-lg px-1.5 sm:px-2 md:px-3 py-1.5 sm:py-2 md:py-3 text-left transition border-2 border-gray-200 hover:border-blue-200 hover:bg-blue-50 focus:outline-none relative ${selectedId === job.job_id.toString()
-                        ? "bg-blue-100 border-blue-400"
-                        : ""
-                        }`}
+                      className={`flex items-center gap-1.5 sm:gap-2 md:gap-3 rounded-lg px-1.5 sm:px-2 md:px-3 py-1.5 sm:py-2 md:py-3 text-left transition border-2 border-gray-200 hover:border-blue-200 hover:bg-blue-50 focus:outline-none relative ${
+                        selectedId === job.job_id.toString()
+                          ? "bg-blue-100 border-blue-400"
+                          : ""
+                      }`}
                     >
                       <img
                         src={
@@ -178,16 +176,14 @@ export default function JobDetailsPage() {
                           {job.company_name}
                         </div>
                         <div className="flex flex-wrap items-center gap-1">
-                          {
-                            job.company_location && (
-                              <Badge color="bg-gray-100 text-gray-700 hover:bg-gray-200">
-                                <span className="text-xs truncate">
-                                  {job.company_location}
-                                </span>
-                              </Badge>
-                            )
-                          }
-                       
+                          {job.company_location && (
+                            <Badge color="bg-gray-100 text-gray-700 hover:bg-gray-200">
+                              <span className="text-xs truncate">
+                                {job.company_location}
+                              </span>
+                            </Badge>
+                          )}
+
                           {/* {
                             job.experience && (
                               <Badge color="bg-gray-100 text-gray-700 hover:bg-gray-200">
@@ -221,7 +217,6 @@ export default function JobDetailsPage() {
                           text={`${job.matchPercentage || 0}% match`}
                           className="text-xs border border-gray-100"
                         />
-
                       </div>
                     </button>
                   ))}
@@ -299,11 +294,11 @@ export default function JobDetailsPage() {
                           </span>
                         </Badge>
                       )}
-                    
+
                       <Badge color="bg-teal-100 text-teal-700 hover:bg-teal-200">
                         <FaUsers className="inline mr-1 text-xs text-teal-500" />
                         <span className="text-xs truncate sm:text-sm">
-                                {selectedJobDetails.number_of_applicants} applicants
+                          {selectedJobDetails.number_of_applicants} applicants
                         </span>
                       </Badge>
                       {selectedJobDetails.job_type && (
@@ -319,14 +314,25 @@ export default function JobDetailsPage() {
 
                   {/* Apply Now Button - Top Right */}
                   <div className="absolute top-0 right-0">
-                    <Button
-                      variant="secondary"
-                      size="small"
-                      onClick={() => setShowApplyForm(true)}
-                      className={`font-semibold py-1.5 sm:py-2 px-2 sm:px-3 md:px-6 rounded-lg shadow-lg transition-colors duration-200 flex items-center gap-1.5 text-xs sm:text-sm`}
-                    >
-                      Apply Now
-                    </Button>
+                    {selectedJobDetails?.has_applied ? (
+                      <Button
+                        variant="disabled"
+                        size="small"
+                        className="font-semibold py-1.5 sm:py-2 px-2 sm:px-3 md:px-6 rounded-lg shadow-lg bg-gray-300 text-gray-600 cursor-not-allowed flex items-center gap-1.5 text-xs sm:text-sm"
+                        disabled
+                      >
+                        Already Applied
+                      </Button>
+                    ) : (
+                      <Button
+                        variant="secondary"
+                        size="small"
+                        onClick={() => setShowApplyForm(true)}
+                        className="font-semibold py-1.5 sm:py-2 px-2 sm:px-3 md:px-6 rounded-lg shadow-lg transition-colors duration-200 flex items-center gap-1.5 text-xs sm:text-sm"
+                      >
+                        Apply Now
+                      </Button>
+                    )}
                   </div>
                 </div>
                 {/* Job Description - Always visible */}
@@ -359,7 +365,11 @@ export default function JobDetailsPage() {
 
                 {/* Expandable Content Container */}
                 <div className="relative">
-                  <div className={`transition-all duration-300 ${isExpanded ? 'max-h-none' : 'max-h-96 overflow-hidden'}`}>
+                  <div
+                    className={`transition-all duration-300 ${
+                      isExpanded ? "max-h-none" : "max-h-96 overflow-hidden"
+                    }`}
+                  >
                     {/* Job Details - Single Column */}
                     <div className="mb-4 space-y-3 sm:space-y-4">
                       {/* Internship Details */}
@@ -378,7 +388,9 @@ export default function JobDetailsPage() {
                             </div>
                             {selectedJobDetails.internship_start_date && (
                               <div className="flex justify-between">
-                                <span className="text-gray-600">Start Date:</span>
+                                <span className="text-gray-600">
+                                  Start Date:
+                                </span>
                                 <span className="font-medium">
                                   {new Date(
                                     selectedJobDetails.internship_start_date
@@ -392,13 +404,15 @@ export default function JobDetailsPage() {
                                   Incentive/Year:
                                 </span>
                                 <span className="font-medium">
-                                 {selectedJobDetails.incentive_per_year}
+                                  {selectedJobDetails.incentive_per_year}
                                 </span>
                               </div>
                             )}
                             {selectedJobDetails.stipend_type && (
                               <div className="flex justify-between">
-                                <span className="text-gray-600">Stipend Type:</span>
+                                <span className="text-gray-600">
+                                  Stipend Type:
+                                </span>
                                 <span className="font-medium">
                                   {selectedJobDetails.stipend_type}
                                 </span>
@@ -436,11 +450,12 @@ export default function JobDetailsPage() {
                           <div className="flex justify-between">
                             <span className="text-gray-600">Status:</span>
                             <span
-                              className={`font-medium ${selectedJobDetails.hiringStatus ===
+                              className={`font-medium ${
+                                selectedJobDetails.hiringStatus ===
                                 "Actively Hiring"
-                                ? "text-green-600"
-                                : "text-orange-600"
-                                }`}
+                                  ? "text-green-600"
+                                  : "text-orange-600"
+                              }`}
                             >
                               {selectedJobDetails.hiringStatus}
                             </span>
@@ -499,64 +514,73 @@ export default function JobDetailsPage() {
                         )}
 
                       {/* Eligible Cities */}
-                      {selectedJobDetails.eligible_cities && selectedJobDetails.eligible_cities.length > 0 && (
-                        <div className="p-3 border border-blue-200 rounded-lg bg-blue-50">
-                          <h4 className="font-semibold text-blue-800 mb-2 flex items-center gap-1.5 text-sm">
-                            <FaMapMarkerAlt className="text-xs text-blue-600" />
-                            Eligible Cities
-                          </h4>
-                          <div className="flex flex-wrap gap-1.5">
-                            {selectedJobDetails.eligible_cities.map((city, index) => (
-                              <Badge
-                                key={`city-${index}`}
-                                color="bg-blue-100 text-blue-700 hover:bg-blue-200"
-                                text={city.name}
-                                className="text-xs border border-blue-200"
-                              />
-                            ))}
+                      {selectedJobDetails.eligible_cities &&
+                        selectedJobDetails.eligible_cities.length > 0 && (
+                          <div className="p-3 border border-blue-200 rounded-lg bg-blue-50">
+                            <h4 className="font-semibold text-blue-800 mb-2 flex items-center gap-1.5 text-sm">
+                              <FaMapMarkerAlt className="text-xs text-blue-600" />
+                              Eligible Cities
+                            </h4>
+                            <div className="flex flex-wrap gap-1.5">
+                              {selectedJobDetails.eligible_cities.map(
+                                (city, index) => (
+                                  <Badge
+                                    key={`city-${index}`}
+                                    color="bg-blue-100 text-blue-700 hover:bg-blue-200"
+                                    text={city.name}
+                                    className="text-xs border border-blue-200"
+                                  />
+                                )
+                              )}
+                            </div>
                           </div>
-                        </div>
-                      )}
+                        )}
 
                       {/* Eligible Colleges */}
-                      {selectedJobDetails.eligible_colleges && selectedJobDetails.eligible_colleges.length > 0 && (
-                        <div className="p-3 border border-purple-200 rounded-lg bg-purple-50">
-                          <h4 className="font-semibold text-purple-800 mb-2 flex items-center gap-1.5 text-sm">
-                            <FaBuilding className="text-xs text-purple-600" />
-                            Eligible Colleges
-                          </h4>
-                          <div className="flex flex-wrap gap-1.5">
-                            {selectedJobDetails.eligible_colleges.map((college, index) => (
-                              <Badge
-                                key={`college-${index}`}
-                                color="bg-purple-100 text-purple-700 hover:bg-purple-200"
-                                text={college.name}
-                                className="text-xs border border-purple-200"
-                              />
-                            ))}
+                      {selectedJobDetails.eligible_colleges &&
+                        selectedJobDetails.eligible_colleges.length > 0 && (
+                          <div className="p-3 border border-purple-200 rounded-lg bg-purple-50">
+                            <h4 className="font-semibold text-purple-800 mb-2 flex items-center gap-1.5 text-sm">
+                              <FaBuilding className="text-xs text-purple-600" />
+                              Eligible Colleges
+                            </h4>
+                            <div className="flex flex-wrap gap-1.5">
+                              {selectedJobDetails.eligible_colleges.map(
+                                (college, index) => (
+                                  <Badge
+                                    key={`college-${index}`}
+                                    color="bg-purple-100 text-purple-700 hover:bg-purple-200"
+                                    text={college.name}
+                                    className="text-xs border border-purple-200"
+                                  />
+                                )
+                              )}
+                            </div>
                           </div>
-                        </div>
-                      )}
+                        )}
 
                       {/* Eligible Courses */}
-                      {selectedJobDetails.eligible_courses && selectedJobDetails.eligible_courses.length > 0 && (
-                        <div className="p-3 border border-green-200 rounded-lg bg-green-50">
-                          <h4 className="font-semibold text-green-800 mb-2 flex items-center gap-1.5 text-sm">
-                            <FaGraduationCap className="text-xs text-green-600" />
-                            Eligible Courses
-                          </h4>
-                          <div className="flex flex-wrap gap-1.5">
-                            {selectedJobDetails.eligible_courses.map((course, index) => (
-                              <Badge
-                                key={`course-${index}`}
-                                color="bg-green-100 text-green-700 hover:bg-green-200"
-                                text={course.name}
-                                className="text-xs border border-green-200"
-                              />
-                            ))}
+                      {selectedJobDetails.eligible_courses &&
+                        selectedJobDetails.eligible_courses.length > 0 && (
+                          <div className="p-3 border border-green-200 rounded-lg bg-green-50">
+                            <h4 className="font-semibold text-green-800 mb-2 flex items-center gap-1.5 text-sm">
+                              <FaGraduationCap className="text-xs text-green-600" />
+                              Eligible Courses
+                            </h4>
+                            <div className="flex flex-wrap gap-1.5">
+                              {selectedJobDetails.eligible_courses.map(
+                                (course, index) => (
+                                  <Badge
+                                    key={`course-${index}`}
+                                    color="bg-green-100 text-green-700 hover:bg-green-200"
+                                    text={course.name}
+                                    className="text-xs border border-green-200"
+                                  />
+                                )
+                              )}
+                            </div>
                           </div>
-                        </div>
-                      )}
+                        )}
                       {/* Candidate Preferences */}
                       <div className="p-3 border border-indigo-200 rounded-lg bg-indigo-50">
                         <h4 className="font-semibold text-indigo-800 mb-2 flex items-center gap-1.5 text-sm">
@@ -641,7 +665,9 @@ export default function JobDetailsPage() {
                         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                           <div className="flex items-center gap-2">
                             <img
-                              src={getImageUrl(selectedJobDetails.recruiter_profile_pic)}
+                              src={getImageUrl(
+                                selectedJobDetails.recruiter_profile_pic
+                              )}
                               alt="Recruiter"
                               className="object-cover w-10 h-10 border border-gray-200 rounded-full"
                             />
@@ -690,22 +716,25 @@ export default function JobDetailsPage() {
                       </h3>
                       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
                         <div
-                          className={`flex items-center gap-1.5 p-2 rounded-lg ${selectedJobDetails.is_email_verified
-                            ? "bg-green-50 border border-green-200"
-                            : "bg-red-50 border border-red-200"
-                            }`}
+                          className={`flex items-center gap-1.5 p-2 rounded-lg ${
+                            selectedJobDetails.is_email_verified
+                              ? "bg-green-50 border border-green-200"
+                              : "bg-red-50 border border-red-200"
+                          }`}
                         >
                           <FaEnvelope
-                            className={`text-xs ${selectedJobDetails.is_email_verified
-                              ? "text-green-600"
-                              : "text-red-600"
-                              }`}
+                            className={`text-xs ${
+                              selectedJobDetails.is_email_verified
+                                ? "text-green-600"
+                                : "text-red-600"
+                            }`}
                           />
                           <span
-                            className={`text-xs font-medium ${selectedJobDetails.is_email_verified
-                              ? "text-green-700"
-                              : "text-red-700"
-                              }`}
+                            className={`text-xs font-medium ${
+                              selectedJobDetails.is_email_verified
+                                ? "text-green-700"
+                                : "text-red-700"
+                            }`}
                           >
                             Email{" "}
                             {selectedJobDetails.is_email_verified
@@ -714,22 +743,25 @@ export default function JobDetailsPage() {
                           </span>
                         </div>
                         <div
-                          className={`flex items-center gap-1.5 p-2 rounded-lg ${selectedJobDetails.is_phone_verified
-                            ? "bg-green-50 border border-green-200"
-                            : "bg-red-50 border border-red-200"
-                            }`}
+                          className={`flex items-center gap-1.5 p-2 rounded-lg ${
+                            selectedJobDetails.is_phone_verified
+                              ? "bg-green-50 border border-green-200"
+                              : "bg-red-50 border border-red-200"
+                          }`}
                         >
                           <FaPhone
-                            className={`text-xs ${selectedJobDetails.is_phone_verified
-                              ? "text-green-600"
-                              : "text-red-600"
-                              }`}
+                            className={`text-xs ${
+                              selectedJobDetails.is_phone_verified
+                                ? "text-green-600"
+                                : "text-red-600"
+                            }`}
                           />
                           <span
-                            className={`text-xs font-medium ${selectedJobDetails.is_phone_verified
-                              ? "text-green-700"
-                              : "text-red-700"
-                              }`}
+                            className={`text-xs font-medium ${
+                              selectedJobDetails.is_phone_verified
+                                ? "text-green-700"
+                                : "text-red-700"
+                            }`}
                           >
                             Phone{" "}
                             {selectedJobDetails.is_phone_verified
@@ -738,22 +770,25 @@ export default function JobDetailsPage() {
                           </span>
                         </div>
                         <div
-                          className={`flex items-center gap-1.5 p-2 rounded-lg ${selectedJobDetails.is_gst_verified
-                            ? "bg-green-50 border border-green-200"
-                            : "bg-red-50 border border-red-200"
-                            }`}
+                          className={`flex items-center gap-1.5 p-2 rounded-lg ${
+                            selectedJobDetails.is_gst_verified
+                              ? "bg-green-50 border border-green-200"
+                              : "bg-red-50 border border-red-200"
+                          }`}
                         >
                           <FaBuilding
-                            className={`text-xs ${selectedJobDetails.is_gst_verified
-                              ? "text-green-600"
-                              : "text-red-600"
-                              }`}
+                            className={`text-xs ${
+                              selectedJobDetails.is_gst_verified
+                                ? "text-green-600"
+                                : "text-red-600"
+                            }`}
                           />
                           <span
-                            className={`text-xs font-medium ${selectedJobDetails.is_gst_verified
-                              ? "text-green-700"
-                              : "text-red-700"
-                              }`}
+                            className={`text-xs font-medium ${
+                              selectedJobDetails.is_gst_verified
+                                ? "text-green-700"
+                                : "text-red-700"
+                            }`}
                           >
                             GST{" "}
                             {selectedJobDetails.is_gst_verified
@@ -790,7 +825,6 @@ export default function JobDetailsPage() {
                     )}
                   </Button>
                 </div>
-
               </>
             )}
           </main>
@@ -811,7 +845,7 @@ export default function JobDetailsPage() {
               jobId={job_id}
               onClose={() => setShowApplyForm(false)}
               onSubmit={(formData) => {
-                console.log('Form submitted:', formData);
+                console.log("Form submitted:", formData);
                 // The actual submission is handled by the useApplyToJob hook in the ApplyForm component
                 setShowApplyForm(false);
               }}
@@ -821,4 +855,4 @@ export default function JobDetailsPage() {
       )}
     </div>
   );
-};
+}
